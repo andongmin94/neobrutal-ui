@@ -1,7 +1,7 @@
-import { CheckCircle2Icon } from "lucide-react"
+import { CheckCircle2Icon } from "lucide-react";
 
-import { Alert, AlertTitle } from "@/components/ui/alert"
-import { Button } from "@/components/ui/button"
+import { Alert, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 
 export default function AlertLongDescriptionDemo() {
   return (
@@ -18,5 +18,5 @@ export default function AlertLongDescriptionDemo() {
         Undo
       </Button>
     </Alert>
-  )
+  );
 }

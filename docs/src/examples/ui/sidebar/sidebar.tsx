@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   AudioWaveform,
@@ -23,16 +23,12 @@ import {
   Sparkles,
   SquareTerminal,
   Trash2,
-} from "lucide-react"
+} from "lucide-react";
 
-import * as React from "react"
+import * as React from "react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,7 +38,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   Sidebar,
   SidebarContent,
@@ -61,7 +57,7 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
   useSidebar,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 // This is sample data.
 const data = {
@@ -191,14 +187,14 @@ const data = {
       icon: Map,
     },
   ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { isMobile } = useSidebar()
-  const [activeTeam, setActiveTeam] = React.useState(data.teams[0])
+  const { isMobile } = useSidebar();
+  const [activeTeam, setActiveTeam] = React.useState(data.teams[0]);
 
   if (!activeTeam) {
-    return null
+    return null;
   }
 
   return (
@@ -216,12 +212,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <activeTeam.logo className="size-4" />
                   </div>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-heading">
-                      {activeTeam.name}
-                    </span>
-                    <span className="truncate font-base text-xs">
-                      {activeTeam.plan}
-                    </span>
+                    <span className="truncate font-heading">{activeTeam.name}</span>
+                    <span className="truncate font-base text-xs">{activeTeam.plan}</span>
                   </div>
                   <ChevronsUpDown className="ml-auto" />
                 </SidebarMenuButton>
@@ -232,9 +224,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 side={isMobile ? "bottom" : "right"}
                 sideOffset={4}
               >
-                <DropdownMenuLabel className="text-sm font-heading">
-                  Teams
-                </DropdownMenuLabel>
+                <DropdownMenuLabel className="text-sm font-heading">Teams</DropdownMenuLabel>
                 {data.teams.map((team, index) => (
                   <DropdownMenuItem
                     key={team.name}
@@ -359,16 +349,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   size="lg"
                 >
                   <Avatar className="h-8 w-8">
-                    <AvatarImage
-                      src="https://github.com/shadcn.png?size=40"
-                      alt="CN"
-                    />
+                    <AvatarImage src="https://github.com/shadcn.png?size=40" alt="CN" />
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-heading">
-                      {data.user.name}
-                    </span>
+                    <span className="truncate font-heading">{data.user.name}</span>
                     <span className="truncate text-xs">{data.user.email}</span>
                   </div>
                   <ChevronsUpDown className="ml-auto size-4" />
@@ -383,19 +368,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <DropdownMenuLabel className="p-0 font-base">
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage
-                        src="https://github.com/shadcn.png?size=40"
-                        alt="CN"
-                      />
+                      <AvatarImage src="https://github.com/shadcn.png?size=40" alt="CN" />
                       <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-heading">
-                        {data.user.name}
-                      </span>
-                      <span className="truncate text-xs">
-                        {data.user.email}
-                      </span>
+                      <span className="truncate font-heading">{data.user.name}</span>
+                      <span className="truncate text-xs">{data.user.email}</span>
                     </div>
                   </div>
                 </DropdownMenuLabel>
@@ -433,5 +411,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

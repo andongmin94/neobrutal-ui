@@ -1,8 +1,8 @@
-import createMDX from "@next/mdx"
+import createMDX from "@next/mdx";
 
 const withMDX = createMDX({
   extension: /\.mdx?$/,
-})
+});
 
 /** @type {import('next').NextConfig} */
 const nextConfig = withMDX({
@@ -14,7 +14,7 @@ const nextConfig = withMDX({
         destination: "/docs/:slug*",
         permanent: true,
       },
-    ]
+    ];
   },
   async rewrites() {
     return [
@@ -30,18 +30,18 @@ const nextConfig = withMDX({
         source: "/ingest/decide",
         destination: "https://eu.i.posthog.com/decide",
       },
-    ]
+    ];
   },
   // This is required to support PostHog trailing slash API requests
   skipTrailingSlashRedirect: true,
-})
+});
 
-const isDev = process.argv.indexOf("dev") !== -1
-const isBuild = process.argv.indexOf("build") !== -1
+const isDev = process.argv.indexOf("dev") !== -1;
+const isBuild = process.argv.indexOf("build") !== -1;
 if (!process.env.VELITE_STARTED && (isDev || isBuild)) {
-  process.env.VELITE_STARTED = "1"
-  const { build } = await import("velite")
-  await build({ watch: isDev, clean: !isDev })
+  process.env.VELITE_STARTED = "1";
+  const { build } = await import("velite");
+  await build({ watch: isDev, clean: !isDev });
 }
 
-export default nextConfig
+export default nextConfig;

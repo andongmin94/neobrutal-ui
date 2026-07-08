@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { TrendingDown, TrendingUp } from "lucide-react"
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+import { TrendingDown, TrendingUp } from "lucide-react";
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
 import {
   Card,
@@ -10,7 +10,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
@@ -18,9 +18,9 @@ import {
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
 
-export const description = "An area chart with icons"
+export const description = "An area chart with icons";
 
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
@@ -29,7 +29,7 @@ const chartData = [
   { month: "April", desktop: 73, mobile: 190 },
   { month: "May", desktop: 209, mobile: 130 },
   { month: "June", desktop: 214, mobile: 140 },
-]
+];
 
 const chartConfig = {
   desktop: {
@@ -42,16 +42,14 @@ const chartConfig = {
     color: "var(--chart-2)",
     icon: TrendingUp,
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 export default function ChartAreaIcons() {
   return (
     <Card className="bg-secondary-background text-foreground">
       <CardHeader>
         <CardTitle>Area Chart - Icons</CardTitle>
-        <CardDescription>
-          Showing total visitors for the last 6 months
-        </CardDescription>
+        <CardDescription>Showing total visitors for the last 6 months</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -71,10 +69,7 @@ export default function ChartAreaIcons() {
               tickMargin={8}
               tickFormatter={(value) => value.slice(0, 3)}
             />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="line" />}
-            />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="line" />} />
             <Area
               dataKey="mobile"
               type="natural"
@@ -105,12 +100,10 @@ export default function ChartAreaIcons() {
             <div className="flex items-center gap-2 leading-none font-medium">
               Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
             </div>
-            <div className="flex items-center gap-2 leading-none">
-              January - June 2024
-            </div>
+            <div className="flex items-center gap-2 leading-none">January - June 2024</div>
           </div>
         </div>
       </CardFooter>
     </Card>
-  )
+  );
 }

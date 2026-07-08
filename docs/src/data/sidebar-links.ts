@@ -1,13 +1,13 @@
-import { transformToSlug } from "@/lib/utils"
+import { transformToSlug } from "@/lib/utils";
 
-import COMPONENTS from "./components"
+import COMPONENTS from "./components";
 
 const COMPONENTS_LINKS = COMPONENTS.map((component) => {
   return {
     href: `/docs/${transformToSlug(component.name)}`,
     text: component.name,
-  }
-})
+  };
+});
 
 const GETTING_STARTED_LINKS = [
   {
@@ -54,7 +54,7 @@ const GETTING_STARTED_LINKS = [
     href: "/showcase",
     text: "Showcase",
   },
-]
+];
 
 const MAIN_SIDEBAR = [
   "Getting started",
@@ -89,6 +89,6 @@ const MAIN_SIDEBAR = [
     href: "/docs/stars",
     text: "Installation",
   },
-]
+];
 
-export { MAIN_SIDEBAR, COMPONENTS_LINKS, GETTING_STARTED_LINKS }
+export { MAIN_SIDEBAR, COMPONENTS_LINKS, GETTING_STARTED_LINKS };

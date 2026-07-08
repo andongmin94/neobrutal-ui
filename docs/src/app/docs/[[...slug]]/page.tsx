@@ -1,108 +1,108 @@
-import "@/styling/code.css"
+import "@/styling/code.css";
 
-import { docs } from "@docs"
-import { ExternalLink } from "lucide-react"
+import { docs } from "@docs";
+import { ExternalLink } from "lucide-react";
 
-import { notFound } from "next/navigation"
+import { notFound } from "next/navigation";
 
-import { MAIN_SIDEBAR } from "@/data/sidebar-links"
+import { MAIN_SIDEBAR } from "@/data/sidebar-links";
 
-import { MDXContent, MDXTableOfContents } from "@/components/app/mdx-components"
-import Pagination from "@/components/app/pagination"
-import { TableOfContents } from "@/components/app/toc"
-import { Badge } from "@/components/ui/badge"
+import { MDXContent, MDXTableOfContents } from "@/components/app/mdx-components";
+import Pagination from "@/components/app/pagination";
+import { TableOfContents } from "@/components/app/toc";
+import { Badge } from "@/components/ui/badge";
 
 interface DocPageProps {
   params: Promise<{
-    slug: string[]
-  }>
+    slug: string[];
+  }>;
 }
 
 export async function generateMetadata(props: DocPageProps) {
-  const doc = await getDocFromParams(props)
-  if (doc == null) return {}
-  return { title: doc.title, description: doc.description }
+  const doc = await getDocFromParams(props);
+  if (doc == null) return {};
+  return { title: doc.title, description: doc.description };
 }
 
 export async function generateStaticParams(): Promise<
   {
-    slug: string[]
+    slug: string[];
   }[]
 > {
   return docs.map((doc) => ({
     slug: doc.slugAsParams.split("/"),
-  }))
+  }));
 }
 
 async function getDocFromParams({ params }: DocPageProps) {
-  const slug = (await params).slug?.join("/") || ""
-  const doc = docs.find((doc) => doc.slugAsParams === slug)
+  const slug = (await params).slug?.join("/") || "";
+  const doc = docs.find((doc) => doc.slugAsParams === slug);
 
   if (!doc) {
-    return null
+    return null;
   }
 
-  return doc
+  return doc;
 }
 
 interface TOCItem {
-  depth: number
-  value: string
-  id: string
+  depth: number;
+  value: string;
+  id: string;
 }
 
 function transformTableOfContents(items: any[]): TOCItem[] {
-  const flattened: TOCItem[] = []
+  const flattened: TOCItem[] = [];
 
   items.forEach((item) => {
     flattened.push({
       depth: item.depth,
       value: item.value,
       id: item.id,
-    })
+    });
 
     if (item.children) {
-      flattened.push(...transformTableOfContents(item.children))
+      flattened.push(...transformTableOfContents(item.children));
     }
-  })
+  });
 
-  return flattened
+  return flattened;
 }
 
 export default async function DocPage(props: DocPageProps) {
-  const doc = await getDocFromParams(props)
-  if (doc == null) notFound()
+  const doc = await getDocFromParams(props);
+  if (doc == null) notFound();
 
-  const { description, title, body, shadcnDocsLink, slug, slugAsParams } = doc
+  const { description, title, body, shadcnDocsLink, slug, slugAsParams } = doc;
 
   const filteredSidebar = MAIN_SIDEBAR.filter(
     (item): item is { href: string; text: string } => typeof item === "object",
-  )
+  );
 
   const currentIndex = filteredSidebar.findIndex((item) => {
-    const isIndex = slugAsParams === ""
+    const isIndex = slugAsParams === "";
 
     if (isIndex) {
-      return item.href === "/docs"
+      return item.href === "/docs";
     }
 
-    return item.href === "/docs/" + slugAsParams
-  })
+    return item.href === "/docs/" + slugAsParams;
+  });
 
-  const prevItem = filteredSidebar[currentIndex - 1]
-  const nextItem = filteredSidebar[currentIndex + 1]
+  const prevItem = filteredSidebar[currentIndex - 1];
+  const nextItem = filteredSidebar[currentIndex + 1];
 
-  const rawTableOfContents = MDXTableOfContents({ code: body })
-  const tableOfContents = transformTableOfContents(rawTableOfContents)
+  const rawTableOfContents = MDXTableOfContents({ code: body });
+  const tableOfContents = transformTableOfContents(rawTableOfContents);
 
-  const docsSlug = slug === "/docs" ? "index" : slug
+  const docsSlug = slug === "/docs" ? "index" : slug;
 
   const paginationProps = {
     prev: prevItem ? { name: prevItem.text, path: prevItem.href } : undefined,
     next: nextItem ? { name: nextItem.text, path: nextItem.href } : undefined,
-  }
+  };
 
-  const isTocEmpty = tableOfContents.length < 2
+  const isTocEmpty = tableOfContents.length < 2;
 
   return (
     <div className="docs min-h-[100dvh] w-full bg-background pt-[70px]">
@@ -139,5 +139,5 @@ export default async function DocPage(props: DocPageProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

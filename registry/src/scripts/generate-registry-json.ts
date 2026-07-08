@@ -1,12 +1,13 @@
-import * as fs from "fs"
-import * as path from "path"
+import * as fs from "fs";
+import * as path from "path";
 
-import REGISTRY from "@/data/registry"
+import REGISTRY from "@/data/registry";
 
-const DEFAULT_REGISTRY_BASE_URL = "https://neobrutal-ui.andongmin.com"
-const registryBaseUrl = (
-  process.env.REGISTRY_BASE_URL || DEFAULT_REGISTRY_BASE_URL
-).replace(/\/$/, "")
+const DEFAULT_REGISTRY_BASE_URL = "https://neobrutal-ui.andongmin.com";
+const registryBaseUrl = (process.env.REGISTRY_BASE_URL || DEFAULT_REGISTRY_BASE_URL).replace(
+  /\/$/,
+  "",
+);
 
 const BASE_UI_COMPONENTS = new Set([
   "accordion",
@@ -45,7 +46,7 @@ const BASE_UI_COMPONENTS = new Set([
   "tabs",
   "tooltip",
   "ntooltip",
-])
+]);
 
 const BASE_ITEM = {
   name: "neobrutal-ui",
@@ -219,33 +220,28 @@ const BASE_ITEM = {
       },
     },
   },
-}
+};
 
 function rewriteRegistryDependency(dependency: string) {
   if (/^https?:\/\//.test(dependency)) {
-    return dependency
+    return dependency;
   }
 
-  return `${registryBaseUrl}/r/${dependency.replace(/\.json$/, "")}.json`
+  return `${registryBaseUrl}/r/${dependency.replace(/\.json$/, "")}.json`;
 }
 
-function rewriteDependencies(
-  item: (typeof REGISTRY)[number],
-): string[] | undefined {
+function rewriteDependencies(item: (typeof REGISTRY)[number]): string[] | undefined {
   const dependencies = new Set(
-    (item.dependencies ?? [])
-      .map((dependency) =>
-        dependency.startsWith("react-day-picker@")
-          ? "react-day-picker"
-          : dependency,
-      ),
-  )
+    (item.dependencies ?? []).map((dependency) =>
+      dependency.startsWith("react-day-picker@") ? "react-day-picker" : dependency,
+    ),
+  );
 
   if (BASE_UI_COMPONENTS.has(item.name)) {
-    dependencies.add("@base-ui/react")
+    dependencies.add("@base-ui/react");
   }
 
-  return dependencies.size ? [...dependencies] : undefined
+  return dependencies.size ? [...dependencies] : undefined;
 }
 
 function rewriteRegistryItem(item: (typeof REGISTRY)[number]) {
@@ -253,15 +249,13 @@ function rewriteRegistryItem(item: (typeof REGISTRY)[number]) {
     ...item,
     author: item.author ?? "andongmin94",
     dependencies: rewriteDependencies(item),
-    registryDependencies: item.registryDependencies?.map(
-      rewriteRegistryDependency,
-    ),
-  }
+    registryDependencies: item.registryDependencies?.map(rewriteRegistryDependency),
+  };
 }
 
 // Read the existing registry.json to preserve metadata
-const registryPath = path.join(process.cwd(), "registry.json")
-const existingRegistry = JSON.parse(fs.readFileSync(registryPath, "utf-8"))
+const registryPath = path.join(process.cwd(), "registry.json");
+const existingRegistry = JSON.parse(fs.readFileSync(registryPath, "utf-8"));
 
 // Update only the items array while preserving other fields
 const updatedRegistry = {
@@ -270,12 +264,12 @@ const updatedRegistry = {
   homepage: registryBaseUrl,
   author: "andongmin94",
   items: [BASE_ITEM, ...REGISTRY.map(rewriteRegistryItem)],
-}
+};
 
 // Convert to JSON string with proper formatting
-const registryJson = JSON.stringify(updatedRegistry, null, 2)
+const registryJson = JSON.stringify(updatedRegistry, null, 2);
 
 // Write the updated JSON file
-fs.writeFileSync(registryPath, registryJson)
+fs.writeFileSync(registryPath, registryJson);
 
-console.log(`Registry JSON file updated at: ${registryPath}`)
+console.log(`Registry JSON file updated at: ${registryPath}`);

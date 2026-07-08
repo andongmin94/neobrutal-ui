@@ -322,6 +322,6 @@ const colors = [
     darkChart4: "#00BD84",
     darkChart5: "#5294FF",
   },
-]
+];
 
-export default colors
+export default colors;

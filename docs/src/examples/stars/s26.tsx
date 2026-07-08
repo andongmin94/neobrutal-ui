@@ -1,4 +1,4 @@
-import Star26 from "@/components/stars/s26"
+import Star26 from "@/components/stars/s26";
 
 export default function Star26Example() {
   return (
@@ -7,5 +7,5 @@ export default function Star26Example() {
       className="w-full h-full"
       pathClassName="stroke-black stroke-3 dark:stroke-2"
     />
-  )
+  );
 }

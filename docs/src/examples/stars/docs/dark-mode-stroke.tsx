@@ -1,4 +1,4 @@
-import Star8 from "@/components/stars/s8"
+import Star8 from "@/components/stars/s8";
 
 export default function StarDarkModeStroke() {
   return (
@@ -8,5 +8,5 @@ export default function StarDarkModeStroke() {
       size={200}
       strokeWidth={2}
     />
-  )
+  );
 }

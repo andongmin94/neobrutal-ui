@@ -1,6 +1,6 @@
-import { CheckIcon } from "lucide-react"
+import { CheckIcon } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge"
+import { Badge } from "@/components/ui/badge";
 
 export default function BadgeWithIconDemo() {
   return (
@@ -8,5 +8,5 @@ export default function BadgeWithIconDemo() {
       <CheckIcon />
       Badge
     </Badge>
-  )
+  );
 }

@@ -1,11 +1,11 @@
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel"
+} from "@/components/ui/carousel";
 
 export default function CarouselDemo() {
   return (
@@ -28,5 +28,5 @@ export default function CarouselDemo() {
         <CarouselNext />
       </Carousel>
     </div>
-  )
+  );
 }

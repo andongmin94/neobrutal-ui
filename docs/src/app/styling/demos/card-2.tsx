@@ -1,6 +1,6 @@
-import { BellRing, Check } from "lucide-react"
+import { BellRing, Check } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,10 +8,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Switch } from "@/components/ui/switch"
+} from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 const notifications = [
   {
@@ -26,26 +26,22 @@ const notifications = [
     title: "Your subscription is expiring soon!",
     description: "2 hours ago",
   },
-]
+];
 
-type CardProps = React.ComponentProps<typeof Card>
+type CardProps = React.ComponentProps<typeof Card>;
 
 export default function CardDemo({ className, ...props }: CardProps) {
   return (
     <Card className="bg-background text-foreground font-base" {...props}>
       <CardHeader>
         <CardTitle>Notifications</CardTitle>
-        <CardDescription className="text-foreground">
-          You have 3 unread messages.
-        </CardDescription>
+        <CardDescription className="text-foreground">You have 3 unread messages.</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
         <div className=" flex items-center space-x-4 rounded-base border-2 bg-secondary-background border-border p-4">
           <BellRing />
           <div className="flex-1 space-y-1">
-            <p className="text-sm font-heading leading-none">
-              Push Notifications
-            </p>
+            <p className="text-sm font-heading leading-none">Push Notifications</p>
             <p className="text-sm">Send notifications to device.</p>
           </div>
           <Switch />
@@ -58,9 +54,7 @@ export default function CardDemo({ className, ...props }: CardProps) {
             >
               <span className="flex h-3 w-3 translate-y-1 rounded-full bg-main border-2 border-border" />
               <div className="space-y-1">
-                <p className="text-sm font-heading leading-none">
-                  {notification.title}
-                </p>
+                <p className="text-sm font-heading leading-none">{notification.title}</p>
                 <p className="text-sm">{notification.description}</p>
               </div>
             </div>
@@ -73,5 +67,5 @@ export default function CardDemo({ className, ...props }: CardProps) {
         </Button>
       </CardFooter>
     </Card>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import Star4 from "@/components/stars/s4"
+import Star4 from "@/components/stars/s4";
 
 export default function Star4Example() {
   return (
@@ -7,5 +7,5 @@ export default function Star4Example() {
       className="w-full h-full"
       pathClassName="stroke-black stroke-3 dark:stroke-2"
     />
-  )
+  );
 }

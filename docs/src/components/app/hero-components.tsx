@@ -1,15 +1,15 @@
-import { ChevronsUpDown, Terminal } from "lucide-react"
+import { ChevronsUpDown, Terminal } from "lucide-react";
 
-import * as React from "react"
+import * as React from "react";
 
-import { Marquee } from "@/components/app/marquee"
+import { Marquee } from "@/components/app/marquee";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+} from "@/components/ui/accordion";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -17,8 +17,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Button } from "@/components/ui/button"
+} from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -26,45 +26,37 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel"
-import { Checkbox } from "@/components/ui/checkbox"
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/carousel";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Input } from "@/components/ui/input";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
-} from "@/components/ui/input-otp"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Slider } from "@/components/ui/slider"
+} from "@/components/ui/input-otp";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Slider } from "@/components/ui/slider";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 export default function HeroComponents({
   className,
   reverse,
 }: {
-  className?: string
-  reverse?: boolean
+  className?: string;
+  reverse?: boolean;
 }) {
   return (
     <div
@@ -93,29 +85,21 @@ export default function HeroComponents({
         <CollapsibleExample />
       </Marquee>
     </div>
-  )
+  );
 }
 
 const CardExample = () => (
   <Card className="w-full bg-main text-main-foreground max-w-sm">
     <CardHeader>
       <CardTitle>Login to your account</CardTitle>
-      <CardDescription>
-        Enter your email below to login to your account
-      </CardDescription>
+      <CardDescription>Enter your email below to login to your account</CardDescription>
     </CardHeader>
     <CardContent>
       <form>
         <div className="flex flex-col gap-6">
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="m@example.com"
-              required
-              tabIndex={-1}
-            />
+            <Input id="email" type="email" placeholder="m@example.com" required tabIndex={-1} />
           </div>
           <div className="grid gap-2">
             <div className="flex items-center">
@@ -148,7 +132,7 @@ const CardExample = () => (
       </div>
     </CardFooter>
   </Card>
-)
+);
 
 const AlertExample = () => (
   <Alert>
@@ -158,24 +142,20 @@ const AlertExample = () => (
       You can add components and dependencies to your app using the cli.
     </AlertDescription>
   </Alert>
-)
+);
 
 const AccordionExample = () => (
   <Accordion className="w-full" type="single" collapsible>
     <AccordionItem className="max-w-full" value="item-1">
       <AccordionTrigger tabIndex={-1}>Is it accessible?</AccordionTrigger>
-      <AccordionContent>
-        Yes. It adheres to the WAI-ARIA design pattern.
-      </AccordionContent>
+      <AccordionContent>Yes. It adheres to the WAI-ARIA design pattern.</AccordionContent>
     </AccordionItem>
   </Accordion>
-)
+);
 
 const InputOTPExample = () => (
   <div className="bg-main w-full flex-col border-2 border-border shadow-shadow py-4 flex items-center justify-center rounded-base">
-    <p className="mb-4 text-lg text-main-foreground font-heading">
-      Your OTP code is:
-    </p>
+    <p className="mb-4 text-lg text-main-foreground font-heading">Your OTP code is:</p>
 
     <InputOTP inert maxLength={6}>
       <InputOTPGroup>
@@ -191,7 +171,7 @@ const InputOTPExample = () => (
       </InputOTPGroup>
     </InputOTP>
   </div>
-)
+);
 
 const ResizableExample = () => (
   <ResizablePanelGroup
@@ -221,7 +201,7 @@ const ResizableExample = () => (
       </ResizablePanelGroup>
     </ResizablePanel>
   </ResizablePanelGroup>
-)
+);
 
 const ScrollAreaExample = () => (
   <ScrollArea
@@ -229,20 +209,19 @@ const ScrollAreaExample = () => (
     inert
     className="rounded-base h-[150px] w-full text-main-foreground border-2 border-border bg-main p-4 shadow-shadow"
   >
-    Jokester began sneaking into the castle in the middle of the night and
-    leaving jokes all over the place: under the king&apos;s pillow, in his soup,
-    even in the royal toilet. The king was furious, but he couldn&apos;t seem to
-    stop Jokester. And then, one day, the people of the kingdom discovered that
-    the jokes left by Jokester were so funny that they couldn&apos;t help but
-    laugh. And once they started laughing, they couldn&apos;t stop.
+    Jokester began sneaking into the castle in the middle of the night and leaving jokes all over
+    the place: under the king&apos;s pillow, in his soup, even in the royal toilet. The king was
+    furious, but he couldn&apos;t seem to stop Jokester. And then, one day, the people of the
+    kingdom discovered that the jokes left by Jokester were so funny that they couldn&apos;t help
+    but laugh. And once they started laughing, they couldn&apos;t stop.
   </ScrollArea>
-)
+);
 
 const SliderExample = () => (
   <div className="bg-main w-full border-2 border-border shadow-shadow p-4 py-6 flex items-center justify-center rounded-base">
     <Slider defaultValue={[33]} max={100} step={1} tabIndex={-1} inert />
   </div>
-)
+);
 
 const BreadcrumbExample = () => (
   <div className="bg-main w-full border-2 border-border shadow-shadow p-4 flex items-center justify-center rounded-base">
@@ -266,7 +245,7 @@ const BreadcrumbExample = () => (
       </BreadcrumbList>
     </Breadcrumb>
   </div>
-)
+);
 
 const RadioGroupExample = () => (
   <div className="bg-main w-full border-2 border-border shadow-shadow p-4 flex items-center justify-center rounded-base">
@@ -306,7 +285,7 @@ const RadioGroupExample = () => (
       </div>
     </RadioGroup>
   </div>
-)
+);
 
 const CheckboxExample = () => (
   <div className="bg-main w-full border-2 border-border shadow-shadow p-4 flex text-main-foreground items-center justify-center rounded-base">
@@ -315,7 +294,7 @@ const CheckboxExample = () => (
       <Label htmlFor="terms">Accept terms and conditions</Label>
     </div>
   </div>
-)
+);
 
 const CarouselExample = () => (
   <div className="w-full flex-col items-center gap-4 flex">
@@ -337,7 +316,7 @@ const CarouselExample = () => (
       <CarouselNext tabIndex={-1} />
     </Carousel>
   </div>
-)
+);
 
 const CollapsibleExample = () => (
   <Collapsible className="w-full space-y-2">
@@ -367,4 +346,4 @@ const CollapsibleExample = () => (
       </div>
     </CollapsibleContent>
   </Collapsible>
-)
+);

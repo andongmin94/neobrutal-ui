@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 
 export default function ButtonNeutralDemo() {
-  return <Button variant="neutral">Button</Button>
+  return <Button variant="neutral">Button</Button>;
 }

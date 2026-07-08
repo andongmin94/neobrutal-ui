@@ -1,9 +1,9 @@
-import components from "@/data/components"
-import { STARS_EXAMPLES } from "@/data/stars"
+import components from "@/data/components";
+import { STARS_EXAMPLES } from "@/data/stars";
 
-import { cn, transformToSlug } from "@/lib/utils"
+import { cn, transformToSlug } from "@/lib/utils";
 
-import { sharedComponents } from "./mdx-components"
+import { sharedComponents } from "./mdx-components";
 
 export default function ComponentPreview({
   component,
@@ -12,36 +12,34 @@ export default function ComponentPreview({
   type = "component",
   wrapperClassName,
 }: {
-  component: string
-  children: React.ReactNode
-  example?: string
-  type?: "star" | "component"
-  wrapperClassName?: string
+  component: string;
+  children: React.ReactNode;
+  example?: string;
+  type?: "star" | "component";
+  wrapperClassName?: string;
 }) {
-  const { Tabs, TabsList, TabsTrigger, TabsContent } = sharedComponents
+  const { Tabs, TabsList, TabsTrigger, TabsContent } = sharedComponents;
 
-  let ExampleComponent: React.ComponentType | undefined
+  let ExampleComponent: React.ComponentType | undefined;
 
   if (type === "star") {
-    const starData = STARS_EXAMPLES[component as keyof typeof STARS_EXAMPLES]
-    if (!starData) return null
+    const starData = STARS_EXAMPLES[component as keyof typeof STARS_EXAMPLES];
+    if (!starData) return null;
 
-    ExampleComponent = starData
+    ExampleComponent = starData;
   } else {
-    const componentData = components.find(
-      (c) => transformToSlug(c.name) === component,
-    )
+    const componentData = components.find((c) => transformToSlug(c.name) === component);
 
-    if (!componentData) return null
+    if (!componentData) return null;
 
     if (type === "component") {
       ExampleComponent = example
         ? componentData.examples?.[example]
-        : componentData.exampleComponent
+        : componentData.exampleComponent;
     }
   }
 
-  if (!ExampleComponent) return null
+  if (!ExampleComponent) return null;
 
   return (
     <>
@@ -64,5 +62,5 @@ export default function ComponentPreview({
         <TabsContent value="code">{children}</TabsContent>
       </Tabs>
     </>
-  )
+  );
 }

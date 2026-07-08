@@ -254,16 +254,8 @@ const UI = [
     name: "form",
     title: "Form",
     type: "registry:ui",
-    dependencies: [
-      "@base-ui/react",
-      "@hookform/resolvers",
-      "zod",
-      "react-hook-form",
-    ],
-    registryDependencies: [
-      "nbutton",
-      "nlabel",
-    ],
+    dependencies: ["@base-ui/react", "@hookform/resolvers", "zod", "react-hook-form"],
+    registryDependencies: ["nbutton", "nlabel"],
     files: [
       {
         path: "src/components/ui/form.tsx",
@@ -309,11 +301,7 @@ const UI = [
     name: "input-group",
     title: "Input Group",
     type: "registry:ui",
-    registryDependencies: [
-      "nbutton",
-      "ninput",
-      "textarea",
-    ],
+    registryDependencies: ["nbutton", "ninput", "textarea"],
     files: [
       {
         path: "src/components/ui/input-group.tsx",
@@ -526,14 +514,7 @@ const UI = [
     name: "sidebar",
     title: "Sidebar",
     type: "registry:ui",
-    registryDependencies: [
-      "nbutton",
-      "nsheet",
-      "ntooltip",
-      "ninput",
-      "separator",
-      "nskeleton",
-    ],
+    registryDependencies: ["nbutton", "nsheet", "ntooltip", "ninput", "separator", "nskeleton"],
     files: [
       {
         path: "src/components/ui/sidebar.tsx",
@@ -661,7 +642,7 @@ const UI = [
       },
     ],
   },
-]
+];
 
 const STARS = [
   {
@@ -1144,8 +1125,8 @@ const STARS = [
       },
     ],
   },
-]
+];
 
-const REGISTRY = [...UI, ...STARS]
+const REGISTRY = [...UI, ...STARS];
 
-export default REGISTRY
+export default REGISTRY;

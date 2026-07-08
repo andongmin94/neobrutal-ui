@@ -1,18 +1,18 @@
-import fs from "fs"
-import rehypeToc from "@stefanprobst/rehype-extract-toc"
-import rehypeTocExtract from "@stefanprobst/rehype-extract-toc/mdx"
-import rehypePrettyCode from "rehype-pretty-code"
-import rehypeSlug from "rehype-slug"
-import codeImport from "remark-code-import"
-import { visit } from "unist-util-visit"
-import { defineCollection, defineConfig, s } from "velite"
+import fs from "fs";
+import rehypeToc from "@stefanprobst/rehype-extract-toc";
+import rehypeTocExtract from "@stefanprobst/rehype-extract-toc/mdx";
+import rehypePrettyCode from "rehype-pretty-code";
+import rehypeSlug from "rehype-slug";
+import codeImport from "remark-code-import";
+import { visit } from "unist-util-visit";
+import { defineCollection, defineConfig, s } from "velite";
 
 const computedFields = <T extends { slug: string }>(data: T) => {
   return {
     ...data,
     slugAsParams: data.slug.split("/").slice(1).join("/"),
-  }
-}
+  };
+};
 
 const docs = defineCollection({
   name: "docs",
@@ -26,7 +26,7 @@ const docs = defineCollection({
       body: s.mdx(),
     })
     .transform(computedFields),
-})
+});
 
 export default defineConfig({
   root: "./src/markdown/",
@@ -46,13 +46,13 @@ export default defineConfig({
       () => (tree) => {
         visit(tree, (node) => {
           if (node?.type === "element" && node?.tagName === "pre") {
-            const [codeEl] = node.children
+            const [codeEl] = node.children;
 
-            if (codeEl.tagName !== "code") return
+            if (codeEl.tagName !== "code") return;
 
-            node.__rawstring__ = codeEl.children?.[0].value
+            node.__rawstring__ = codeEl.children?.[0].value;
           }
-        })
+        });
       },
       [
         // @ts-ignore
@@ -62,7 +62,7 @@ export default defineConfig({
           keepBackground: false,
           onVisitLine(node: any) {
             if (node.children.length === 0) {
-              node.children = [{ type: "text", value: " " }]
+              node.children = [{ type: "text", value: " " }];
             }
           },
         },
@@ -71,19 +71,19 @@ export default defineConfig({
         visit(tree, (node) => {
           if (node?.type === "element" && node?.tagName === "figure") {
             if (!("data-rehype-pretty-code-figure" in node.properties)) {
-              return
+              return;
             }
 
-            const preElement = node.children.at(-1)
+            const preElement = node.children.at(-1);
             if (preElement.tagName !== "pre") {
-              return
+              return;
             }
 
-            preElement.properties["__rawstring__"] = node.__rawstring__
+            preElement.properties["__rawstring__"] = node.__rawstring__;
           }
-        })
+        });
       },
     ],
     remarkPlugins: [[codeImport, { removeRedundantIndentations: true }]],
   },
-})
+});

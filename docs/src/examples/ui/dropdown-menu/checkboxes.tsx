@@ -1,15 +1,10 @@
-"use client"
+"use client";
 
-import {
-  CreditCardIcon,
-  LogOutIcon,
-  Settings2Icon,
-  UserIcon,
-} from "lucide-react"
+import { CreditCardIcon, LogOutIcon, Settings2Icon, UserIcon } from "lucide-react";
 
-import * as React from "react"
+import * as React from "react";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -19,12 +14,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 
 export default function DropdownMenuCheckboxes() {
-  const [showStatusBar, setShowStatusBar] = React.useState(true)
-  const [showActivityBar, setShowActivityBar] = React.useState(false)
-  const [showPanel, setShowPanel] = React.useState(false)
+  const [showStatusBar, setShowStatusBar] = React.useState(true);
+  const [showActivityBar, setShowActivityBar] = React.useState(false);
+  const [showPanel, setShowPanel] = React.useState(false);
 
   return (
     <DropdownMenu>
@@ -47,10 +42,7 @@ export default function DropdownMenuCheckboxes() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuLabel>Appearance</DropdownMenuLabel>
-          <DropdownMenuCheckboxItem
-            checked={showStatusBar}
-            onCheckedChange={setShowStatusBar}
-          >
+          <DropdownMenuCheckboxItem checked={showStatusBar} onCheckedChange={setShowStatusBar}>
             Status Bar
           </DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem
@@ -60,10 +52,7 @@ export default function DropdownMenuCheckboxes() {
           >
             Activity Bar
           </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem
-            checked={showPanel}
-            onCheckedChange={setShowPanel}
-          >
+          <DropdownMenuCheckboxItem checked={showPanel} onCheckedChange={setShowPanel}>
             Panel
           </DropdownMenuCheckboxItem>
         </DropdownMenuGroup>
@@ -75,5 +64,5 @@ export default function DropdownMenuCheckboxes() {
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

@@ -1,18 +1,17 @@
-import { sharedComponents } from "./mdx-components"
-import { Pre } from "./pre"
+import { sharedComponents } from "./mdx-components";
+import { Pre } from "./pre";
 
 const REGISTRY_BASE_URL =
-  process.env.NEXT_PUBLIC_REGISTRY_BASE_URL ||
-  "https://neobrutal-ui.andongmin.com"
+  process.env.NEXT_PUBLIC_REGISTRY_BASE_URL || "https://neobrutal-ui.andongmin.com";
 
 export default function ShadcnCliCommand({ component }: { component: string }) {
-  const { Tabs, TabsContent, TabsList, TabsTrigger } = sharedComponents
+  const { Tabs, TabsContent, TabsList, TabsTrigger } = sharedComponents;
 
-  const itemUrl = `${REGISTRY_BASE_URL}/r/${component}.json`
-  const pnpmCommand = `pnpm dlx shadcn@latest add ${itemUrl}`
-  const npmCommand = `npx shadcn@latest add ${itemUrl}`
-  const yarnCommand = `npx shadcn@latest add ${itemUrl}`
-  const bunCommand = `bunx --bun shadcn@latest add ${itemUrl}`
+  const itemUrl = `${REGISTRY_BASE_URL}/r/${component}.json`;
+  const pnpmCommand = `pnpm dlx shadcn@latest add ${itemUrl}`;
+  const npmCommand = `npx shadcn@latest add ${itemUrl}`;
+  const yarnCommand = `npx shadcn@latest add ${itemUrl}`;
+  const bunCommand = `bunx --bun shadcn@latest add ${itemUrl}`;
 
   return (
     <Tabs defaultValue="pnpm" className="w-full">
@@ -55,5 +54,5 @@ export default function ShadcnCliCommand({ component }: { component: string }) {
         </Pre>
       </TabsContent>
     </Tabs>
-  )
+  );
 }

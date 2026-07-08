@@ -1,25 +1,25 @@
-import ninethavenue from "@public/showcase-previews/9thavenue.webp"
-import aicademy from "@public/showcase-previews/aicademy.webp"
-import dreamchanted from "@public/showcase-previews/dreamchanted.webp"
-import geschenkidee from "@public/showcase-previews/geschenkidee.webp"
-import getYourMvp from "@public/showcase-previews/getyourmvp.webp"
-import habboimx from "@public/showcase-previews/habboimx.webp"
-import hasmire from "@public/showcase-previews/hasmire.webp"
-import jukebox from "@public/showcase-previews/jukebox.webp"
-import kuma from "@public/showcase-previews/kuma.webp"
-import luizCampos from "@public/showcase-previews/luiz-campos.webp"
-import lyceeComteDeFoix from "@public/showcase-previews/lycee-comte-de-foix.webp"
-import nationSoundFront from "@public/showcase-previews/nation-sound-front.webp"
-import neokitSummerkit from "@public/showcase-previews/neokit-summerkit.webp"
-import omi3 from "@public/showcase-previews/omi3.webp"
-import projects from "@public/showcase-previews/projects.webp"
-import qeeper from "@public/showcase-previews/qeeper.webp"
-import ralphOrtiz from "@public/showcase-previews/ralph-ortiz.webp"
-import redditWrapped from "@public/showcase-previews/reddit-wrapped.webp"
-import ronitJadhav from "@public/showcase-previews/ronit-jadhav.webp"
-import timotejKovacka from "@public/showcase-previews/timotej-kovacka.webp"
-import weatherToRun from "@public/showcase-previews/weather-to-run.webp"
-import yeunwookKim from "@public/showcase-previews/yeunwook-kim.webp"
+import ninethavenue from "@public/showcase-previews/9thavenue.webp";
+import aicademy from "@public/showcase-previews/aicademy.webp";
+import dreamchanted from "@public/showcase-previews/dreamchanted.webp";
+import geschenkidee from "@public/showcase-previews/geschenkidee.webp";
+import getYourMvp from "@public/showcase-previews/getyourmvp.webp";
+import habboimx from "@public/showcase-previews/habboimx.webp";
+import hasmire from "@public/showcase-previews/hasmire.webp";
+import jukebox from "@public/showcase-previews/jukebox.webp";
+import kuma from "@public/showcase-previews/kuma.webp";
+import luizCampos from "@public/showcase-previews/luiz-campos.webp";
+import lyceeComteDeFoix from "@public/showcase-previews/lycee-comte-de-foix.webp";
+import nationSoundFront from "@public/showcase-previews/nation-sound-front.webp";
+import neokitSummerkit from "@public/showcase-previews/neokit-summerkit.webp";
+import omi3 from "@public/showcase-previews/omi3.webp";
+import projects from "@public/showcase-previews/projects.webp";
+import qeeper from "@public/showcase-previews/qeeper.webp";
+import ralphOrtiz from "@public/showcase-previews/ralph-ortiz.webp";
+import redditWrapped from "@public/showcase-previews/reddit-wrapped.webp";
+import ronitJadhav from "@public/showcase-previews/ronit-jadhav.webp";
+import timotejKovacka from "@public/showcase-previews/timotej-kovacka.webp";
+import weatherToRun from "@public/showcase-previews/weather-to-run.webp";
+import yeunwookKim from "@public/showcase-previews/yeunwook-kim.webp";
 
 const SHOWCASE = [
   {
@@ -175,6 +175,6 @@ const SHOWCASE = [
     repoUrl: "https://github.com/Hasmire/portfolio",
     color: "#51B8FF",
   },
-]
+];
 
-export default SHOWCASE
+export default SHOWCASE;

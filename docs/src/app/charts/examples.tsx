@@ -1,7 +1,7 @@
-import { ChartExample, charts } from "@/data/charts"
+import { ChartExample, charts } from "@/data/charts";
 
-import { Pre } from "@/components/app/pre"
-import { Button } from "@/components/ui/button"
+import { Pre } from "@/components/app/pre";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 
 export default function Examples() {
   return (
@@ -25,12 +25,12 @@ export default function Examples() {
             charts.find((chart) => chart.name === "ChartBarMultiple"),
             charts.find((chart) => chart.name === "ChartPieDonutText"),
           ].map((chart) => {
-            if (!chart) return null
+            if (!chart) return null;
             return (
               <ChartComponent chart={chart} key={chart.name}>
                 <chart.component />
               </ChartComponent>
-            )
+            );
           })}
         </div>
         <div
@@ -46,24 +46,22 @@ export default function Examples() {
             charts.find((chart) => chart.name === "ChartAreaIcons"),
             charts.find((chart) => chart.name === "ChartAreaAxes"),
           ].map((chart) => {
-            if (!chart) return null
+            if (!chart) return null;
             return (
               <ChartComponent chart={chart} key={chart.name}>
                 <chart.component />
               </ChartComponent>
-            )
+            );
           })}
           <div className="md:col-span-2 lg:col-span-3">
             {(() => {
-              const chart = charts.find(
-                (chart) => chart.name === "ChartAreaInteractive",
-              )
-              if (!chart) return null
+              const chart = charts.find((chart) => chart.name === "ChartAreaInteractive");
+              if (!chart) return null;
               return (
                 <ChartComponent chart={chart} key={chart.name}>
                   <chart.component />
                 </ChartComponent>
-              )
+              );
             })()}
           </div>
         </div>
@@ -82,24 +80,22 @@ export default function Examples() {
             charts.find((chart) => chart.name === "ChartBarActive"),
             charts.find((chart) => chart.name === "ChartBarNegative"),
           ].map((chart) => {
-            if (!chart) return null
+            if (!chart) return null;
             return (
               <ChartComponent chart={chart} key={chart.name}>
                 <chart.component />
               </ChartComponent>
-            )
+            );
           })}
           <div className="md:col-span-2 lg:col-span-3">
             {(() => {
-              const chart = charts.find(
-                (chart) => chart.name === "ChartBarInteractive",
-              )
-              if (!chart) return null
+              const chart = charts.find((chart) => chart.name === "ChartBarInteractive");
+              if (!chart) return null;
               return (
                 <ChartComponent chart={chart} key={chart.name}>
                   <chart.component />
                 </ChartComponent>
-              )
+              );
             })()}
           </div>
         </div>
@@ -118,24 +114,22 @@ export default function Examples() {
             charts.find((chart) => chart.name === "ChartLineLabel"),
             charts.find((chart) => chart.name === "ChartLineLabelCustom"),
           ].map((chart) => {
-            if (!chart) return null
+            if (!chart) return null;
             return (
               <ChartComponent chart={chart} key={chart.name}>
                 <chart.component />
               </ChartComponent>
-            )
+            );
           })}
           <div className="md:col-span-2 lg:col-span-3">
             {(() => {
-              const chart = charts.find(
-                (chart) => chart.name === "ChartLineInteractive",
-              )
-              if (!chart) return null
+              const chart = charts.find((chart) => chart.name === "ChartLineInteractive");
+              if (!chart) return null;
               return (
                 <ChartComponent chart={chart} key={chart.name}>
                   <chart.component />
                 </ChartComponent>
-              )
+              );
             })()}
           </div>
         </div>
@@ -154,12 +148,12 @@ export default function Examples() {
             charts.find((chart) => chart.name === "ChartPieDonutText"),
             charts.find((chart) => chart.name === "ChartPieStacked"),
           ].map((chart) => {
-            if (!chart) return null
+            if (!chart) return null;
             return (
               <ChartComponent chart={chart} key={chart.name}>
                 <chart.component />
               </ChartComponent>
-            )
+            );
           })}
         </div>
         <div
@@ -177,27 +171,27 @@ export default function Examples() {
             charts.find((chart) => chart.name === "ChartTooltipIcons"),
             charts.find((chart) => chart.name === "ChartTooltipAdvanced"),
           ].map((chart) => {
-            if (!chart) return null
+            if (!chart) return null;
             return (
               <ChartComponent chart={chart} key={chart.name}>
                 <chart.component />
               </ChartComponent>
-            )
+            );
           })}
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 const ChartComponent = ({
   children,
   chart,
 }: {
-  children: React.ReactNode
-  chart: ChartExample
+  children: React.ReactNode;
+  chart: ChartExample;
 }) => {
-  const { code, name } = chart
+  const { code, name } = chart;
   return (
     <div>
       {children}
@@ -209,14 +203,11 @@ const ChartComponent = ({
           <DialogHeader>
             <DialogTitle>{name}</DialogTitle>
           </DialogHeader>
-          <Pre
-            wrapperClassName="w-full max-w-full text-white overflow-x-auto"
-            __rawstring__={code}
-          >
+          <Pre wrapperClassName="w-full max-w-full text-white overflow-x-auto" __rawstring__={code}>
             {code}
           </Pre>
         </DialogContent>
       </Dialog>
     </div>
-  )
-}
+  );
+};

@@ -7,7 +7,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 
 const invoices = [
   {
@@ -52,14 +52,12 @@ const invoices = [
     totalAmount: "$300.00",
     paymentMethod: "Credit Card",
   },
-]
+];
 
 export default function TableDemo() {
   return (
     <Table>
-      <TableCaption className="text-foreground">
-        A list of your recent invoices.
-      </TableCaption>
+      <TableCaption className="text-foreground">A list of your recent invoices.</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead className="w-[100px]">Invoice</TableHead>
@@ -85,5 +83,5 @@ export default function TableDemo() {
         </TableRow>
       </TableFooter>
     </Table>
-  )
+  );
 }

@@ -1,26 +1,20 @@
-"use client"
+"use client";
 
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts"
+import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 
-import * as React from "react"
+import * as React from "react";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
-export const description = "An interactive line chart"
+export const description = "An interactive line chart";
 
 const chartData = [
   { date: "2024-04-01", desktop: 222, mobile: 150 },
@@ -114,7 +108,7 @@ const chartData = [
   { date: "2024-06-28", desktop: 149, mobile: 200 },
   { date: "2024-06-29", desktop: 103, mobile: 160 },
   { date: "2024-06-30", desktop: 446, mobile: 400 },
-]
+];
 
 const chartConfig = {
   views: {
@@ -128,11 +122,10 @@ const chartConfig = {
     label: "Mobile",
     color: "var(--chart-2)",
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 export default function ChartLineInteractive() {
-  const [activeChart, setActiveChart] =
-    React.useState<keyof typeof chartConfig>("desktop")
+  const [activeChart, setActiveChart] = React.useState<keyof typeof chartConfig>("desktop");
 
   const total = React.useMemo(
     () => ({
@@ -140,20 +133,18 @@ export default function ChartLineInteractive() {
       mobile: chartData.reduce((acc, curr) => acc + curr.mobile, 0),
     }),
     [],
-  )
+  );
 
   return (
     <Card className="bg-secondary-background py-0 text-foreground">
       <CardHeader className="flex flex-col items-stretch space-y-0 p-0 gap-0 border-b-2 border-b-border sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 sm:py-0 py-4 px-6">
           <CardTitle>Line Chart - Interactive</CardTitle>
-          <CardDescription>
-            Showing total visitors for the last 3 months
-          </CardDescription>
+          <CardDescription>Showing total visitors for the last 3 months</CardDescription>
         </div>
         <div className="flex">
           {["desktop", "mobile"].map((key) => {
-            const chart = key as keyof typeof chartConfig
+            const chart = key as keyof typeof chartConfig;
             return (
               <button
                 key={chart}
@@ -166,7 +157,7 @@ export default function ChartLineInteractive() {
                   {total[key as keyof typeof total].toLocaleString()}
                 </span>
               </button>
-            )
+            );
           })}
         </div>
       </CardHeader>
@@ -175,10 +166,8 @@ export default function ChartLineInteractive() {
           config={chartConfig}
           className={cn(
             "aspect-auto h-[250px] w-full",
-            activeChart === "mobile" &&
-              "[&_.recharts-layer_path]:stroke-[var(--color-mobile)]",
-            activeChart === "desktop" &&
-              "[&_.recharts-layer_path]:stroke-[var(--color-desktop)]",
+            activeChart === "mobile" && "[&_.recharts-layer_path]:stroke-[var(--color-mobile)]",
+            activeChart === "desktop" && "[&_.recharts-layer_path]:stroke-[var(--color-desktop)]",
           )}
         >
           <LineChart
@@ -197,11 +186,11 @@ export default function ChartLineInteractive() {
               tickMargin={8}
               minTickGap={32}
               tickFormatter={(value) => {
-                const date = new Date(value)
+                const date = new Date(value);
                 return date.toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric",
-                })
+                });
               }}
             />
             <ChartTooltip
@@ -214,7 +203,7 @@ export default function ChartLineInteractive() {
                       month: "short",
                       day: "numeric",
                       year: "numeric",
-                    })
+                    });
                   }}
                 />
               }
@@ -232,5 +221,5 @@ export default function ChartLineInteractive() {
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }

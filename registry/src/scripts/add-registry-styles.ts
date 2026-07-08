@@ -1,12 +1,13 @@
-import fs from "fs"
-import path from "path"
+import fs from "fs";
+import path from "path";
 
-import colors from "@/data/colors"
+import colors from "@/data/colors";
 
-const DEFAULT_REGISTRY_BASE_URL = "https://neobrutal-ui.andongmin.com"
-const registryBaseUrl = (
-  process.env.REGISTRY_BASE_URL || DEFAULT_REGISTRY_BASE_URL
-).replace(/\/$/, "")
+const DEFAULT_REGISTRY_BASE_URL = "https://neobrutal-ui.andongmin.com";
+const registryBaseUrl = (process.env.REGISTRY_BASE_URL || DEFAULT_REGISTRY_BASE_URL).replace(
+  /\/$/,
+  "",
+);
 
 function createCssVars(color: (typeof colors)[number]) {
   return {
@@ -140,7 +141,7 @@ function createCssVars(color: (typeof colors)[number]) {
       "font-weight-heading": "700",
       "shadow-shadow": "var(--shadow)",
     },
-  }
+  };
 }
 
 // First create all styles
@@ -152,8 +153,7 @@ const STYLES = colors.map((color) => ({
   author: "andongmin94",
   cssVars: createCssVars(color),
   extends: "none",
-  description:
-    "A modern neobrutalist style preset for neobrutal-ui.",
+  description: "A modern neobrutalist style preset for neobrutal-ui.",
   dependencies: [
     "@base-ui/react",
     "shadcn",
@@ -177,12 +177,12 @@ const STYLES = colors.map((color) => ({
   meta: {
     registryBaseUrl,
   },
-}))
+}));
 
 // Create directory if it doesn't exist
-const dir = path.join(process.cwd(), "public", "r", "styling")
+const dir = path.join(process.cwd(), "public", "r", "styling");
 if (!fs.existsSync(dir)) {
-  fs.mkdirSync(dir, { recursive: true })
+  fs.mkdirSync(dir, { recursive: true });
 }
 
 // Write all styles to files
@@ -190,5 +190,5 @@ STYLES.forEach((style) => {
   fs.writeFileSync(
     path.join(dir, `${style.name.replace("neobrutal-", "")}.json`),
     JSON.stringify(style, null, 2),
-  )
-})
+  );
+});

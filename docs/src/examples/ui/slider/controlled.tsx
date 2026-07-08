@@ -1,20 +1,18 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 
-import { Label } from "@/components/ui/label"
-import { Slider } from "@/components/ui/slider"
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 
 export default function SliderControlled() {
-  const [value, setValue] = React.useState([0.3, 0.7])
+  const [value, setValue] = React.useState([0.3, 0.7]);
 
   return (
     <div className="grid w-full gap-3">
       <div className="flex items-center justify-between gap-2">
         <Label htmlFor="slider-demo-temperature">Temperature</Label>
-        <span className="text-foreground font-base text-sm">
-          {value.join(", ")}
-        </span>
+        <span className="text-foreground font-base text-sm">{value.join(", ")}</span>
       </div>
       <Slider
         id="slider-demo-temperature"
@@ -25,5 +23,5 @@ export default function SliderControlled() {
         step={0.1}
       />
     </div>
-  )
+  );
 }

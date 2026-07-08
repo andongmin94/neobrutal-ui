@@ -1,18 +1,18 @@
-"use client"
+"use client";
 
-import { CheckCircle2Icon } from "lucide-react"
+import { CheckCircle2Icon } from "lucide-react";
 
-import { useState } from "react"
+import { useState } from "react";
 
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+} from "@/components/ui/accordion";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -21,7 +21,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
 const previewStyling = [
   {
@@ -56,12 +56,10 @@ const previewStyling = [
     shadow: "shadow-[4px_-4px_0_0_rgba(0,0,0,1)]!",
     boxShadow: "4px -4px 0 0 rgba(0,0,0,1)",
   },
-]
+];
 
 export default function StylingCustomizer() {
-  const [{ main, bg, rounded, boxShadow }, setStyling] = useState(
-    previewStyling[0],
-  )
+  const [{ main, bg, rounded, boxShadow }, setStyling] = useState(previewStyling[0]);
 
   return (
     <div className="mx-auto max-w-[800px] w-full mt-20 sm:px-5 px-0">
@@ -88,9 +86,7 @@ export default function StylingCustomizer() {
           >
             <CheckCircle2Icon />
             <AlertTitle>Success! Your changes have been saved</AlertTitle>
-            <AlertDescription>
-              This is an alert with icon, title and description.
-            </AlertDescription>
+            <AlertDescription>This is an alert with icon, title and description.</AlertDescription>
           </Alert>
 
           <Accordion type="single" defaultValue="item-1">
@@ -101,12 +97,8 @@ export default function StylingCustomizer() {
               className={`${rounded} transition-all duration-200`}
               value="item-1"
             >
-              <AccordionTrigger className={`${main}`}>
-                Is it accessible?
-              </AccordionTrigger>
-              <AccordionContent>
-                Yes. It adheres to the WAI-ARIA design pattern.
-              </AccordionContent>
+              <AccordionTrigger className={`${main}`}>Is it accessible?</AccordionTrigger>
+              <AccordionContent>Yes. It adheres to the WAI-ARIA design pattern.</AccordionContent>
             </AccordionItem>
           </Accordion>
 
@@ -127,9 +119,7 @@ export default function StylingCustomizer() {
             >
               Button
             </Button>
-            <Badge
-              className={`${main} ${rounded} transition-all hidden md:block duration-200`}
-            >
+            <Badge className={`${main} ${rounded} transition-all hidden md:block duration-200`}>
               Badge
             </Badge>
 
@@ -140,9 +130,7 @@ export default function StylingCustomizer() {
                 >
                   <SelectValue placeholder="Select a fruit" />
                 </SelectTrigger>
-                <SelectContent
-                  className={`${main} ${rounded} transition-all duration-200`}
-                >
+                <SelectContent className={`${main} ${rounded} transition-all duration-200`}>
                   <SelectGroup>
                     <SelectLabel>Fruits</SelectLabel>
                     <SelectItem className={`${rounded}`} value="apple">
@@ -165,5 +153,5 @@ export default function StylingCustomizer() {
         </div>
       </div>
     </div>
-  )
+  );
 }

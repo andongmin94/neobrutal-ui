@@ -1,12 +1,10 @@
-import { MetadataRoute } from "next"
+import { MetadataRoute } from "next";
 
-import COMPONENTS from "@/data/components"
+import COMPONENTS from "@/data/components";
 
-import { transformToSlug } from "@/lib/utils"
+import { transformToSlug } from "@/lib/utils";
 
-const root =
-  process.env.NEXT_PUBLIC_DOCS_BASE_URL ||
-  "https://neobrutal-ui.andongmin.com"
+const root = process.env.NEXT_PUBLIC_DOCS_BASE_URL || "https://neobrutal-ui.andongmin.com";
 
 const DOCS_PAGES = [
   "/docs",
@@ -21,7 +19,7 @@ const DOCS_PAGES = [
   "/stars",
   "/styling",
   "/charts",
-]
+];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
@@ -40,5 +38,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       priority: 0.8,
     })),
-  ]
+  ];
 }

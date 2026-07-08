@@ -1,22 +1,16 @@
-"use client"
+"use client";
 
-import { Bar, BarChart, XAxis } from "recharts"
+import { Bar, BarChart, XAxis } from "recharts";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
 
-export const description = "A stacked bar chart with a legend"
+export const description = "A stacked bar chart with a legend";
 
 const chartData = [
   { date: "2024-07-15", running: 450, swimming: 300 },
@@ -25,7 +19,7 @@ const chartData = [
   { date: "2024-07-18", running: 140, swimming: 550 },
   { date: "2024-07-19", running: 600, swimming: 350 },
   { date: "2024-07-20", running: 480, swimming: 400 },
-]
+];
 
 const chartConfig = {
   running: {
@@ -36,16 +30,14 @@ const chartConfig = {
     label: "Swimming",
     color: "var(--chart-2)",
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 export default function ChartTooltipAdvanced() {
   return (
     <Card className="bg-secondary-background text-foreground">
       <CardHeader>
         <CardTitle>Tooltip - Advanced</CardTitle>
-        <CardDescription>
-          Tooltip with custom formatter and total.
-        </CardDescription>
+        <CardDescription>Tooltip with custom formatter and total.</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -58,15 +50,10 @@ export default function ChartTooltipAdvanced() {
               tickFormatter={(value) => {
                 return new Date(value).toLocaleDateString("en-US", {
                   weekday: "short",
-                })
+                });
               }}
             />
-            <Bar
-              dataKey="running"
-              stackId="a"
-              fill="var(--color-running)"
-              radius={[0, 0, 4, 4]}
-            />
+            <Bar dataKey="running" stackId="a" fill="var(--color-running)" radius={[0, 0, 4, 4]} />
             <Bar
               dataKey="swimming"
               stackId="a"
@@ -88,8 +75,7 @@ export default function ChartTooltipAdvanced() {
                           } as React.CSSProperties
                         }
                       />
-                      {chartConfig[name as keyof typeof chartConfig]?.label ||
-                        name}
+                      {chartConfig[name as keyof typeof chartConfig]?.label || name}
                       <div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
                         {value}
                         <span className="font-normal">kcal</span>
@@ -115,5 +101,5 @@ export default function ChartTooltipAdvanced() {
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import { Search as SearchIcon } from "lucide-react"
+import { Search as SearchIcon } from "lucide-react";
 
-import React, { useCallback, useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import React, { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
-import { COMPONENTS_LINKS, GETTING_STARTED_LINKS } from "@/data/sidebar-links"
+import { COMPONENTS_LINKS, GETTING_STARTED_LINKS } from "@/data/sidebar-links";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   CommandDialog,
   CommandEmpty,
@@ -16,7 +16,7 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "@/components/ui/command"
+} from "@/components/ui/command";
 
 export default function Search() {
   const DOCS_LINKS = [
@@ -28,27 +28,27 @@ export default function Search() {
       heading: "Components",
       links: [...COMPONENTS_LINKS],
     },
-  ]
+  ];
 
-  const router = useRouter()
+  const router = useRouter();
 
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
-        setOpen((open) => !open)
+        e.preventDefault();
+        setOpen((open) => !open);
       }
-    }
-    document.addEventListener("keydown", down)
-    return () => document.removeEventListener("keydown", down)
-  }, [])
+    };
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
 
   const runCommand = useCallback((command: () => unknown) => {
-    setOpen(false)
-    command()
-  }, [])
+    setOpen(false);
+    command();
+  }, []);
 
   return (
     <>
@@ -65,11 +65,7 @@ export default function Search() {
           ??K
         </span>
       </Button>
-      <CommandDialog
-        title="Search documentation"
-        open={open}
-        onOpenChange={setOpen}
-      >
+      <CommandDialog title="Search documentation" open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Search documentation..." />
         <CommandList className="command-scrollbar **:data-[slot=command-item]:py-1.5!">
           <CommandEmpty>No results found.</CommandEmpty>
@@ -82,21 +78,21 @@ export default function Search() {
                       <CommandItem
                         value={text}
                         onSelect={() => {
-                          runCommand(() => router.push(href))
+                          runCommand(() => router.push(href));
                         }}
                         key={href}
                       >
                         {text}
                       </CommandItem>
-                    )
+                    );
                   })}
                 </CommandGroup>
                 {i < 2 && <CommandSeparator />}
               </React.Fragment>
-            )
+            );
           })}
         </CommandList>
       </CommandDialog>
     </>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -6,16 +6,16 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
 export default function CardDemo3() {
   return (
@@ -31,21 +31,14 @@ export default function CardDemo3() {
               <Label autoFocus={false} htmlFor="name">
                 Name
               </Label>
-              <Input
-                id="name"
-                placeholder="Name of your project"
-                autoFocus={false}
-              />
+              <Input id="name" placeholder="Name of your project" autoFocus={false} />
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label autoFocus={false} htmlFor="framework">
                 Framework
               </Label>
               <Select>
-                <SelectTrigger
-                  className="bg-secondary-background text-foreground"
-                  id="framework"
-                >
+                <SelectTrigger className="bg-secondary-background text-foreground" id="framework">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent position="popper">
@@ -64,5 +57,5 @@ export default function CardDemo3() {
         <Button>Deploy</Button>
       </CardFooter>
     </Card>
-  )
+  );
 }

@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible"
-import * as React from "react"
+import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible";
+import * as React from "react";
 
 function Collapsible({
   asChild = false,
@@ -9,21 +9,16 @@ function Collapsible({
   render,
   ...props
 }: CollapsiblePrimitive.Root.Props & {
-  asChild?: boolean
-  children?: React.ReactNode
+  asChild?: boolean;
+  children?: React.ReactNode;
 }) {
-  const renderElement =
-    asChild && React.isValidElement(children) ? children : render
+  const renderElement = asChild && React.isValidElement(children) ? children : render;
 
   return (
-    <CollapsiblePrimitive.Root
-      data-slot="collapsible"
-      render={renderElement}
-      {...props}
-    >
+    <CollapsiblePrimitive.Root data-slot="collapsible" render={renderElement} {...props}>
       {asChild && React.isValidElement(children) ? undefined : children}
     </CollapsiblePrimitive.Root>
-  )
+  );
 }
 
 function CollapsibleTrigger({
@@ -32,27 +27,20 @@ function CollapsibleTrigger({
   render,
   ...props
 }: CollapsiblePrimitive.Trigger.Props & {
-  asChild?: boolean
-  children?: React.ReactNode
+  asChild?: boolean;
+  children?: React.ReactNode;
 }) {
-  const renderElement =
-    asChild && React.isValidElement(children) ? children : render
+  const renderElement = asChild && React.isValidElement(children) ? children : render;
 
   return (
-    <CollapsiblePrimitive.Trigger
-      data-slot="collapsible-trigger"
-      render={renderElement}
-      {...props}
-    >
+    <CollapsiblePrimitive.Trigger data-slot="collapsible-trigger" render={renderElement} {...props}>
       {asChild && React.isValidElement(children) ? undefined : children}
     </CollapsiblePrimitive.Trigger>
-  )
+  );
 }
 
 function CollapsibleContent({ ...props }: CollapsiblePrimitive.Panel.Props) {
-  return (
-    <CollapsiblePrimitive.Panel data-slot="collapsible-content" {...props} />
-  )
+  return <CollapsiblePrimitive.Panel data-slot="collapsible-content" {...props} />;
 }
 
-export { Collapsible, CollapsibleTrigger, CollapsibleContent }
+export { Collapsible, CollapsibleTrigger, CollapsibleContent };

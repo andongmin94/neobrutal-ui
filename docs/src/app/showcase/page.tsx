@@ -1,19 +1,14 @@
-import { Metadata } from "next"
+import { Metadata } from "next";
 
-import SHOWCASE from "@/data/showcase"
+import SHOWCASE from "@/data/showcase";
 
-import {
-  PageDescription,
-  PageHeader,
-  PageHeading,
-  PageWrapper,
-} from "@/components/app/page"
-import ShowcaseContainer from "@/components/app/showcase-container"
+import { PageDescription, PageHeader, PageHeading, PageWrapper } from "@/components/app/page";
+import ShowcaseContainer from "@/components/app/showcase-container";
 
 export const metadata: Metadata = {
   title: "Showcase",
   description: "Showcase of websites built with neobrutalism components.",
-}
+};
 
 export default function Page() {
   return (
@@ -25,11 +20,7 @@ export default function Page() {
           Showcase of websites built with neobrutalism components.
           <br />
           If you&apos;ve built something and want to get it featured here,{" "}
-          <a
-            className="underline"
-            target="_blank"
-            href="https://x.com/samuelbreznjak"
-          >
+          <a className="underline" target="_blank" href="https://x.com/samuelbreznjak">
             dm me
           </a>{" "}
           or{" "}
@@ -42,5 +33,5 @@ export default function Page() {
 
       <ShowcaseContainer items={SHOWCASE} />
     </PageWrapper>
-  )
+  );
 }

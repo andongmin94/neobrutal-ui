@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 function PageWrapper({ children }: { children: React.ReactNode }) {
   return (
@@ -7,22 +7,16 @@ function PageWrapper({ children }: { children: React.ReactNode }) {
         {children}
       </div>
     </div>
-  )
+  );
 }
 
-function PageHeading({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLHeadingElement>) {
+function PageHeading({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h1
-      className={cn(
-        "font-heading text-center 2xl:text-4xl xl:text-3xl text-2xl",
-        className,
-      )}
+      className={cn("font-heading text-center 2xl:text-4xl xl:text-3xl text-2xl", className)}
       {...props}
     />
-  )
+  );
 }
 
 function PageHeader({
@@ -34,13 +28,10 @@ function PageHeader({
     <div className={cn("mb-[50px] flex flex-col gap-8", className)} {...props}>
       {children}
     </div>
-  )
+  );
 }
 
-function PageDescription({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLParagraphElement>) {
+function PageDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
     <p
       className={cn(
@@ -49,22 +40,16 @@ function PageDescription({
       )}
       {...props}
     />
-  )
+  );
 }
 
-function PageActions({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+function PageActions({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn(
-        "flex w-full items-center justify-center gap-2 pt-2",
-        className,
-      )}
+      className={cn("flex w-full items-center justify-center gap-2 pt-2", className)}
       {...props}
     />
-  )
+  );
 }
 
-export { PageWrapper, PageActions, PageDescription, PageHeading, PageHeader }
+export { PageWrapper, PageActions, PageDescription, PageHeading, PageHeader };

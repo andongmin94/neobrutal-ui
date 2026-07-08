@@ -1,4 +1,4 @@
-import Star32 from "@/components/stars/s32"
+import Star32 from "@/components/stars/s32";
 
 export default function Star32Example() {
   return (
@@ -7,5 +7,5 @@ export default function Star32Example() {
       className="w-full h-full"
       pathClassName="stroke-black stroke-3 dark:stroke-2"
     />
-  )
+  );
 }

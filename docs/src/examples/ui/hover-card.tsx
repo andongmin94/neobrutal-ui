@@ -1,9 +1,5 @@
-import { Button } from "@/components/ui/button"
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card"
+import { Button } from "@/components/ui/button";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
 export default function HoverCardDemo() {
   return (
@@ -11,9 +7,7 @@ export default function HoverCardDemo() {
       <HoverCardTrigger asChild>
         <Button variant="noShadow">Hover</Button>
       </HoverCardTrigger>
-      <HoverCardContent>
-        The React Framework ??created and maintained by @vercel.
-      </HoverCardContent>
+      <HoverCardContent>The React Framework ??created and maintained by @vercel.</HoverCardContent>
     </HoverCard>
-  )
+  );
 }
