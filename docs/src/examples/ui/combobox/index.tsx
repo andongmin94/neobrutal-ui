@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { CheckIcon, ChevronsUpDown } from "lucide-react"
+import { CheckIcon, ChevronsUpDown } from "lucide-react";
 
-import * as React from "react"
+import * as React from "react";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -12,14 +12,10 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 const frameworks = [
   {
@@ -42,11 +38,11 @@ const frameworks = [
     value: "astro",
     label: "Astro",
   },
-]
+];
 
 export default function FrameworkCombobox() {
-  const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState("")
+  const [open, setOpen] = React.useState(false);
+  const [value, setValue] = React.useState("");
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -74,8 +70,8 @@ export default function FrameworkCombobox() {
                   key={framework.value}
                   value={framework.value}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue)
-                    setOpen(false)
+                    setValue(currentValue === value ? "" : currentValue);
+                    setOpen(false);
                   }}
                 >
                   {framework.label}
@@ -92,5 +88,5 @@ export default function FrameworkCombobox() {
         </Command>
       </PopoverContent>
     </Popover>
-  )
+  );
 }

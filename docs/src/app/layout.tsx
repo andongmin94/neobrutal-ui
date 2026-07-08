@@ -1,31 +1,28 @@
-import "@/styling/globals.css"
+import "@/styling/globals.css";
 
-import type { Metadata } from "next"
-import { DM_Sans } from "next/font/google"
+import type { Metadata } from "next";
+import { DM_Sans } from "next/font/google";
 
-import Navbar from "@/components/app/navbar"
-import ScrollToTop from "@/components/app/scroll-to-top"
-import SetStylingPref from "@/components/app/set-styling-pref"
-import { ThemeProvider } from "@/components/app/theme-provider"
-import { Toaster } from "@/components/ui/sonner"
+import Navbar from "@/components/app/navbar";
+import ScrollToTop from "@/components/app/scroll-to-top";
+import SetStylingPref from "@/components/app/set-styling-pref";
+import { ThemeProvider } from "@/components/app/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 
-const docsBaseUrl =
-  process.env.NEXT_PUBLIC_DOCS_BASE_URL ||
-  "https://neobrutal-ui.andongmin.com"
+const docsBaseUrl = process.env.NEXT_PUBLIC_DOCS_BASE_URL || "https://neobrutal-ui.andongmin.com";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
   display: "swap",
   adjustFontFallback: false,
-})
+});
 
 export const metadata: Metadata = {
   title: {
     default: "neobrutal-ui - Modern neobrutalist components for shadcn/ui",
     template: `%s - neobrutal-ui`,
   },
-  description:
-    "A collection of neobrutalism-styled components based on shadcn/ui.",
+  description: "A collection of neobrutalism-styled components based on shadcn/ui.",
   keywords: [
     "neobrutalism",
     "neobrutalism components",
@@ -38,8 +35,7 @@ export const metadata: Metadata = {
   authors: [{ name: "andongmin94", url: "https://github.com/andongmin94" }],
   openGraph: {
     type: "website",
-    description:
-      "A collection of neobrutalism-styled components based on shadcn/ui.",
+    description: "A collection of neobrutalism-styled components based on shadcn/ui.",
     images: [`${docsBaseUrl}/preview.png`],
     url: docsBaseUrl,
     title: "neobrutal-ui",
@@ -48,33 +44,24 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "neobrutal-ui - Modern neobrutalist components",
-    description:
-      "A collection of neobrutalism-styled components based on shadcn/ui.",
+    description: "A collection of neobrutalism-styled components based on shadcn/ui.",
     images: [`${docsBaseUrl}/preview.png`],
     creator: "@andongmin94",
   },
-}
+};
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html className="scroll-smooth" suppressHydrationWarning lang="en">
       <body className={dmSans.className}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            disableTransitionOnChange
-          >
-            <Navbar />
-            {children}
-            <SetStylingPref />
-            <ScrollToTop />
-            <Toaster />
-          </ThemeProvider>
+        <ThemeProvider attribute="class" defaultTheme="light" disableTransitionOnChange>
+          <Navbar />
+          {children}
+          <SetStylingPref />
+          <ScrollToTop />
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import Star35 from "@/components/stars/s35"
+import Star35 from "@/components/stars/s35";
 
 export default function Star35Example() {
   return (
@@ -7,5 +7,5 @@ export default function Star35Example() {
       className="w-full h-full"
       pathClassName="stroke-black stroke-3 dark:stroke-2"
     />
-  )
+  );
 }

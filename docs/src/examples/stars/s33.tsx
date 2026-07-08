@@ -1,4 +1,4 @@
-import Star33 from "@/components/stars/s33"
+import Star33 from "@/components/stars/s33";
 
 export default function Star33Example() {
   return (
@@ -7,5 +7,5 @@ export default function Star33Example() {
       className="w-full h-full"
       pathClassName="stroke-black stroke-3 dark:stroke-2"
     />
-  )
+  );
 }

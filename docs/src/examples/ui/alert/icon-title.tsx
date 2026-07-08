@@ -1,6 +1,6 @@
-import { PopcornIcon } from "lucide-react"
+import { PopcornIcon } from "lucide-react";
 
-import { Alert, AlertTitle } from "@/components/ui/alert"
+import { Alert, AlertTitle } from "@/components/ui/alert";
 
 export default function AlertIconTitleDemo() {
   return (
@@ -8,5 +8,5 @@ export default function AlertIconTitleDemo() {
       <PopcornIcon />
       <AlertTitle>Let&apos;s try one with icon and title.</AlertTitle>
     </Alert>
-  )
+  );
 }

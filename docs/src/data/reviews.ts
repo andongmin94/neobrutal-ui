@@ -1,10 +1,10 @@
-import lillie from "../../public/pfps/17.jpg"
-import ignacio from "../../public/pfps/20.jpg"
-import megan from "../../public/pfps/26.jpg"
-import caleb from "../../public/pfps/35.jpg"
-import john from "../../public/pfps/76.jpg"
-import pedro from "../../public/pfps/80.jpg"
-import willis from "../../public/pfps/90.jpg"
+import lillie from "../../public/pfps/17.jpg";
+import ignacio from "../../public/pfps/20.jpg";
+import megan from "../../public/pfps/26.jpg";
+import caleb from "../../public/pfps/35.jpg";
+import john from "../../public/pfps/76.jpg";
+import pedro from "../../public/pfps/80.jpg";
+import willis from "../../public/pfps/90.jpg";
 
 const reviewers = [
   {
@@ -23,8 +23,7 @@ const reviewers = [
     fullName: "Mr. Ignacio Beier",
     jobTitle: "International Quality Executive",
     pfp: ignacio,
-    review:
-      "This “theme” frankly sucks. Unbelievable somebody actually spent time on this.",
+    review: "This “theme” frankly sucks. Unbelievable somebody actually spent time on this.",
   },
   {
     fullName: "Megan Franey",
@@ -51,6 +50,6 @@ const reviewers = [
     pfp: pedro,
     review: "HAHAHAHAHAHAHAHAHAHAHAHAHAHAH IMAGINE USING THIS.",
   },
-]
+];
 
-export default reviewers
+export default reviewers;

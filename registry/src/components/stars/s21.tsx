@@ -11,11 +11,11 @@ export default function Star21({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -36,5 +36,5 @@ export default function Star21({
         fillRule="evenodd"
       />
     </svg>
-  )
+  );
 }

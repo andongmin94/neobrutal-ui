@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import Link from "next/link"
+import * as React from "react";
+import Link from "next/link";
 
 import {
   NavigationMenu,
@@ -11,9 +11,9 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu"
+} from "@/components/ui/navigation-menu";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -25,8 +25,7 @@ const components: { title: string; href: string; description: string }[] = [
   {
     title: "Hover Card",
     href: "https://ui.shadcn.com/docs/primitives/hover-card",
-    description:
-      "For sighted users to preview content available behind a link.",
+    description: "For sighted users to preview content available behind a link.",
   },
   {
     title: "Progress",
@@ -51,7 +50,7 @@ const components: { title: string; href: string; description: string }[] = [
     description:
       "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
   },
-]
+];
 
 export default function NavigationMenuDemo() {
   return (
@@ -67,13 +66,10 @@ export default function NavigationMenuDemo() {
                     className="flex h-full w-full select-none flex-col justify-end rounded-base p-6 no-underline outline-hidden"
                     href="https://ui.shadcn.com"
                   >
-                    <div className="mb-2 mt-4 text-lg font-heading">
-                      shadcn/ui
-                    </div>
+                    <div className="mb-2 mt-4 text-lg font-heading">shadcn/ui</div>
                     <p className="text-sm font-base leading-tight">
-                      Beautifully designed components that you can copy and
-                      paste into your apps. Accessible. Customizable. Open
-                      Source.
+                      Beautifully designed components that you can copy and paste into your apps.
+                      Accessible. Customizable. Open Source.
                     </p>
                   </a>
                 </NavigationMenuLink>
@@ -81,16 +77,10 @@ export default function NavigationMenuDemo() {
               <ListItem href="https://ui.shadcn.com/docs" title="Introduction">
                 Re-usable components built using Base UI and Tailwind CSS.
               </ListItem>
-              <ListItem
-                href="https://ui.shadcn.com/docs/installation"
-                title="Installation"
-              >
+              <ListItem href="https://ui.shadcn.com/docs/installation" title="Installation">
                 How to install dependencies and structure your app.
               </ListItem>
-              <ListItem
-                href="https://ui.shadcn.com/docs/primitives/typography"
-                title="Typography"
-              >
+              <ListItem href="https://ui.shadcn.com/docs/primitives/typography" title="Typography">
                 Styles for headings, paragraphs, lists...etc
               </ListItem>
             </ul>
@@ -101,11 +91,7 @@ export default function NavigationMenuDemo() {
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-3 p-2 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
               {components.map((component) => (
-                <ListItem
-                  key={component.title}
-                  title={component.title}
-                  href={component.href}
-                >
+                <ListItem key={component.title} title={component.title} href={component.href}>
                   {component.description}
                 </ListItem>
               ))}
@@ -121,15 +107,10 @@ export default function NavigationMenuDemo() {
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
-  )
+  );
 }
 
-function ListItem({
-  className,
-  title,
-  children,
-  ...props
-}: React.ComponentProps<"a">) {
+function ListItem({ className, title, children, ...props }: React.ComponentProps<"a">) {
   return (
     <li>
       <NavigationMenuLink asChild>
@@ -141,12 +122,10 @@ function ListItem({
           {...props}
         >
           <div className="text-base font-heading leading-none">{title}</div>
-          <p className="font-base line-clamp-2 text-sm leading-snug">
-            {children}
-          </p>
+          <p className="font-base line-clamp-2 text-sm leading-snug">{children}</p>
         </a>
       </NavigationMenuLink>
     </li>
-  )
+  );
 }
-ListItem.displayName = "ListItem"
+ListItem.displayName = "ListItem";

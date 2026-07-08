@@ -1,29 +1,29 @@
-import { ArrowLeft, ArrowRight } from "lucide-react"
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
-import Link from "next/link"
+import Link from "next/link";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 
 type Props = {
   prev?: {
-    name: string
-    path: string
-  }
+    name: string;
+    path: string;
+  };
   next?: {
-    name: string
-    path: string
-  }
-}
+    name: string;
+    path: string;
+  };
+};
 
 export default function Pagination({ prev, next }: Props) {
-  let justifyContent
+  let justifyContent;
 
   if (prev && next) {
-    justifyContent = "justify-between"
+    justifyContent = "justify-between";
   } else if (prev) {
-    justifyContent = "justify-start"
+    justifyContent = "justify-start";
   } else if (next) {
-    justifyContent = "justify-end"
+    justifyContent = "justify-end";
   }
 
   return (
@@ -46,5 +46,5 @@ export default function Pagination({ prev, next }: Props) {
         </Link>
       )}
     </div>
-  )
+  );
 }

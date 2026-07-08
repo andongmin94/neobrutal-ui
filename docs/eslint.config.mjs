@@ -1,5 +1,5 @@
-import nextVitals from "eslint-config-next/core-web-vitals"
-import nextTypescript from "eslint-config-next/typescript"
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTypescript from "eslint-config-next/typescript";
 
 const eslintConfig = [
   ...nextVitals,
@@ -15,6 +15,6 @@ const eslintConfig = [
       "react-hooks/set-state-in-effect": "warn",
     },
   },
-]
+];
 
-export default eslintConfig
+export default eslintConfig;

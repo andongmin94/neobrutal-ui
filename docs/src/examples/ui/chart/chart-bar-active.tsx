@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { TrendingUp } from "lucide-react"
-import { Bar, BarChart, CartesianGrid, Rectangle, XAxis } from "recharts"
+import { TrendingUp } from "lucide-react";
+import { Bar, BarChart, CartesianGrid, Rectangle, XAxis } from "recharts";
 
 import {
   Card,
@@ -10,15 +10,15 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
 
-export const description = "A bar chart with an active bar"
+export const description = "A bar chart with an active bar";
 
 const chartData = [
   { browser: "chrome", visitors: 187, fill: "var(--color-chrome)" },
@@ -26,7 +26,7 @@ const chartData = [
   { browser: "firefox", visitors: 275, fill: "var(--color-firefox)" },
   { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
   { browser: "other", visitors: 90, fill: "var(--color-other)" },
-]
+];
 
 const chartConfig = {
   visitors: {
@@ -52,7 +52,7 @@ const chartConfig = {
     label: "Other",
     color: "var(--chart-5)",
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 export default function ChartBarActive() {
   return (
@@ -70,9 +70,7 @@ export default function ChartBarActive() {
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) =>
-                chartConfig[value as keyof typeof chartConfig]?.label
-              }
+              tickFormatter={(value) => chartConfig[value as keyof typeof chartConfig]?.label}
             />
             <ChartTooltip
               cursor={false}
@@ -92,7 +90,7 @@ export default function ChartBarActive() {
                     stroke={props.payload.fill}
                     className="!stroke-4"
                   />
-                )
+                );
               }}
             />
           </BarChart>
@@ -102,10 +100,8 @@ export default function ChartBarActive() {
         <div className="flex gap-2 leading-none font-medium">
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
-        <div className="leading-none">
-          Showing total visitors for the last 6 months
-        </div>
+        <div className="leading-none">Showing total visitors for the last 6 months</div>
       </CardFooter>
     </Card>
-  )
+  );
 }

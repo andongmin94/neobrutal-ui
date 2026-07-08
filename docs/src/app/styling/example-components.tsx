@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import AlertDemo from "@/examples/ui/alert"
+import AlertDemo from "@/examples/ui/alert";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -10,19 +10,19 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
-import AccordionDemo from "./demos/accordion"
-import CardDemo2 from "./demos/card-2"
-import CardDemo3 from "./demos/card-3"
-import CarouselDemo from "./demos/carousel"
-import CollapsibleDemo from "./demos/collapsible"
-import CommandDemo from "./demos/command"
-import ImageCardDemo from "./demos/image-card"
-import ResizableDemo from "./demos/resizable"
-import ScrollAreaDemo from "./demos/scroll-area"
+import AccordionDemo from "./demos/accordion";
+import CardDemo2 from "./demos/card-2";
+import CardDemo3 from "./demos/card-3";
+import CarouselDemo from "./demos/carousel";
+import CollapsibleDemo from "./demos/collapsible";
+import CommandDemo from "./demos/command";
+import ImageCardDemo from "./demos/image-card";
+import ResizableDemo from "./demos/resizable";
+import ScrollAreaDemo from "./demos/scroll-area";
 
 export default function ExampleComponents() {
   return (
@@ -46,7 +46,7 @@ export default function ExampleComponents() {
         <CardDemo />
       </div>
     </div>
-  )
+  );
 }
 
 const CardDemo = () => {
@@ -54,9 +54,7 @@ const CardDemo = () => {
     <Card>
       <CardHeader>
         <CardTitle>Login to your account</CardTitle>
-        <CardDescription>
-          Enter your email below to login to your account
-        </CardDescription>
+        <CardDescription>Enter your email below to login to your account</CardDescription>
       </CardHeader>
       <CardContent>
         <form>
@@ -105,5 +103,5 @@ const CardDemo = () => {
         </div>
       </CardFooter>
     </Card>
-  )
-}
+  );
+};

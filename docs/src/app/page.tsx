@@ -1,45 +1,42 @@
-import { ArrowUpRight } from "lucide-react"
+import { ArrowUpRight } from "lucide-react";
 
-import "@/styling/marquee.css"
+import "@/styling/marquee.css";
 
-import Link from "next/link"
+import Link from "next/link";
 
-import reviews from "@/data/reviews"
+import reviews from "@/data/reviews";
 
-import HeroComponents from "@/components/app/hero-components"
-import { Marquee } from "@/components/app/marquee"
-import { sharedComponents } from "@/components/app/mdx-components"
-import { Pre } from "@/components/app/pre"
-import StylingCustomizer from "@/components/app/styling-customizer"
-import Star8 from "@/components/stars/s8"
-import Star9 from "@/components/stars/s9"
-import Star11 from "@/components/stars/s11"
-import Star14 from "@/components/stars/s14"
-import Star16 from "@/components/stars/s16"
-import Star20 from "@/components/stars/s20"
-import Star22 from "@/components/stars/s22"
-import Star26 from "@/components/stars/s26"
-import Star29 from "@/components/stars/s29"
-import Star32 from "@/components/stars/s32"
-import Star37 from "@/components/stars/s37"
+import HeroComponents from "@/components/app/hero-components";
+import { Marquee } from "@/components/app/marquee";
+import { sharedComponents } from "@/components/app/mdx-components";
+import { Pre } from "@/components/app/pre";
+import StylingCustomizer from "@/components/app/styling-customizer";
+import Star8 from "@/components/stars/s8";
+import Star9 from "@/components/stars/s9";
+import Star11 from "@/components/stars/s11";
+import Star14 from "@/components/stars/s14";
+import Star16 from "@/components/stars/s16";
+import Star20 from "@/components/stars/s20";
+import Star22 from "@/components/stars/s22";
+import Star26 from "@/components/stars/s26";
+import Star29 from "@/components/stars/s29";
+import Star32 from "@/components/stars/s32";
+import Star37 from "@/components/stars/s37";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
+} from "@/components/ui/accordion";
 
 export default function Home() {
-  const { Tabs, TabsContent, TabsList, TabsTrigger } = sharedComponents
+  const { Tabs, TabsContent, TabsList, TabsTrigger } = sharedComponents;
 
   return (
     <div className="text-foreground font-base prose-headings:font-heading prose-h1:2xl:text-6xl prose-h1:xl:text-5xl prose-h1:md:text-5xl prose-h1:sm:text-[33px] prose-h1:text-2xl prose-h2:2xl:text-4xl prose-h2:lg:text-4xl prose-h2:md:text-3xl prose-h2:text-2xl prose-h3:2xl:text-4xl prose-h3:xl:text-3xl prose-h3:lg:text-3xl prose-h3:md:text-2xl prose-h3:sm:text-xl">
       <main className="relative flex min-h-[100dvh] flex-col overflow-hidden items-center justify-center bg-background px-5 md:py-[200px] py-[100px] bg-[linear-gradient(to_right,#80808033_1px,transparent_1px),linear-gradient(to_bottom,#80808033_1px,transparent_1px)] bg-[size:70px_70px]">
         <HeroComponents className="xl:-left-[130px] md:-left-[200px] lg:block hidden" />
-        <HeroComponents
-          className="xl:-right-[130px] md:-right-[200px] lg:block hidden"
-          reverse
-        />
+        <HeroComponents className="xl:-right-[130px] md:-right-[200px] lg:block hidden" reverse />
         <div className="mx-auto w-container max-w-full">
           <div className="flex flex-col items-center text-center">
             <h1 className="leading-normal">
@@ -94,7 +91,7 @@ export default function Home() {
                 <span>neobrutal-ui</span>
                 <Star26 color="var(--main)" stroke="black" strokeWidth={7} />
               </div>
-            )
+            );
           })}
         </Marquee>
         <div className="grid grid-cols-1 md:grid-cols-2 border-b-4 border-t-4 border-border">
@@ -108,8 +105,8 @@ export default function Home() {
             </div>
 
             <p className="2xl:text-2xl xl:text-xl md:text-base sm:text-lg text-base">
-              These components efficiently utilize Tailwind and its versatile
-              utility classes, enabling swift and straightforward styling.
+              These components efficiently utilize Tailwind and its versatile utility classes,
+              enabling swift and straightforward styling.
             </p>
           </section>
           <section className="border-b-4 border-border md:text-main-foreground md:dark:text-main-foreground md:bg-main text-main-foreground dark:text-foreground 2xl:p-14 2xl:py-16 xl:p-10 xl:py-10 lg:p-8 lg:py-10 p-5 py-7 bg-background">
@@ -122,8 +119,8 @@ export default function Home() {
             </div>
 
             <p className="2xl:text-2xl xl:text-xl md:text-base sm:text-lg text-base">
-              This project is open source with an MIT License, fostering
-              collaboration and allowing widespread adoption and modification.
+              This project is open source with an MIT License, fostering collaboration and allowing
+              widespread adoption and modification.
             </p>
           </section>
           <section className="md:border-r-4 md:border-b-0 border-border bg-main dark:text-main-foreground 2xl:p-14 2xl:py-16 xl:p-10 xl:py-10 lg:p-8 lg:py-10 p-5 py-7 border-b-4">
@@ -136,8 +133,8 @@ export default function Home() {
             </div>
 
             <p className="2xl:text-2xl xl:text-xl md:text-base sm:text-lg text-base">
-              Most of the components are based on shadcn/ui, meaning
-              high-quality components with best practices.
+              Most of the components are based on shadcn/ui, meaning high-quality components with
+              best practices.
             </p>
           </section>
           <section className="bg-background 2xl:p-14 2xl:py-16 xl:p-10 xl:py-10 lg:p-8 lg:py-10 p-5 py-7">
@@ -155,13 +152,10 @@ export default function Home() {
           </section>
         </div>
         <section className="border-b-4 border-b-border bg-background py-16 lg:py-[100px]">
-          <h2 className="mb-5 px-5 text-center">
-            Fully customizable set of components.
-          </h2>
+          <h2 className="mb-5 px-5 text-center">Fully customizable set of components.</h2>
 
           <p className="text-center px-5 xl:text-xl md:text-lg sm:text-base text-sm">
-            You can customize the styling of the components to your liking.
-            Visit{" "}
+            You can customize the styling of the components to your liking. Visit{" "}
             <Link className="underline font-heading" href={"/styling"}>
               styling page
             </Link>{" "}
@@ -186,9 +180,7 @@ export default function Home() {
             className="absolute bottom-[120px] lg:block hidden -right-[125px] -z-10"
           />
           <div className="mx-auto w-container max-w-full py-16 lg:py-[100px]">
-            <h2 className="sm:mb-20 mb-14 text-center">
-              Loved by the community
-            </h2>
+            <h2 className="sm:mb-20 mb-14 text-center">Loved by the community</h2>
             <div className="grid-cols-1 grid lg:grid-cols-3 gap-0 lg:gap-8">
               {[
                 [reviews[0], reviews[1]],
@@ -209,15 +201,11 @@ export default function Home() {
                         />
 
                         <div>
-                          <h4 className="sm:text-lg text-base font-heading">
-                            {fullName}
-                          </h4>
+                          <h4 className="sm:text-lg text-base font-heading">{fullName}</h4>
                           <p className="text-xs sm:text-sm ">{jobTitle}</p>
                         </div>
                       </div>
-                      <div className="sm:mt-5 mt-3 sm:text-base text-sm break-words">
-                        {review}
-                      </div>
+                      <div className="sm:mt-5 mt-3 sm:text-base text-sm break-words">{review}</div>
                     </div>
                   ))}
                 </div>
@@ -226,24 +214,17 @@ export default function Home() {
           </div>
         </section>
         <section className="border-t-4 z-0 border-t-border border-b-4 border-b-border bg-background py-16 lg:py-[100px]">
-          <h2 className="sm:mb-20 mb-14 px-5 text-center">
-            Frequently asked questions
-          </h2>
+          <h2 className="sm:mb-20 mb-14 px-5 text-center">Frequently asked questions</h2>
 
           <div className="mx-auto not-prose grid w-[700px] max-w-full px-5">
-            <Accordion
-              className="text-base sm:text-lg"
-              type="single"
-              collapsible
-            >
+            <Accordion className="text-base sm:text-lg" type="single" collapsible>
               <AccordionItem className="mb-2" value="item-2">
                 <AccordionTrigger className="text-left">
                   Are these components accessible?
                 </AccordionTrigger>
                 <AccordionContent className="text-sm sm:text-base">
-                  Most of the components are based on shadcn/ui, which means
-                  they are accessible because under the hood they use Base UI primitives
-                  which is fully accessible.
+                  Most of the components are based on shadcn/ui, which means they are accessible
+                  because under the hood they use Base UI primitives which is fully accessible.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem className="mb-2" value="item-3">
@@ -251,24 +232,21 @@ export default function Home() {
                   Why copy/paste and not packaged as a dependency?
                 </AccordionTrigger>
                 <AccordionContent className="text-sm sm:text-base">
-                  I like shadcn&apos;s philosophy about component libraries,
-                  I&apos;ll quote what he said about this:
+                  I like shadcn&apos;s philosophy about component libraries, I&apos;ll quote what he
+                  said about this:
                   <br />
                   <q className="mt-5 block">
-                    The idea behind this is to give you ownership and control
-                    over the code, allowing you to decide how the components are
-                    built and styled. Start with some sensible defaults, then
-                    customize the components to your needs. One of the drawback
-                    of packaging the components in an npm package is that the
-                    style is coupled with the implementation. The design of your
-                    components should be separate from their implementation.
+                    The idea behind this is to give you ownership and control over the code,
+                    allowing you to decide how the components are built and styled. Start with some
+                    sensible defaults, then customize the components to your needs. One of the
+                    drawback of packaging the components in an npm package is that the style is
+                    coupled with the implementation. The design of your components should be
+                    separate from their implementation.
                   </q>
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-4">
-                <AccordionTrigger className="text-left">
-                  How to contribute?
-                </AccordionTrigger>
+                <AccordionTrigger className="text-left">How to contribute?</AccordionTrigger>
                 <AccordionContent className="text-sm sm:text-base">
                   Visit{" "}
                   <a
@@ -304,7 +282,7 @@ export default function Home() {
                 <span>neobrutal-ui</span>
                 <Star8 color="var(--main)" stroke="black" strokeWidth={7} />
               </div>
-            )
+            );
           })}
         </Marquee>
         <section className="inset-0 w-full flex flex-col items-center justify-center bg-main  bg-[linear-gradient(to_right,#00000033_1px,transparent_1px),linear-gradient(to_bottom,#00000033_1px,transparent_1px)] bg-[size:70px_70px] px-5 lg:py-[200px] md:py-[150px] sm:py-[100px] py-[100px]">
@@ -390,7 +368,7 @@ export default function Home() {
         .
       </footer>
     </div>
-  )
+  );
 }
 
 const OpenSourceIcon = () => (
@@ -401,7 +379,7 @@ const OpenSourceIcon = () => (
       strokeWidth="30"
     />
   </svg>
-)
+);
 
 const ShadcnIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
@@ -429,7 +407,7 @@ const ShadcnIcon = () => (
       strokeWidth="32"
     ></line>
   </svg>
-)
+);
 
 const CustomizableIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" fill="none">
@@ -439,7 +417,7 @@ const CustomizableIcon = () => (
       strokeWidth="30"
     />
   </svg>
-)
+);
 
 const TailwindIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 481" fill="none">
@@ -452,12 +430,7 @@ const TailwindIcon = () => (
       width="800"
       height="481"
     >
-      <path
-        d="M10 10H790V470.109H10V10Z"
-        fill="white"
-        stroke="white"
-        strokeWidth="20"
-      />
+      <path d="M10 10H790V470.109H10V10Z" fill="white" stroke="white" strokeWidth="20" />
     </mask>
     <g mask="url(#mask0_16_29)">
       <path
@@ -468,4 +441,4 @@ const TailwindIcon = () => (
       />
     </g>
   </svg>
-)
+);

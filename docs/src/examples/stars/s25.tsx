@@ -1,4 +1,4 @@
-import Star25 from "@/components/stars/s25"
+import Star25 from "@/components/stars/s25";
 
 export default function Star25Example() {
   return (
@@ -7,5 +7,5 @@ export default function Star25Example() {
       className="w-full h-full"
       pathClassName="stroke-black stroke-3 dark:stroke-2"
     />
-  )
+  );
 }

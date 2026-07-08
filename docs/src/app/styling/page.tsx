@@ -1,19 +1,14 @@
-import { Metadata } from "next"
+import { Metadata } from "next";
 
-import {
-  PageDescription,
-  PageHeader,
-  PageHeading,
-  PageWrapper,
-} from "@/components/app/page"
+import { PageDescription, PageHeader, PageHeading, PageWrapper } from "@/components/app/page";
 
-import ExampleComponents from "./example-components"
-import Styling from "./styling"
+import ExampleComponents from "./example-components";
+import Styling from "./styling";
 
 export const metadata: Metadata = {
   title: "Styling",
   description: "Learn how to fully customize your neobrutalism layouts.",
-}
+};
 
 export default function Page() {
   return (
@@ -22,8 +17,7 @@ export default function Page() {
         <PageHeading>Styling</PageHeading>
 
         <PageDescription>
-          Choose a color scheme with other styling options and copy the styling
-          to your project.
+          Choose a color scheme with other styling options and copy the styling to your project.
         </PageDescription>
 
         <Styling />
@@ -31,5 +25,5 @@ export default function Page() {
         <ExampleComponents />
       </PageHeader>
     </PageWrapper>
-  )
+  );
 }

@@ -11,11 +11,11 @@ export default function Star6({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -34,5 +34,5 @@ export default function Star6({
         d="m100 5 25.659 69.341L195 100l-69.341 25.659L100 195l-25.659-69.341L5 100l69.341-25.659z"
       />
     </svg>
-  )
+  );
 }

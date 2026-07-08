@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Drawer,
   DrawerClose,
@@ -8,7 +8,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/drawer"
+} from "@/components/ui/drawer";
 
 export default function DrawerDemo() {
   return (
@@ -25,10 +25,7 @@ export default function DrawerDemo() {
           <DrawerFooter className="grid grid-cols-2">
             <Button variant="noShadow">Submit</Button>
             <DrawerClose asChild>
-              <Button
-                className="bg-secondary-background text-foreground"
-                variant="noShadow"
-              >
+              <Button className="bg-secondary-background text-foreground" variant="noShadow">
                 Cancel
               </Button>
             </DrawerClose>
@@ -36,5 +33,5 @@ export default function DrawerDemo() {
         </div>
       </DrawerContent>
     </Drawer>
-  )
+  );
 }

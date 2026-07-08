@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { Activity, TrendingUp } from "lucide-react"
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+import { Activity, TrendingUp } from "lucide-react";
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
 import {
   Card,
@@ -10,15 +10,15 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
 
-export const description = "A step area chart"
+export const description = "A step area chart";
 
 const chartData = [
   { month: "January", desktop: 186 },
@@ -27,7 +27,7 @@ const chartData = [
   { month: "April", desktop: 73 },
   { month: "May", desktop: 209 },
   { month: "June", desktop: 214 },
-]
+];
 
 const chartConfig = {
   desktop: {
@@ -35,16 +35,14 @@ const chartConfig = {
     color: "var(--chart-1)",
     icon: Activity,
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 export default function ChartAreaStep() {
   return (
     <Card className="bg-secondary-background text-foreground">
       <CardHeader>
         <CardTitle>Area Chart - Step</CardTitle>
-        <CardDescription>
-          Showing total visitors for the last 6 months
-        </CardDescription>
+        <CardDescription>Showing total visitors for the last 6 months</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -64,10 +62,7 @@ export default function ChartAreaStep() {
               tickMargin={8}
               tickFormatter={(value) => value.slice(0, 3)}
             />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
             <Area
               dataKey="desktop"
               type="step"
@@ -86,12 +81,10 @@ export default function ChartAreaStep() {
             <div className="flex items-center gap-2 leading-none font-medium">
               Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
             </div>
-            <div className="flex items-center gap-2 leading-none">
-              January - June 2024
-            </div>
+            <div className="flex items-center gap-2 leading-none">January - June 2024</div>
           </div>
         </div>
       </CardFooter>
     </Card>
-  )
+  );
 }

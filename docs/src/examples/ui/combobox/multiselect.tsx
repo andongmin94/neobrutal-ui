@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { CheckIcon, ChevronsUpDown } from "lucide-react"
+import { CheckIcon, ChevronsUpDown } from "lucide-react";
 
-import * as React from "react"
+import * as React from "react";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -12,12 +12,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const frameworks = [
   {
@@ -40,15 +36,13 @@ const frameworks = [
     value: "astro",
     label: "Astro",
   },
-]
+];
 
-type Framework = (typeof frameworks)[number]
+type Framework = (typeof frameworks)[number];
 
 export default function ComboboxWithCheckbox() {
-  const [open, setOpen] = React.useState(false)
-  const [selectedFrameworks, setSelectedFrameworks] = React.useState<
-    Framework[]
-  >([])
+  const [open, setOpen] = React.useState(false);
+  const [selectedFrameworks, setSelectedFrameworks] = React.useState<Framework[]>([]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -78,18 +72,14 @@ export default function ComboboxWithCheckbox() {
                   onSelect={(currentValue) => {
                     setSelectedFrameworks(
                       selectedFrameworks.some((f) => f.value === currentValue)
-                        ? selectedFrameworks.filter(
-                            (f) => f.value !== currentValue,
-                          )
+                        ? selectedFrameworks.filter((f) => f.value !== currentValue)
                         : [...selectedFrameworks, framework],
-                    )
+                    );
                   }}
                 >
                   <div
                     className="border-border pointer-events-none size-5 shrink-0 rounded-base border-2 transition-all select-none *:[svg]:opacity-0 data-[selected=true]:*:[svg]:opacity-100"
-                    data-selected={selectedFrameworks.some(
-                      (f) => f.value === framework.value,
-                    )}
+                    data-selected={selectedFrameworks.some((f) => f.value === framework.value)}
                   >
                     <CheckIcon className="size-4 text-current" />
                   </div>
@@ -101,5 +91,5 @@ export default function ComboboxWithCheckbox() {
         </Command>
       </PopoverContent>
     </Popover>
-  )
+  );
 }

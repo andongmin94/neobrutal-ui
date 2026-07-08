@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import { Slider as SliderPrimitive } from "@base-ui/react/slider"
+import { Slider as SliderPrimitive } from "@base-ui/react/slider";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 type SliderProps = Omit<
   SliderPrimitive.Root.Props<readonly number[]>,
   "defaultValue" | "onValueChange" | "onValueCommitted" | "value"
 > & {
-  defaultValue?: number[]
-  onValueChange?: (value: number[], eventDetails: unknown) => void
-  onValueCommit?: (value: number[], eventDetails: unknown) => void
-  onValueCommitted?: (value: number[], eventDetails: unknown) => void
-  value?: number[]
-}
+  defaultValue?: number[];
+  onValueChange?: (value: number[], eventDetails: unknown) => void;
+  onValueCommit?: (value: number[], eventDetails: unknown) => void;
+  onValueCommitted?: (value: number[], eventDetails: unknown) => void;
+  value?: number[];
+};
 
 function Slider({
   className,
@@ -30,7 +30,7 @@ function Slider({
     ? value
     : Array.isArray(defaultValue)
       ? defaultValue
-      : [min, max]
+      : [min, max];
 
   return (
     <SliderPrimitive.Root
@@ -40,13 +40,13 @@ function Slider({
       max={max}
       min={min}
       onValueChange={(nextValue, eventDetails) => {
-        onValueChange?.([...nextValue], eventDetails)
+        onValueChange?.([...nextValue], eventDetails);
       }}
       onValueCommitted={(nextValue, eventDetails) => {
-        const values = [...nextValue]
+        const values = [...nextValue];
 
-        onValueCommitted?.(values, eventDetails)
-        onValueCommit?.(values, eventDetails)
+        onValueCommitted?.(values, eventDetails);
+        onValueCommit?.(values, eventDetails);
       }}
       thumbAlignment="edge"
       value={value}
@@ -71,7 +71,7 @@ function Slider({
         ))}
       </SliderPrimitive.Control>
     </SliderPrimitive.Root>
-  )
+  );
 }
 
-export { Slider }
+export { Slider };

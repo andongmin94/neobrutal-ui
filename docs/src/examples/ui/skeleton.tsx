@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function SkeletonDemo() {
   return (
@@ -9,5 +9,5 @@ export default function SkeletonDemo() {
         <Skeleton className="h-4 sm:w-[200px] w-[100px]" />
       </div>
     </div>
-  )
+  );
 }

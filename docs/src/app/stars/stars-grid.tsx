@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 
-import STARS from "@/data/stars"
+import STARS from "@/data/stars";
 
 import {
   Select,
@@ -12,34 +12,31 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { TooltipProvider } from "@/components/ui/tooltip"
+} from "@/components/ui/select";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
-import CopyBtn from "./copy-btn"
-import ShadcnBtn from "./shadcn-btn"
+import CopyBtn from "./copy-btn";
+import ShadcnBtn from "./shadcn-btn";
 
 const REGISTRY_BASE_URL =
-  process.env.NEXT_PUBLIC_REGISTRY_BASE_URL ||
-  "https://neobrutal-ui.andongmin.com"
+  process.env.NEXT_PUBLIC_REGISTRY_BASE_URL || "https://neobrutal-ui.andongmin.com";
 
 export default function StarsGrid() {
-  const [command, setCommand] = useState(
-    `pnpm dlx shadcn@latest add ${REGISTRY_BASE_URL}/r/`,
-  )
+  const [command, setCommand] = useState(`pnpm dlx shadcn@latest add ${REGISTRY_BASE_URL}/r/`);
 
   const handleChange = (pkg: string) => {
-    const command = `shadcn@latest add ${REGISTRY_BASE_URL}/r/`
+    const command = `shadcn@latest add ${REGISTRY_BASE_URL}/r/`;
 
     if (pkg === "pnpm") {
-      setCommand("pnpm dlx " + command)
+      setCommand("pnpm dlx " + command);
     } else if (pkg === "npm") {
-      setCommand("npx " + command)
+      setCommand("npx " + command);
     } else if (pkg === "yarn") {
-      setCommand("npx " + command)
+      setCommand("npx " + command);
     } else {
-      setCommand("bunx --bun " + command)
+      setCommand("bunx --bun " + command);
     }
-  }
+  };
 
   return (
     <>
@@ -80,9 +77,9 @@ export default function StarsGrid() {
                 </TooltipProvider>
               </div>
             </div>
-          )
+          );
         })}
       </div>
     </>
-  )
+  );
 }

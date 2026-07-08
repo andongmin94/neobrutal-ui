@@ -1,13 +1,13 @@
-import type * as React from "react"
+import type * as React from "react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 type MarqueeProps = {
-  children: React.ReactNode
-  className?: string
-  direction?: "left" | "up"
-  reverse?: boolean
-}
+  children: React.ReactNode;
+  className?: string;
+  direction?: "left" | "up";
+  reverse?: boolean;
+};
 
 export function Marquee({
   children,
@@ -15,9 +15,8 @@ export function Marquee({
   direction = "left",
   reverse = false,
 }: MarqueeProps) {
-  const axisClass = direction === "up" ? "flex-col" : "flex-row"
-  const animationClass =
-    direction === "up" ? "animate-marquee-up" : "animate-marquee-left"
+  const axisClass = direction === "up" ? "flex-col" : "flex-row";
+  const animationClass = direction === "up" ? "animate-marquee-up" : "animate-marquee-left";
 
   return (
     <div
@@ -42,5 +41,5 @@ export function Marquee({
         </div>
       ))}
     </div>
-  )
+  );
 }

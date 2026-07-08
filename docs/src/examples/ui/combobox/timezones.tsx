@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { CheckIcon, ChevronDownIcon, PlusCircleIcon } from "lucide-react"
+import { CheckIcon, ChevronDownIcon, PlusCircleIcon } from "lucide-react";
 
-import * as React from "react"
+import * as React from "react";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -12,12 +12,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const timezones = [
   {
@@ -53,39 +49,33 @@ const timezones = [
       { value: "Asia/Seoul", label: "(GMT+9) Seoul" },
     ],
   },
-] as const
+] as const;
 
-type Timezone = (typeof timezones)[number]
+type Timezone = (typeof timezones)[number];
 
 export default function TimezoneCombobox() {
-  const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState("America/New_York")
+  const [open, setOpen] = React.useState(false);
+  const [value, setValue] = React.useState("America/New_York");
 
   const selectedGroup = React.useMemo(
-    () =>
-      timezones.find((group) =>
-        group.timezones.some((tz) => tz.value === value),
-      ),
+    () => timezones.find((group) => group.timezones.some((tz) => tz.value === value)),
     [value],
-  )
+  );
 
   const selectedTimezoneLabel = React.useMemo(() => {
-    if (!selectedGroup) return undefined
+    if (!selectedGroup) return undefined;
     for (const tz of selectedGroup.timezones) {
       if (tz.value === value) {
-        return tz.label
+        return tz.label;
       }
     }
-    return undefined
-  }, [value, selectedGroup])
+    return undefined;
+  }, [value, selectedGroup]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="noShadow"
-          className="h-12 w-full justify-between px-2.5 md:max-w-[200px]"
-        >
+        <Button variant="noShadow" className="h-12 w-full justify-between px-2.5 md:max-w-[200px]">
           {selectedTimezoneLabel ? (
             <div className="flex flex-col items-start gap-0.5">
               <span className="text-main-foreground text-xs font-normal">
@@ -105,20 +95,14 @@ export default function TimezoneCombobox() {
           <CommandList className="scroll-pb-12">
             <CommandEmpty>No timezone found.</CommandEmpty>
             {timezones.map((region) => (
-              <CommandGroup
-                className="p-2"
-                key={region.label}
-                heading={region.label}
-              >
+              <CommandGroup className="p-2" key={region.label} heading={region.label}>
                 {region.timezones.map((timezone) => (
                   <CommandItem
                     key={timezone.value}
                     value={timezone.value}
                     onSelect={(currentValue) => {
-                      setValue(
-                        currentValue as Timezone["timezones"][number]["value"],
-                      )
-                      setOpen(false)
+                      setValue(currentValue as Timezone["timezones"][number]["value"]);
+                      setOpen(false);
                     }}
                   >
                     {timezone.label}
@@ -140,5 +124,5 @@ export default function TimezoneCombobox() {
         </Command>
       </PopoverContent>
     </Popover>
-  )
+  );
 }

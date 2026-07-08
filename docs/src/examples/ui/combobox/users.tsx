@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { CheckIcon, ChevronsUpDown, PlusCircleIcon } from "lucide-react"
+import { CheckIcon, ChevronsUpDown, PlusCircleIcon } from "lucide-react";
 
-import * as React from "react"
+import * as React from "react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -14,14 +14,10 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "@/components/ui/command"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 const users = [
   {
@@ -36,16 +32,13 @@ const users = [
     id: "3",
     username: "evilrabbit",
   },
-] as const
+] as const;
 
 export default function UserCombobox() {
-  const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState("1")
+  const [open, setOpen] = React.useState(false);
+  const [value, setValue] = React.useState("1");
 
-  const selectedUser = React.useMemo(
-    () => users.find((user) => user.id === value),
-    [value],
-  )
+  const selectedUser = React.useMemo(() => users.find((user) => user.id === value), [value]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -59,9 +52,7 @@ export default function UserCombobox() {
           {selectedUser ? (
             <div className="flex items-center gap-2">
               <Avatar className="size-5">
-                <AvatarImage
-                  src={`https://github.com/${selectedUser.username}.png`}
-                />
+                <AvatarImage src={`https://github.com/${selectedUser.username}.png`} />
                 <AvatarFallback>{selectedUser.username[0]}</AvatarFallback>
               </Avatar>
               {selectedUser.username}
@@ -83,22 +74,17 @@ export default function UserCombobox() {
                   key={user.id}
                   value={user.id}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue)
-                    setOpen(false)
+                    setValue(currentValue === value ? "" : currentValue);
+                    setOpen(false);
                   }}
                 >
                   <Avatar className="size-5">
-                    <AvatarImage
-                      src={`https://github.com/${user.username}.png`}
-                    />
+                    <AvatarImage src={`https://github.com/${user.username}.png`} />
                     <AvatarFallback>{user.username[0]}</AvatarFallback>
                   </Avatar>
                   {user.username}
                   <CheckIcon
-                    className={cn(
-                      "ml-auto",
-                      value === user.id ? "opacity-100" : "opacity-0",
-                    )}
+                    className={cn("ml-auto", value === user.id ? "opacity-100" : "opacity-0")}
                   />
                 </CommandItem>
               ))}
@@ -114,5 +100,5 @@ export default function UserCombobox() {
         </Command>
       </PopoverContent>
     </Popover>
-  )
+  );
 }

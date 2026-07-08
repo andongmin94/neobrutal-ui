@@ -1,7 +1,7 @@
-import bento from "@public/template-previews/bento.webp"
-import blog from "@public/template-previews/blog.webp"
-import portfolio from "@public/template-previews/portfolio.webp"
-import windowedPortfolio from "@public/template-previews/windowed-portfolio.webp"
+import bento from "@public/template-previews/bento.webp";
+import blog from "@public/template-previews/blog.webp";
+import portfolio from "@public/template-previews/portfolio.webp";
+import windowedPortfolio from "@public/template-previews/windowed-portfolio.webp";
 
 const TEMPLATES = [
   {
@@ -32,6 +32,6 @@ const TEMPLATES = [
     repoUrl: "https://github.com/neobrutalism-templates/bento",
     color: "#5093fe",
   },
-]
+];
 
-export default TEMPLATES
+export default TEMPLATES;

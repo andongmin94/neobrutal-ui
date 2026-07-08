@@ -1,18 +1,11 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 
-import { Calendar } from "@/components/ui/calendar"
+import { Calendar } from "@/components/ui/calendar";
 
 export default function CalendarDemo() {
-  const [date, setDate] = useState<Date | undefined>(new Date())
+  const [date, setDate] = useState<Date | undefined>(new Date());
 
-  return (
-    <Calendar
-      className="w-max"
-      mode="single"
-      selected={date}
-      onSelect={setDate}
-    />
-  )
+  return <Calendar className="w-max" mode="single" selected={date} onSelect={setDate} />;
 }

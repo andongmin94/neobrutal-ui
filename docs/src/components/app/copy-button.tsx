@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
-import { Check, Clipboard } from "lucide-react"
+import { Check, Clipboard } from "lucide-react";
 
-import { useState } from "react"
+import { useState } from "react";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 
 export function CopyButton({ text }: { text: string }) {
-  const [isCopied, setIsCopied] = useState(false)
+  const [isCopied, setIsCopied] = useState(false);
 
   const copy = async () => {
-    await navigator.clipboard.writeText(text)
-    setIsCopied(true)
+    await navigator.clipboard.writeText(text);
+    setIsCopied(true);
 
     setTimeout(() => {
-      setIsCopied(false)
-    }, 1500)
-  }
+      setIsCopied(false);
+    }, 1500);
+  };
 
   return (
     <Button
@@ -29,5 +29,5 @@ export function CopyButton({ text }: { text: string }) {
       <span className="sr-only">Copy</span>
       {isCopied ? <Check /> : <Clipboard />}
     </Button>
-  )
+  );
 }

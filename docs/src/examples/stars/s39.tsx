@@ -1,4 +1,4 @@
-import Star39 from "@/components/stars/s39"
+import Star39 from "@/components/stars/s39";
 
 export default function Star39Example() {
   return (
@@ -7,5 +7,5 @@ export default function Star39Example() {
       className="w-full h-full"
       pathClassName="stroke-black stroke-3 dark:stroke-2"
     />
-  )
+  );
 }

@@ -4,7 +4,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
 export default function SelectDemo() {
   return (
@@ -22,5 +22,5 @@ export default function SelectDemo() {
         <SelectItem value="pineapple">Pineapple</SelectItem>
       </SelectContent>
     </Select>
-  )
+  );
 }

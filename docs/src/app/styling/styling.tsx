@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { useLayoutEffect, useState } from "react"
+import { useLayoutEffect, useState } from "react";
 
-import colors from "@/data/colors"
+import colors from "@/data/colors";
 
-import { Pre } from "@/components/app/pre"
-import { Button } from "@/components/ui/button"
+import { Pre } from "@/components/app/pre";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -13,16 +13,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   Sheet,
   SheetClose,
@@ -31,12 +31,12 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet"
+} from "@/components/ui/sheet";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 export default function Styling() {
-  const defaultColorPalette = colors[10]
+  const defaultColorPalette = colors[10];
 
   const [
     {
@@ -57,131 +57,131 @@ export default function Styling() {
       darkChart5,
     },
     setColor,
-  ] = useState(defaultColorPalette)
-  const [borderRadius, setBorderRadius] = useState(5)
-  const [boxShadowLength, setBoxShadowLength] = useState([4, 4])
-  const [fontWeight, setFontWeight] = useState([700, 500])
+  ] = useState(defaultColorPalette);
+  const [borderRadius, setBorderRadius] = useState(5);
+  const [boxShadowLength, setBoxShadowLength] = useState([4, 4]);
+  const [fontWeight, setFontWeight] = useState([700, 500]);
 
   useLayoutEffect(() => {
-    const colorObj = JSON.parse(localStorage.getItem("color") as string)
-    const borderRadius = Number(localStorage.getItem("borderRadius"))
-    const boxShadow = localStorage.getItem("boxShadow")?.split(",")
-    const fontWeight = localStorage.getItem("fontWeight")?.split(",")
+    const colorObj = JSON.parse(localStorage.getItem("color") as string);
+    const borderRadius = Number(localStorage.getItem("borderRadius"));
+    const boxShadow = localStorage.getItem("boxShadow")?.split(",");
+    const fontWeight = localStorage.getItem("fontWeight")?.split(",");
 
     if (colorObj) {
-      setColor(colorObj)
+      setColor(colorObj);
     }
 
     if (borderRadius) {
-      setBorderRadius(borderRadius)
+      setBorderRadius(borderRadius);
     }
 
     if (boxShadow) {
-      setBoxShadowLength([+boxShadow[0], +boxShadow[1]])
+      setBoxShadowLength([+boxShadow[0], +boxShadow[1]]);
     }
 
     if (fontWeight) {
-      setFontWeight([+fontWeight[0], +fontWeight[1]])
+      setFontWeight([+fontWeight[0], +fontWeight[1]]);
     }
-  }, [])
+  }, []);
 
   const updateColor = (value: string) => {
-    const r = window.document.querySelector(":root") as HTMLElement
-    const color = colors.find((color) => color.name === value)!
+    const r = window.document.querySelector(":root") as HTMLElement;
+    const color = colors.find((color) => color.name === value)!;
 
-    setColor(color)
+    setColor(color);
 
-    localStorage.setItem("color", JSON.stringify(color))
+    localStorage.setItem("color", JSON.stringify(color));
 
-    const isDarkMode = document.documentElement.classList.contains("dark")
+    const isDarkMode = document.documentElement.classList.contains("dark");
 
     if (isDarkMode) {
-      r.style.setProperty("--background", color.darkBg)
-      r.style.setProperty("--main", color.darkMain)
-      r.style.setProperty("--chart-1", color.darkChart1)
-      r.style.setProperty("--chart-2", color.darkChart2)
-      r.style.setProperty("--chart-3", color.darkChart3)
-      r.style.setProperty("--chart-4", color.darkChart4)
-      r.style.setProperty("--chart-5", color.darkChart5)
+      r.style.setProperty("--background", color.darkBg);
+      r.style.setProperty("--main", color.darkMain);
+      r.style.setProperty("--chart-1", color.darkChart1);
+      r.style.setProperty("--chart-2", color.darkChart2);
+      r.style.setProperty("--chart-3", color.darkChart3);
+      r.style.setProperty("--chart-4", color.darkChart4);
+      r.style.setProperty("--chart-5", color.darkChart5);
     } else {
-      r.style.setProperty("--background", color.bg)
-      r.style.setProperty("--main", color.main)
-      r.style.setProperty("--chart-1", color.chart1)
-      r.style.setProperty("--chart-2", color.chart2)
-      r.style.setProperty("--chart-3", color.chart3)
-      r.style.setProperty("--chart-4", color.chart4)
-      r.style.setProperty("--chart-5", color.chart5)
+      r.style.setProperty("--background", color.bg);
+      r.style.setProperty("--main", color.main);
+      r.style.setProperty("--chart-1", color.chart1);
+      r.style.setProperty("--chart-2", color.chart2);
+      r.style.setProperty("--chart-3", color.chart3);
+      r.style.setProperty("--chart-4", color.chart4);
+      r.style.setProperty("--chart-5", color.chart5);
     }
 
-    r.style.setProperty("--dark-background", color.darkBg)
-    r.style.setProperty("--dark-main", color.darkMain)
-    r.style.setProperty("--light-background", color.bg)
-    r.style.setProperty("--light-main", color.main)
-  }
+    r.style.setProperty("--dark-background", color.darkBg);
+    r.style.setProperty("--dark-main", color.darkMain);
+    r.style.setProperty("--light-background", color.bg);
+    r.style.setProperty("--light-main", color.main);
+  };
 
   const updateBorderRadius = (value: number) => {
-    const r = window.document.querySelector(":root") as HTMLElement
-    r.style.setProperty("--border-radius", `${value}px`)
+    const r = window.document.querySelector(":root") as HTMLElement;
+    r.style.setProperty("--border-radius", `${value}px`);
 
-    localStorage.setItem("borderRadius", value.toString())
+    localStorage.setItem("borderRadius", value.toString());
 
-    setBorderRadius(value)
-  }
+    setBorderRadius(value);
+  };
 
   const updateHorizontalBoxShadow = (value: number) => {
-    const r = window.document.querySelector(":root") as HTMLElement
-    r.style.setProperty("--box-shadow-x", value + "px")
+    const r = window.document.querySelector(":root") as HTMLElement;
+    r.style.setProperty("--box-shadow-x", value + "px");
 
-    setBoxShadowLength([value, boxShadowLength[1]])
+    setBoxShadowLength([value, boxShadowLength[1]]);
 
-    localStorage.setItem("boxShadow", `${value},${boxShadowLength[1]}`)
-  }
+    localStorage.setItem("boxShadow", `${value},${boxShadowLength[1]}`);
+  };
 
   const updateVerticalBoxShadow = (value: number) => {
-    const r = window.document.querySelector(":root") as HTMLElement
-    r.style.setProperty("--box-shadow-y", value + "px")
+    const r = window.document.querySelector(":root") as HTMLElement;
+    r.style.setProperty("--box-shadow-y", value + "px");
 
-    setBoxShadowLength([boxShadowLength[0], value])
+    setBoxShadowLength([boxShadowLength[0], value]);
 
-    localStorage.setItem("boxShadow", `${boxShadowLength[0]},${value}`)
-  }
+    localStorage.setItem("boxShadow", `${boxShadowLength[0]},${value}`);
+  };
 
   const updateHeadingFontWeight = (value: number) => {
-    const r = window.document.querySelector(":root") as HTMLElement
-    r.style.setProperty("--heading-font-weight", `${value}`)
+    const r = window.document.querySelector(":root") as HTMLElement;
+    r.style.setProperty("--heading-font-weight", `${value}`);
 
-    setFontWeight([value, fontWeight[1]])
+    setFontWeight([value, fontWeight[1]]);
 
-    localStorage.setItem("fontWeight", `${value},${fontWeight[1]}`)
-  }
+    localStorage.setItem("fontWeight", `${value},${fontWeight[1]}`);
+  };
 
   const updateBaseFontWeight = (value: number) => {
-    const r = window.document.querySelector(":root") as HTMLElement
-    r.style.setProperty("--base-font-weight", `${value}`)
+    const r = window.document.querySelector(":root") as HTMLElement;
+    r.style.setProperty("--base-font-weight", `${value}`);
 
-    setFontWeight([fontWeight[0], value])
+    setFontWeight([fontWeight[0], value]);
 
-    localStorage.setItem("fontWeight", `${fontWeight[0]},${value}`)
-  }
+    localStorage.setItem("fontWeight", `${fontWeight[0]},${value}`);
+  };
 
   const resetStyling = () => {
-    const r = window.document.querySelector(":root") as HTMLElement
+    const r = window.document.querySelector(":root") as HTMLElement;
 
-    updateColor(defaultColorPalette.name)
+    updateColor(defaultColorPalette.name);
 
-    r.style.setProperty("--border-radius", "5px")
-    r.style.setProperty("--box-shadow-x", "4px")
-    r.style.setProperty("--box-shadow-y", "4px")
-    r.style.setProperty("--heading-font-weight", "700")
-    r.style.setProperty("--base-font-weight", "500")
+    r.style.setProperty("--border-radius", "5px");
+    r.style.setProperty("--box-shadow-x", "4px");
+    r.style.setProperty("--box-shadow-y", "4px");
+    r.style.setProperty("--heading-font-weight", "700");
+    r.style.setProperty("--base-font-weight", "500");
 
-    setColor(defaultColorPalette)
-    setBorderRadius(5)
-    setBoxShadowLength([4, 4])
-    setFontWeight([700, 500])
+    setColor(defaultColorPalette);
+    setBorderRadius(5);
+    setBoxShadowLength([4, 4]);
+    setFontWeight([700, 500]);
 
-    localStorage.clear()
-  }
+    localStorage.clear();
+  };
 
   const styling = `@import "tailwindcss";
 @import "tw-animate-css";
@@ -256,7 +256,7 @@ export default function Styling() {
   h1, h2, h3, h4, h5, h6{
     @apply font-heading;
   }
-}`
+}`;
 
   return (
     <div className="flex items-center justify-center gap-4">
@@ -272,10 +272,7 @@ export default function Styling() {
             <div className="grid gap-3">
               <Label htmlFor="color">Color</Label>
               <Select value={name} onValueChange={updateColor}>
-                <SelectTrigger
-                  id="color"
-                  className="bg-secondary-background text-foreground"
-                >
+                <SelectTrigger id="color" className="bg-secondary-background text-foreground">
                   <SelectValue placeholder="Select a color" />
                 </SelectTrigger>
                 <SelectContent className="bg-secondary-background text-foreground">
@@ -411,9 +408,7 @@ export default function Styling() {
         <DialogContent className="max-w-full">
           <DialogHeader>
             <DialogTitle>Theming</DialogTitle>
-            <DialogDescription>
-              Copy the styling to your globals.css file.
-            </DialogDescription>
+            <DialogDescription>Copy the styling to your globals.css file.</DialogDescription>
           </DialogHeader>
           <Pre
             wrapperClassName="w-full max-w-full text-white overflow-x-auto"
@@ -424,5 +419,5 @@ export default function Styling() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

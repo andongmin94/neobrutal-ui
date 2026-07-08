@@ -1,18 +1,18 @@
-import clsx from "clsx"
+import clsx from "clsx";
 
-import { StaticImageData } from "next/image"
+import { StaticImageData } from "next/image";
 
 export default function ShowcaseContainer({
   items,
 }: {
   items: {
-    color: string
-    text?: string
-    liveUrl: string
-    previewImg: StaticImageData
-    repoUrl?: string
-    title: string
-  }[]
+    color: string;
+    text?: string;
+    liveUrl: string;
+    previewImg: StaticImageData;
+    repoUrl?: string;
+    title: string;
+  }[];
 }) {
   return (
     <div className="max-w-full grid sm:grid-cols-2 grid-cols-1 gap-5">
@@ -23,11 +23,7 @@ export default function ShowcaseContainer({
             key={title}
           >
             <div className="border-2 border-border rounded-base aspect-2/1">
-              <img
-                className="rounded-base"
-                src={`${previewImg.src}`}
-                alt="preview image"
-              />
+              <img className="rounded-base" src={`${previewImg.src}`} alt="preview image" />
             </div>
 
             <h4 className="text-center font-heading mt-4">{title}</h4>
@@ -62,8 +58,8 @@ export default function ShowcaseContainer({
               )}
             </div>
           </div>
-        )
+        );
       })}
     </div>
-  )
+  );
 }
