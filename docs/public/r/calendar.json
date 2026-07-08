@@ -4,8 +4,7 @@
   "title": "Calendar",
   "author": "andongmin94",
   "dependencies": [
-    "react-day-picker",
-    "date-fns"
+    "react-day-picker"
   ],
   "registryDependencies": [
     "https://neobrutal-ui.andongmin.com/r/nbutton.json"

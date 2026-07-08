@@ -303,8 +303,7 @@
       "title": "Calendar",
       "type": "registry:ui",
       "dependencies": [
-        "react-day-picker",
-        "date-fns"
+        "react-day-picker"
       ],
       "registryDependencies": [
         "https://neobrutal-ui.andongmin.com/r/nbutton.json"
