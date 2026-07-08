@@ -112,13 +112,15 @@ function formatJsonValue(value, indent, sectionName) {
 }
 
 function lint() {
-  run("oxlint", ["--fix", "--react-plugin", "--no-error-on-unmatched-pattern", "src", "scripts"]);
+  run("oxlint", ["--fix", "--no-error-on-unmatched-pattern", "src", "scripts"]);
   run("oxfmt", [
     "--write",
     "--no-error-on-unmatched-pattern",
     "src",
     "scripts",
     "tsconfig.json",
+    ".oxlintrc.json",
+    ".oxfmtrc.json",
     "package.json",
   ]);
   formatPackageJson();

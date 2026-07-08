@@ -101,15 +101,11 @@ function formatJsonValue(value, indent, sectionName) {
 function lint() {
   run("oxlint", [
     "--fix",
-    "--react-plugin",
-    "--nextjs-plugin",
-    "--jsx-a11y-plugin",
     "--no-error-on-unmatched-pattern",
     "src",
     "scripts",
     "next.config.mjs",
     "velite.config.ts",
-    "eslint.config.mjs",
   ]);
   run("oxfmt", [
     "--write",
@@ -118,9 +114,10 @@ function lint() {
     "scripts",
     "next.config.mjs",
     "velite.config.ts",
-    "eslint.config.mjs",
     "postcss.config.js",
     "tsconfig.json",
+    ".oxlintrc.json",
+    ".oxfmtrc.json",
     "package.json",
   ]);
   formatPackageJson();

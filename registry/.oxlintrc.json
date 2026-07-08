@@ -1,0 +1,10 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "unicorn", "typescript", "oxc"],
+  "ignorePatterns": ["node_modules/**", "public/**"],
+  "settings": {
+    "react": {
+      "version": "19.2.7"
+    }
+  }
+}
