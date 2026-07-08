@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>neobrutal-ui registry</title>
+    <style>
+      :root {
+        color: #111;
+        background: #f6e85f;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+      }
+
+      main {
+        width: min(760px, calc(100vw - 32px));
+        border: 3px solid #111;
+        background: #fff;
+        box-shadow: 8px 8px 0 #111;
+        padding: 28px;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: clamp(2rem, 7vw, 4.5rem);
+        line-height: 0.9;
+        letter-spacing: 0;
+      }
+
+      p {
+        line-height: 1.6;
+        font-weight: 700;
+      }
+
+      a {
+        display: inline-block;
+        margin: 10px 10px 0 0;
+        border: 2px solid #111;
+        color: #111;
+        background: #7df9ff;
+        box-shadow: 4px 4px 0 #111;
+        padding: 10px 14px;
+        font-weight: 900;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>neobrutal-ui</h1>
+      <p>Modern neobrutalist registry items for shadcn/ui.</p>
+      <a href="./r/registry.json">Registry</a>
+      <a href="./r/button.json">Button</a>
+      <a href="./r/styling/yellow.json">Yellow Style</a>
+    </main>
+  </body>
+</html>

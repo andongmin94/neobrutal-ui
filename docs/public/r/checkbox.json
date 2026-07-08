@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "checkbox",
+  "title": "Checkbox",
+  "author": "andongmin94",
+  "dependencies": [
+    "@base-ui/react"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/checkbox.tsx",
+      "content": "\"use client\"\n\nimport { Checkbox as CheckboxPrimitive } from \"@base-ui/react/checkbox\"\n\nimport { cn } from \"@/lib/utils\"\nimport { CheckIcon } from \"lucide-react\"\n\ntype CheckedState = boolean | \"indeterminate\"\ntype CheckboxProps = Omit<\n  CheckboxPrimitive.Root.Props,\n  \"checked\" | \"defaultChecked\"\n> & {\n  checked?: CheckedState\n  defaultChecked?: CheckedState\n}\n\nfunction Checkbox({\n  checked,\n  className,\n  defaultChecked,\n  indeterminate,\n  ...props\n}: CheckboxProps) {\n  return (\n    <CheckboxPrimitive.Root\n      data-slot=\"checkbox\"\n      checked={checked === \"indeterminate\" ? false : checked}\n      className={cn(\n        \"peer relative flex size-4 shrink-0 items-center justify-center rounded-base border-2 border-border bg-secondary-background outline-hidden ring-offset-white transition-colors focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-checked:bg-main data-checked:text-main-foreground data-indeterminate:bg-main data-indeterminate:text-main-foreground\",\n        className\n      )}\n      defaultChecked={\n        defaultChecked === \"indeterminate\" ? false : defaultChecked\n      }\n      indeterminate={indeterminate ?? checked === \"indeterminate\"}\n      {...props}\n    >\n      <CheckboxPrimitive.Indicator\n        data-slot=\"checkbox-indicator\"\n        className=\"grid place-content-center text-current transition-none [&>svg]:size-3.5\"\n      >\n        <CheckIcon\n        />\n      </CheckboxPrimitive.Indicator>\n    </CheckboxPrimitive.Root>\n  )\n}\n\nexport { Checkbox }\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

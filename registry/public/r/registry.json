@@ -1,0 +1,1523 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "neobrutal-ui",
+  "homepage": "https://neobrutal-ui.andongmin.com",
+  "author": "andongmin94",
+  "items": [
+    {
+      "name": "neobrutal-ui",
+      "title": "neobrutal-ui",
+      "type": "registry:base",
+      "extends": "none",
+      "author": "andongmin94",
+      "description": "Base UI powered neobrutalist design-system base.",
+      "config": {
+        "style": "neobrutal-ui",
+        "iconLibrary": "lucide",
+        "rsc": true,
+        "tsx": true,
+        "tailwind": {
+          "baseColor": "neutral",
+          "css": "src/index.css"
+        },
+        "aliases": {
+          "components": "@/components",
+          "utils": "@/lib/utils",
+          "ui": "@/components/ui",
+          "lib": "@/lib",
+          "hooks": "@/hooks"
+        }
+      },
+      "dependencies": [
+        "@base-ui/react",
+        "shadcn",
+        "tw-animate-css",
+        "class-variance-authority",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "cssVars": {
+        "light": {
+          "background": "oklch(96.79% 0.0654 102.26)",
+          "foreground": "oklch(0% 0 0)",
+          "card": "oklch(96.79% 0.0654 102.26)",
+          "card-foreground": "oklch(0% 0 0)",
+          "popover": "oklch(96.79% 0.0654 102.26)",
+          "popover-foreground": "oklch(0% 0 0)",
+          "primary": "oklch(86.03% 0.176 92.36)",
+          "primary-foreground": "oklch(0% 0 0)",
+          "secondary": "oklch(23.93% 0 0)",
+          "secondary-foreground": "oklch(100% 0 0)",
+          "muted": "oklch(23.93% 0 0)",
+          "muted-foreground": "oklch(100% 0 0)",
+          "accent": "oklch(86.03% 0.176 92.36)",
+          "accent-foreground": "oklch(0% 0 0)",
+          "destructive": "oklch(63.68% 0.2078 25.33)",
+          "border": "oklch(0% 0 0)",
+          "input": "oklch(0% 0 0)",
+          "ring": "oklch(0% 0 0)",
+          "main": "oklch(86.03% 0.176 92.36)",
+          "main-foreground": "oklch(0% 0 0)",
+          "secondary-background": "oklch(23.93% 0 0)",
+          "overlay": "rgba(0, 0, 0, 0.8)",
+          "shadow": "4px 4px 0px 0px var(--border)",
+          "radius": "5px",
+          "chart-1": "#FACC00",
+          "chart-2": "#7A83FF",
+          "chart-3": "#FF4D50",
+          "chart-4": "#00D696",
+          "chart-5": "#0099FF",
+          "sidebar": "oklch(96.79% 0.0654 102.26)",
+          "sidebar-foreground": "oklch(0% 0 0)",
+          "sidebar-primary": "oklch(86.03% 0.176 92.36)",
+          "sidebar-primary-foreground": "oklch(0% 0 0)",
+          "sidebar-accent": "oklch(23.93% 0 0)",
+          "sidebar-accent-foreground": "oklch(100% 0 0)",
+          "sidebar-border": "oklch(0% 0 0)",
+          "sidebar-ring": "oklch(0% 0 0)"
+        },
+        "dark": {
+          "background": "oklch(29.28% 0.0373 94.38)",
+          "foreground": "oklch(92.49% 0 0)",
+          "card": "oklch(29.28% 0.0373 94.38)",
+          "card-foreground": "oklch(92.49% 0 0)",
+          "popover": "oklch(29.28% 0.0373 94.38)",
+          "popover-foreground": "oklch(92.49% 0 0)",
+          "primary": "oklch(79.36% 0.1624 92.49)",
+          "primary-foreground": "oklch(0% 0 0)",
+          "secondary": "oklch(100% 0 0)",
+          "secondary-foreground": "oklch(0% 0 0)",
+          "muted": "oklch(100% 0 0)",
+          "muted-foreground": "oklch(0% 0 0)",
+          "accent": "oklch(79.36% 0.1624 92.49)",
+          "accent-foreground": "oklch(0% 0 0)",
+          "destructive": "oklch(63.68% 0.2078 25.33)",
+          "border": "oklch(0% 0 0)",
+          "input": "oklch(100% 0 0)",
+          "ring": "oklch(100% 0 0)",
+          "main": "oklch(79.36% 0.1624 92.49)",
+          "main-foreground": "oklch(0% 0 0)",
+          "secondary-background": "oklch(100% 0 0)",
+          "overlay": "rgba(0, 0, 0, 0.8)",
+          "shadow": "4px 4px 0px 0px var(--border)",
+          "radius": "5px",
+          "chart-1": "#E0B700",
+          "chart-2": "#7A83FF",
+          "chart-3": "#FF6669",
+          "chart-4": "#00BD84",
+          "chart-5": "#008AE5",
+          "sidebar": "oklch(29.28% 0.0373 94.38)",
+          "sidebar-foreground": "oklch(92.49% 0 0)",
+          "sidebar-primary": "oklch(79.36% 0.1624 92.49)",
+          "sidebar-primary-foreground": "oklch(0% 0 0)",
+          "sidebar-accent": "oklch(100% 0 0)",
+          "sidebar-accent-foreground": "oklch(0% 0 0)",
+          "sidebar-border": "oklch(0% 0 0)",
+          "sidebar-ring": "oklch(100% 0 0)"
+        },
+        "theme": {
+          "color-background": "var(--background)",
+          "color-foreground": "var(--foreground)",
+          "color-card": "var(--card)",
+          "color-card-foreground": "var(--card-foreground)",
+          "color-popover": "var(--popover)",
+          "color-popover-foreground": "var(--popover-foreground)",
+          "color-primary": "var(--primary)",
+          "color-primary-foreground": "var(--primary-foreground)",
+          "color-secondary": "var(--secondary)",
+          "color-secondary-foreground": "var(--secondary-foreground)",
+          "color-muted": "var(--muted)",
+          "color-muted-foreground": "var(--muted-foreground)",
+          "color-accent": "var(--accent)",
+          "color-accent-foreground": "var(--accent-foreground)",
+          "color-destructive": "var(--destructive)",
+          "color-border": "var(--border)",
+          "color-input": "var(--input)",
+          "color-ring": "var(--ring)",
+          "color-main": "var(--main)",
+          "color-main-foreground": "var(--main-foreground)",
+          "color-secondary-background": "var(--secondary-background)",
+          "color-overlay": "var(--overlay)",
+          "color-chart-1": "var(--chart-1)",
+          "color-chart-2": "var(--chart-2)",
+          "color-chart-3": "var(--chart-3)",
+          "color-chart-4": "var(--chart-4)",
+          "color-chart-5": "var(--chart-5)",
+          "color-sidebar": "var(--sidebar)",
+          "color-sidebar-foreground": "var(--sidebar-foreground)",
+          "color-sidebar-primary": "var(--sidebar-primary)",
+          "color-sidebar-primary-foreground": "var(--sidebar-primary-foreground)",
+          "color-sidebar-accent": "var(--sidebar-accent)",
+          "color-sidebar-accent-foreground": "var(--sidebar-accent-foreground)",
+          "color-sidebar-border": "var(--sidebar-border)",
+          "color-sidebar-ring": "var(--sidebar-ring)",
+          "shadow-shadow": "var(--shadow)",
+          "radius-base": "5px",
+          "radius-sm": "calc(var(--radius) * 0.6)",
+          "radius-md": "calc(var(--radius) * 0.8)",
+          "radius-lg": "var(--radius)",
+          "radius-xl": "calc(var(--radius) * 1.4)",
+          "radius-2xl": "calc(var(--radius) * 1.8)",
+          "radius-3xl": "calc(var(--radius) * 2.2)",
+          "radius-4xl": "calc(var(--radius) * 2.6)",
+          "font-weight-base": "500",
+          "font-weight-heading": "700"
+        }
+      },
+      "css": {
+        "@import \"tw-animate-css\"": {},
+        "@import \"shadcn/tailwind.css\"": {},
+        "@layer base": {
+          "*": {
+            "@apply border-border outline-ring/50": {}
+          },
+          "body": {
+            "@apply bg-background text-foreground": {}
+          }
+        }
+      }
+    },
+    {
+      "name": "accordion",
+      "title": "Accordion",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/accordion.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "alert",
+      "title": "Alert",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "src/components/ui/alert.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "alert-dialog",
+      "title": "Alert dialog",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "registryDependencies": [
+        "https://neobrutal-ui.andongmin.com/r/nbutton.json"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/alert-dialog.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "avatar",
+      "title": "Avatar",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/avatar.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "badge",
+      "title": "Badge",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "src/components/ui/badge.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react"
+      ]
+    },
+    {
+      "name": "breadcrumb",
+      "title": "Breadcrumb",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/breadcrumb.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "nbutton",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/button.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "button",
+      "title": "Button",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/button.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "calendar",
+      "title": "Calendar",
+      "type": "registry:ui",
+      "dependencies": [
+        "react-day-picker",
+        "date-fns"
+      ],
+      "registryDependencies": [
+        "https://neobrutal-ui.andongmin.com/r/nbutton.json"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/calendar.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "ncard",
+      "title": "Card",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "src/components/ui/card.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "card",
+      "title": "Card",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "src/components/ui/card.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "carousel",
+      "title": "Carousel",
+      "type": "registry:ui",
+      "dependencies": [
+        "embla-carousel-react"
+      ],
+      "registryDependencies": [
+        "https://neobrutal-ui.andongmin.com/r/nbutton.json"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/carousel.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "chart",
+      "title": "Chart",
+      "type": "registry:ui",
+      "dependencies": [
+        "recharts",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "https://neobrutal-ui.andongmin.com/r/ncard.json"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/chart.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "checkbox",
+      "title": "Checkbox",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/checkbox.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "collapsible",
+      "title": "Collapsible",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/collapsible.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "command",
+      "title": "Command",
+      "type": "registry:ui",
+      "dependencies": [
+        "cmdk"
+      ],
+      "registryDependencies": [
+        "https://neobrutal-ui.andongmin.com/r/ndialog.json"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/command.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "context-menu",
+      "title": "Context menu",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/context-menu.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "ndialog",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/dialog.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "dialog",
+      "title": "Dialog",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/dialog.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "drawer",
+      "title": "Drawer",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/drawer.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "dropdown-menu",
+      "title": "Dropdown menu",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/dropdown-menu.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "form",
+      "title": "Form",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react",
+        "@hookform/resolvers",
+        "zod",
+        "react-hook-form"
+      ],
+      "registryDependencies": [
+        "https://neobrutal-ui.andongmin.com/r/nbutton.json",
+        "https://neobrutal-ui.andongmin.com/r/nlabel.json"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/form.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "hover-card",
+      "title": "Hover card",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/hover-card.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "image-card",
+      "title": "Image card",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "src/components/ui/image-card.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "input",
+      "title": "Input",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "src/components/ui/input.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react"
+      ]
+    },
+    {
+      "name": "input-group",
+      "title": "Input Group",
+      "type": "registry:ui",
+      "registryDependencies": [
+        "https://neobrutal-ui.andongmin.com/r/nbutton.json",
+        "https://neobrutal-ui.andongmin.com/r/ninput.json",
+        "https://neobrutal-ui.andongmin.com/r/textarea.json"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/input-group.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "ninput",
+      "title": "Input",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "src/components/ui/input.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react"
+      ]
+    },
+    {
+      "name": "input-otp",
+      "title": "Input OTP",
+      "type": "registry:ui",
+      "dependencies": [
+        "input-otp"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/input-otp.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "nlabel",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/label.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "label",
+      "title": "Label",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/label.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "marquee",
+      "title": "Marquee",
+      "docs": "Make sure there is enough content in `items` so it loops perfectly. Visit https://jackwhiting.co.uk/posts/creating-a-marquee-with-tailwind to learn more.",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "src/components/ui/marquee.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "menubar",
+      "title": "Menubar",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/menubar.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "navigation-menu",
+      "title": "Navigation menu",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/navigation-menu.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "pagination",
+      "title": "Pagination",
+      "type": "registry:ui",
+      "registryDependencies": [
+        "https://neobrutal-ui.andongmin.com/r/nbutton.json"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/pagination.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "popover",
+      "title": "Popover",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/popover.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "progress",
+      "title": "Progress",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/progress.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "radio-group",
+      "title": "Radio group",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/radio-group.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "resizable",
+      "title": "Resizable",
+      "type": "registry:ui",
+      "dependencies": [
+        "react-resizable-panels"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/resizable.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "scroll-area",
+      "title": "Scroll area",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/scroll-area.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "select",
+      "title": "Select",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/select.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "separator",
+      "title": "Separator",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "src/components/ui/separator.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react"
+      ]
+    },
+    {
+      "name": "sheet",
+      "title": "Sheet",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/sheet.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "nsheet",
+      "title": "Sheet",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/sheet.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "sidebar",
+      "title": "Sidebar",
+      "type": "registry:ui",
+      "registryDependencies": [
+        "https://neobrutal-ui.andongmin.com/r/nbutton.json",
+        "https://neobrutal-ui.andongmin.com/r/nsheet.json",
+        "https://neobrutal-ui.andongmin.com/r/ntooltip.json",
+        "https://neobrutal-ui.andongmin.com/r/ninput.json",
+        "https://neobrutal-ui.andongmin.com/r/separator.json",
+        "https://neobrutal-ui.andongmin.com/r/nskeleton.json"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/sidebar.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/hooks/use-mobile.ts",
+          "type": "registry:hook"
+        }
+      ],
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react"
+      ]
+    },
+    {
+      "name": "skeleton",
+      "title": "Skeleton",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "src/components/ui/skeleton.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "nskeleton",
+      "title": "Skeleton",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "src/components/ui/skeleton.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "slider",
+      "title": "Slider",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/slider.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "sonner",
+      "title": "Sonner",
+      "type": "registry:ui",
+      "dependencies": [
+        "sonner",
+        "next-themes"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/sonner.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "switch",
+      "title": "Switch",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/switch.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "table",
+      "title": "Table",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "src/components/ui/table.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "tabs",
+      "title": "Tabs",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/tabs.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "textarea",
+      "title": "Textarea",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "src/components/ui/textarea.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "tooltip",
+      "title": "Tooltip",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/tooltip.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "ntooltip",
+      "title": "Tooltip",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/tooltip.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s1",
+      "title": "Star 1",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s1.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s1.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s2",
+      "title": "Star 2",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s2.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s2.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s3",
+      "title": "Star 3",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s3.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s3.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s4",
+      "title": "Star 4",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s4.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s4.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s5",
+      "title": "Star 5",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s5.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s5.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s6",
+      "title": "Star 6",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s6.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s6.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s7",
+      "title": "Star 7",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s7.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s7.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s8",
+      "title": "Star 8",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s8.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s8.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s9",
+      "title": "Star 9",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s9.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s9.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s10",
+      "title": "Star 10",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s10.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s10.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s11",
+      "title": "Star 11",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s11.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s11.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s12",
+      "title": "Star 12",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s12.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s12.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s13",
+      "title": "Star 13",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s13.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s13.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s14",
+      "title": "Star 14",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s14.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s14.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s15",
+      "title": "Star 15",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s15.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s15.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s16",
+      "title": "Star 16",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s16.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s16.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s17",
+      "title": "Star 17",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s17.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s17.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s18",
+      "title": "Star 18",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s18.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s18.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s19",
+      "title": "Star 19",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s19.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s19.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s20",
+      "title": "Star 20",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s20.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s20.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s21",
+      "title": "Star 21",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s21.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s21.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s22",
+      "title": "Star 22",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s22.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s22.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s23",
+      "title": "Star 23",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s23.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s23.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s24",
+      "title": "Star 24",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s24.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s24.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s25",
+      "title": "Star 25",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s25.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s25.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s26",
+      "title": "Star 26",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s26.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s26.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s27",
+      "title": "Star 27",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s27.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s27.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s28",
+      "title": "Star 28",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s28.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s28.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s29",
+      "title": "Star 29",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s29.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s29.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s30",
+      "title": "Star 30",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s30.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s30.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s31",
+      "title": "Star 31",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s31.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s31.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s32",
+      "title": "Star 32",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s32.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s32.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s33",
+      "title": "Star 33",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s33.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s33.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s34",
+      "title": "Star 34",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s34.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s34.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s35",
+      "title": "Star 35",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s35.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s35.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s36",
+      "title": "Star 36",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s36.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s36.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s37",
+      "title": "Star 37",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s37.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s37.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s38",
+      "title": "Star 38",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s38.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s38.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s39",
+      "title": "Star 39",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s39.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s39.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
+      "name": "s40",
+      "title": "Star 40",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "src/components/stars/s40.tsx",
+          "type": "registry:component",
+          "target": "components/stars/s40.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    }
+  ]
+}

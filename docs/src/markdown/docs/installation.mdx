@@ -1,0 +1,34 @@
+---
+title: Installation
+description: Learn how to install neobrutal-ui components.
+---
+
+## 1. Initialize shadcn
+
+neobrutal-ui targets the current shadcn Base UI setup.
+
+```bash
+pnpm dlx shadcn@latest init -b base
+```
+
+## 2. Add the base registry
+
+Install the neobrutal-ui base item first. It adds the CSS variables, aliases, imports, and shared dependencies used by the components.
+
+```bash
+pnpm dlx shadcn@latest add https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json
+```
+
+## 3. Install components
+
+Install the component you need from the registry.
+
+```bash
+pnpm dlx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json
+```
+
+Component pages include the exact CLI command and source code. If a component has extra dependencies, the registry item installs them with the component.
+
+## Manual install
+
+You can still copy component files manually, but install the base item first so the theme tokens and Tailwind imports exist in your project.
