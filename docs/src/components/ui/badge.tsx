@@ -30,7 +30,9 @@ function Badge({
     asChild?: boolean;
     render?: React.ReactElement;
   }) {
-  const child = asChild && React.isValidElement(children) ? children : render;
+  const child = asChild
+    ? (React.Children.toArray(children).find(React.isValidElement) as React.ReactElement)
+    : render;
   const badgeClassName = cn(badgeVariants({ variant }), className);
 
   if (React.isValidElement(child)) {

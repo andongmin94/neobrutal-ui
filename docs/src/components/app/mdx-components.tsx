@@ -37,14 +37,14 @@ export const sharedComponents = {
   TabsTrigger: ({ className, ...props }: React.ComponentProps<typeof TabsTrigger>) => (
     <TabsTrigger
       className={cn(
-        "h-full border-0 border-r-2 z-10 border-r-border rounded-none sm:text-base data-[state=active]:text-main-foreground text-foreground last:border-r-0",
+        "z-10 h-full rounded-none border-0 border-r-2 border-r-border text-foreground last:border-r-0 data-active:text-main-foreground data-[state=active]:text-main-foreground sm:text-base",
         className,
       )}
       {...props}
     />
   ),
   TabsContent: ({ className, ...props }: React.ComponentProps<typeof TabsContent>) => (
-    <TabsContent className="mt-0 rounded-none" {...props} />
+    <TabsContent className={cn("mt-0 rounded-none", className)} {...props} />
   ),
   Warning: ({
     description,

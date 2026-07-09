@@ -12,11 +12,13 @@ function Collapsible({
   asChild?: boolean;
   children?: React.ReactNode;
 }) {
-  const renderElement = asChild && React.isValidElement(children) ? children : render;
+  const renderElement = asChild
+    ? (React.Children.toArray(children).find(React.isValidElement) as React.ReactElement)
+    : render;
 
   return (
     <CollapsiblePrimitive.Root data-slot="collapsible" render={renderElement} {...props}>
-      {asChild && React.isValidElement(children) ? undefined : children}
+      {asChild ? undefined : children}
     </CollapsiblePrimitive.Root>
   );
 }
@@ -30,11 +32,13 @@ function CollapsibleTrigger({
   asChild?: boolean;
   children?: React.ReactNode;
 }) {
-  const renderElement = asChild && React.isValidElement(children) ? children : render;
+  const renderElement = asChild
+    ? (React.Children.toArray(children).find(React.isValidElement) as React.ReactElement)
+    : render;
 
   return (
     <CollapsiblePrimitive.Trigger data-slot="collapsible-trigger" render={renderElement} {...props}>
-      {asChild && React.isValidElement(children) ? undefined : children}
+      {asChild ? undefined : children}
     </CollapsiblePrimitive.Trigger>
   );
 }

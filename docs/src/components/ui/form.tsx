@@ -98,7 +98,9 @@ function FormControl({
   children: React.ReactElement;
 }) {
   const { error, formItemId, formDescriptionId, formMessageId } = useFormField();
-  const child = React.Children.only(children) as React.ReactElement<Record<string, unknown>>;
+  const child = React.Children.toArray(children).find(React.isValidElement) as React.ReactElement<
+    Record<string, unknown>
+  >;
 
   return React.cloneElement(child, {
     ...props,
