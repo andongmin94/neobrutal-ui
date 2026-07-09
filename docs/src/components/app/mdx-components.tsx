@@ -1,4 +1,4 @@
-import { Toc } from "@stefanprobst/rehype-extract-toc";
+import type { Toc } from "@stefanprobst/rehype-extract-toc";
 import { CircleAlert } from "lucide-react";
 
 import * as runtime from "react/jsx-runtime";

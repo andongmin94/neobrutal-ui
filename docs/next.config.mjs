@@ -1,12 +1,5 @@
-import createMDX from "@next/mdx";
-
-const withMDX = createMDX({
-  extension: /\.mdx?$/,
-});
-
 /** @type {import('next').NextConfig} */
-const nextConfig = withMDX({
-  pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
+const nextConfig = {
   async redirects() {
     return [
       {
@@ -34,7 +27,7 @@ const nextConfig = withMDX({
   },
   // This is required to support PostHog trailing slash API requests
   skipTrailingSlashRedirect: true,
-});
+};
 
 const isDev = process.argv.indexOf("dev") !== -1;
 const isBuild = process.argv.indexOf("build") !== -1;
