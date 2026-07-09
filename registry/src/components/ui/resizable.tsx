@@ -23,8 +23,27 @@ function ResizablePanelGroup({
   );
 }
 
-function ResizablePanel({ ...props }: ResizablePrimitive.PanelProps) {
-  return <ResizablePrimitive.Panel data-slot="resizable-panel" {...props} />;
+function toPercentSize(value: string | number | undefined) {
+  return typeof value === "number" ? `${value}%` : value;
+}
+
+function ResizablePanel({
+  collapsedSize,
+  defaultSize,
+  maxSize,
+  minSize,
+  ...props
+}: ResizablePrimitive.PanelProps) {
+  return (
+    <ResizablePrimitive.Panel
+      data-slot="resizable-panel"
+      collapsedSize={toPercentSize(collapsedSize)}
+      defaultSize={toPercentSize(defaultSize)}
+      maxSize={toPercentSize(maxSize)}
+      minSize={toPercentSize(minSize)}
+      {...props}
+    />
+  );
 }
 
 function ResizableHandle({

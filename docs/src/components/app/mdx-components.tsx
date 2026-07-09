@@ -28,7 +28,7 @@ export const sharedComponents = {
   TabsList: ({ className, ...props }: React.ComponentProps<typeof TabsList>) => (
     <TabsList
       className={cn(
-        "w-full overflow-x-hidden rounded-none sm:h-12 h-10 p-0 bg-secondary-background",
+        "w-full overflow-hidden rounded-none sm:h-12 h-10 p-0 bg-secondary-background",
         className,
       )}
       {...props}
