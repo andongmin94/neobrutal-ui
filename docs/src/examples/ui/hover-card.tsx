@@ -7,7 +7,7 @@ export default function HoverCardDemo() {
       <HoverCardTrigger asChild>
         <Button variant="noShadow">Hover</Button>
       </HoverCardTrigger>
-      <HoverCardContent>The React Framework ??created and maintained by @vercel.</HoverCardContent>
+      <HoverCardContent>The React Framework – created and maintained by @vercel.</HoverCardContent>
     </HoverCard>
   );
 }

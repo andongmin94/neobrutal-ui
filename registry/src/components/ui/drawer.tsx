@@ -5,14 +5,74 @@ import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer";
 
 import { cn } from "@/lib/utils";
 
+type AutoFocusEventHandler = (event: Event) => void;
+type FocusTarget = DrawerPrimitive.Popup.Props["initialFocus"];
+type PointerDownOutsideEvent = CustomEvent<{ originalEvent: PointerEvent }>;
+type FocusOutsideEvent = CustomEvent<{ originalEvent: FocusEvent }>;
+type DismissableLayerHandlers = {
+  onEscapeKeyDown?: (event: KeyboardEvent) => void;
+  onFocusOutside?: (event: FocusOutsideEvent) => void;
+  onInteractOutside?: (event: FocusOutsideEvent | PointerDownOutsideEvent) => void;
+  onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
+};
+type DrawerDirection = "bottom" | "left" | "right" | "top";
+type DrawerSnapPoint = DrawerPrimitive.Root.SnapPoint;
+type DrawerDragMetrics = {
+  active: boolean;
+  event: React.PointerEvent<HTMLDivElement> | null;
+  percentage: number;
+  pointerType: string;
+  releaseScheduled: boolean;
+  velocity: number;
+};
+type DrawerProps = DrawerPrimitive.Root.Props & {
+  activeSnapPoint?: DrawerSnapPoint | null;
+  autoFocus?: boolean;
+  closeThreshold?: number;
+  container?: HTMLElement | null;
+  direction?: DrawerDirection;
+  dismissible?: boolean;
+  handleOnly?: boolean;
+  onAnimationEnd?: (open: boolean) => void;
+  onClose?: () => void;
+  onDrag?: (event: React.PointerEvent<HTMLDivElement>, percentageDragged: number) => void;
+  onRelease?: (event: React.PointerEvent<HTMLDivElement>, open: boolean) => void;
+  setActiveSnapPoint?: (snapPoint: DrawerSnapPoint | null) => void;
+  setBackgroundColorOnScale?: boolean;
+  shouldScaleBackground?: boolean;
+  showSwipeHandle?: boolean;
+  snapToSequentialPoint?: boolean;
+};
+type DrawerPortalProps = DrawerPrimitive.Portal.Props & {
+  forceMount?: boolean;
+};
+type DrawerOverlayProps = DrawerPrimitive.Backdrop.Props & {
+  forceMount?: boolean;
+};
+type DrawerContentProps = DrawerPrimitive.Popup.Props & {
+  forceMount?: boolean;
+  onCloseAutoFocus?: AutoFocusEventHandler;
+  onOpenAutoFocus?: AutoFocusEventHandler;
+} & DismissableLayerHandlers;
+
 type DrawerContextProps = {
+  actionsRef: React.RefObject<DrawerPrimitive.Root.Actions | null>;
+  autoFocus: boolean;
+  closeThreshold: number;
+  container: HTMLElement | null | undefined;
+  dismissible: boolean;
+  dismissableLayerHandlersRef: React.RefObject<DismissableLayerHandlers>;
+  dragMetricsRef: React.RefObject<DrawerDragMetrics>;
+  handleOnly: boolean;
   hasSnapPoints: boolean;
   modal: DrawerPrimitive.Root.Props["modal"];
+  onDrag: DrawerProps["onDrag"];
+  openRef: React.RefObject<boolean>;
+  popupRef: React.RefObject<HTMLDivElement | null>;
+  scheduleRelease: (event: React.PointerEvent<HTMLDivElement>) => void;
   showSwipeHandle: boolean;
   swipeDirection: NonNullable<DrawerPrimitive.Root.Props["swipeDirection"]>;
 };
-
-type DrawerDirection = "bottom" | "left" | "right" | "top";
 
 function toSwipeDirection(direction?: DrawerDirection) {
   if (direction === "bottom") {
@@ -24,6 +84,221 @@ function toSwipeDirection(direction?: DrawerDirection) {
   }
 
   return direction;
+}
+
+function fromSwipeDirection(
+  swipeDirection: NonNullable<DrawerPrimitive.Root.Props["swipeDirection"]>,
+): DrawerDirection {
+  if (swipeDirection === "down") {
+    return "bottom";
+  }
+
+  if (swipeDirection === "up") {
+    return "top";
+  }
+
+  return swipeDirection;
+}
+
+function createPointerEvent(event: MouseEvent | PointerEvent | TouchEvent): PointerEvent {
+  if ("pointerId" in event) {
+    return event;
+  }
+
+  const touch = "changedTouches" in event ? event.changedTouches[0] : undefined;
+  const ownerDocument = event.target instanceof Node ? event.target.ownerDocument : null;
+  const view = ownerDocument?.defaultView ?? window;
+  const PointerEventConstructor = view?.PointerEvent;
+
+  if (!PointerEventConstructor) {
+    return event as PointerEvent;
+  }
+
+  return new PointerEventConstructor("pointerdown", {
+    bubbles: event.bubbles,
+    button: "button" in event ? event.button : 0,
+    buttons: "buttons" in event ? event.buttons : 1,
+    cancelable: event.cancelable,
+    clientX: touch?.clientX ?? ("clientX" in event ? event.clientX : 0),
+    clientY: touch?.clientY ?? ("clientY" in event ? event.clientY : 0),
+    composed: event.composed,
+    ctrlKey: "ctrlKey" in event && event.ctrlKey,
+    metaKey: "metaKey" in event && event.metaKey,
+    pointerType: "changedTouches" in event ? "touch" : "mouse",
+    shiftKey: "shiftKey" in event && event.shiftKey,
+  });
+}
+
+function createPointerDownOutsideEvent(
+  originalEvent: MouseEvent | PointerEvent | TouchEvent,
+): PointerDownOutsideEvent {
+  const event = new CustomEvent<{ originalEvent: PointerEvent }>(
+    "dismissableLayer.pointerDownOutside",
+    {
+      cancelable: true,
+      detail: { originalEvent: createPointerEvent(originalEvent) },
+    },
+  );
+  Object.defineProperty(event, "target", { configurable: true, value: originalEvent.target });
+  return event;
+}
+
+function createFocusOutsideEvent(originalEvent: FocusEvent | KeyboardEvent): FocusOutsideEvent {
+  const focusEvent =
+    "relatedTarget" in originalEvent
+      ? originalEvent
+      : new FocusEvent("focusin", { bubbles: true, cancelable: true });
+  const event = new CustomEvent<{ originalEvent: FocusEvent }>("dismissableLayer.focusOutside", {
+    cancelable: true,
+    detail: { originalEvent: focusEvent },
+  });
+  Object.defineProperty(event, "target", { configurable: true, value: originalEvent.target });
+  return event;
+}
+
+function adaptDismissableLayerEvent(
+  eventDetails: DrawerPrimitive.Root.ChangeEventDetails,
+  handlers: DismissableLayerHandlers,
+) {
+  if (eventDetails.reason === "escape-key") {
+    handlers.onEscapeKeyDown?.(eventDetails.event);
+    if (eventDetails.event.defaultPrevented) {
+      eventDetails.cancel();
+    }
+    return;
+  }
+
+  if (eventDetails.reason === "outside-press") {
+    const event = createPointerDownOutsideEvent(eventDetails.event);
+    handlers.onPointerDownOutside?.(event);
+    handlers.onInteractOutside?.(event);
+    if (event.defaultPrevented) {
+      eventDetails.cancel();
+    }
+    return;
+  }
+
+  if (eventDetails.reason === "focus-out") {
+    const event = createFocusOutsideEvent(eventDetails.event);
+    handlers.onFocusOutside?.(event);
+    handlers.onInteractOutside?.(event);
+    if (event.defaultPrevented) {
+      eventDetails.cancel();
+    }
+  }
+}
+
+function adaptCloseClick(
+  handler: DrawerPrimitive.Close.Props["onClick"],
+): DrawerPrimitive.Close.Props["onClick"] {
+  if (!handler) {
+    return undefined;
+  }
+
+  return (event) => {
+    handler(event);
+    if (event.defaultPrevented) {
+      event.preventBaseUIHandler();
+    }
+  };
+}
+
+function hasForceMountedChild(children: React.ReactNode) {
+  return React.Children.toArray(children).some(
+    (child) => React.isValidElement<{ forceMount?: boolean }>(child) && child.props.forceMount,
+  );
+}
+
+function adaptAutoFocus(
+  handler: AutoFocusEventHandler | undefined,
+  focus: FocusTarget,
+  eventName: string,
+): FocusTarget {
+  if (!handler) {
+    return focus;
+  }
+
+  return (interactionType) => {
+    const event = new Event(eventName, { cancelable: true });
+    handler(event);
+
+    if (event.defaultPrevented) {
+      return false;
+    }
+
+    if (typeof focus === "function") {
+      return focus(interactionType);
+    }
+
+    if (typeof focus === "object" && focus !== null) {
+      return focus.current;
+    }
+
+    return focus ?? true;
+  };
+}
+
+function useScaleBackground({
+  direction,
+  enabled,
+  open,
+  setBackgroundColor,
+}: {
+  direction: DrawerDirection;
+  enabled: boolean;
+  open: boolean;
+  setBackgroundColor: boolean;
+}) {
+  React.useEffect(() => {
+    if (!enabled || !open) {
+      return;
+    }
+
+    const wrapper =
+      document.querySelector<HTMLElement>("[data-vaul-drawer-wrapper]") ??
+      document.querySelector<HTMLElement>("[vaul-drawer-wrapper]");
+
+    if (!wrapper) {
+      return;
+    }
+
+    const previousWrapperStyles = {
+      borderRadius: wrapper.style.borderRadius,
+      overflow: wrapper.style.overflow,
+      transform: wrapper.style.transform,
+      transformOrigin: wrapper.style.transformOrigin,
+      transitionDuration: wrapper.style.transitionDuration,
+      transitionProperty: wrapper.style.transitionProperty,
+      transitionTimingFunction: wrapper.style.transitionTimingFunction,
+    };
+    const previousBodyBackground = document.body.style.background;
+    const scale = (window.innerWidth - 16) / Math.max(window.innerWidth, 1);
+    const vertical = direction === "bottom" || direction === "top";
+
+    Object.assign(wrapper.style, {
+      borderRadius: "8px",
+      overflow: "hidden",
+      transform: vertical
+        ? `scale(${scale}) translate3d(0, calc(env(safe-area-inset-top) + 14px), 0)`
+        : `scale(${scale}) translate3d(calc(env(safe-area-inset-top) + 14px), 0, 0)`,
+      transformOrigin: vertical ? "top" : "left",
+      transitionDuration: "500ms",
+      transitionProperty: "transform, border-radius",
+      transitionTimingFunction: "cubic-bezier(0.32, 0.72, 0, 1)",
+    });
+
+    if (setBackgroundColor) {
+      document.body.style.background = "black";
+    }
+
+    return () => {
+      Object.assign(wrapper.style, previousWrapperStyles);
+
+      if (setBackgroundColor) {
+        document.body.style.background = previousBodyBackground;
+      }
+    };
+  }, [direction, enabled, open, setBackgroundColor]);
 }
 
 const DrawerContext = React.createContext<DrawerContextProps | null>(null);
@@ -39,32 +314,221 @@ function useDrawer() {
 }
 
 function Drawer({
+  actionsRef: actionsRefProp,
+  activeSnapPoint,
+  autoFocus = false,
+  children,
+  closeThreshold = 0.25,
+  container,
+  defaultOpen = false,
   direction,
+  disablePointerDismissal,
+  dismissible = true,
+  handleOnly = false,
   modal = true,
-  showSwipeHandle = false,
+  onAnimationEnd,
+  onClose,
+  onDrag,
+  onOpenChange,
+  onOpenChangeComplete,
+  onRelease,
+  onSnapPointChange,
+  open,
+  setActiveSnapPoint,
+  setBackgroundColorOnScale = true,
+  shouldScaleBackground = false,
+  showSwipeHandle = true,
+  snapPoint,
   snapPoints,
+  snapToSequentialPoint,
+  snapToSequentialPoints,
   swipeDirection: swipeDirectionProp,
   ...props
-}: DrawerPrimitive.Root.Props & {
-  direction?: DrawerDirection;
-  showSwipeHandle?: boolean;
-}) {
+}: DrawerProps) {
   const swipeDirection = swipeDirectionProp ?? toSwipeDirection(direction) ?? "down";
   const hasSnapPoints = snapPoints != null && snapPoints.length > 0;
+  const resolvedDirection = direction ?? fromSwipeDirection(swipeDirection);
+  const resolvedCloseThreshold = Math.min(Math.max(closeThreshold, 0), 1);
+  const resolvedSnapPoint = activeSnapPoint !== undefined ? activeSnapPoint : snapPoint;
+  const resolvedSnapToSequentialPoints = snapToSequentialPoint ?? snapToSequentialPoints;
+  const fallbackActionsRef = React.useRef<DrawerPrimitive.Root.Actions | null>(null);
+  const actionsRef = actionsRefProp ?? fallbackActionsRef;
+  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultOpen);
+  const resolvedOpen = open ?? uncontrolledOpen;
+  const openRef = React.useRef(resolvedOpen);
+  const popupRef = React.useRef<HTMLDivElement>(null);
+  const dismissableLayerHandlersRef = React.useRef<DismissableLayerHandlers>({});
+  const dragMetricsRef = React.useRef<DrawerDragMetrics>({
+    active: false,
+    event: null,
+    percentage: 0,
+    pointerType: "",
+    releaseScheduled: false,
+    velocity: 0,
+  });
+  const releaseFrameRef = React.useRef<number | null>(null);
+  openRef.current = resolvedOpen;
+
+  if (hasSnapPoints && (swipeDirection === "left" || swipeDirection === "right")) {
+    throw new Error("Drawer snapPoints are only supported for top and bottom drawers.");
+  }
+
+  const scheduleRelease = React.useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      if (!onRelease) {
+        return;
+      }
+
+      if (releaseFrameRef.current !== null) {
+        window.cancelAnimationFrame(releaseFrameRef.current);
+      }
+      releaseFrameRef.current = window.requestAnimationFrame(() => {
+        releaseFrameRef.current = null;
+        onRelease(event, openRef.current);
+      });
+    },
+    [onRelease],
+  );
+
+  React.useEffect(
+    () => () => {
+      if (releaseFrameRef.current !== null) {
+        window.cancelAnimationFrame(releaseFrameRef.current);
+      }
+    },
+    [],
+  );
+
+  const handleOpenChange: NonNullable<DrawerPrimitive.Root.Props["onOpenChange"]> = (
+    nextOpen,
+    eventDetails,
+  ) => {
+    if (!nextOpen) {
+      adaptDismissableLayerEvent(eventDetails, dismissableLayerHandlersRef.current);
+    }
+
+    if (!nextOpen && !dismissible) {
+      eventDetails.cancel();
+    }
+
+    const dragMetrics = dragMetricsRef.current;
+    if (
+      !nextOpen &&
+      eventDetails.reason === "swipe" &&
+      dragMetrics.active &&
+      dragMetrics.percentage < resolvedCloseThreshold &&
+      dragMetrics.velocity <= 0.4
+    ) {
+      eventDetails.cancel();
+    }
+
+    if (!eventDetails.isCanceled) {
+      onOpenChange?.(nextOpen, eventDetails);
+    }
+
+    if (
+      !nextOpen &&
+      eventDetails.reason === "swipe" &&
+      dragMetrics.active &&
+      dragMetrics.event &&
+      !dragMetrics.releaseScheduled
+    ) {
+      dragMetrics.releaseScheduled = true;
+      scheduleRelease(dragMetrics.event);
+    }
+
+    if (eventDetails.isCanceled) {
+      return;
+    }
+
+    if (open === undefined) {
+      openRef.current = nextOpen;
+      setUncontrolledOpen(nextOpen);
+    }
+
+    if (!nextOpen) {
+      onClose?.();
+    }
+  };
+
+  const handleOpenChangeComplete = (nextOpen: boolean) => {
+    onOpenChangeComplete?.(nextOpen);
+    onAnimationEnd?.(nextOpen);
+  };
+
+  const handleSnapPointChange: NonNullable<DrawerPrimitive.Root.Props["onSnapPointChange"]> = (
+    nextSnapPoint,
+    eventDetails,
+  ) => {
+    onSnapPointChange?.(nextSnapPoint, eventDetails);
+
+    if (!eventDetails.isCanceled) {
+      setActiveSnapPoint?.(nextSnapPoint);
+    }
+  };
+
+  useScaleBackground({
+    direction: resolvedDirection,
+    enabled: shouldScaleBackground,
+    open: resolvedOpen,
+    setBackgroundColor: setBackgroundColorOnScale,
+  });
+
   const contextValue = React.useMemo(
-    () => ({ hasSnapPoints, modal, showSwipeHandle, swipeDirection }),
-    [hasSnapPoints, modal, showSwipeHandle, swipeDirection],
+    () => ({
+      actionsRef,
+      autoFocus,
+      closeThreshold: resolvedCloseThreshold,
+      container,
+      dismissible,
+      dismissableLayerHandlersRef,
+      dragMetricsRef,
+      handleOnly,
+      hasSnapPoints,
+      modal,
+      onDrag,
+      openRef,
+      popupRef,
+      scheduleRelease,
+      showSwipeHandle,
+      swipeDirection,
+    }),
+    [
+      actionsRef,
+      autoFocus,
+      container,
+      dismissible,
+      handleOnly,
+      hasSnapPoints,
+      modal,
+      onDrag,
+      resolvedCloseThreshold,
+      scheduleRelease,
+      showSwipeHandle,
+      swipeDirection,
+    ],
   );
 
   return (
     <DrawerContext.Provider value={contextValue}>
       <DrawerPrimitive.Root
         data-slot="drawer"
+        actionsRef={actionsRef}
+        defaultOpen={defaultOpen}
+        disablePointerDismissal={disablePointerDismissal ?? !dismissible}
         modal={modal}
+        onOpenChange={handleOpenChange}
+        onOpenChangeComplete={handleOpenChangeComplete}
+        onSnapPointChange={handleSnapPointChange}
+        open={open}
+        snapPoint={resolvedSnapPoint}
         snapPoints={snapPoints}
+        snapToSequentialPoints={resolvedSnapToSequentialPoints}
         swipeDirection={swipeDirection}
         {...props}
-      />
+      >
+        {children}
+      </DrawerPrimitive.Root>
     </DrawerContext.Provider>
   );
 }
@@ -89,13 +553,29 @@ function DrawerTrigger({
   );
 }
 
-function DrawerPortal({ ...props }: DrawerPrimitive.Portal.Props) {
-  return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />;
+function DrawerPortal({
+  container: containerProp,
+  forceMount,
+  keepMounted,
+  ...props
+}: DrawerPortalProps) {
+  const { container } = useDrawer();
+  const keepPortalMounted = forceMount ?? (hasForceMountedChild(props.children) || keepMounted);
+
+  return (
+    <DrawerPrimitive.Portal
+      data-slot="drawer-portal"
+      container={containerProp ?? container ?? undefined}
+      keepMounted={keepPortalMounted}
+      {...props}
+    />
+  );
 }
 
 function DrawerClose({
   asChild = false,
   children,
+  onClick,
   render,
   ...props
 }: DrawerPrimitive.Close.Props & {
@@ -107,13 +587,18 @@ function DrawerClose({
     : render;
 
   return (
-    <DrawerPrimitive.Close data-slot="drawer-close" render={renderElement} {...props}>
+    <DrawerPrimitive.Close
+      data-slot="drawer-close"
+      onClick={adaptCloseClick(onClick)}
+      render={renderElement}
+      {...props}
+    >
       {asChild ? undefined : children}
     </DrawerPrimitive.Close>
   );
 }
 
-function DrawerOverlay({ className, ...props }: DrawerPrimitive.Backdrop.Props) {
+function DrawerOverlay({ className, forceMount: _forceMount, ...props }: DrawerOverlayProps) {
   return (
     <DrawerPrimitive.Backdrop
       data-slot="drawer-overlay"
@@ -132,7 +617,7 @@ function DrawerSwipeHandle({ className, ...props }: React.ComponentProps<"div">)
       data-slot="drawer-swipe-handle"
       aria-hidden="true"
       className={cn(
-        "relative z-10 flex shrink-0 cursor-grab transition-opacity duration-200 group-data-nested-drawer-open/drawer-popup:opacity-0 group-data-nested-drawer-swiping/drawer-popup:opacity-100 group-data-[swipe-axis=x]/drawer-popup:h-full group-data-[swipe-axis=x]/drawer-popup:w-3 group-data-[swipe-axis=x]/drawer-popup:items-center group-data-[swipe-axis=y]/drawer-popup:h-3 group-data-[swipe-axis=y]/drawer-popup:w-full group-data-[swipe-axis=y]/drawer-popup:justify-center group-data-[swipe-direction=down]/drawer-popup:items-end group-data-[swipe-direction=left]/drawer-popup:order-last group-data-[swipe-direction=left]/drawer-popup:justify-start group-data-[swipe-direction=right]/drawer-popup:justify-end group-data-[swipe-direction=up]/drawer-popup:order-last group-data-[swipe-direction=up]/drawer-popup:items-start after:block after:shrink-0 after:rounded-full after:bg-border group-data-[swipe-axis=x]/drawer-popup:after:h-24 group-data-[swipe-axis=x]/drawer-popup:after:w-1 group-data-[swipe-axis=y]/drawer-popup:after:h-1 group-data-[swipe-axis=y]/drawer-popup:after:w-24 active:cursor-grabbing",
+        "relative z-10 shrink-0 cursor-grab rounded-full bg-current transition-opacity duration-200 group-data-nested-drawer-open/drawer-popup:opacity-0 group-data-nested-drawer-swiping/drawer-popup:opacity-100 group-data-[swipe-axis=x]/drawer-popup:my-auto group-data-[swipe-axis=x]/drawer-popup:h-[100px] group-data-[swipe-axis=x]/drawer-popup:w-2 group-data-[swipe-axis=y]/drawer-popup:mx-auto group-data-[swipe-axis=y]/drawer-popup:h-2 group-data-[swipe-axis=y]/drawer-popup:w-[100px] group-data-[swipe-direction=down]/drawer-popup:mt-4 group-data-[swipe-direction=left]/drawer-popup:order-last group-data-[swipe-direction=left]/drawer-popup:mr-4 group-data-[swipe-direction=right]/drawer-popup:ml-4 group-data-[swipe-direction=up]/drawer-popup:order-last group-data-[swipe-direction=up]/drawer-popup:mb-4 active:cursor-grabbing",
         className,
       )}
       {...props}
@@ -140,31 +625,313 @@ function DrawerSwipeHandle({ className, ...props }: React.ComponentProps<"div">)
   );
 }
 
-function DrawerContent({ className, children, ...props }: DrawerPrimitive.Popup.Props) {
-  const { hasSnapPoints, modal, showSwipeHandle, swipeDirection } = useDrawer();
+type PointerDragState = {
+  active: boolean;
+  lastCoordinate: number;
+  lastTime: number;
+  pointerId: number;
+  pointerType: string;
+  size: number;
+  startCoordinate: number;
+  startCrossCoordinate: number;
+};
+
+function getDismissCoordinate(
+  event: React.PointerEvent<HTMLDivElement>,
+  swipeDirection: NonNullable<DrawerPrimitive.Root.Props["swipeDirection"]>,
+) {
+  if (swipeDirection === "down") {
+    return event.clientY;
+  }
+
+  if (swipeDirection === "up") {
+    return -event.clientY;
+  }
+
+  if (swipeDirection === "right") {
+    return event.clientX;
+  }
+
+  return -event.clientX;
+}
+
+function getCrossCoordinate(
+  event: React.PointerEvent<HTMLDivElement>,
+  swipeDirection: NonNullable<DrawerPrimitive.Root.Props["swipeDirection"]>,
+) {
+  return swipeDirection === "down" || swipeDirection === "up" ? event.clientX : event.clientY;
+}
+
+function isSwipeHandleTarget(target: EventTarget | null) {
+  return target instanceof Element && target.closest('[data-slot="drawer-swipe-handle"]') !== null;
+}
+
+function shouldTrackPointerDrag(event: React.PointerEvent<HTMLDivElement>, handleOnly: boolean) {
+  if (event.button !== 0) {
+    return false;
+  }
+
+  if (handleOnly) {
+    return isSwipeHandleTarget(event.target);
+  }
+
+  if (!(event.target instanceof Element)) {
+    return false;
+  }
+
+  if (event.target.closest("[data-base-ui-swipe-ignore]")) {
+    return false;
+  }
+
+  if (
+    event.pointerType !== "touch" &&
+    event.target.closest(
+      '[data-drawer-content],button,a,input,select,textarea,label,[role="button"]',
+    )
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
+function getDrawerSize(
+  viewport: HTMLDivElement,
+  swipeDirection: NonNullable<DrawerPrimitive.Root.Props["swipeDirection"]>,
+) {
+  const popup = viewport.querySelector<HTMLElement>('[data-slot="drawer-content"]');
+
+  if (!popup) {
+    return 1;
+  }
+
+  return swipeDirection === "down" || swipeDirection === "up"
+    ? Math.max(popup.offsetHeight, 1)
+    : Math.max(popup.offsetWidth, 1);
+}
+
+function DrawerContent({
+  className,
+  children,
+  finalFocus,
+  forceMount,
+  initialFocus,
+  onCloseAutoFocus,
+  onEscapeKeyDown,
+  onFocusOutside,
+  onInteractOutside,
+  onOpenAutoFocus,
+  onPointerDown,
+  onPointerDownOutside,
+  onTouchStart,
+  ...props
+}: DrawerContentProps) {
+  const {
+    actionsRef,
+    autoFocus,
+    closeThreshold,
+    dismissible,
+    dismissableLayerHandlersRef,
+    dragMetricsRef,
+    handleOnly,
+    hasSnapPoints,
+    modal,
+    onDrag,
+    openRef,
+    popupRef,
+    scheduleRelease,
+    showSwipeHandle,
+    swipeDirection,
+  } = useDrawer();
   const swipeAxis = swipeDirection === "down" || swipeDirection === "up" ? "y" : "x";
+  const dragStateRef = React.useRef<PointerDragState | null>(null);
+  const dismissableLayerHandlers = React.useMemo(
+    () => ({ onEscapeKeyDown, onFocusOutside, onInteractOutside, onPointerDownOutside }),
+    [onEscapeKeyDown, onFocusOutside, onInteractOutside, onPointerDownOutside],
+  );
+  dismissableLayerHandlersRef.current = dismissableLayerHandlers;
+
+  React.useEffect(
+    () => () => {
+      if (dismissableLayerHandlersRef.current === dismissableLayerHandlers) {
+        dismissableLayerHandlersRef.current = {};
+      }
+    },
+    [dismissableLayerHandlers, dismissableLayerHandlersRef],
+  );
+
+  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!shouldTrackPointerDrag(event, handleOnly)) {
+      return;
+    }
+
+    const coordinate = getDismissCoordinate(event, swipeDirection);
+    dragStateRef.current = {
+      active: false,
+      lastCoordinate: coordinate,
+      lastTime: event.timeStamp,
+      pointerId: event.pointerId,
+      pointerType: event.pointerType,
+      size: getDrawerSize(event.currentTarget, swipeDirection),
+      startCoordinate: coordinate,
+      startCrossCoordinate: getCrossCoordinate(event, swipeDirection),
+    };
+    dragMetricsRef.current = {
+      active: false,
+      event,
+      percentage: 0,
+      pointerType: event.pointerType,
+      releaseScheduled: false,
+      velocity: 0,
+    };
+  };
+
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const dragState = dragStateRef.current;
+
+    if (!dragState || dragState.pointerId !== event.pointerId) {
+      return;
+    }
+
+    const coordinate = getDismissCoordinate(event, swipeDirection);
+    const displacement = coordinate - dragState.startCoordinate;
+    const crossDisplacement = Math.abs(
+      getCrossCoordinate(event, swipeDirection) - dragState.startCrossCoordinate,
+    );
+    const activationThreshold = event.pointerType === "touch" ? 10 : 2;
+
+    if (!dragState.active) {
+      if (
+        displacement < 0 ||
+        (crossDisplacement > activationThreshold && crossDisplacement > displacement)
+      ) {
+        dragStateRef.current = null;
+        return;
+      }
+
+      if (displacement < activationThreshold || displacement < crossDisplacement) {
+        return;
+      }
+
+      dragState.active = true;
+    }
+
+    const elapsed = Math.max(event.timeStamp - dragState.lastTime, 1);
+    const percentage = Math.max(0, displacement / dragState.size);
+    const velocity = Math.max(0, (coordinate - dragState.lastCoordinate) / elapsed);
+    dragState.lastCoordinate = coordinate;
+    dragState.lastTime = event.timeStamp;
+    dragMetricsRef.current = {
+      active: true,
+      event,
+      percentage,
+      pointerType: event.pointerType,
+      releaseScheduled: dragMetricsRef.current.releaseScheduled,
+      velocity,
+    };
+    onDrag?.(event, percentage);
+
+    if (event.buttons === 0) {
+      finishPointerDrag(event);
+    }
+  };
+
+  function finishPointerDrag(event: React.PointerEvent<HTMLDivElement>, canceled = false) {
+    const dragState = dragStateRef.current;
+
+    if (!dragState || dragState.pointerId !== event.pointerId) {
+      return;
+    }
+
+    if (canceled || !dragState.active) {
+      dragMetricsRef.current.active = false;
+      dragStateRef.current = null;
+      return;
+    }
+
+    const coordinate = getDismissCoordinate(event, swipeDirection);
+    const elapsed = Math.max(event.timeStamp - dragState.lastTime, 1);
+    const percentage = Math.max(0, (coordinate - dragState.startCoordinate) / dragState.size);
+    const velocity = Math.max(0, (coordinate - dragState.lastCoordinate) / elapsed);
+    dragMetricsRef.current = {
+      active: true,
+      event,
+      percentage,
+      pointerType: event.pointerType,
+      releaseScheduled: dragMetricsRef.current.releaseScheduled,
+      velocity,
+    };
+
+    if (
+      dismissible &&
+      !hasSnapPoints &&
+      !dragMetricsRef.current.releaseScheduled &&
+      openRef.current &&
+      (percentage >= closeThreshold || velocity > 0.4)
+    ) {
+      actionsRef.current?.close();
+    }
+
+    if (!dragMetricsRef.current.releaseScheduled) {
+      dragMetricsRef.current.releaseScheduled = true;
+      scheduleRelease(event);
+    }
+    dragMetricsRef.current.active = false;
+    dragStateRef.current = null;
+  }
+
+  const handlePopupPointerDown: NonNullable<DrawerPrimitive.Popup.Props["onPointerDown"]> = (
+    event,
+  ) => {
+    onPointerDown?.(event);
+    if (handleOnly && !isSwipeHandleTarget(event.target)) {
+      event.stopPropagation();
+    }
+  };
+
+  const handlePopupTouchStart: NonNullable<DrawerPrimitive.Popup.Props["onTouchStart"]> = (
+    event,
+  ) => {
+    onTouchStart?.(event);
+    if (handleOnly && !isSwipeHandleTarget(event.target)) {
+      event.stopPropagation();
+    }
+  };
 
   return (
-    <DrawerPortal data-slot="drawer-portal">
+    <DrawerPortal data-slot="drawer-portal" forceMount={forceMount}>
       {modal === true && <DrawerOverlay data-snap-points={hasSnapPoints ? "" : undefined} />}
       <DrawerPrimitive.Viewport
         data-slot="drawer-viewport"
         data-modal={modal}
+        onPointerCancel={(event) => finishPointerDrag(event, true)}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={finishPointerDrag}
         className="pointer-events-none fixed inset-0 z-50 select-none data-[modal=true]:pointer-events-auto"
       >
         <DrawerPrimitive.Popup
-          data-slot="drawer-popup"
+          data-slot="drawer-content"
           data-swipe-axis={swipeAxis}
           data-snap-points={hasSnapPoints ? "" : undefined}
+          initialFocus={adaptAutoFocus(
+            onOpenAutoFocus,
+            initialFocus ?? autoFocus,
+            "focusScope.autoFocusOnMount",
+          )}
+          finalFocus={adaptAutoFocus(onCloseAutoFocus, finalFocus, "focusScope.autoFocusOnUnmount")}
+          onPointerDown={handlePopupPointerDown}
+          onTouchStart={handlePopupTouchStart}
+          ref={popupRef}
           className={cn(
             // Base.
-            "group/drawer-popup pointer-events-auto fixed z-50 m-(--drawer-inset,0px) flex h-(--drawer-content-height) max-h-(--drawer-content-max-height,none) min-h-0 w-(--drawer-content-width,auto) transform-[translate3d(var(--translate-x,0px),var(--translate-y,0px),0)_scale(var(--stack-scale))] flex-col border-2 border-border bg-background text-sm text-foreground shadow-shadow transition-[transform,height,opacity,filter] duration-450 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform outline-none select-none [interpolate-size:allow-keywords] data-[swipe-direction=down]:rounded-t-base data-[swipe-direction=left]:rounded-r-base data-[swipe-direction=right]:rounded-l-base data-[swipe-direction=up]:rounded-b-base",
+            "group/drawer-popup pointer-events-auto fixed z-50 m-(--drawer-inset,0px) flex h-(--drawer-content-height) max-h-(--drawer-content-max-height,none) min-h-0 w-(--drawer-content-width,auto) transform-[translate3d(var(--translate-x,0px),var(--translate-y,0px),0)_scale(var(--stack-scale))] flex-col border-2 border-border bg-background text-foreground shadow-none transition-[transform,height,opacity,filter] duration-450 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform outline-none select-none [interpolate-size:allow-keywords] data-[swipe-direction=down]:mt-24 data-[swipe-direction=down]:rounded-t-base data-[swipe-direction=left]:rounded-r-base data-[swipe-direction=right]:rounded-l-base data-[swipe-direction=up]:mb-24 data-[swipe-direction=up]:rounded-b-base",
             // Nested.
             "data-nested-drawer-open:overflow-hidden data-nested-drawer-open:brightness-95",
             // Bleed.
             "after:pointer-events-none after:absolute after:bg-(--drawer-bleed-background,var(--color-background)) data-[swipe-axis=x]:after:inset-y-0 data-[swipe-axis=x]:after:w-(--bleed) data-[swipe-axis=y]:after:inset-x-0 data-[swipe-axis=y]:after:h-(--bleed) data-[swipe-direction=down]:after:top-full data-[swipe-direction=left]:after:right-full data-[swipe-direction=right]:after:left-full data-[swipe-direction=up]:after:bottom-full",
             // Sizing.
-            "[--drawer-content-height:var(--drawer-height,auto)] data-[swipe-axis=x]:[--drawer-content-width:75%] data-[swipe-axis=y]:[--drawer-content-max-height:calc(100dvh-6rem)] data-[swipe-axis=y]:data-snap-points:[--drawer-content-height:100dvh] data-[swipe-axis=x]:sm:[--drawer-content-width:24rem]",
+            "[--drawer-content-height:var(--drawer-height,auto)] data-[swipe-axis=x]:[--drawer-content-width:75%] data-[swipe-axis=y]:[--drawer-content-max-height:80vh] data-[swipe-axis=y]:data-snap-points:[--drawer-content-height:100dvh] data-[swipe-axis=y]:data-snap-points:[--drawer-content-max-height:100dvh] data-[swipe-axis=x]:sm:[--drawer-content-width:24rem]",
             // Stack.
             "[--bleed:3rem] [--peek:1rem] [--stack-height:var(--drawer-frontmost-height,var(--drawer-height,0px))] [--stack-peek-offset:max(0px,calc((var(--nested-drawers)-var(--stack-progress))*var(--peek)))] [--stack-progress:clamp(0,var(--drawer-swipe-progress),1)] [--stack-scale-base:max(0,calc(1-(var(--nested-drawers)*var(--stack-step))))] [--stack-scale:clamp(0,calc(var(--stack-scale-base)+(var(--stack-step)*var(--stack-progress))),1)] [--stack-shrink:calc(1-var(--stack-scale))] [--stack-step:0.05]",
             // Transitions.
@@ -187,7 +954,7 @@ function DrawerContent({ className, children, ...props }: DrawerPrimitive.Popup.
         >
           {showSwipeHandle && <DrawerSwipeHandle />}
           <DrawerPrimitive.Content
-            data-slot="drawer-content"
+            data-slot="drawer-body"
             className={cn(
               "flex min-h-0 flex-1 flex-col overflow-hidden overscroll-contain rounded-[inherit] transition-opacity duration-300 ease-[cubic-bezier(0.45,1.005,0,1.005)] select-text group-data-nested-drawer-open/drawer-popup:opacity-0 group-data-nested-drawer-swiping/drawer-popup:opacity-100 group-data-swiping/drawer-popup:select-none",
             )}
@@ -204,10 +971,7 @@ function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="drawer-header"
-      className={cn(
-        "flex shrink-0 flex-col gap-0.5 p-4 pb-0 group-data-[swipe-axis=y]/drawer-popup:text-center md:gap-0.5 md:text-left",
-        className,
-      )}
+      className={cn("grid shrink-0 gap-1.5 p-4 text-center sm:text-left", className)}
       {...props}
     />
   );
@@ -217,7 +981,7 @@ function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="drawer-footer"
-      className={cn("mt-auto flex shrink-0 flex-col gap-2 p-4 pt-0", className)}
+      className={cn("mt-auto flex shrink-0 flex-col gap-3 p-4", className)}
       {...props}
     />
   );
@@ -227,7 +991,7 @@ function DrawerTitle({ className, ...props }: DrawerPrimitive.Title.Props) {
   return (
     <DrawerPrimitive.Title
       data-slot="drawer-title"
-      className={cn("font-heading text-base text-foreground", className)}
+      className={cn("font-heading text-lg leading-none tracking-tight", className)}
       {...props}
     />
   );

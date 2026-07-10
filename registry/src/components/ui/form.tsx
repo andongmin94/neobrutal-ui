@@ -9,6 +9,7 @@ import {
   type FieldPath,
   type FieldValues,
 } from "react-hook-form";
+import { useRender } from "@base-ui/react/use-render";
 
 import * as React from "react";
 
@@ -91,26 +92,32 @@ function FormLabel({ className, ...props }: React.ComponentProps<typeof Label>) 
   );
 }
 
-function FormControl({
-  children,
-  ...props
-}: React.ComponentProps<"div"> & {
-  children: React.ReactElement;
-}) {
-  const { error, formItemId, formDescriptionId, formMessageId } = useFormField();
-  const child = React.Children.toArray(children).find(React.isValidElement) as React.ReactElement<
-    Record<string, unknown>
-  >;
+type FormControlProps = React.HTMLAttributes<HTMLElement> & {
+  children?: React.ReactNode;
+};
 
-  return React.cloneElement(child, {
-    ...props,
-    ...child.props,
-    "data-slot": "form-control",
-    id: formItemId,
-    "aria-describedby": !error ? `${formDescriptionId}` : `${formDescriptionId} ${formMessageId}`,
-    "aria-invalid": !!error,
+const FormControl = React.forwardRef<HTMLElement, FormControlProps>(function FormControl(
+  { children, ...props },
+  forwardedRef,
+) {
+  const { error, formItemId, formDescriptionId, formMessageId } = useFormField();
+  const child = React.Children.toArray(children).find(React.isValidElement);
+
+  return useRender({
+    defaultTagName: "span",
+    enabled: child !== undefined,
+    props: {
+      "data-slot": "form-control",
+      id: formItemId,
+      "aria-describedby": !error ? formDescriptionId : `${formDescriptionId} ${formMessageId}`,
+      "aria-invalid": !!error,
+      ...props,
+    },
+    ref: forwardedRef,
+    render: child,
+    state: {},
   });
-}
+});
 
 function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
   const { formDescriptionId } = useFormField();

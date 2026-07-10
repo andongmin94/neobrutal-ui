@@ -47,13 +47,12 @@ function CommandDialog({
         <DialogDescription>{description}</DialogDescription>
       </DialogHeader>
       <DialogContent
-        className={cn(
-          "top-1/3 translate-y-0 overflow-hidden rounded-[0px]! border-0 p-0 shadow-shadow",
-          className,
-        )}
+        className={cn("overflow-hidden rounded-[0px]! border-0 p-0 shadow-shadow", className)}
         showCloseButton={showCloseButton}
       >
-        <Command>{children}</Command>
+        <Command className="**:data-[slot=command-input-wrapper]:h-12 [&_[cmdk-group-heading]]:mb-1 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-heading [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:size-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:size-5">
+          {children}
+        </Command>
       </DialogContent>
     </Dialog>
   );

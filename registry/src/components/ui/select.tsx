@@ -2,24 +2,206 @@
 
 import * as React from "react";
 import { Select as SelectPrimitive } from "@base-ui/react/select";
+import { DirectionProvider } from "@base-ui/react/direction-provider";
 
 import { cn } from "@/lib/utils";
 import { ChevronDownIcon, CheckIcon, ChevronUpIcon } from "lucide-react";
 
-type SelectProps = Omit<SelectPrimitive.Root.Props<string>, "onValueChange"> & {
-  onValueChange?: (value: string, eventDetails: unknown) => void;
+type SelectProps = Omit<
+  SelectPrimitive.Root.Props<string>,
+  "defaultValue" | "onValueChange" | "value"
+> & {
+  defaultValue?: string;
+  dir?: "ltr" | "rtl";
+  onValueChange?: (value: string, eventDetails: SelectPrimitive.Root.ChangeEventDetails) => void;
+  value?: string;
 };
 
-function Select({ onValueChange, ...props }: SelectProps) {
-  return (
-    <SelectPrimitive.Root
-      onValueChange={(value, eventDetails) => {
-        if (value !== null) {
-          onValueChange?.(value, eventDetails);
-        }
-      }}
-      {...props}
-    />
+type SelectItemDefinition = {
+  label: React.ReactNode;
+  value: string;
+};
+
+type SelectPointerDownOutsideEvent = CustomEvent<{ originalEvent: PointerEvent }>;
+
+type SelectDismissHandlers = {
+  onEscapeKeyDown?: (event: KeyboardEvent) => void;
+  onPointerDownOutside?: (event: SelectPointerDownOutsideEvent) => void;
+};
+
+type SelectDismissContextValue = {
+  handlersRef: React.RefObject<SelectDismissHandlers>;
+};
+
+const SelectDismissContext = React.createContext<SelectDismissContextValue | null>(null);
+
+function hasChildren(props: unknown): props is { children?: React.ReactNode } {
+  return typeof props === "object" && props !== null && "children" in props;
+}
+
+function hasSelectItemProps(
+  props: unknown,
+): props is { children?: React.ReactNode; label?: React.ReactNode; value: string } {
+  return hasChildren(props) && "value" in props && typeof props.value === "string";
+}
+
+function collectSelectItems(children: React.ReactNode, items: SelectItemDefinition[] = []) {
+  React.Children.forEach(children, (child) => {
+    if (!React.isValidElement(child)) {
+      return;
+    }
+
+    if (hasSelectItemProps(child.props)) {
+      items.push({ label: child.props.label ?? child.props.children, value: child.props.value });
+      return;
+    }
+
+    if (hasChildren(child.props)) {
+      collectSelectItems(child.props.children, items);
+    }
+  });
+
+  return items;
+}
+
+function setRefValue<T>(ref: React.Ref<T> | undefined, value: T | null) {
+  if (typeof ref === "function") {
+    ref(value);
+  } else if (ref) {
+    ref.current = value;
+  }
+}
+
+function toPointerEvent(originalEvent: Event) {
+  if (originalEvent instanceof PointerEvent) {
+    return originalEvent;
+  }
+
+  const mouseEvent = originalEvent instanceof MouseEvent ? originalEvent : undefined;
+  return new PointerEvent(originalEvent.type, {
+    altKey: mouseEvent?.altKey,
+    bubbles: originalEvent.bubbles,
+    button: mouseEvent?.button,
+    buttons: mouseEvent?.buttons,
+    cancelable: originalEvent.cancelable,
+    clientX: mouseEvent?.clientX,
+    clientY: mouseEvent?.clientY,
+    composed: originalEvent.composed,
+    ctrlKey: mouseEvent?.ctrlKey,
+    metaKey: mouseEvent?.metaKey,
+    pointerType:
+      typeof TouchEvent !== "undefined" && originalEvent instanceof TouchEvent ? "touch" : "mouse",
+    shiftKey: mouseEvent?.shiftKey,
+  });
+}
+
+function createPointerDownOutsideEvent(name: string, originalEvent: Event) {
+  const event = new CustomEvent<{ originalEvent: PointerEvent }>(name, {
+    cancelable: true,
+    detail: { originalEvent: toPointerEvent(originalEvent) },
+  });
+
+  Object.defineProperty(event, "target", {
+    configurable: true,
+    value: originalEvent.target,
+  });
+
+  return event;
+}
+
+function Select({
+  children,
+  defaultValue,
+  dir,
+  form,
+  inputRef,
+  items,
+  onOpenChange,
+  onValueChange,
+  value,
+  ...props
+}: SelectProps) {
+  const isControlled = value !== undefined;
+  const [uncontrolledValue, setUncontrolledValue] = React.useState(defaultValue);
+  const currentValue = isControlled ? value : uncontrolledValue;
+  const initialValueRef = React.useRef(defaultValue);
+  const dismissHandlersRef = React.useRef<SelectDismissHandlers>({});
+  const [associatedForm, setAssociatedForm] = React.useState<HTMLFormElement | null>(null);
+  const mergedInputRef = React.useCallback(
+    (input: HTMLInputElement | null) => {
+      setRefValue(inputRef, input);
+      setAssociatedForm(input?.form ?? null);
+    },
+    [inputRef],
+  );
+  const resolvedItems = React.useMemo(
+    () => items ?? collectSelectItems(children),
+    [children, items],
+  );
+
+  React.useEffect(() => {
+    if (isControlled || associatedForm === null) {
+      return undefined;
+    }
+
+    const reset = () => setUncontrolledValue(initialValueRef.current);
+    associatedForm.addEventListener("reset", reset);
+    return () => associatedForm.removeEventListener("reset", reset);
+  }, [associatedForm, isControlled]);
+
+  const select = (
+    <SelectDismissContext.Provider value={{ handlersRef: dismissHandlersRef }}>
+      <SelectPrimitive.Root
+        form={form}
+        inputRef={mergedInputRef}
+        items={resolvedItems}
+        value={currentValue ?? null}
+        onOpenChange={(nextOpen, eventDetails) => {
+          if (!nextOpen && eventDetails.reason === "escape-key") {
+            const keyboardEvent = eventDetails.event;
+            if (keyboardEvent instanceof KeyboardEvent) {
+              dismissHandlersRef.current.onEscapeKeyDown?.(keyboardEvent);
+              if (keyboardEvent.defaultPrevented) {
+                eventDetails.cancel();
+              }
+            }
+          } else if (!nextOpen && eventDetails.reason === "outside-press") {
+            const outsideEvent = createPointerDownOutsideEvent(
+              "select.pointerDownOutside",
+              eventDetails.event,
+            );
+            dismissHandlersRef.current.onPointerDownOutside?.(outsideEvent);
+            if (outsideEvent.defaultPrevented) {
+              eventDetails.cancel();
+            }
+          }
+
+          if (!eventDetails.isCanceled) {
+            onOpenChange?.(nextOpen, eventDetails);
+          }
+        }}
+        onValueChange={(nextValue, eventDetails) => {
+          if (nextValue === null) {
+            eventDetails.cancel();
+            return;
+          }
+
+          onValueChange?.(nextValue, eventDetails);
+          if (!eventDetails.isCanceled && !isControlled) {
+            setUncontrolledValue(nextValue);
+          }
+        }}
+        {...props}
+      >
+        {children}
+      </SelectPrimitive.Root>
+    </SelectDismissContext.Provider>
+  );
+
+  return dir === undefined ? (
+    select
+  ) : (
+    <DirectionProvider direction={dir}>{select}</DirectionProvider>
   );
 }
 
@@ -70,37 +252,110 @@ function SelectTrigger({
 }
 
 function SelectContent({
+  anchor,
+  arrowPadding,
   className,
   children,
+  collisionAvoidance,
+  collisionBoundary,
+  collisionPadding,
+  disableAnchorTracking,
+  finalFocus,
+  onCloseAutoFocus,
+  onEscapeKeyDown,
+  onPointerDownOutside,
+  positionMethod,
   side = "bottom",
   sideOffset = 4,
   align = "center",
   alignOffset = 0,
   alignItemWithTrigger: alignItemWithTriggerProp,
   position,
+  sticky,
   ...props
 }: SelectPrimitive.Popup.Props &
   Pick<
     SelectPrimitive.Positioner.Props,
-    "align" | "alignOffset" | "side" | "sideOffset" | "alignItemWithTrigger"
+    | "align"
+    | "alignItemWithTrigger"
+    | "alignOffset"
+    | "anchor"
+    | "arrowPadding"
+    | "collisionAvoidance"
+    | "collisionBoundary"
+    | "collisionPadding"
+    | "disableAnchorTracking"
+    | "positionMethod"
+    | "side"
+    | "sideOffset"
+    | "sticky"
   > & {
+    onCloseAutoFocus?: (event: Event) => void;
+    onEscapeKeyDown?: (event: KeyboardEvent) => void;
+    onPointerDownOutside?: (event: SelectPointerDownOutsideEvent) => void;
     position?: "item-aligned" | "popper";
   }) {
-  const alignItemWithTrigger = alignItemWithTriggerProp ?? position !== "popper";
+  const dismissContext = React.useContext(SelectDismissContext);
+  const resolvedPosition = position ?? "popper";
+  const alignItemWithTrigger = alignItemWithTriggerProp ?? resolvedPosition !== "popper";
+  const resolvedFinalFocus: SelectPrimitive.Popup.Props["finalFocus"] = onCloseAutoFocus
+    ? (closeType) => {
+        const event = new Event("select.closeAutoFocus", { cancelable: true });
+        onCloseAutoFocus(event);
+
+        if (event.defaultPrevented) {
+          return false;
+        }
+
+        if (typeof finalFocus === "function") {
+          return finalFocus(closeType);
+        }
+
+        if (typeof finalFocus === "object" && finalFocus !== null) {
+          return finalFocus.current;
+        }
+
+        return finalFocus ?? true;
+      }
+    : finalFocus;
+
+  React.useLayoutEffect(() => {
+    if (dismissContext === null) {
+      return undefined;
+    }
+
+    const handlers = { onEscapeKeyDown, onPointerDownOutside };
+    const handlersRef = dismissContext.handlersRef;
+    handlersRef.current = handlers;
+    return () => {
+      if (handlersRef.current === handlers) {
+        handlersRef.current = {};
+      }
+    };
+  }, [dismissContext, onEscapeKeyDown, onPointerDownOutside]);
 
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Positioner
+        anchor={anchor}
+        arrowPadding={arrowPadding}
         side={side}
         sideOffset={sideOffset}
         align={align}
         alignOffset={alignOffset}
         alignItemWithTrigger={alignItemWithTrigger}
+        collisionAvoidance={collisionAvoidance}
+        collisionBoundary={collisionBoundary}
+        collisionPadding={collisionPadding}
+        disableAnchorTracking={disableAnchorTracking}
+        positionMethod={positionMethod}
+        sticky={sticky}
         className="isolate z-50"
       >
         <SelectPrimitive.Popup
           data-slot="select-content"
           data-align-trigger={alignItemWithTrigger}
+          finalFocus={resolvedFinalFocus}
           className={cn(
             "relative isolate z-50 max-h-(--available-height) w-(--anchor-width) min-w-[8rem] origin-(--transform-origin) overflow-hidden rounded-base border-2 border-border bg-main font-base text-main-foreground duration-100 data-[align-trigger=true]:animate-none data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
             className,

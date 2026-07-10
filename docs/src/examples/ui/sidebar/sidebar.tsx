@@ -206,7 +206,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <DropdownMenuTrigger className="focus-visible:ring-0" asChild>
                 <SidebarMenuButton
                   size="lg"
-                  className="data-[state=open]:bg-main data-[state=open]:text-main-foreground data-[state=open]:outline-border data-[state=open]:outline-2"
+                  className="data-open:bg-main data-open:text-main-foreground data-open:outline-2 data-open:outline-border data-popup-open:bg-main data-popup-open:text-main-foreground data-popup-open:outline-2 data-popup-open:outline-border"
                 >
                   <div className="flex aspect-square size-8 items-center justify-center rounded-base">
                     <activeTeam.logo className="size-4" />
@@ -264,12 +264,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton
-                      className="data-[state=open]:bg-main data-[state=open]:outline-border data-[state=open]:text-main-foreground"
+                      className="group-data-open/collapsible:bg-main group-data-open/collapsible:text-main-foreground group-data-open/collapsible:outline-border"
                       tooltip={item.title}
                     >
                       {item.icon && <item.icon />}
                       <span>{item.title}</span>
-                      <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                      <ChevronRight className="ml-auto transition-transform duration-200 group-data-open/collapsible:rotate-90" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                   <CollapsibleContent>

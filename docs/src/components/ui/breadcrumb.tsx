@@ -36,16 +36,25 @@ function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
   );
 }
 
-function BreadcrumbLink({ className, render, ...props }: useRender.ComponentProps<"a">) {
+function BreadcrumbLink({
+  asChild = false,
+  children,
+  className,
+  render,
+  ...props
+}: useRender.ComponentProps<"a"> & { asChild?: boolean }) {
+  const child = React.Children.toArray(children).find(React.isValidElement);
+
   return useRender({
     defaultTagName: "a",
     props: mergeProps<"a">(
       {
         className: cn("transition-colors hover:text-main", className),
+        children: asChild ? undefined : children,
       },
       props,
     ),
-    render,
+    render: asChild ? child : render,
     state: {
       slot: "breadcrumb-link",
     },

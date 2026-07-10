@@ -42,7 +42,7 @@ const chartConfig = {
 
 export default function ChartAreaStacked() {
   return (
-    <Card className="bg-secondary-background text-foreground">
+    <Card className="w-[284px] bg-secondary-background text-foreground">
       <CardHeader>
         <CardTitle>Area Chart - Stacked</CardTitle>
         <CardDescription>Showing total visitors for the last 6 months</CardDescription>
