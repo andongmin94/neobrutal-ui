@@ -222,6 +222,13 @@ const BASE_ITEM = {
   },
 };
 
+type RegistryItem = {
+  name: string;
+  author?: string;
+  dependencies?: string[];
+  registryDependencies?: string[];
+};
+
 function rewriteRegistryDependency(dependency: string) {
   if (/^https?:\/\//.test(dependency)) {
     return dependency;
@@ -230,7 +237,7 @@ function rewriteRegistryDependency(dependency: string) {
   return `${registryBaseUrl}/r/${dependency.replace(/\.json$/, "")}.json`;
 }
 
-function rewriteDependencies(item: (typeof REGISTRY)[number]): string[] | undefined {
+function rewriteDependencies(item: RegistryItem): string[] | undefined {
   const dependencies = new Set(
     (item.dependencies ?? []).map((dependency) =>
       dependency.startsWith("react-day-picker@") ? "react-day-picker" : dependency,
@@ -244,7 +251,7 @@ function rewriteDependencies(item: (typeof REGISTRY)[number]): string[] | undefi
   return dependencies.size ? [...dependencies] : undefined;
 }
 
-function rewriteRegistryItem(item: (typeof REGISTRY)[number]) {
+function rewriteRegistryItem<T extends RegistryItem>(item: T) {
   return {
     ...item,
     author: item.author ?? "andongmin94",

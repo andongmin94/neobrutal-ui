@@ -97,7 +97,7 @@ const UI = [
     name: "calendar",
     title: "Calendar",
     type: "registry:ui",
-    dependencies: ["react-day-picker@8.10.1", "date-fns"],
+    dependencies: ["react-day-picker"],
     registryDependencies: ["nbutton"],
     files: [
       {
