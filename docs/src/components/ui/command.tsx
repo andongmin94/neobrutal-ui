@@ -1,5 +1,7 @@
+"use client";
+
 import * as React from "react";
-import { Command as CommandPrimitive } from "cmdk";
+import { Command as CommandPrimitive, useCommandState } from "cmdk";
 
 import { cn } from "@/lib/utils";
 import {
@@ -9,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { SearchIcon, CheckIcon } from "lucide-react";
+import { SearchIcon } from "lucide-react";
 
 function Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {
   return (
@@ -51,7 +53,7 @@ function CommandDialog({
         )}
         showCloseButton={showCloseButton}
       >
-        {children}
+        <Command>{children}</Command>
       </DialogContent>
     </Dialog>
   );
@@ -96,6 +98,12 @@ function CommandEmpty({
   className,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Empty>) {
+  const search = useCommandState((state) => state.search);
+
+  if (!search) {
+    return null;
+  }
+
   return (
     <CommandPrimitive.Empty
       data-slot="command-empty"
@@ -134,23 +142,16 @@ function CommandSeparator({
   );
 }
 
-function CommandItem({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive.Item>) {
+function CommandItem({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Item>) {
   return (
     <CommandPrimitive.Item
       data-slot="command-item"
       className={cn(
-        "group/command-item relative flex cursor-default items-center gap-2 rounded-base px-2 py-1.5 text-sm text-main-foreground outline-0 outline-border select-none aria-selected:outline-2 data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-selected:outline-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "relative flex cursor-default items-center gap-2 rounded-base px-2 py-1.5 text-sm text-main-foreground outline-0 outline-border select-none aria-selected:outline-2 data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[selected=true]:outline-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
-    >
-      {children}
-      <CheckIcon className="ml-auto opacity-0 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:opacity-100" />
-    </CommandPrimitive.Item>
+    />
   );
 }
 
