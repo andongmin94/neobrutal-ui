@@ -235,7 +235,7 @@ function Sidebar({
         <div
           data-sidebar="sidebar"
           data-slot="sidebar-inner"
-          className="flex size-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1 group-data-[variant=floating]:ring-sidebar-border"
+          className="flex size-full flex-col bg-sidebar group-data-[variant=floating]:rounded-base group-data-[variant=floating]:border-2 group-data-[variant=floating]:border-border group-data-[variant=floating]:shadow-shadow"
         >
           {children}
         </div>
@@ -296,7 +296,7 @@ function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
     <main
       data-slot="sidebar-inset"
       className={cn(
-        "relative flex w-full flex-1 flex-col bg-background md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2",
+        "relative flex w-full flex-1 flex-col bg-background md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-base md:peer-data-[variant=inset]:border-2 md:peer-data-[variant=inset]:border-border md:peer-data-[variant=inset]:shadow-shadow md:peer-data-[state=collapsed]:ml-2",
         className,
       )}
       {...props}
@@ -494,8 +494,10 @@ function SidebarMenuButton({
     tooltip?: string | React.ComponentProps<typeof TooltipContent>;
   } & VariantProps<typeof sidebarMenuButtonVariants>) {
   const { isMobile, state } = useSidebar();
-  const renderElement = asChild && React.isValidElement(children) ? children : render;
-  const buttonChildren = asChild && React.isValidElement(children) ? undefined : children;
+  const renderElement = asChild
+    ? (React.Children.toArray(children).find(React.isValidElement) as React.ReactElement)
+    : render;
+  const buttonChildren = asChild ? undefined : children;
   const comp = useRender({
     defaultTagName: "button",
     props: mergeProps<"button">(
@@ -654,8 +656,10 @@ function SidebarMenuSubButton({
     asChild?: boolean;
     children?: React.ReactNode;
   }) {
-  const renderElement = asChild && React.isValidElement(children) ? children : render;
-  const buttonChildren = asChild && React.isValidElement(children) ? undefined : children;
+  const renderElement = asChild
+    ? (React.Children.toArray(children).find(React.isValidElement) as React.ReactElement)
+    : render;
+  const buttonChildren = asChild ? undefined : children;
 
   return useRender({
     defaultTagName: "a",

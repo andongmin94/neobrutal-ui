@@ -58,7 +58,9 @@ function Button({
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
   }) {
-  const renderElement = asChild && React.isValidElement(children) ? children : render;
+  const renderElement = asChild
+    ? (React.Children.toArray(children).find(React.isValidElement) as React.ReactElement)
+    : render;
 
   return (
     <ButtonPrimitive
@@ -67,7 +69,7 @@ function Button({
       render={renderElement}
       {...props}
     >
-      {asChild && React.isValidElement(children) ? undefined : children}
+      {asChild ? undefined : children}
     </ButtonPrimitive>
   );
 }
