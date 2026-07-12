@@ -1,57 +1,211 @@
 "use client";
 
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion";
+import { DirectionProvider, useDirection } from "@base-ui/react/direction-provider";
+import * as React from "react";
 
 import { cn } from "@/lib/utils";
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
-type AccordionProps = Omit<
-  AccordionPrimitive.Root.Props,
-  "defaultValue" | "multiple" | "onValueChange" | "value"
+type AccordionBaseProps = Omit<
+  AccordionPrimitive.Root.Props<string>,
+  "defaultValue" | "loopFocus" | "multiple" | "onValueChange" | "value"
 > & {
-  collapsible?: boolean;
-  defaultValue?: string | string[];
-  onValueChange?: (value: string | string[], eventDetails: unknown) => void;
-  type?: "single" | "multiple";
-  value?: string | string[];
+  loop?: boolean;
+  loopFocus?: boolean;
 };
 
-function toAccordionValue(value?: string | string[]) {
-  if (value === undefined) {
-    return undefined;
+type AccordionSingleProps = AccordionBaseProps & {
+  collapsible?: boolean;
+  defaultValue?: string;
+  onValueChange?: (value: string, eventDetails: AccordionPrimitive.Root.ChangeEventDetails) => void;
+  type: "single";
+  value?: string;
+};
+
+type AccordionMultipleProps = AccordionBaseProps & {
+  collapsible?: never;
+  defaultValue?: string[];
+  onValueChange?: (
+    value: string[],
+    eventDetails: AccordionPrimitive.Root.ChangeEventDetails,
+  ) => void;
+  type: "multiple";
+  value?: string[];
+};
+
+type AccordionProps = AccordionSingleProps | AccordionMultipleProps;
+type AccordionKeyDownHandler = NonNullable<AccordionPrimitive.Root.Props<string>["onKeyDown"]>;
+
+function isDisabledAccordionTrigger(trigger: HTMLElement) {
+  return (
+    (trigger instanceof HTMLButtonElement && trigger.disabled) ||
+    trigger.getAttribute("aria-disabled") === "true" ||
+    trigger.hasAttribute("data-disabled")
+  );
+}
+
+function getAccordionTriggers(root: HTMLElement) {
+  return Array.from(root.querySelectorAll<HTMLElement>('[data-slot="accordion-trigger"]')).filter(
+    (trigger) =>
+      trigger.closest<HTMLElement>('[data-slot="accordion"]') === root &&
+      !isDisabledAccordionTrigger(trigger),
+  );
+}
+
+function Accordion(props: AccordionProps) {
+  const inheritedDirection = useDirection();
+  const direction = props.dir === "rtl" ? "rtl" : props.dir === "ltr" ? "ltr" : inheritedDirection;
+  const disabled = props.disabled ?? false;
+  const loop = props.loop ?? props.loopFocus ?? true;
+  const orientation = props.orientation ?? "vertical";
+  const onKeyDown = props.onKeyDown;
+
+  const handleKeyDown = React.useCallback<AccordionKeyDownHandler>(
+    (event) => {
+      onKeyDown?.(event);
+      if (event.defaultPrevented || event.baseUIHandlerPrevented || disabled) {
+        event.preventBaseUIHandler();
+        return;
+      }
+
+      const navigationKeys = new Set([
+        "Home",
+        "End",
+        "ArrowDown",
+        "ArrowUp",
+        "ArrowLeft",
+        "ArrowRight",
+      ]);
+      if (!navigationKeys.has(event.key)) {
+        return;
+      }
+
+      const target = (event.target as Element).closest<HTMLElement>(
+        '[data-slot="accordion-trigger"]',
+      );
+      const root = event.currentTarget;
+      if (target?.closest<HTMLElement>('[data-slot="accordion"]') !== root) {
+        return;
+      }
+
+      const triggers = getAccordionTriggers(root);
+      const currentIndex = target === null ? -1 : triggers.indexOf(target);
+      if (currentIndex === -1 || triggers.length === 0) {
+        return;
+      }
+
+      event.preventDefault();
+      event.preventBaseUIHandler();
+
+      let nextIndex = currentIndex;
+      const lastIndex = triggers.length - 1;
+      const move = (offset: number) => {
+        const candidate = currentIndex + offset;
+        if (candidate < 0) {
+          nextIndex = loop ? lastIndex : 0;
+        } else if (candidate > lastIndex) {
+          nextIndex = loop ? 0 : lastIndex;
+        } else {
+          nextIndex = candidate;
+        }
+      };
+
+      switch (event.key) {
+        case "Home":
+          nextIndex = 0;
+          break;
+        case "End":
+          nextIndex = lastIndex;
+          break;
+        case "ArrowDown":
+          if (orientation === "vertical") move(1);
+          break;
+        case "ArrowUp":
+          if (orientation === "vertical") move(-1);
+          break;
+        case "ArrowRight":
+          if (orientation === "horizontal") move(direction === "rtl" ? -1 : 1);
+          break;
+        case "ArrowLeft":
+          if (orientation === "horizontal") move(direction === "rtl" ? 1 : -1);
+          break;
+      }
+
+      triggers[nextIndex]?.focus();
+    },
+    [direction, disabled, loop, onKeyDown, orientation],
+  );
+
+  if (props.type === "multiple") {
+    const {
+      className,
+      defaultValue,
+      loop: _loop,
+      loopFocus: _loopFocus,
+      onKeyDown: _onKeyDown,
+      onValueChange,
+      orientation: _orientation,
+      type: _type,
+      value,
+      ...rootProps
+    } = props;
+
+    const accordion = (
+      <AccordionPrimitive.Root<string>
+        data-slot="accordion"
+        className={cn("flex w-full flex-col", className)}
+        defaultValue={defaultValue}
+        loopFocus={loop}
+        multiple
+        onKeyDown={handleKeyDown}
+        onValueChange={onValueChange}
+        orientation={orientation}
+        value={value}
+        {...rootProps}
+      />
+    );
+
+    return <DirectionProvider direction={direction}>{accordion}</DirectionProvider>;
   }
 
-  return Array.isArray(value) ? value : [value];
-}
+  const {
+    className,
+    collapsible = false,
+    defaultValue,
+    loop: _loop,
+    loopFocus: _loopFocus,
+    onKeyDown: _onKeyDown,
+    onValueChange,
+    orientation: _orientation,
+    type: _type,
+    value,
+    ...rootProps
+  } = props;
 
-function fromAccordionValue(value: string[], multiple: boolean) {
-  return multiple ? value : (value[0] ?? "");
-}
-
-function Accordion({
-  className,
-  collapsible: _collapsible,
-  defaultValue,
-  onValueChange,
-  type = "single",
-  value,
-  ...props
-}: AccordionProps) {
-  const multiple = type === "multiple";
-
-  return (
-    <AccordionPrimitive.Root
+  const accordion = (
+    <AccordionPrimitive.Root<string>
       data-slot="accordion"
       className={cn("flex w-full flex-col", className)}
-      defaultValue={toAccordionValue(defaultValue)}
-      multiple={multiple}
+      defaultValue={defaultValue === undefined ? undefined : [defaultValue]}
+      loopFocus={loop}
+      multiple={false}
+      onKeyDown={handleKeyDown}
       onValueChange={(nextValue, eventDetails) => {
-        onValueChange?.(fromAccordionValue(nextValue, multiple), eventDetails);
+        if (!collapsible && nextValue.length === 0) {
+          eventDetails.cancel();
+          return;
+        }
+
+        onValueChange?.(nextValue[0] ?? "", eventDetails);
       }}
-      value={toAccordionValue(value)}
-      {...props}
+      orientation={orientation}
+      value={value === undefined ? undefined : [value]}
+      {...rootProps}
     />
   );
+
+  return <DirectionProvider direction={direction}>{accordion}</DirectionProvider>;
 }
 
 function AccordionItem({ className, ...props }: AccordionPrimitive.Item.Props) {

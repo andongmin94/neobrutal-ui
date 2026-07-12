@@ -43,8 +43,14 @@ function CollapsibleTrigger({
   );
 }
 
-function CollapsibleContent({ ...props }: CollapsiblePrimitive.Panel.Props) {
-  return <CollapsiblePrimitive.Panel data-slot="collapsible-content" {...props} />;
+function CollapsibleContent({ keepMounted = true, ...props }: CollapsiblePrimitive.Panel.Props) {
+  return (
+    <CollapsiblePrimitive.Panel
+      data-slot="collapsible-content"
+      keepMounted={keepMounted}
+      {...props}
+    />
+  );
 }
 
 export { Collapsible, CollapsibleTrigger, CollapsibleContent };

@@ -42,6 +42,7 @@ const frameworks = [
 function ComboboxDemo() {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -58,9 +59,9 @@ function ComboboxDemo() {
           <ChevronsUpDown className="ml-2 size-4 shrink-0" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] border-0! p-0 font-base">
+      <PopoverContent className="w-[200px] border-0! p-0 font-base" initialFocus={inputRef}>
         <Command>
-          <CommandInput placeholder="Search framework..." />
+          <CommandInput ref={inputRef} placeholder="Search framework..." />
           <CommandEmpty>No framework found.</CommandEmpty>
           <CommandGroup>
             {frameworks.map((framework) => (

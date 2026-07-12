@@ -1,18 +1,20 @@
 "use client";
 
 import * as React from "react";
-import { Menu as MenuPrimitive } from "@base-ui/react/menu";
+import { DirectionProvider } from "@base-ui/react/direction-provider";
 import { Menubar as MenubarPrimitive } from "@base-ui/react/menubar";
 
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuPortal,
   DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuSub,
@@ -20,23 +22,132 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { CheckIcon } from "lucide-react";
 
-function Menubar({ className, ...props }: MenubarPrimitive.Props) {
-  return (
+type MenubarValueContextValue = {
+  setValue: (value: string) => void;
+  value: string;
+  valueRef: React.MutableRefObject<string>;
+};
+
+const MenubarValueContext = React.createContext<MenubarValueContextValue | null>(null);
+
+type MenubarMenuContextValue = {
+  defaultTriggerId: string;
+  setTriggerId: React.Dispatch<React.SetStateAction<string>>;
+};
+
+const MenubarMenuContext = React.createContext<MenubarMenuContextValue | null>(null);
+
+function useMenubarValueContext() {
+  const context = React.useContext(MenubarValueContext);
+
+  if (!context) {
+    throw new Error("MenubarMenu must be used within Menubar");
+  }
+  return context;
+}
+
+type MenubarProps = Omit<MenubarPrimitive.Props, "dir" | "loopFocus" | "orientation"> & {
+  defaultValue?: string;
+  dir?: "ltr" | "rtl";
+  loop?: boolean;
+  onValueChange?: (value: string) => void;
+  value?: string;
+};
+
+function Menubar({
+  children,
+  className,
+  defaultValue = "",
+  dir,
+  loop = true,
+  onValueChange,
+  value: valueProp,
+  ...props
+}: MenubarProps) {
+  const controlled = valueProp !== undefined;
+  const [uncontrolledValue, setUncontrolledValue] = React.useState(defaultValue);
+  const value = valueProp ?? uncontrolledValue;
+  const valueRef = React.useRef(value);
+  valueRef.current = value;
+
+  const setValue = React.useCallback(
+    (nextValue: string) => {
+      if (!controlled) {
+        if (valueRef.current === nextValue) return;
+        valueRef.current = nextValue;
+        setUncontrolledValue(nextValue);
+      }
+      onValueChange?.(nextValue);
+    },
+    [controlled, onValueChange],
+  );
+
+  const context = React.useMemo<MenubarValueContextValue>(
+    () => ({ setValue, value, valueRef }),
+    [setValue, value],
+  );
+
+  const menubar = (
     <MenubarPrimitive
       data-slot="menubar"
+      data-value={value || undefined}
+      dir={dir}
+      loopFocus={loop}
       className={cn(
         "flex h-11 items-center gap-1 rounded-base border-2 border-border bg-main p-1 font-base",
         className,
       )}
       {...props}
-    />
+    >
+      {children}
+    </MenubarPrimitive>
+  );
+
+  return (
+    <MenubarValueContext.Provider value={context}>
+      {dir ? <DirectionProvider direction={dir}>{menubar}</DirectionProvider> : menubar}
+    </MenubarValueContext.Provider>
   );
 }
 
-function MenubarMenu({ ...props }: React.ComponentProps<typeof DropdownMenu>) {
-  return <DropdownMenu data-slot="menubar-menu" {...props} />;
+type MenubarMenuProps = Omit<
+  React.ComponentProps<typeof DropdownMenu>,
+  "defaultOpen" | "onOpenChange" | "open"
+> & {
+  value?: string;
+};
+
+function MenubarMenu({ children, value: valueProp, ...props }: MenubarMenuProps) {
+  const context = useMenubarValueContext();
+  const generatedValue = React.useId();
+  const value = valueProp ?? generatedValue;
+  const defaultTriggerId = `${generatedValue}-trigger`;
+  const [triggerId, setTriggerId] = React.useState(defaultTriggerId);
+  const menuContext = React.useMemo<MenubarMenuContextValue>(
+    () => ({ defaultTriggerId, setTriggerId }),
+    [defaultTriggerId],
+  );
+
+  return (
+    <MenubarMenuContext.Provider value={menuContext}>
+      <DropdownMenu
+        data-slot="menubar-menu"
+        {...props}
+        onOpenChange={(open) => {
+          if (open) {
+            context.setValue(value);
+          } else if (context.valueRef.current === value) {
+            context.setValue("");
+          }
+        }}
+        open={context.value === value}
+        triggerId={triggerId}
+      >
+        {children}
+      </DropdownMenu>
+    </MenubarMenuContext.Provider>
+  );
 }
 
 function MenubarGroup({ ...props }: React.ComponentProps<typeof DropdownMenuGroup>) {
@@ -47,12 +158,31 @@ function MenubarPortal({ ...props }: React.ComponentProps<typeof DropdownMenuPor
   return <DropdownMenuPortal data-slot="menubar-portal" {...props} />;
 }
 
-function MenubarTrigger({ className, ...props }: React.ComponentProps<typeof DropdownMenuTrigger>) {
+function MenubarTrigger({
+  className,
+  id,
+  ...props
+}: React.ComponentProps<typeof DropdownMenuTrigger>) {
+  const menuContext = React.useContext(MenubarMenuContext);
+  const triggerId = id ?? menuContext?.defaultTriggerId;
+
+  React.useLayoutEffect(() => {
+    if (!menuContext || !triggerId) return undefined;
+
+    menuContext.setTriggerId(triggerId);
+    return () => {
+      menuContext.setTriggerId((currentId) =>
+        currentId === triggerId ? menuContext.defaultTriggerId : currentId,
+      );
+    };
+  }, [menuContext, triggerId]);
+
   return (
     <DropdownMenuTrigger
       data-slot="menubar-trigger"
+      id={triggerId}
       className={cn(
-        "flex items-center rounded-base border-2 border-transparent px-2 py-1.5 text-sm font-base outline-hidden select-none hover:border-border aria-expanded:border-border",
+        "flex cursor-default items-center rounded-base border-2 border-transparent px-3 py-1.5 text-sm font-heading text-main-foreground outline-hidden select-none hover:border-border aria-expanded:border-border data-open:border-border data-popup-open:border-border",
         className,
       )}
       {...props}
@@ -105,30 +235,21 @@ function MenubarItem({
 function MenubarCheckboxItem({
   className,
   children,
-  checked,
   inset,
   ...props
-}: MenuPrimitive.CheckboxItem.Props & {
-  inset?: boolean;
-}) {
+}: React.ComponentProps<typeof DropdownMenuCheckboxItem>) {
   return (
-    <MenuPrimitive.CheckboxItem
+    <DropdownMenuCheckboxItem
       data-slot="menubar-checkbox-item"
       data-inset={inset}
       className={cn(
         "relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent py-1.5 pr-2 pl-8 text-sm font-base outline-hidden transition-colors select-none focus:border-border data-inset:pl-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
         className,
       )}
-      checked={checked}
       {...props}
     >
-      <span className="pointer-events-none absolute left-1.5 flex size-4 items-center justify-center [&_svg:not([class*='size-'])]:size-4">
-        <MenuPrimitive.CheckboxItemIndicator>
-          <CheckIcon />
-        </MenuPrimitive.CheckboxItemIndicator>
-      </span>
       {children}
-    </MenuPrimitive.CheckboxItem>
+    </DropdownMenuCheckboxItem>
   );
 }
 
@@ -141,11 +262,9 @@ function MenubarRadioItem({
   children,
   inset,
   ...props
-}: MenuPrimitive.RadioItem.Props & {
-  inset?: boolean;
-}) {
+}: React.ComponentProps<typeof DropdownMenuRadioItem>) {
   return (
-    <MenuPrimitive.RadioItem
+    <DropdownMenuRadioItem
       data-slot="menubar-radio-item"
       data-inset={inset}
       className={cn(
@@ -154,13 +273,8 @@ function MenubarRadioItem({
       )}
       {...props}
     >
-      <span className="pointer-events-none absolute left-1.5 flex size-4 items-center justify-center [&_svg:not([class*='size-'])]:size-4">
-        <MenuPrimitive.RadioItemIndicator>
-          <CheckIcon />
-        </MenuPrimitive.RadioItemIndicator>
-      </span>
       {children}
-    </MenuPrimitive.RadioItem>
+    </DropdownMenuRadioItem>
   );
 }
 
@@ -223,7 +337,7 @@ function MenubarSubTrigger({
       data-slot="menubar-sub-trigger"
       data-inset={inset}
       className={cn(
-        "gap-2 rounded-base border-2 border-transparent px-2 py-1.5 text-sm font-base focus:border-border data-inset:pl-8 data-open:border-border [&_svg:not([class*='size-'])]:size-4",
+        "gap-2 rounded-base border-2 border-transparent px-2 py-1.5 text-sm font-base focus:border-border data-inset:pl-8 data-open:border-border data-popup-open:border-border [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
