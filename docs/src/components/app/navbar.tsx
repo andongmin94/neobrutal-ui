@@ -22,17 +22,20 @@ async function getRepoData() {
 async function Navbar() {
   const repo = await getRepoData();
 
-  const starsCount = (repo.stargazers_count / 1000).toFixed(1) + "k";
+  const starsCount =
+    repo.stargazers_count >= 1000
+      ? `${(repo.stargazers_count / 1000).toFixed(1)}k`
+      : String(repo.stargazers_count);
 
   return (
     <nav className="fixed left-0 top-0 z-20 mx-auto flex h-[70px] w-full items-center border-b-4 border-border bg-secondary-background px-5">
       <div className="mx-auto flex w-[1300px] text-foreground max-w-full items-center justify-between">
-        <div className="flex items-center xl:gap-10 gap-10">
-          <Link
-            className="text-[22px] size-8 rounded-base flex bg-main text-main-foreground border-2 border-black items-center justify-center font-heading"
-            href={"/"}
-          >
-            N
+        <div className="flex items-center gap-8 xl:gap-10">
+          <Link className="flex items-center gap-2.5 font-heading" href={"/"}>
+            <span className="flex size-8 items-center justify-center rounded-base border-2 border-black bg-signal text-[22px] text-main-foreground">
+              N
+            </span>
+            <span className="hidden text-base xl:inline">neobrutal-ui</span>
           </Link>
 
           <div className="items-center text-base font-base xl:gap-10 lg:flex gap-10 hidden">
@@ -73,9 +76,11 @@ async function Navbar() {
               </svg>
             </a>
             <a
+              aria-label="andongmin94 on X"
               target="_blank"
-              href="https://twitter.com/samuelbreznjak"
-              className="flex items-center justify-center rounded-base border-2 border-border shadow-nav dark:shadow-navDark dark:border-darkBorder size-9 transition-all hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none dark:hover:shadow-none"
+              rel="noreferrer"
+              href="https://x.com/andongmin94"
+              className="flex size-9 items-center justify-center rounded-base border-2 border-border shadow-nav transition-all hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none dark:border-darkBorder dark:shadow-navDark dark:hover:shadow-none"
             >
               <svg className="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                 <path
@@ -84,7 +89,6 @@ async function Navbar() {
                 />
               </svg>
             </a>
-
             <ThemeSwitcher />
           </div>
         </div>
