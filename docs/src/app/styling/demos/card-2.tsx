@@ -38,7 +38,7 @@ export default function CardDemo({ className, ...props }: CardProps) {
         <CardDescription className="text-foreground">You have 3 unread messages.</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
-        <div className=" flex items-center space-x-4 rounded-base border-2 bg-secondary-background border-border p-4">
+        <div className="flex items-center gap-4 rounded-base border-2 border-border bg-secondary-background p-4">
           <BellRing />
           <div className="flex-1 space-y-1">
             <p className="text-sm font-heading leading-none">Push Notifications</p>

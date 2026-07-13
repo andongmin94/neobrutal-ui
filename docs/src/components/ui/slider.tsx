@@ -285,13 +285,21 @@ function SliderThumb({
   index,
   inputRef,
   onKeyDown,
+  orientation,
   style,
 }: {
   index: number;
   inputRef: React.Ref<HTMLInputElement>;
   onKeyDown: React.KeyboardEventHandler<HTMLInputElement>;
+  orientation: "horizontal" | "vertical";
   style?: React.CSSProperties;
 }) {
+  const aliasedStyle = {
+    "--radix-slider-thumb-transform":
+      orientation === "horizontal" ? "translateX(-50%)" : "translateY(50%)",
+    ...style,
+  } as React.CSSProperties;
+
   return (
     <SliderPrimitive.Thumb
       data-slider-index={index}
@@ -299,8 +307,8 @@ function SliderThumb({
       index={index}
       inputRef={inputRef}
       onKeyDown={onKeyDown}
-      style={style}
-      className="relative block size-5 shrink-0 rounded-full border-2 border-border bg-white ring-offset-white transition-colors select-none after:absolute after:-inset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 data-disabled:pointer-events-none data-disabled:opacity-50"
+      style={aliasedStyle}
+      className="relative block size-5 shrink-0 rounded-full border-2 border-border bg-white ring-offset-white transition-colors select-none after:absolute after:-inset-2 has-focus-visible:outline-none has-focus-visible:ring-2 has-focus-visible:ring-ring has-focus-visible:ring-offset-2 data-disabled:pointer-events-none data-disabled:opacity-50"
     />
   );
 }
@@ -385,8 +393,8 @@ function Slider({
         return false;
       }
 
-      currentValuesRef.current = nextValues;
       if (value === undefined) {
+        currentValuesRef.current = nextValues;
         setUncontrolledValues(nextValues);
       }
       return true;
@@ -651,7 +659,10 @@ function Slider({
           }
 
           event.preventBaseUIHandler();
-          if (pointerState.changed) {
+          if (
+            pointerState.changed &&
+            !areSliderValuesEqual(pointerState.startValues, currentValuesRef.current)
+          ) {
             const committedValues = [...currentValuesRef.current];
             const details =
               pointerState.reason === "drag"
@@ -685,6 +696,7 @@ function Slider({
             inputRef={getInputRef(index)}
             key={index}
             onKeyDown={(event) => handleThumbKeyDown(index, event)}
+            orientation={orientation}
             style={
               inverted
                 ? getInvertedThumbStyle(currentValue, min, max, orientation, direction)

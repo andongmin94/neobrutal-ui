@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 function Table({ className, ...props }: React.ComponentProps<"table">) {
   return (
-    <div data-slot="table-container" className="relative w-full overflow-x-auto">
+    <div data-slot="table-container" className="relative w-full overflow-auto">
       <table
         data-slot="table"
         className={cn("w-full caption-bottom border-2 border-border text-sm", className)}
@@ -65,7 +65,7 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
     <th
       data-slot="table-head"
       className={cn(
-        "h-12 px-4 text-left align-middle font-heading text-main-foreground whitespace-nowrap [&:has([role=checkbox])]:pr-0",
+        "h-12 px-4 text-left align-middle font-heading text-main-foreground [&:has([role=checkbox])]:pr-0",
         className,
       )}
       {...props}
@@ -77,7 +77,7 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
   return (
     <td
       data-slot="table-cell"
-      className={cn("p-4 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0", className)}
+      className={cn("p-4 align-middle [&:has([role=checkbox])]:pr-0", className)}
       {...props}
     />
   );

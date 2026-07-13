@@ -21,9 +21,13 @@ type DialogPortalProps = DialogPrimitive.Portal.Props & {
   forceMount?: boolean;
 };
 type DialogOverlayProps = DialogPrimitive.Backdrop.Props & {
+  asChild?: boolean;
+  children?: React.ReactNode;
   forceMount?: boolean;
 };
 type DialogContentProps = DialogPrimitive.Popup.Props & {
+  asChild?: boolean;
+  children?: React.ReactNode;
   forceMount?: boolean;
   onCloseAutoFocus?: AutoFocusEventHandler;
   onOpenAutoFocus?: AutoFocusEventHandler;
@@ -31,7 +35,60 @@ type DialogContentProps = DialogPrimitive.Popup.Props & {
 } & DismissableLayerHandlers;
 type DialogContextProps = {
   dismissableLayerHandlersRef: React.RefObject<DismissableLayerHandlers>;
+  open: boolean;
 };
+
+type PreventableBaseUIEvent = {
+  readonly baseUIHandlerPrevented?: boolean;
+  readonly defaultPrevented?: boolean;
+  preventBaseUIHandler?: () => void;
+};
+type EventHandler = (...args: unknown[]) => unknown;
+type RenderFunction = (props: Record<string, unknown>, state: unknown) => React.ReactElement;
+
+function adaptEventHandlers(props: Record<string, unknown>, beforeBaseUIHandler: boolean) {
+  const eventHandlers: Record<string, EventHandler> = {};
+
+  for (const [name, handler] of Object.entries(props)) {
+    if (!/^on[A-Z]/.test(name) || typeof handler !== "function") {
+      continue;
+    }
+
+    eventHandlers[name] = (...args) => {
+      const event = args[0] as PreventableBaseUIEvent | undefined;
+      if (beforeBaseUIHandler && event?.defaultPrevented) {
+        event.preventBaseUIHandler?.();
+      }
+      if (beforeBaseUIHandler && event?.baseUIHandlerPrevented) {
+        return undefined;
+      }
+
+      const result = handler(...args);
+      if (!beforeBaseUIHandler && event?.defaultPrevented) {
+        event.preventBaseUIHandler?.();
+      }
+      return result;
+    };
+  }
+
+  return eventHandlers;
+}
+
+function adaptRenderEventHandlers<Render>(render: Render): Render {
+  if (React.isValidElement(render)) {
+    const element = render as React.ReactElement<Record<string, unknown>>;
+    const eventHandlers = adaptEventHandlers(element.props, false);
+    return (Object.keys(eventHandlers).length === 0
+      ? render
+      : React.cloneElement(element, eventHandlers)) as unknown as Render;
+  }
+  if (typeof render === "function") {
+    const renderFunction = render as RenderFunction;
+    return ((props: Record<string, unknown>, state: unknown) =>
+      renderFunction({ ...props, ...adaptEventHandlers(props, true) }, state)) as unknown as Render;
+  }
+  return render;
+}
 
 const DialogContext = React.createContext<DialogContextProps | null>(null);
 
@@ -183,26 +240,40 @@ function adaptAutoFocus(
   };
 }
 
-function Dialog({ onOpenChange, ...props }: DialogPrimitive.Root.Props) {
+function Dialog({ defaultOpen = false, onOpenChange, open, ...props }: DialogPrimitive.Root.Props) {
   const dismissableLayerHandlersRef = React.useRef<DismissableLayerHandlers>({});
-  const contextValue = React.useMemo(() => ({ dismissableLayerHandlersRef }), []);
+  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultOpen);
+  const resolvedOpen = open ?? uncontrolledOpen;
+  const contextValue = React.useMemo(
+    () => ({ dismissableLayerHandlersRef, open: resolvedOpen }),
+    [resolvedOpen],
+  );
 
   const handleOpenChange: NonNullable<DialogPrimitive.Root.Props["onOpenChange"]> = (
-    open,
+    nextOpen,
     eventDetails,
   ) => {
-    if (!open) {
+    if (!nextOpen) {
       adaptDismissableLayerEvent(eventDetails, dismissableLayerHandlersRef.current);
     }
     if (eventDetails.isCanceled) {
       return;
     }
-    onOpenChange?.(open, eventDetails);
+    if (open === undefined) {
+      setUncontrolledOpen(nextOpen);
+    }
+    onOpenChange?.(nextOpen, eventDetails);
   };
 
   return (
     <DialogContext.Provider value={contextValue}>
-      <DialogPrimitive.Root data-slot="dialog" {...props} onOpenChange={handleOpenChange} />
+      <DialogPrimitive.Root
+        data-slot="dialog"
+        defaultOpen={defaultOpen}
+        open={open}
+        {...props}
+        onOpenChange={handleOpenChange}
+      />
     </DialogContext.Provider>
   );
 }
@@ -216,12 +287,18 @@ function DialogTrigger({
   asChild?: boolean;
   children?: React.ReactNode;
 }) {
+  const { open } = useDialogContext();
   const renderElement = asChild
     ? (React.Children.toArray(children).find(React.isValidElement) as React.ReactElement)
     : render;
 
   return (
-    <DialogPrimitive.Trigger data-slot="dialog-trigger" render={renderElement} {...props}>
+    <DialogPrimitive.Trigger
+      data-slot="dialog-trigger"
+      data-state={open ? "open" : "closed"}
+      render={adaptRenderEventHandlers(renderElement)}
+      {...props}
+    >
       {asChild ? undefined : children}
     </DialogPrimitive.Trigger>
   );
@@ -253,7 +330,7 @@ function DialogClose({
     <DialogPrimitive.Close
       data-slot="dialog-close"
       onClick={adaptCloseClick(onClick)}
-      render={renderElement}
+      render={adaptRenderEventHandlers(renderElement)}
       {...props}
     >
       {asChild ? undefined : children}
@@ -261,20 +338,37 @@ function DialogClose({
   );
 }
 
-function DialogOverlay({ className, forceMount: _forceMount, ...props }: DialogOverlayProps) {
+function DialogOverlay({
+  asChild = false,
+  children,
+  className,
+  forceMount: _forceMount,
+  render,
+  ...props
+}: DialogOverlayProps) {
+  const { open } = useDialogContext();
+  const renderElement = asChild
+    ? (React.Children.toArray(children).find(React.isValidElement) as React.ReactElement)
+    : render;
+
   return (
     <DialogPrimitive.Backdrop
       data-slot="dialog-overlay"
+      data-state={open ? "open" : "closed"}
+      render={adaptRenderEventHandlers(renderElement)}
       className={cn(
         "fixed inset-0 isolate z-50 bg-overlay duration-200 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
         className,
       )}
       {...props}
-    />
+    >
+      {asChild ? undefined : children}
+    </DialogPrimitive.Backdrop>
   );
 }
 
 function DialogContent({
+  asChild = false,
   className,
   children,
   finalFocus,
@@ -286,15 +380,32 @@ function DialogContent({
   onInteractOutside,
   onOpenAutoFocus,
   onPointerDownOutside,
+  render,
   showCloseButton = true,
   ...props
 }: DialogContentProps) {
-  const { dismissableLayerHandlersRef } = useDialogContext();
+  const { dismissableLayerHandlersRef, open } = useDialogContext();
   const dismissableLayerHandlers = React.useMemo(
     () => ({ onEscapeKeyDown, onFocusOutside, onInteractOutside, onPointerDownOutside }),
     [onEscapeKeyDown, onFocusOutside, onInteractOutside, onPointerDownOutside],
   );
   dismissableLayerHandlersRef.current = dismissableLayerHandlers;
+
+  const closeButton = showCloseButton ? (
+    <DialogPrimitive.Close
+      data-slot="dialog-close"
+      render={<Button variant="ghost" className="absolute top-4 right-4" size="icon-sm" />}
+    >
+      <XIcon />
+      <span className="sr-only">Close</span>
+    </DialogPrimitive.Close>
+  ) : null;
+  const contentChild = React.Children.toArray(children).find(
+    React.isValidElement,
+  ) as React.ReactElement<{ children?: React.ReactNode }>;
+  const renderElement = asChild
+    ? React.cloneElement(contentChild, undefined, contentChild.props.children, closeButton)
+    : render;
 
   React.useEffect(
     () => () => {
@@ -310,6 +421,8 @@ function DialogContent({
       <DialogOverlay />
       <DialogPrimitive.Popup
         data-slot="dialog-content"
+        data-state={open ? "open" : "closed"}
+        render={adaptRenderEventHandlers(renderElement)}
         initialFocus={adaptAutoFocus(onOpenAutoFocus, initialFocus, "focusScope.autoFocusOnMount")}
         finalFocus={adaptAutoFocus(onCloseAutoFocus, finalFocus, "focusScope.autoFocusOnUnmount")}
         className={cn(
@@ -318,16 +431,8 @@ function DialogContent({
         )}
         {...props}
       >
-        {children}
-        {showCloseButton && (
-          <DialogPrimitive.Close
-            data-slot="dialog-close"
-            render={<Button variant="ghost" className="absolute top-4 right-4" size="icon-sm" />}
-          >
-            <XIcon />
-            <span className="sr-only">Close</span>
-          </DialogPrimitive.Close>
-        )}
+        {asChild ? undefined : children}
+        {asChild ? undefined : closeButton}
       </DialogPrimitive.Popup>
     </DialogPortal>
   );
@@ -365,23 +470,49 @@ function DialogFooter({
   );
 }
 
-function DialogTitle({ className, ...props }: DialogPrimitive.Title.Props) {
+function DialogTitle({
+  asChild = false,
+  children,
+  className,
+  render,
+  ...props
+}: DialogPrimitive.Title.Props & { asChild?: boolean; children?: React.ReactNode }) {
+  const renderElement = asChild
+    ? (React.Children.toArray(children).find(React.isValidElement) as React.ReactElement)
+    : render;
+
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
+      render={adaptRenderEventHandlers(renderElement)}
       className={cn("font-heading text-lg leading-none tracking-tight", className)}
       {...props}
-    />
+    >
+      {asChild ? undefined : children}
+    </DialogPrimitive.Title>
   );
 }
 
-function DialogDescription({ className, ...props }: DialogPrimitive.Description.Props) {
+function DialogDescription({
+  asChild = false,
+  children,
+  className,
+  render,
+  ...props
+}: DialogPrimitive.Description.Props & { asChild?: boolean; children?: React.ReactNode }) {
+  const renderElement = asChild
+    ? (React.Children.toArray(children).find(React.isValidElement) as React.ReactElement)
+    : render;
+
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
+      render={adaptRenderEventHandlers(renderElement)}
       className={cn("text-sm font-base text-foreground", className)}
       {...props}
-    />
+    >
+      {asChild ? undefined : children}
+    </DialogPrimitive.Description>
   );
 }
 

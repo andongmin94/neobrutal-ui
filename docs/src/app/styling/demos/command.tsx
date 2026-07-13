@@ -15,17 +15,15 @@ export default function CommandDemo() {
       <CommandList className="max-h-[9999px] min-h-[565px] overflow-y-hidden">
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Suggestions">
-          <CommandItem className="outline-2" value="Calendar">
-            Calendar
-          </CommandItem>
-          <CommandItem value="Search Emoji">Search Emoji</CommandItem>
-          <CommandItem value="Calculator">Calculator</CommandItem>
+          <CommandItem>Calendar</CommandItem>
+          <CommandItem>Search Emoji</CommandItem>
+          <CommandItem>Calculator</CommandItem>
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup heading="Settings">
-          <CommandItem value="Profile">Profile</CommandItem>
-          <CommandItem value="Billing">Billing</CommandItem>
-          <CommandItem value="Settings">Settings</CommandItem>
+          <CommandItem>Profile</CommandItem>
+          <CommandItem>Billing</CommandItem>
+          <CommandItem>Settings</CommandItem>
         </CommandGroup>
       </CommandList>
     </Command>

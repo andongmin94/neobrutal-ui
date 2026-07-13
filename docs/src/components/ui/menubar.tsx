@@ -38,6 +38,40 @@ type MenubarMenuContextValue = {
 
 const MenubarMenuContext = React.createContext<MenubarMenuContextValue | null>(null);
 
+type CSSPropertiesWithVariables = React.CSSProperties & {
+  [name: `--${string}`]: string | number | undefined;
+};
+type MenubarContentStyle = React.ComponentProps<typeof DropdownMenuContent>["style"];
+
+const menubarCssVariables: CSSPropertiesWithVariables = {
+  "--radix-menubar-content-available-height": "var(--available-height)",
+  "--radix-menubar-content-available-width": "var(--available-width)",
+  "--radix-menubar-content-transform-origin": "var(--transform-origin)",
+  "--radix-menubar-trigger-height": "var(--anchor-height)",
+  "--radix-menubar-trigger-width": "var(--anchor-width)",
+};
+
+function mergeContentStyle(style: MenubarContentStyle): MenubarContentStyle {
+  if (typeof style === "function") {
+    return (state) => ({ ...menubarCssVariables, ...style(state) });
+  }
+
+  return { ...menubarCssVariables, ...style };
+}
+
+function getAsChildElement(children: React.ReactNode, componentName: string) {
+  const child = React.Children.toArray(children).find(React.isValidElement);
+
+  if (!child) {
+    throw new Error(`${componentName} with asChild requires a valid React element child.`);
+  }
+
+  return child as React.ReactElement<{
+    [key: string]: unknown;
+    children?: React.ReactNode;
+  }>;
+}
+
 function useMenubarValueContext() {
   const context = React.useContext(MenubarValueContext);
 
@@ -48,6 +82,7 @@ function useMenubarValueContext() {
 }
 
 type MenubarProps = Omit<MenubarPrimitive.Props, "dir" | "loopFocus" | "orientation"> & {
+  asChild?: boolean;
   defaultValue?: string;
   dir?: "ltr" | "rtl";
   loop?: boolean;
@@ -56,12 +91,14 @@ type MenubarProps = Omit<MenubarPrimitive.Props, "dir" | "loopFocus" | "orientat
 };
 
 function Menubar({
+  asChild = false,
   children,
   className,
   defaultValue = "",
   dir,
   loop = true,
   onValueChange,
+  render,
   value: valueProp,
   ...props
 }: MenubarProps) {
@@ -87,6 +124,7 @@ function Menubar({
     () => ({ setValue, value, valueRef }),
     [setValue, value],
   );
+  const renderElement = asChild ? getAsChildElement(children, "Menubar") : render;
 
   const menubar = (
     <MenubarPrimitive
@@ -94,13 +132,14 @@ function Menubar({
       data-value={value || undefined}
       dir={dir}
       loopFocus={loop}
+      render={renderElement}
       className={cn(
         "flex h-11 items-center gap-1 rounded-base border-2 border-border bg-main p-1 font-base",
         className,
       )}
       {...props}
     >
-      {children}
+      {asChild ? undefined : children}
     </MenubarPrimitive>
   );
 
@@ -195,6 +234,7 @@ function MenubarContent({
   align = "start",
   alignOffset = -4,
   sideOffset = 8,
+  style,
   ...props
 }: React.ComponentProps<typeof DropdownMenuContent>) {
   return (
@@ -203,6 +243,7 @@ function MenubarContent({
       align={align}
       alignOffset={alignOffset}
       sideOffset={sideOffset}
+      style={mergeContentStyle(style)}
       className={cn(
         "min-w-[12rem] rounded-base border-2 border-border bg-main p-1 font-base text-main-foreground duration-100 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95",
         className,
@@ -347,11 +388,13 @@ function MenubarSubTrigger({
 
 function MenubarSubContent({
   className,
+  style,
   ...props
 }: React.ComponentProps<typeof DropdownMenuSubContent>) {
   return (
     <DropdownMenuSubContent
       data-slot="menubar-sub-content"
+      style={mergeContentStyle(style)}
       className={cn(
         "min-w-[8rem] rounded-base border-2 border-border bg-main p-1 font-base text-main-foreground duration-100 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
         className,

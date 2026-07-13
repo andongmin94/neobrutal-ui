@@ -12,10 +12,15 @@ type TooltipProviderContract = {
 
 type TooltipRootContract = {
   contentId: string;
+  dataState: "closed" | "delayed-open" | "instant-open";
   delayDuration?: number;
   dismissHandlersRef: React.RefObject<TooltipDismissHandlers>;
+  hoverStartedAtRef: React.RefObject<number | null>;
   open: boolean;
+  portalContainer: HTMLElement | null;
   setContentId: React.Dispatch<React.SetStateAction<string>>;
+  setPortalContainer: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
+  setTriggerDelay: React.Dispatch<React.SetStateAction<number>>;
 };
 
 type TooltipPointerDownOutsideEvent = CustomEvent<{ originalEvent: PointerEvent }>;
@@ -25,10 +30,108 @@ type TooltipDismissHandlers = {
   onPointerDownOutside?: (event: TooltipPointerDownOutsideEvent) => void;
 };
 
+type CollisionBoundary =
+  | TooltipPrimitive.Positioner.Props["collisionBoundary"]
+  | null
+  | Array<Element | null>;
+type CSSPropertiesWithVariables = React.CSSProperties & {
+  [name: `--${string}`]: string | number | undefined;
+};
+type TooltipPositioningProps = Pick<
+  TooltipPrimitive.Positioner.Props,
+  | "align"
+  | "alignOffset"
+  | "arrowPadding"
+  | "collisionAvoidance"
+  | "collisionPadding"
+  | "disableAnchorTracking"
+  | "positionMethod"
+  | "side"
+  | "sideOffset"
+> & {
+  avoidCollisions?: boolean;
+  collisionBoundary?: CollisionBoundary;
+  hideWhenDetached?: boolean;
+  sticky?: "partial" | "always";
+  updatePositionStrategy?: "optimized" | "always";
+};
+
+const tooltipCssVariables: CSSPropertiesWithVariables = {
+  "--radix-tooltip-content-available-height": "var(--available-height)",
+  "--radix-tooltip-content-available-width": "var(--available-width)",
+  "--radix-tooltip-content-transform-origin": "var(--transform-origin)",
+  "--radix-tooltip-trigger-height": "var(--anchor-height)",
+  "--radix-tooltip-trigger-width": "var(--anchor-width)",
+};
+
 const TooltipProviderContractContext = React.createContext<TooltipProviderContract | undefined>(
   undefined,
 );
 const TooltipRootContractContext = React.createContext<TooltipRootContract | null>(null);
+
+function mergePopupStyle(
+  style: TooltipPrimitive.Popup.Props["style"],
+): TooltipPrimitive.Popup.Props["style"] {
+  if (typeof style === "function") {
+    return (state) => ({ ...tooltipCssVariables, ...style(state) });
+  }
+
+  return { ...tooltipCssVariables, ...style };
+}
+
+function normalizeCollisionBoundary(
+  collisionBoundary: CollisionBoundary | undefined,
+): TooltipPrimitive.Positioner.Props["collisionBoundary"] {
+  if (Array.isArray(collisionBoundary)) {
+    const boundaries: Element[] = [];
+    for (const boundary of collisionBoundary) {
+      if (boundary) boundaries.push(boundary);
+    }
+    return boundaries;
+  }
+
+  return collisionBoundary ?? undefined;
+}
+
+function preserveRadixEventCancellation(
+  child: React.ReactElement<{ [key: string]: unknown; children?: React.ReactNode }>,
+) {
+  const eventProps: Record<string, unknown> = {};
+
+  for (const [name, handler] of Object.entries(child.props)) {
+    if (/^on[A-Z]/.test(name) && typeof handler === "function") {
+      eventProps[name] = (...args: unknown[]) => {
+        (handler as (...handlerArgs: unknown[]) => void)(...args);
+        const event = args[0] as
+          | { defaultPrevented?: boolean; preventBaseUIHandler?: () => void }
+          | undefined;
+        if (event?.defaultPrevented) event.preventBaseUIHandler?.();
+      };
+    }
+  }
+
+  return React.cloneElement(child, eventProps);
+}
+
+function getAsChildElement(children: React.ReactNode, componentName: string) {
+  const child = React.Children.toArray(children).find(React.isValidElement);
+
+  if (!child) {
+    throw new Error(`${componentName} with asChild requires a valid React element child.`);
+  }
+
+  return preserveRadixEventCancellation(
+    child as React.ReactElement<{
+      [key: string]: unknown;
+      children?: React.ReactNode;
+    }>,
+  );
+}
+
+function setRefValue<T>(ref: React.Ref<T> | undefined, value: T | null) {
+  if (typeof ref === "function") ref(value);
+  else if (ref) ref.current = value;
+}
 
 function toPointerEvent(originalEvent: Event) {
   if (originalEvent instanceof PointerEvent) {
@@ -108,7 +211,7 @@ function Tooltip({
   disableHoverableContent?: boolean;
 }) {
   const providerContract = React.useContext(TooltipProviderContractContext);
-  const resolvedDelay = delayDuration ?? providerContract?.delayDuration;
+  const resolvedDelay = delayDuration ?? providerContract?.delayDuration ?? 600;
   const resolvedDisableHoverablePopup =
     disableHoverablePopup ??
     disableHoverableContent ??
@@ -116,18 +219,37 @@ function Tooltip({
     false;
   const generatedContentId = React.useId();
   const [contentId, setContentId] = React.useState(generatedContentId);
+  const [triggerDelay, setTriggerDelay] = React.useState(resolvedDelay);
+  const [openKind, setOpenKind] = React.useState<"delayed-open" | "instant-open">("instant-open");
+  const [portalContainer, setPortalContainer] = React.useState<HTMLElement | null>(null);
   const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultOpen);
   const open = openProp ?? uncontrolledOpen;
   const dismissHandlersRef = React.useRef<TooltipDismissHandlers>({});
+  const hoverStartedAtRef = React.useRef<number | null>(null);
+  const previousOpenRef = React.useRef(open);
+  const openKindSetByEventRef = React.useRef(false);
+
+  React.useLayoutEffect(() => {
+    if (open && !previousOpenRef.current) {
+      if (!openKindSetByEventRef.current) setOpenKind("instant-open");
+      openKindSetByEventRef.current = false;
+    }
+    previousOpenRef.current = open;
+  }, [open]);
 
   return (
     <TooltipRootContractContext.Provider
       value={{
         contentId,
+        dataState: open ? openKind : "closed",
         delayDuration: resolvedDelay,
         dismissHandlersRef,
+        hoverStartedAtRef,
         open,
+        portalContainer,
         setContentId,
+        setPortalContainer,
+        setTriggerDelay,
       }}
     >
       <TooltipPrimitive.Root
@@ -156,6 +278,17 @@ function Tooltip({
             return;
           }
 
+          if (nextOpen) {
+            const hoverElapsed =
+              hoverStartedAtRef.current === null ? 0 : Date.now() - hoverStartedAtRef.current;
+            const delayed =
+              eventDetails.reason === "trigger-hover" &&
+              triggerDelay > 0 &&
+              hoverElapsed >= Math.max(0, triggerDelay - 32);
+            setOpenKind(delayed ? "delayed-open" : "instant-open");
+            openKindSetByEventRef.current = true;
+          }
+
           onOpenChange?.(nextOpen, eventDetails);
           if (!eventDetails.isCanceled && openProp === undefined) {
             setUncontrolledOpen(nextOpen);
@@ -174,27 +307,59 @@ type TooltipTriggerProps = TooltipPrimitive.Trigger.Props & {
 
 const TooltipTrigger = React.forwardRef<HTMLButtonElement, TooltipTriggerProps>(
   function TooltipTrigger(
-    { "aria-describedby": ariaDescribedBy, asChild = false, children, delay, render, ...props },
+    {
+      "aria-describedby": ariaDescribedBy,
+      asChild = false,
+      children,
+      delay,
+      onFocus,
+      onPointerEnter,
+      render,
+      ...props
+    },
     forwardedRef,
   ) {
     const rootContract = React.useContext(TooltipRootContractContext);
-    const child = React.Children.toArray(children).find(React.isValidElement);
-    if (asChild && child === undefined) {
-      throw new Error("TooltipTrigger with asChild requires a valid React element child.");
-    }
+    const hoverStartedAtRef = rootContract?.hoverStartedAtRef;
+    const setPortalContainer = rootContract?.setPortalContainer;
+    const child = asChild ? getAsChildElement(children, "TooltipTrigger") : undefined;
 
     const renderElement = asChild ? child : render;
+    const setTriggerDelay = rootContract?.setTriggerDelay;
     const describedBy =
       rootContract?.open === true
         ? [ariaDescribedBy, rootContract.contentId].filter(Boolean).join(" ")
         : ariaDescribedBy;
+    const mergedRef = React.useCallback(
+      (trigger: HTMLButtonElement | null) => {
+        setRefValue(forwardedRef, trigger);
+        const nextContainer = trigger?.parentElement ?? null;
+        setPortalContainer?.((current) => (current === nextContainer ? current : nextContainer));
+      },
+      [forwardedRef, setPortalContainer],
+    );
+
+    React.useLayoutEffect(() => {
+      setTriggerDelay?.(delay ?? rootContract?.delayDuration ?? 600);
+    }, [delay, rootContract?.delayDuration, setTriggerDelay]);
 
     return (
       <TooltipPrimitive.Trigger
-        ref={forwardedRef}
+        ref={mergedRef}
         data-slot="tooltip-trigger"
+        data-state={rootContract?.dataState}
         aria-describedby={describedBy || undefined}
         delay={delay ?? rootContract?.delayDuration}
+        onFocus={(event) => {
+          if (hoverStartedAtRef) hoverStartedAtRef.current = null;
+          onFocus?.(event);
+          if (event.defaultPrevented) event.preventBaseUIHandler();
+        }}
+        onPointerEnter={(event) => {
+          if (hoverStartedAtRef) hoverStartedAtRef.current = Date.now();
+          onPointerEnter?.(event);
+          if (event.defaultPrevented) event.preventBaseUIHandler();
+        }}
         render={renderElement}
         {...props}
       >
@@ -205,21 +370,35 @@ const TooltipTrigger = React.forwardRef<HTMLButtonElement, TooltipTriggerProps>(
 );
 
 function TooltipContent({
+  align = "center",
+  alignOffset = 0,
+  arrowPadding = 0,
+  asChild = false,
+  avoidCollisions = true,
   className,
+  collisionAvoidance,
+  collisionBoundary,
+  collisionPadding = 0,
+  disableAnchorTracking,
   id,
   forceMount,
+  hideWhenDetached = false,
   keepMounted,
   onEscapeKeyDown,
   onPointerDownOutside,
   role,
+  render,
   side = "top",
   sideOffset = 4,
-  align = "center",
-  alignOffset = 0,
+  positionMethod = "fixed",
+  sticky,
+  style,
+  updatePositionStrategy,
   children,
   ...props
 }: TooltipPrimitive.Popup.Props &
-  Pick<TooltipPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset"> & {
+  TooltipPositioningProps & {
+    asChild?: boolean;
     forceMount?: true;
     keepMounted?: boolean;
     onEscapeKeyDown?: (event: KeyboardEvent) => void;
@@ -227,6 +406,9 @@ function TooltipContent({
   }) {
   const rootContract = React.useContext(TooltipRootContractContext);
   const resolvedId = id ?? rootContract?.contentId;
+  const child = asChild ? getAsChildElement(children, "TooltipContent") : null;
+  const popupChildren = <>{child ? child.props.children : children}</>;
+  const renderElement = child ? React.cloneElement(child, undefined, popupChildren) : render;
 
   React.useLayoutEffect(() => {
     if (rootContract === null) {
@@ -247,26 +429,45 @@ function TooltipContent({
   }, [onEscapeKeyDown, onPointerDownOutside, resolvedId, rootContract]);
 
   return (
-    <TooltipPrimitive.Portal keepMounted={keepMounted ?? forceMount}>
+    <TooltipPrimitive.Portal
+      container={rootContract?.portalContainer}
+      keepMounted={keepMounted ?? forceMount}
+    >
       <TooltipPrimitive.Positioner
         align={align}
         alignOffset={alignOffset}
+        arrowPadding={arrowPadding}
+        collisionAvoidance={
+          avoidCollisions
+            ? collisionAvoidance
+            : { align: "none", fallbackAxisSide: "none", side: "none" }
+        }
+        collisionBoundary={normalizeCollisionBoundary(collisionBoundary)}
+        collisionPadding={collisionPadding}
+        disableAnchorTracking={updatePositionStrategy === "always" ? false : disableAnchorTracking}
+        positionMethod={positionMethod}
         side={side}
         sideOffset={sideOffset}
-        className="isolate z-50"
+        sticky={sticky === undefined ? undefined : sticky === "always"}
+        className={cn(
+          "isolate z-50",
+          hideWhenDetached && "data-anchor-hidden:pointer-events-none data-anchor-hidden:invisible",
+        )}
       >
         <TooltipPrimitive.Popup
           data-slot="tooltip-content"
+          data-state={rootContract?.dataState}
           id={resolvedId}
+          render={renderElement}
           role={role ?? "tooltip"}
+          style={mergePopupStyle(style)}
           className={cn(
-            "z-50 inline-flex w-fit max-w-xs origin-(--transform-origin) items-center gap-1.5 overflow-hidden rounded-base border-2 border-border bg-main px-3 py-1.5 text-sm font-base text-main-foreground has-data-[slot=kbd]:pr-1.5 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 **:data-[slot=kbd]:relative **:data-[slot=kbd]:isolate **:data-[slot=kbd]:z-50 **:data-[slot=kbd]:rounded-sm data-[state=delayed-open]:animate-in data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+            "z-50 origin-(--transform-origin) overflow-hidden rounded-base border-2 border-border bg-main px-3 py-1.5 text-sm font-base text-main-foreground animate-in fade-in-0 zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
             className,
           )}
           {...props}
         >
-          {children}
-          <TooltipPrimitive.Arrow className="z-50 size-2.5 translate-y-[calc(-50%-2px)] rotate-45 rounded-[2px] border-r-2 border-b-2 border-border bg-main fill-main data-[side=bottom]:top-1 data-[side=inline-end]:top-1/2! data-[side=inline-end]:-left-1 data-[side=inline-end]:-translate-y-1/2 data-[side=inline-start]:top-1/2! data-[side=inline-start]:-right-1 data-[side=inline-start]:-translate-y-1/2 data-[side=left]:top-1/2! data-[side=left]:-right-1 data-[side=left]:-translate-y-1/2 data-[side=right]:top-1/2! data-[side=right]:-left-1 data-[side=right]:-translate-y-1/2 data-[side=top]:-bottom-2.5" />
+          {child ? undefined : popupChildren}
         </TooltipPrimitive.Popup>
       </TooltipPrimitive.Positioner>
     </TooltipPrimitive.Portal>
