@@ -38,7 +38,7 @@ function CommandDialog({
   description?: string;
   className?: string;
   showCloseButton?: boolean;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }) {
   return (
     <Dialog {...props}>
@@ -120,7 +120,7 @@ function CommandGroup({
     <CommandPrimitive.Group
       data-slot="command-group"
       className={cn(
-        "overflow-hidden p-2 text-main-foreground **:[[cmdk-group-heading]]:mb-1 **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:py-1.5 **:[[cmdk-group-heading]]:text-base **:[[cmdk-group-heading]]:font-heading",
+        "overflow-hidden p-2 text-main-foreground **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:py-1.5 **:[[cmdk-group-heading]]:text-base **:[[cmdk-group-heading]]:font-heading",
         className,
       )}
       {...props}

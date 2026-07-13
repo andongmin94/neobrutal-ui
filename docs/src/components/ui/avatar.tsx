@@ -5,11 +5,24 @@ import { Avatar as AvatarPrimitive } from "@base-ui/react/avatar";
 
 import { cn } from "@/lib/utils";
 
+function getChildElement(children: React.ReactNode, componentName: string) {
+  const child = React.Children.toArray(children).find(React.isValidElement);
+  if (child === undefined) {
+    throw new Error(`${componentName} with asChild requires a valid React element child.`);
+  }
+  return child;
+}
+
 function Avatar({
+  asChild = false,
   className,
+  children,
+  render,
   size = "default",
   ...props
 }: AvatarPrimitive.Root.Props & {
+  asChild?: boolean;
+  children?: React.ReactNode;
   size?: "default" | "sm" | "lg";
 }) {
   return (
@@ -20,22 +33,44 @@ function Avatar({
         "group/avatar relative flex size-10 shrink-0 overflow-hidden rounded-full outline-2 outline-border select-none data-[size=lg]:size-12 data-[size=sm]:size-8",
         className,
       )}
+      render={asChild ? getChildElement(children, "Avatar") : render}
       {...props}
-    />
+    >
+      {asChild ? undefined : children}
+    </AvatarPrimitive.Root>
   );
 }
 
-function AvatarImage({ className, ...props }: AvatarPrimitive.Image.Props) {
+function AvatarImage({
+  asChild = false,
+  children,
+  className,
+  render,
+  ...props
+}: AvatarPrimitive.Image.Props & { asChild?: boolean; children?: React.ReactNode }) {
   return (
     <AvatarPrimitive.Image
       data-slot="avatar-image"
       className={cn("aspect-square size-full rounded-full object-cover", className)}
+      render={asChild ? getChildElement(children, "AvatarImage") : render}
       {...props}
     />
   );
 }
 
-function AvatarFallback({ className, ...props }: AvatarPrimitive.Fallback.Props) {
+function AvatarFallback({
+  asChild = false,
+  children,
+  className,
+  delay,
+  delayMs,
+  render,
+  ...props
+}: AvatarPrimitive.Fallback.Props & {
+  asChild?: boolean;
+  children?: React.ReactNode;
+  delayMs?: number;
+}) {
   return (
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"
@@ -43,8 +78,12 @@ function AvatarFallback({ className, ...props }: AvatarPrimitive.Fallback.Props)
         "flex size-full items-center justify-center rounded-full bg-secondary-background text-sm font-base text-foreground group-data-[size=sm]/avatar:text-xs",
         className,
       )}
+      delay={delay ?? delayMs}
+      render={asChild ? getChildElement(children, "AvatarFallback") : render}
       {...props}
-    />
+    >
+      {asChild ? undefined : children}
+    </AvatarPrimitive.Fallback>
   );
 }
 

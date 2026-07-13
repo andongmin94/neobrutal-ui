@@ -5,6 +5,22 @@ import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from "lucide-react";
 
+type DayPickerProps = React.ComponentProps<typeof DayPicker>;
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+
+export type CalendarProps = DistributiveOmit<DayPickerProps, "captionLayout"> & {
+  buttonVariant?: React.ComponentProps<typeof Button>["variant"];
+  captionLayout?: DayPickerProps["captionLayout"] | "buttons";
+  fromDate?: Date;
+  fromMonth?: Date;
+  fromYear?: number;
+  hideHead?: boolean;
+  initialFocus?: boolean;
+  toDate?: Date;
+  toMonth?: Date;
+  toYear?: number;
+};
+
 function Calendar({
   className,
   classNames,
@@ -14,11 +30,36 @@ function Calendar({
   locale,
   formatters,
   components,
+  startMonth,
+  endMonth,
+  hidden,
+  autoFocus,
+  hideWeekdays,
+  fromDate,
+  fromMonth,
+  fromYear,
+  hideHead,
+  initialFocus,
+  toDate,
+  toMonth,
+  toYear,
   ...props
-}: React.ComponentProps<typeof DayPicker> & {
-  buttonVariant?: React.ComponentProps<typeof Button>["variant"];
-}) {
+}: CalendarProps) {
   const defaultClassNames = getDefaultClassNames();
+  const resolvedCaptionLayout = captionLayout === "buttons" ? "label" : captionLayout;
+  const resolvedStartMonth =
+    startMonth ?? fromMonth ?? (fromYear === undefined ? fromDate : new Date(fromYear, 0));
+  const resolvedEndMonth =
+    endMonth ?? toMonth ?? (toYear === undefined ? toDate : new Date(toYear, 11));
+  const legacyHidden = [
+    fromDate && fromMonth === undefined && fromYear === undefined
+      ? { before: fromDate }
+      : undefined,
+    toDate && toMonth === undefined && toYear === undefined ? { after: toDate } : undefined,
+  ].filter((matcher) => matcher !== undefined);
+  const resolvedHidden = legacyHidden.length
+    ? [...(hidden === undefined ? [] : Array.isArray(hidden) ? hidden : [hidden]), ...legacyHidden]
+    : hidden;
 
   return (
     <DayPicker
@@ -29,7 +70,12 @@ function Calendar({
         String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
         className,
       )}
-      captionLayout={captionLayout}
+      captionLayout={resolvedCaptionLayout}
+      startMonth={resolvedStartMonth}
+      endMonth={resolvedEndMonth}
+      hidden={resolvedHidden}
+      {...{ autoFocus: autoFocus ?? initialFocus }}
+      hideWeekdays={hideWeekdays ?? hideHead}
       locale={locale}
       formatters={{
         formatMonthDropdown: (date) => date.toLocaleString(locale?.code, { month: "short" }),
@@ -65,7 +111,7 @@ function Calendar({
         dropdown: cn("absolute inset-0 bg-main opacity-0", defaultClassNames.dropdown),
         caption_label: cn(
           "font-heading text-main-foreground select-none",
-          captionLayout === "label"
+          resolvedCaptionLayout === "label"
             ? "text-sm"
             : "flex items-center gap-1 rounded-(--cell-radius) text-sm [&>svg]:size-3.5 [&>svg]:text-main-foreground",
           defaultClassNames.caption_label,

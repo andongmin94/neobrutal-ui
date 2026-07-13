@@ -62,7 +62,7 @@ export default function Search() {
         </span>
 
         <span className="absolute xl:flex hidden items-center justify-center text-black border text-xs px-1 border-black rounded-base bg-main h-6 right-2 top-1">
-          ⌘K
+          ⌘ K
         </span>
       </Button>
       <CommandDialog title="Search documentation" open={open} onOpenChange={setOpen}>

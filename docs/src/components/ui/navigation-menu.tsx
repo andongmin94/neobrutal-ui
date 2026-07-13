@@ -1,6 +1,7 @@
 "use client";
 
 import { DirectionProvider } from "@base-ui/react/direction-provider";
+import { mergeProps } from "@base-ui/react/merge-props";
 import { NavigationMenu as NavigationMenuPrimitive } from "@base-ui/react/navigation-menu";
 import { cva } from "class-variance-authority";
 import * as React from "react";
@@ -47,6 +48,8 @@ type NavigationMenuProps = Omit<
   "defaultValue" | "onValueChange" | "value"
 > &
   Pick<NavigationMenuPrimitive.Positioner.Props, "align"> & {
+    asChild?: boolean;
+    children?: React.ReactNode;
     defaultValue?: string;
     delayDuration?: number;
     dir?: "ltr" | "rtl";
@@ -61,12 +64,17 @@ type NavigationMenuContentProps = Omit<
   "keepMounted"
 > &
   NavigationMenuDismissHandlers & {
+    asChild?: boolean;
+    children?: React.ReactNode;
     forceMount?: boolean;
     keepMounted?: boolean;
   };
 
 type NavigationMenuViewportProps = React.ComponentPropsWithRef<"div"> & {
+  asChild?: boolean;
+  children?: React.ReactNode;
   forceMount?: boolean;
+  render?: NavigationMenuPrimitive.Viewport.Props["render"];
 };
 
 type NavigationMenuPositionerProps = NavigationMenuPrimitive.Positioner.Props & {
@@ -89,6 +97,120 @@ function setReactRef<T>(ref: React.Ref<T> | null | undefined, value: T | null) {
   } else if (ref) {
     ref.current = value;
   }
+}
+
+function preserveRadixEventCancellation(child: React.ReactElement) {
+  const childProps = child.props as Record<string, unknown>;
+  const eventProps: Record<string, unknown> = {};
+
+  for (const [name, handler] of Object.entries(childProps)) {
+    if (/^on[A-Z]/.test(name) && typeof handler === "function") {
+      eventProps[name] = (...args: unknown[]) => {
+        (handler as (...handlerArgs: unknown[]) => void)(...args);
+        const event = args[0] as
+          | { defaultPrevented?: boolean; preventBaseUIHandler?: () => void }
+          | undefined;
+        if (event?.defaultPrevented) event.preventBaseUIHandler?.();
+      };
+    }
+  }
+
+  return React.cloneElement(child, eventProps);
+}
+
+function getRenderElement<Render>(
+  asChild: boolean,
+  children: React.ReactNode,
+  render: Render,
+): React.ReactElement | Render {
+  return asChild
+    ? preserveRadixEventCancellation(
+        React.Children.toArray(children).find(React.isValidElement) as React.ReactElement,
+      )
+    : render;
+}
+
+function mergeRenderElement(
+  render: React.ReactElement,
+  elementProps: React.HTMLAttributes<HTMLElement> & { ref?: React.Ref<HTMLElement> },
+) {
+  const renderProps = render.props as React.HTMLAttributes<HTMLElement> & {
+    ref?: React.Ref<HTMLElement>;
+  };
+  const mergedProps = mergeProps<"div">(
+    elementProps as React.ComponentPropsWithRef<"div">,
+    renderProps as React.ComponentPropsWithRef<"div">,
+  );
+  const elementRef = elementProps.ref;
+  const renderRef = renderProps.ref;
+
+  mergedProps.ref = (node: HTMLDivElement | null) => {
+    setReactRef(elementRef, node);
+    setReactRef(renderRef, node);
+  };
+
+  return React.cloneElement(render, mergedProps);
+}
+
+function getRadixNavigationMenuMotion(state: NavigationMenuPrimitive.Content.State) {
+  const direction = state.activationDirection;
+  if (
+    !direction ||
+    (state.transitionStatus !== "starting" && state.transitionStatus !== "ending")
+  ) {
+    return undefined;
+  }
+
+  const movingTowardEnd = direction === "right" || direction === "down";
+  if (state.transitionStatus === "starting") {
+    return movingTowardEnd ? "from-end" : "from-start";
+  }
+
+  return movingTowardEnd ? "to-start" : "to-end";
+}
+
+function adaptNavigationMenuTriggerRender(
+  render: NavigationMenuPrimitive.Trigger.Props["render"],
+): NavigationMenuPrimitive.Trigger.Props["render"] {
+  return (elementProps, state) => {
+    const compatProps = mergeProps<"button">(elementProps, {
+      "data-state": state.open ? "open" : "closed",
+    } as React.ComponentPropsWithRef<"button">);
+
+    if (typeof render === "function") {
+      return render(compatProps, state);
+    }
+
+    if (render) {
+      return mergeRenderElement(
+        render,
+        compatProps as React.HTMLAttributes<HTMLElement> & { ref?: React.Ref<HTMLElement> },
+      );
+    }
+
+    return <button {...compatProps} />;
+  };
+}
+
+function adaptNavigationMenuContentRender(
+  render: NavigationMenuPrimitive.Content.Props["render"],
+): NavigationMenuPrimitive.Content.Props["render"] {
+  return (elementProps, state) => {
+    const compatProps = mergeProps<"div">(elementProps, {
+      "data-motion": getRadixNavigationMenuMotion(state),
+      "data-state": state.open ? "open" : "closed",
+    } as React.ComponentPropsWithRef<"div">);
+
+    if (typeof render === "function") {
+      return render(compatProps, state);
+    }
+
+    if (render) {
+      return mergeRenderElement(render, compatProps);
+    }
+
+    return <div {...compatProps} />;
+  };
 }
 
 function hasForceMountedContent(children: React.ReactNode): boolean {
@@ -180,6 +302,7 @@ function isNavigationMenuDismissPrevented(
 
 function NavigationMenu({
   align = "start",
+  asChild = false,
   className,
   children,
   closeDelay = 150,
@@ -190,6 +313,7 @@ function NavigationMenu({
   onValueChange,
   orientation = "horizontal",
   ref,
+  render,
   skipDelayDuration = 300,
   value: valueProp,
   viewport = true,
@@ -310,6 +434,26 @@ function NavigationMenu({
     [ref],
   );
 
+  const rootChild = React.Children.toArray(children).find(
+    React.isValidElement,
+  ) as React.ReactElement<{ children?: React.ReactNode }>;
+  const rootChildren = (
+    <>
+      {asChild ? rootChild.props.children : children}
+      {viewport ? (
+        !explicitViewport && <NavigationMenuViewport />
+      ) : (
+        <NavigationMenuPositioner
+          align={align}
+          forceMount={contentForceMount}
+          portalContainer={portalContainer}
+          viewport={false}
+        />
+      )}
+    </>
+  );
+  const renderElement = asChild ? React.cloneElement(rootChild, undefined, rootChildren) : render;
+
   const menu = (
     <NavigationMenuPrimitive.Root
       ref={setNavigationRootRef}
@@ -323,6 +467,7 @@ function NavigationMenu({
       dir={dir}
       onValueChange={handleValueChange}
       orientation={orientation}
+      render={renderElement}
       value={valueProp === undefined ? undefined : valueProp || null}
       className={cn(
         "group/navigation-menu relative z-10 flex max-w-max flex-1 items-center justify-center rounded-base border-2 border-border bg-main p-1 font-heading",
@@ -330,17 +475,7 @@ function NavigationMenu({
       )}
       {...props}
     >
-      {children}
-      {viewport ? (
-        !explicitViewport && <NavigationMenuViewport />
-      ) : (
-        <NavigationMenuPositioner
-          align={align}
-          forceMount={contentForceMount}
-          portalContainer={portalContainer}
-          viewport={false}
-        />
-      )}
+      {asChild ? undefined : rootChildren}
     </NavigationMenuPrimitive.Root>
   );
 
@@ -352,37 +487,52 @@ function NavigationMenu({
 }
 
 function NavigationMenuList({
+  asChild = false,
+  children,
   className,
+  render,
   ...props
-}: React.ComponentPropsWithRef<typeof NavigationMenuPrimitive.List>) {
+}: React.ComponentPropsWithRef<typeof NavigationMenuPrimitive.List> & {
+  asChild?: boolean;
+  children?: React.ReactNode;
+}) {
   const adapter = React.useContext(NavigationMenuAdapterContext);
+  const renderElement = getRenderElement(asChild, children, render);
 
   return (
     <NavigationMenuPrimitive.List
       data-slot="navigation-menu-list"
       data-orientation={adapter?.orientation ?? "horizontal"}
+      render={renderElement}
       className={cn(
         "group flex flex-1 list-none items-center justify-center gap-1 font-heading",
         className,
       )}
       {...props}
-    />
+    >
+      {asChild ? undefined : children}
+    </NavigationMenuPrimitive.List>
   );
 }
 
 function NavigationMenuItem({
+  asChild = false,
   children,
   className,
   ref,
+  render,
   value: valueProp,
   ...props
 }: Omit<React.ComponentPropsWithRef<typeof NavigationMenuPrimitive.Item>, "value"> & {
+  asChild?: boolean;
+  children?: React.ReactNode;
   value?: string;
 }) {
   const adapter = React.useContext(NavigationMenuAdapterContext);
   const generatedValue = React.useId();
   const value = valueProp ?? generatedValue;
   const forceMount = hasForceMountedContent(children);
+  const renderElement = getRenderElement(asChild, children, render);
   const setItemRef = React.useCallback(
     (node: HTMLLIElement | null) => {
       adapter?.registerItem(value, node, forceMount);
@@ -397,10 +547,11 @@ function NavigationMenuItem({
       data-slot="navigation-menu-item"
       data-value={value}
       value={value}
+      render={renderElement}
       className={cn("relative", className)}
       {...props}
     >
-      {children}
+      {asChild ? undefined : children}
     </NavigationMenuPrimitive.Item>
   );
 }
@@ -410,26 +561,49 @@ const navigationMenuTriggerStyle = cva(
 );
 
 function NavigationMenuTrigger({
+  asChild = false,
   className,
   children,
+  render,
   ...props
-}: NavigationMenuPrimitive.Trigger.Props) {
+}: NavigationMenuPrimitive.Trigger.Props & {
+  asChild?: boolean;
+  children?: React.ReactNode;
+}) {
+  const triggerChild = asChild
+    ? (preserveRadixEventCancellation(
+        React.Children.toArray(children).find(React.isValidElement) as React.ReactElement<{
+          children?: React.ReactNode;
+        }>,
+      ) as React.ReactElement<{ children?: React.ReactNode }>)
+    : undefined;
+  const chevron = (
+    <ChevronDownIcon
+      className="relative top-px ml-2 size-4 transition duration-200 group-data-popup-open/navigation-menu-trigger:rotate-180 group-data-open/navigation-menu-trigger:rotate-180 group-data-[state=open]/navigation-menu-trigger:rotate-180"
+      aria-hidden="true"
+    />
+  );
+  const renderElement = asChild
+    ? React.cloneElement(triggerChild!, undefined, triggerChild!.props.children, " ", chevron)
+    : render;
+
   return (
     <NavigationMenuPrimitive.Trigger
       data-slot="navigation-menu-trigger"
+      render={adaptNavigationMenuTriggerRender(renderElement)}
       className={cn(navigationMenuTriggerStyle(), "group", className)}
       {...props}
     >
-      {children}{" "}
-      <ChevronDownIcon
-        className="relative top-px ml-2 size-4 transition duration-200 group-data-popup-open/navigation-menu-trigger:rotate-180 group-data-open/navigation-menu-trigger:rotate-180"
-        aria-hidden="true"
-      />
+      {asChild ? undefined : children}
+      {asChild ? undefined : " "}
+      {asChild ? undefined : chevron}
     </NavigationMenuPrimitive.Trigger>
   );
 }
 
 function NavigationMenuContent({
+  asChild = false,
+  children,
   className,
   forceMount,
   keepMounted,
@@ -438,6 +612,7 @@ function NavigationMenuContent({
   onInteractOutside,
   onPointerDownOutside,
   ref,
+  render,
   ...props
 }: NavigationMenuContentProps) {
   const adapter = React.useContext(NavigationMenuAdapterContext);
@@ -452,6 +627,7 @@ function NavigationMenuContent({
   if (contentElementRef.current && adapter) {
     adapter.contentHandlersRef.current.set(contentElementRef.current, handlersRef.current);
   }
+  const renderElement = getRenderElement(asChild, children, render);
 
   const setContentRef = React.useCallback(
     (node: HTMLDivElement | null) => {
@@ -470,14 +646,17 @@ function NavigationMenuContent({
       data-slot="navigation-menu-content"
       data-orientation={adapter?.orientation ?? "horizontal"}
       keepMounted={forceMount ?? keepMounted}
+      render={adaptNavigationMenuContentRender(renderElement)}
       className={cn(
-        "h-full w-auto p-2 pr-2.5 transition-[opacity,transform,translate] duration-[0.35s] ease-[cubic-bezier(0.22,1,0.36,1)] data-[activation-direction=down]:data-ending-style:-translate-y-1/2 data-[activation-direction=down]:data-starting-style:translate-y-1/2 data-[activation-direction=left]:data-ending-style:translate-x-1/2 data-[activation-direction=left]:data-starting-style:-translate-x-1/2 data-[activation-direction=right]:data-ending-style:-translate-x-1/2 data-[activation-direction=right]:data-starting-style:translate-x-1/2 data-[activation-direction=up]:data-ending-style:translate-y-1/2 data-[activation-direction=up]:data-starting-style:-translate-y-1/2 data-ending-style:opacity-0 data-starting-style:opacity-0 **:data-[slot=navigation-menu-link]:focus:ring-0 **:data-[slot=navigation-menu-link]:focus:outline-none",
+        "h-full w-auto p-2 pr-2.5 transition-[opacity,transform,translate] duration-[0.35s] ease-[cubic-bezier(0.22,1,0.36,1)] data-[motion^=from-]:animate-in data-[motion^=to-]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 data-[activation-direction=down]:data-ending-style:-translate-y-1/2 data-[activation-direction=down]:data-starting-style:translate-y-1/2 data-[activation-direction=left]:data-ending-style:translate-x-1/2 data-[activation-direction=left]:data-starting-style:-translate-x-1/2 data-[activation-direction=right]:data-ending-style:-translate-x-1/2 data-[activation-direction=right]:data-starting-style:translate-x-1/2 data-[activation-direction=up]:data-ending-style:translate-y-1/2 data-[activation-direction=up]:data-starting-style:-translate-y-1/2 data-ending-style:opacity-0 data-starting-style:opacity-0 **:data-[slot=navigation-menu-link]:focus:ring-0 **:data-[slot=navigation-menu-link]:focus:outline-none",
         !adapter?.viewport &&
           "rounded-base border-2 border-border bg-main text-main-foreground duration-300 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
         className,
       )}
       {...props}
-    />
+    >
+      {asChild ? undefined : children}
+    </NavigationMenuPrimitive.Content>
   );
 }
 
@@ -498,12 +677,16 @@ function NavigationMenuPositioner({
   const keepMounted = Boolean(forceMount || adapter?.contentForceMount);
   const container = viewport ? undefined : (portalContainer ?? adapter?.portalContainer);
   const {
+    asChild: viewportAsChild = false,
+    children: viewportChildren,
     className: viewportClassName,
     forceMount: viewportForceMount,
     ref: viewportRef,
+    render: viewportRender,
     style: viewportStyle,
     ...viewportElementProps
   } = viewportProps ?? {};
+  const viewportRenderElement = getRenderElement(viewportAsChild, viewportChildren, viewportRender);
 
   if (!viewport && !container) return null;
 
@@ -519,15 +702,18 @@ function NavigationMenuPositioner({
       data-slot={viewport ? "navigation-menu-viewport" : "navigation-menu-content-container"}
       data-state={adapter?.value ? "open" : "closed"}
       data-orientation={adapter?.orientation ?? "horizontal"}
+      render={viewportRenderElement}
       className={cn(
         "relative h-(--radix-navigation-menu-viewport-height) w-(--radix-navigation-menu-viewport-width)",
         viewport
-          ? "overflow-hidden rounded-base border-2 border-border bg-main"
+          ? "overflow-hidden rounded-base bg-main shadow-[inset_0_0_0_2px_var(--border)]"
           : "overflow-visible",
         viewportClassName,
       )}
       style={radixStyle}
-    />
+    >
+      {viewportAsChild ? undefined : viewportChildren}
+    </NavigationMenuPrimitive.Viewport>
   );
 
   return (
@@ -559,7 +745,13 @@ function NavigationMenuPositioner({
   );
 }
 
-function NavigationMenuViewport({ forceMount, ...props }: NavigationMenuViewportProps) {
+function NavigationMenuViewport({
+  asChild = false,
+  children,
+  forceMount,
+  render,
+  ...props
+}: NavigationMenuViewportProps) {
   const adapter = React.useContext(NavigationMenuAdapterContext);
   if (adapter && !adapter.viewport) return null;
 
@@ -567,7 +759,7 @@ function NavigationMenuViewport({ forceMount, ...props }: NavigationMenuViewport
     <NavigationMenuPositioner
       align={adapter?.align ?? "start"}
       forceMount={Boolean(forceMount || adapter?.contentForceMount)}
-      viewportProps={{ forceMount, ...props }}
+      viewportProps={{ asChild, children, forceMount, render, ...props }}
     />
   );
 }
@@ -588,7 +780,9 @@ function NavigationMenuLink({
   onSelect?: NavigationMenuLifecycleHandler;
 }) {
   const renderElement = asChild
-    ? (React.Children.toArray(children).find(React.isValidElement) as React.ReactElement)
+    ? preserveRadixEventCancellation(
+        React.Children.toArray(children).find(React.isValidElement) as React.ReactElement,
+      )
     : render;
 
   return (
@@ -599,7 +793,7 @@ function NavigationMenuLink({
       closeOnClick={closeOnClick}
       render={renderElement}
       className={cn(
-        "flex items-center gap-2 rounded-base p-2 text-sm leading-none no-underline transition-colors outline-none focus-visible:ring-4 focus-visible:outline-1 [&_svg:not([class*='size-'])]:size-4",
+        "block space-y-1 rounded-base p-2 leading-none no-underline transition-colors outline-none select-none focus-visible:ring-4 focus-visible:outline-1 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       onClick={(event) => {
@@ -624,7 +818,9 @@ function NavigationMenuLink({
 }
 
 type NavigationMenuIndicatorProps = React.ComponentPropsWithoutRef<"div"> & {
+  asChild?: boolean;
   forceMount?: boolean;
+  render?: NavigationMenuPrimitive.Viewport.Props["render"];
 };
 
 type NavigationMenuIndicatorPosition = {
@@ -633,7 +829,10 @@ type NavigationMenuIndicatorPosition = {
 };
 
 const NavigationMenuIndicator = React.forwardRef<HTMLDivElement, NavigationMenuIndicatorProps>(
-  function NavigationMenuIndicator({ className, forceMount, style, ...props }, ref) {
+  function NavigationMenuIndicator(
+    { asChild = false, children, className, forceMount, render, style, ...props },
+    ref,
+  ) {
     const adapter = React.useContext(NavigationMenuAdapterContext);
     const [position, setPosition] = React.useState<NavigationMenuIndicatorPosition | null>(null);
     const visible = Boolean(adapter?.value);
@@ -718,25 +917,45 @@ const NavigationMenuIndicator = React.forwardRef<HTMLDivElement, NavigationMenuI
           "--radix-navigation-menu-indicator-translate-y": `${position.offset}px`,
           ...style,
         };
+    const renderElement = getRenderElement(asChild, children, render);
+    const indicatorChildren =
+      asChild && React.isValidElement<{ children?: React.ReactNode }>(renderElement)
+        ? renderElement.props.children
+        : children;
+    const indicatorProps = {
+      ...props,
+      "aria-hidden": true,
+      "data-slot": "navigation-menu-indicator",
+      "data-orientation": adapter.orientation,
+      "data-state": visible ? "visible" : "hidden",
+      className: cn(
+        "absolute top-full z-1 flex h-1.5 items-end justify-center overflow-hidden transition-[transform,width,height,opacity] data-[state=hidden]:pointer-events-none data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:animate-in data-[state=visible]:fade-in",
+        !horizontal && "top-0 right-0 h-auto w-1.5 items-center",
+        className,
+      ),
+      ref,
+      style: indicatorStyle,
+    } as React.HTMLAttributes<HTMLDivElement> & { ref?: React.Ref<HTMLDivElement> };
+    const indicator =
+      typeof renderElement === "function" ? (
+        renderElement(indicatorProps, {})
+      ) : renderElement ? (
+        mergeRenderElement(
+          renderElement,
+          indicatorProps as React.HTMLAttributes<HTMLElement> & { ref?: React.Ref<HTMLElement> },
+        )
+      ) : (
+        <div {...indicatorProps}>{children}</div>
+      );
 
     return (
       <NavigationMenuPrimitive.Portal container={adapter.rootElement} keepMounted>
-        <div
-          ref={ref}
-          aria-hidden="true"
-          data-slot="navigation-menu-indicator"
-          data-orientation={adapter.orientation}
-          data-state={visible ? "visible" : "hidden"}
-          className={cn(
-            "absolute top-full z-1 flex h-1.5 items-end justify-center overflow-hidden transition-[transform,width,height,opacity] data-[state=hidden]:pointer-events-none data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:animate-in data-[state=visible]:fade-in",
-            !horizontal && "top-0 right-0 h-auto w-1.5 items-center",
-            className,
-          )}
-          style={indicatorStyle}
-          {...props}
-        >
-          <div className="relative top-[60%] h-2 w-2 rotate-45 rounded-tl-sm bg-border shadow-md" />
-        </div>
+        {React.cloneElement(
+          indicator,
+          undefined,
+          indicatorChildren,
+          <div className="relative top-[60%] h-2 w-2 rotate-45 rounded-tl-sm bg-border shadow-md" />,
+        )}
       </NavigationMenuPrimitive.Portal>
     );
   },

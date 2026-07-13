@@ -377,10 +377,16 @@ function SidebarGroup({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function SidebarGroupLabel({
+  asChild = false,
+  children,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div"> & React.ComponentProps<"div">) {
+}: useRender.ComponentProps<"div"> & React.ComponentProps<"div"> & { asChild?: boolean }) {
+  const renderElement = asChild
+    ? (React.Children.toArray(children).find(React.isValidElement) as React.ReactElement)
+    : render;
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(
@@ -389,10 +395,11 @@ function SidebarGroupLabel({
           "flex h-8 shrink-0 items-center rounded-base px-2 text-sm font-heading text-foreground ring-ring outline-hidden transition-[margin,opacity] duration-200 ease-linear group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0 focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
           className,
         ),
+        children: asChild ? undefined : children,
       },
       props,
     ),
-    render,
+    render: renderElement,
     state: {
       slot: "sidebar-group-label",
       sidebar: "group-label",
@@ -401,10 +408,16 @@ function SidebarGroupLabel({
 }
 
 function SidebarGroupAction({
+  asChild = false,
+  children,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"button"> & React.ComponentProps<"button">) {
+}: useRender.ComponentProps<"button"> & React.ComponentProps<"button"> & { asChild?: boolean }) {
+  const renderElement = asChild
+    ? (React.Children.toArray(children).find(React.isValidElement) as React.ReactElement)
+    : render;
+
   return useRender({
     defaultTagName: "button",
     props: mergeProps<"button">(
@@ -413,10 +426,11 @@ function SidebarGroupAction({
           "absolute top-3.5 right-3 flex aspect-square w-5 items-center justify-center rounded-base p-0 outline-hidden transition-transform group-data-[collapsible=icon]:hidden after:absolute after:-inset-2 focus-visible:ring-2 md:after:hidden [&>svg]:size-4 [&>svg]:shrink-0",
           className,
         ),
+        children: asChild ? undefined : children,
       },
       props,
     ),
-    render,
+    render: renderElement,
     state: {
       slot: "sidebar-group-action",
       sidebar: "group-action",
@@ -542,14 +556,21 @@ function SidebarMenuButton({
 }
 
 function SidebarMenuAction({
+  asChild = false,
+  children,
   className,
   render,
   showOnHover = false,
   ...props
 }: useRender.ComponentProps<"button"> &
   React.ComponentProps<"button"> & {
+    asChild?: boolean;
     showOnHover?: boolean;
   }) {
+  const renderElement = asChild
+    ? (React.Children.toArray(children).find(React.isValidElement) as React.ReactElement)
+    : render;
+
   return useRender({
     defaultTagName: "button",
     props: mergeProps<"button">(
@@ -560,10 +581,11 @@ function SidebarMenuAction({
             "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 peer-data-active/menu-button:text-main-foreground aria-expanded:opacity-100 md:opacity-0",
           className,
         ),
+        children: asChild ? undefined : children,
       },
       props,
     ),
-    render,
+    render: renderElement,
     state: {
       slot: "sidebar-menu-action",
       sidebar: "menu-action",

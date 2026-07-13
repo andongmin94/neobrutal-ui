@@ -46,22 +46,22 @@ export default function DropdownMenuDemo() {
           <DropdownMenuItem>
             <User />
             <span>Profile</span>
-            <DropdownMenuShortcut>Shift+Cmd+P</DropdownMenuShortcut>
+            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <CreditCard />
             <span>Billing</span>
-            <DropdownMenuShortcut>Cmd+B</DropdownMenuShortcut>
+            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Settings />
             <span>Settings</span>
-            <DropdownMenuShortcut>Cmd+S</DropdownMenuShortcut>
+            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Keyboard />
             <span>Keyboard shortcuts</span>
-            <DropdownMenuShortcut>Cmd+K</DropdownMenuShortcut>
+            <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
@@ -96,7 +96,7 @@ export default function DropdownMenuDemo() {
           <DropdownMenuItem>
             <Plus />
             <span>New Team</span>
-            <DropdownMenuShortcut>Cmd+T</DropdownMenuShortcut>
+            <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
@@ -116,7 +116,7 @@ export default function DropdownMenuDemo() {
         <DropdownMenuItem>
           <LogOut />
           <span>Log out</span>
-          <DropdownMenuShortcut>Shift+Cmd+Q</DropdownMenuShortcut>
+          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

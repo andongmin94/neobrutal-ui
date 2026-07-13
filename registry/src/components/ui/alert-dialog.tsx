@@ -20,9 +20,13 @@ type AlertDialogPortalProps = AlertDialogPrimitive.Portal.Props & {
   forceMount?: boolean;
 };
 type AlertDialogOverlayProps = AlertDialogPrimitive.Backdrop.Props & {
+  asChild?: boolean;
+  children?: React.ReactNode;
   forceMount?: boolean;
 };
 type AlertDialogContentProps = AlertDialogPrimitive.Popup.Props & {
+  asChild?: boolean;
+  children?: React.ReactNode;
   forceMount?: boolean;
   onCloseAutoFocus?: AutoFocusEventHandler;
   onOpenAutoFocus?: AutoFocusEventHandler;
@@ -36,7 +40,60 @@ type AlertDialogButtonProps = React.ComponentProps<typeof AlertDialogPrimitive.C
 type AlertDialogContextProps = {
   cancelRef: React.RefObject<HTMLButtonElement | null>;
   dismissableLayerHandlersRef: React.RefObject<DismissableLayerHandlers>;
+  open: boolean;
 };
+
+type PreventableBaseUIEvent = {
+  readonly baseUIHandlerPrevented?: boolean;
+  readonly defaultPrevented?: boolean;
+  preventBaseUIHandler?: () => void;
+};
+type EventHandler = (...args: unknown[]) => unknown;
+type RenderFunction = (props: Record<string, unknown>, state: unknown) => React.ReactElement;
+
+function adaptEventHandlers(props: Record<string, unknown>, beforeBaseUIHandler: boolean) {
+  const eventHandlers: Record<string, EventHandler> = {};
+
+  for (const [name, handler] of Object.entries(props)) {
+    if (!/^on[A-Z]/.test(name) || typeof handler !== "function") {
+      continue;
+    }
+
+    eventHandlers[name] = (...args) => {
+      const event = args[0] as PreventableBaseUIEvent | undefined;
+      if (beforeBaseUIHandler && event?.defaultPrevented) {
+        event.preventBaseUIHandler?.();
+      }
+      if (beforeBaseUIHandler && event?.baseUIHandlerPrevented) {
+        return undefined;
+      }
+
+      const result = handler(...args);
+      if (!beforeBaseUIHandler && event?.defaultPrevented) {
+        event.preventBaseUIHandler?.();
+      }
+      return result;
+    };
+  }
+
+  return eventHandlers;
+}
+
+function adaptRenderEventHandlers<Render>(render: Render): Render {
+  if (React.isValidElement(render)) {
+    const element = render as React.ReactElement<Record<string, unknown>>;
+    const eventHandlers = adaptEventHandlers(element.props, false);
+    return (Object.keys(eventHandlers).length === 0
+      ? render
+      : React.cloneElement(element, eventHandlers)) as unknown as Render;
+  }
+  if (typeof render === "function") {
+    const renderFunction = render as RenderFunction;
+    return ((props: Record<string, unknown>, state: unknown) =>
+      renderFunction({ ...props, ...adaptEventHandlers(props, true) }, state)) as unknown as Render;
+  }
+  return render;
+}
 
 const AlertDialogContext = React.createContext<AlertDialogContextProps | null>(null);
 
@@ -196,28 +253,43 @@ function adaptAutoFocus(
   };
 }
 
-function AlertDialog({ onOpenChange, ...props }: AlertDialogPrimitive.Root.Props) {
+function AlertDialog({
+  defaultOpen = false,
+  onOpenChange,
+  open,
+  ...props
+}: AlertDialogPrimitive.Root.Props) {
   const cancelRef = React.useRef<HTMLButtonElement>(null);
   const dismissableLayerHandlersRef = React.useRef<DismissableLayerHandlers>({});
-  const contextValue = React.useMemo(() => ({ cancelRef, dismissableLayerHandlersRef }), []);
+  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultOpen);
+  const resolvedOpen = open ?? uncontrolledOpen;
+  const contextValue = React.useMemo(
+    () => ({ cancelRef, dismissableLayerHandlersRef, open: resolvedOpen }),
+    [resolvedOpen],
+  );
 
   const handleOpenChange: NonNullable<AlertDialogPrimitive.Root.Props["onOpenChange"]> = (
-    open,
+    nextOpen,
     eventDetails,
   ) => {
-    if (!open) {
+    if (!nextOpen) {
       adaptDismissableLayerEvent(eventDetails, dismissableLayerHandlersRef.current);
     }
     if (eventDetails.isCanceled) {
       return;
     }
-    onOpenChange?.(open, eventDetails);
+    if (open === undefined) {
+      setUncontrolledOpen(nextOpen);
+    }
+    onOpenChange?.(nextOpen, eventDetails);
   };
 
   return (
     <AlertDialogContext.Provider value={contextValue}>
       <AlertDialogPrimitive.Root
         data-slot="alert-dialog"
+        defaultOpen={defaultOpen}
+        open={open}
         {...props}
         onOpenChange={handleOpenChange}
       />
@@ -234,6 +306,7 @@ function AlertDialogTrigger({
   asChild?: boolean;
   children?: React.ReactNode;
 }) {
+  const { open } = useAlertDialogContext();
   const renderElement = asChild
     ? (React.Children.toArray(children).find(React.isValidElement) as React.ReactElement)
     : render;
@@ -241,7 +314,8 @@ function AlertDialogTrigger({
   return (
     <AlertDialogPrimitive.Trigger
       data-slot="alert-dialog-trigger"
-      render={renderElement}
+      data-state={open ? "open" : "closed"}
+      render={adaptRenderEventHandlers(renderElement)}
       {...props}
     >
       {asChild ? undefined : children}
@@ -262,24 +336,38 @@ function AlertDialogPortal({ forceMount, keepMounted, ...props }: AlertDialogPor
 }
 
 function AlertDialogOverlay({
+  asChild = false,
+  children,
   className,
   forceMount: _forceMount,
+  render,
   ...props
 }: AlertDialogOverlayProps) {
+  const { open } = useAlertDialogContext();
+  const renderElement = asChild
+    ? (React.Children.toArray(children).find(React.isValidElement) as React.ReactElement)
+    : render;
+
   return (
     <AlertDialogPrimitive.Backdrop
       data-slot="alert-dialog-overlay"
+      data-state={open ? "open" : "closed"}
+      render={adaptRenderEventHandlers(renderElement)}
       className={cn(
         "fixed inset-0 isolate z-50 bg-overlay duration-200 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
         className,
       )}
       {...props}
-    />
+    >
+      {asChild ? undefined : children}
+    </AlertDialogPrimitive.Backdrop>
   );
 }
 
 function AlertDialogContent({
+  asChild = false,
   className,
+  children,
   finalFocus,
   forceMount,
   initialFocus,
@@ -289,15 +377,19 @@ function AlertDialogContent({
   onInteractOutside,
   onOpenAutoFocus,
   onPointerDownOutside,
+  render,
   size = "default",
   ...props
 }: AlertDialogContentProps) {
-  const { cancelRef, dismissableLayerHandlersRef } = useAlertDialogContext();
+  const { cancelRef, dismissableLayerHandlersRef, open } = useAlertDialogContext();
   const dismissableLayerHandlers = React.useMemo(
     () => ({ onEscapeKeyDown, onFocusOutside, onInteractOutside, onPointerDownOutside }),
     [onEscapeKeyDown, onFocusOutside, onInteractOutside, onPointerDownOutside],
   );
   const defaultInitialFocus = React.useCallback(() => cancelRef.current ?? false, [cancelRef]);
+  const renderElement = asChild
+    ? (React.Children.toArray(children).find(React.isValidElement) as React.ReactElement)
+    : render;
   dismissableLayerHandlersRef.current = dismissableLayerHandlers;
 
   React.useEffect(
@@ -315,6 +407,8 @@ function AlertDialogContent({
       <AlertDialogPrimitive.Popup
         data-slot="alert-dialog-content"
         data-size={size}
+        data-state={open ? "open" : "closed"}
+        render={adaptRenderEventHandlers(renderElement)}
         initialFocus={adaptAutoFocus(
           onOpenAutoFocus,
           initialFocus === undefined ? defaultInitialFocus : initialFocus,
@@ -326,7 +420,9 @@ function AlertDialogContent({
           className,
         )}
         {...props}
-      />
+      >
+        {asChild ? undefined : children}
+      </AlertDialogPrimitive.Popup>
     </AlertDialogPortal>
   );
 }
@@ -365,28 +461,54 @@ function AlertDialogMedia({ className, ...props }: React.ComponentProps<"div">) 
 }
 
 function AlertDialogTitle({
+  asChild = false,
+  children,
   className,
+  render,
   ...props
-}: React.ComponentProps<typeof AlertDialogPrimitive.Title>) {
+}: React.ComponentProps<typeof AlertDialogPrimitive.Title> & {
+  asChild?: boolean;
+  children?: React.ReactNode;
+}) {
+  const renderElement = asChild
+    ? (React.Children.toArray(children).find(React.isValidElement) as React.ReactElement)
+    : render;
+
   return (
     <AlertDialogPrimitive.Title
       data-slot="alert-dialog-title"
+      render={adaptRenderEventHandlers(renderElement)}
       className={cn("font-heading text-lg", className)}
       {...props}
-    />
+    >
+      {asChild ? undefined : children}
+    </AlertDialogPrimitive.Title>
   );
 }
 
 function AlertDialogDescription({
+  asChild = false,
+  children,
   className,
+  render,
   ...props
-}: React.ComponentProps<typeof AlertDialogPrimitive.Description>) {
+}: React.ComponentProps<typeof AlertDialogPrimitive.Description> & {
+  asChild?: boolean;
+  children?: React.ReactNode;
+}) {
+  const renderElement = asChild
+    ? (React.Children.toArray(children).find(React.isValidElement) as React.ReactElement)
+    : render;
+
   return (
     <AlertDialogPrimitive.Description
       data-slot="alert-dialog-description"
+      render={adaptRenderEventHandlers(renderElement)}
       className={cn("text-sm font-base text-foreground", className)}
       {...props}
-    />
+    >
+      {asChild ? undefined : children}
+    </AlertDialogPrimitive.Description>
   );
 }
 
@@ -409,7 +531,7 @@ function AlertDialogAction({
       data-slot="alert-dialog-action"
       className={cn(className)}
       onClick={adaptCloseClick(onClick)}
-      render={renderElement}
+      render={adaptRenderEventHandlers(renderElement)}
       {...props}
     >
       {asChild ? undefined : children}
@@ -446,7 +568,7 @@ function AlertDialogCancel({
       className={cn(className)}
       onClick={adaptCloseClick(onClick)}
       ref={composedRef}
-      render={renderElement}
+      render={adaptRenderEventHandlers(renderElement)}
       {...props}
     >
       {asChild ? undefined : children}
