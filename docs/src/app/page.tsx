@@ -39,33 +39,32 @@ export default function Home() {
         <HeroComponents className="xl:-right-[130px] md:-right-[200px] lg:block hidden" reverse />
         <div className="mx-auto w-container max-w-full">
           <div className="flex flex-col items-center text-center">
-            <h1 className="leading-normal">
-              Get started with creating <br />{" "}
-              <span className="relative px-2 sm:mr-2 mr-0 md:[&_svg]:size-[45px] sm:[&_svg]:size-7 bg-main/50 rounded-base border-2 border-border/40 dark:border-border/70">
-                neobrutalism
+            <h1 className="leading-[1.08]">
+              <span className="relative inline-block rounded-base border-2 border-border bg-main px-3 py-1 text-main-foreground shadow-shadow sm:px-5 md:[&_svg]:size-[45px] sm:[&_svg]:size-7">
+                neobrutal-ui
                 <Star9
                   className="absolute sm:block hidden md:-bottom-4 md:-right-5 -bottom-2.5 -right-2.5"
-                  color="var(--main)"
+                  color="var(--signal)"
                   pathClassName="stroke-5 dark:stroke-3.5 stroke-black dark:stroke-black/70"
                 />
                 <Star9
                   className="absolute sm:block hidden md:-top-4 md:-left-5 -top-2.5 -left-2.5"
-                  color="var(--main)"
+                  color="var(--signal)"
                   pathClassName="stroke-5 dark:stroke-3.5 stroke-black dark:stroke-black/70"
                 />
-              </span>{" "}
-              layouts.
+              </span>
             </h1>
 
-            <p className="leading-snug w-full md:mt-[50px] md:mb-[60px] sm:mt-12 my-9 sm:mb-10 2xl:text-3xl xl:text-2xl lg:text-2xl xl:w-full lg:w-2/3 md:w-full md:text-2xl sm:text-xl text-xl">
-              A collection of neobrutalism-styled components based on shadcn/ui.
+            <p className="my-9 w-full max-w-[760px] leading-snug sm:mt-12 sm:mb-10 sm:text-xl md:mt-[50px] md:mb-[60px] md:text-2xl lg:text-2xl 2xl:text-3xl">
+              Own the source. Shape the system. Neobrutalist React components built on Base UI and
+              delivered through the shadcn registry.
             </p>
 
             <Link
               className="flex items-center gap-2.5 w-max text-main-foreground rounded-base border-2 border-border bg-main md:px-10 px-4 md:py-3 py-2 md:text-[22px] text-base shadow-shadow transition-all hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none"
               href={"/docs"}
             >
-              Read the docs
+              Browse components
               <ArrowUpRight className="md:size-[30px] size-5" />
             </Link>
           </div>
@@ -85,11 +84,11 @@ export default function Home() {
                 <span>neobrutal-ui</span>
                 <Star32 className="text-foreground" />
                 <span>neobrutal-ui</span>
-                <Star22 stroke="black" strokeWidth={6} color="var(--main)" />
+                <Star22 stroke="black" strokeWidth={6} color="var(--signal)" />
                 <span>neobrutal-ui</span>
                 <Star11 className="text-foreground" />
                 <span>neobrutal-ui</span>
-                <Star26 color="var(--main)" stroke="black" strokeWidth={7} />
+                <Star26 color="var(--signal)" stroke="black" strokeWidth={7} />
               </div>
             );
           })}
