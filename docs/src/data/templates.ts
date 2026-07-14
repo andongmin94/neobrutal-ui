@@ -1,35 +1,43 @@
-import bento from "@public/template-previews/bento.webp";
-import blog from "@public/template-previews/blog.webp";
-import portfolio from "@public/template-previews/portfolio.webp";
-import windowedPortfolio from "@public/template-previews/windowed-portfolio.webp";
+export type TemplateEntry = {
+  color: string;
+  description: string;
+  installCommand: string;
+  preview: string;
+  slug: "blog" | "portfolio" | "cms" | "links";
+  title: string;
+};
 
-const TEMPLATES = [
+const TEMPLATES: TemplateEntry[] = [
   {
-    title: "Portfolio",
-    previewImg: portfolio,
-    liveUrl: "https://neobrutalism-portfolio.netlify.app/",
-    repoUrl: "https://github.com/neobrutalism-templates/portfolio",
-    color: "#ff7b07",
-  },
-  {
+    slug: "blog",
     title: "Blog",
-    previewImg: blog,
-    liveUrl: "https://neobrutalism-blog.netlify.app/",
-    repoUrl: "https://github.com/neobrutalism-templates/blog",
+    description: "A searchable home for articles and notes.",
+    preview: "/template-previews/blog-ab017b7060.png",
+    installCommand: "npx shadcn@latest add @neobrut-ui/blog-template",
     color: "#ffbe00",
   },
   {
-    title: "Windowed portfolio",
-    previewImg: windowedPortfolio,
-    liveUrl: "https://neobrutalism-windowed-portfolio.netlify.app/",
-    repoUrl: "https://github.com/neobrutalism-templates/windowed-portfolio",
+    slug: "portfolio",
+    title: "Portfolio",
+    description: "A simple personal site for selected work and contact details.",
+    preview: "/template-previews/portfolio-26ccf36d51.png",
+    installCommand: "npx shadcn@latest add @neobrut-ui/portfolio-template",
+    color: "#ff7b07",
+  },
+  {
+    slug: "cms",
+    title: "CMS",
+    description: "A focused workspace for finding, editing, and publishing posts.",
+    preview: "/template-previews/cms-7aa8e7ec5f.png",
+    installCommand: "npx shadcn@latest add @neobrut-ui/cms-template",
     color: "#7983ff",
   },
   {
-    title: "Bento",
-    previewImg: bento,
-    liveUrl: "https://neobrutalism-bento.netlify.app/",
-    repoUrl: "https://github.com/neobrutalism-templates/bento",
+    slug: "links",
+    title: "Link in bio",
+    description: "A profile and link grid for sharing your work in one place.",
+    preview: "/template-previews/link-hub-b034636455.png",
+    installCommand: "npx shadcn@latest add @neobrut-ui/link-hub-template",
     color: "#5093fe",
   },
 ];

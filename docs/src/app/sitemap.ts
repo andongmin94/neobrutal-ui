@@ -1,25 +1,11 @@
+import { docs } from "@docs";
 import { MetadataRoute } from "next";
 
-import COMPONENTS from "@/data/components";
-
-import { transformToSlug } from "@/lib/utils";
+import TEMPLATES from "@/data/templates";
 
 const root = process.env.NEXT_PUBLIC_DOCS_BASE_URL || "https://neobrutal-ui.andongmin.com";
 
-const DOCS_PAGES = [
-  "/docs",
-  "/docs/resources",
-  "/docs/figma",
-  "/docs/changelog",
-  "/docs/installation",
-  "/docs/stars",
-  "/docs/migrating-from-v3",
-  "/templates",
-  "/showcase",
-  "/stars",
-  "/styling",
-  "/charts",
-];
+const SITE_PAGES = ["/templates", "/showcase", "/stars", "/styling", "/charts"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
@@ -28,15 +14,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       priority: 1,
     },
-    ...DOCS_PAGES.map((page) => ({
+    ...SITE_PAGES.map((page) => ({
       url: root + page,
       lastModified: new Date(),
       priority: 1,
     })),
-    ...COMPONENTS.map((page) => ({
-      url: root + "/docs/" + transformToSlug(page.name),
+    ...TEMPLATES.map(({ slug }) => ({
+      url: `${root}/templates/${slug}`,
       lastModified: new Date(),
       priority: 0.8,
+    })),
+    ...docs.map((doc) => ({
+      url: root + (doc.slugAsParams ? `/docs/${doc.slugAsParams}` : "/docs"),
+      lastModified: new Date(),
+      priority: doc.slug.startsWith("components/") ? 0.8 : 1,
     })),
   ];
 }

@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "link-hub-template",
+  "title": "Link in bio template",
+  "author": "andongmin94",
+  "description": "A compact profile and link grid for projects, social profiles, and contact.",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json",
+    "https://neobrutal-ui.andongmin.com/r/button.json"
+  ],
+  "files": [
+    {
+      "path": "src/blocks/templates/link-hub-template.tsx",
+      "content": "\"use client\";\n\n/* oxlint-disable next/no-img-element -- This shared template also runs outside Next.js. */\n\nimport { AtSign, BookOpen, Boxes, GitFork, LayoutGrid, Mail } from \"lucide-react\";\n\nimport { Button } from \"@/components/ui/button\";\n\nconst TEMPLATE_THEME =\n  \"[color-scheme:light] [--background:#dceafe] [--secondary-background:#fff] [--foreground:#000] [--main-foreground:#000] [--main:#5093fe] [--border:#000] [--ring:#000] [--box-shadow-x:4px] [--box-shadow-y:-4px] [--reverse-box-shadow-x:-4px] [--reverse-box-shadow-y:4px] [--shadow:4px_-4px_0px_0px_var(--border)] [--border-radius:5px] [--base-font-weight:400] [--heading-font-weight:600] dark:[color-scheme:dark] dark:[--background:#2c304c] dark:[--secondary-background:#222] dark:[--foreground:#ececec] dark:[--main:#5093fe] dark:[--ring:#fff]\";\n\nconst LINKS = [\n  {\n    title: \"Neobrutalism\",\n    detail: \"neobrutal-ui.andongmin.com\",\n    href: \"https://neobrutal-ui.andongmin.com\",\n    icon: LayoutGrid,\n    highlighted: true,\n    external: true,\n  },\n  {\n    title: \"GitHub\",\n    detail: \"@andongmin94\",\n    href: \"https://github.com/andongmin94\",\n    icon: GitFork,\n    highlighted: false,\n    external: true,\n  },\n  {\n    title: \"X\",\n    detail: \"@andongmin94\",\n    href: \"https://x.com/andongmin94\",\n    icon: AtSign,\n    highlighted: false,\n    external: true,\n  },\n  {\n    title: \"Docs\",\n    detail: \"neobrutal-ui.andongmin.com/docs\",\n    href: \"https://neobrutal-ui.andongmin.com/docs\",\n    icon: BookOpen,\n    highlighted: false,\n    external: true,\n  },\n  {\n    title: \"Components\",\n    detail: \"neobrutal-ui.andongmin.com/docs/button\",\n    href: \"https://neobrutal-ui.andongmin.com/docs/button\",\n    icon: Boxes,\n    highlighted: false,\n    external: true,\n  },\n  {\n    title: \"Email\",\n    detail: \"andongmin94@gmail.com\",\n    href: \"mailto:andongmin94@gmail.com\",\n    icon: Mail,\n    highlighted: false,\n    external: false,\n  },\n] as const;\n\nexport default function LinkHubTemplate() {\n  return (\n    <div className={`min-h-dvh flex flex-col bg-background text-foreground ${TEMPLATE_THEME}`}>\n      <main className=\"mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6 sm:py-10\">\n        <section aria-labelledby=\"profile-name\" className=\"text-center\">\n          <div className=\"mx-auto size-24 overflow-hidden rounded-full border-2 border-border bg-secondary-background\">\n            <img\n              src=\"https://github.com/andongmin94.png\"\n              alt=\"Andong Min\"\n              width={256}\n              height={256}\n              className=\"size-full object-cover\"\n            />\n          </div>\n\n          <h1 id=\"profile-name\" className=\"mt-4 font-heading text-2xl sm:text-3xl\">\n            Andong Min\n          </h1>\n          <p className=\"mt-1 text-sm text-foreground/65\">@andongmin94</p>\n          <p className=\"mx-auto mt-3 max-w-sm text-sm leading-6 text-foreground/80 sm:text-base\">\n            I build open-source interfaces and tools for the web.\n          </p>\n        </section>\n\n        <ul className=\"mt-7 grid gap-3 sm:grid-cols-2\">\n          {LINKS.map((link) => {\n            const LinkIcon = link.icon;\n\n            return (\n              <li key={link.title}>\n                <Button\n                  asChild\n                  nativeButton={false}\n                  variant={link.highlighted ? \"default\" : \"neutral\"}\n                  className=\"h-auto min-h-20 w-full justify-start whitespace-normal p-0 text-left [&_svg]:size-5\"\n                >\n                  <a\n                    href={link.href}\n                    target={link.external ? \"_blank\" : undefined}\n                    rel={link.external ? \"noreferrer\" : undefined}\n                  >\n                    <span className=\"flex w-full min-w-0 items-center gap-3 p-4\">\n                      <LinkIcon className=\"shrink-0\" aria-hidden=\"true\" />\n                      <span className=\"min-w-0 flex-1\">\n                        <span className=\"block font-heading text-base leading-tight\">\n                          {link.title}\n                        </span>\n                        <span className=\"mt-1 block truncate text-xs opacity-70\">\n                          {link.detail}\n                        </span>\n                        {link.external ? <span className=\"sr-only\">Opens in a new tab</span> : null}\n                      </span>\n                    </span>\n                  </a>\n                </Button>\n              </li>\n            );\n          })}\n        </ul>\n      </main>\n\n      <footer className=\"px-4 py-4 text-center text-xs text-foreground/60\">\n        <p>(c) 2026 Andong Min</p>\n      </footer>\n    </div>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/templates/link-hub-template.tsx"
+    },
+    {
+      "path": "src/blocks/templates/pages/links/page.tsx",
+      "content": "import LinkHubTemplate from \"@/components/templates/link-hub-template\";\n\nexport default function Page() {\n  return <LinkHubTemplate />;\n}\n",
+      "type": "registry:page",
+      "target": "app/links/page.tsx"
+    }
+  ],
+  "categories": [
+    "template",
+    "profile",
+    "links"
+  ],
+  "type": "registry:block"
+}

@@ -21,9 +21,9 @@ export default function Page() {
         </PageDescription>
 
         <Styling />
-
-        <ExampleComponents />
       </PageHeader>
+
+      <ExampleComponents />
     </PageWrapper>
   );
 }

@@ -11,20 +11,32 @@ neobrutal-ui targets the current shadcn Base UI setup.
 pnpm dlx shadcn@latest init -b base
 ```
 
-## 2. Add the base registry
+## 2. Configure the registry namespace
+
+Add the neobrutal-ui registry to `components.json`. The `{name}` placeholder is replaced by the CLI when you install an item.
+
+```json
+{
+  "registries": {
+    "@neobrutal-ui": "https://neobrutal-ui.andongmin.com/r/{name}.json"
+  }
+}
+```
+
+## 3. Add the base registry
 
 Install the neobrutal-ui base item first. It adds the CSS variables, aliases, imports, and shared dependencies used by the components.
 
 ```bash
-pnpm dlx shadcn@latest add https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json
+pnpm dlx shadcn@latest add @neobrutal-ui/neobrutal-ui
 ```
 
-## 3. Install components
+## 4. Install components
 
 Install the component you need from the registry.
 
 ```bash
-pnpm dlx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json
+pnpm dlx shadcn@latest add @neobrutal-ui/button
 ```
 
 Component pages include the exact CLI command and source code. If a component has extra dependencies, the registry item installs them with the component.

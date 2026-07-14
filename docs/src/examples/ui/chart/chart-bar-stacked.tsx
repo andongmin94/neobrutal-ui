@@ -1,6 +1,6 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
+import { LibraryBig } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
 import {
@@ -20,24 +20,24 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-export const description = "A stacked bar chart with a legend";
+export const description = "A stacked catalog coverage chart with a legend";
 
 const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
+  { category: "Forms", registry: 12, recipes: 8 },
+  { category: "Overlays", registry: 9, recipes: 7 },
+  { category: "Navigation", registry: 7, recipes: 5 },
+  { category: "Data", registry: 8, recipes: 6 },
+  { category: "Feedback", registry: 4, recipes: 3 },
+  { category: "Layout", registry: 4, recipes: 2 },
 ];
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  registry: {
+    label: "Registry",
     color: "var(--chart-1)",
   },
-  mobile: {
-    label: "Mobile",
+  recipes: {
+    label: "Recipes",
     color: "var(--chart-2)",
   },
 } satisfies ChartConfig;
@@ -46,15 +46,15 @@ export default function ChartBarStacked() {
   return (
     <Card className="bg-secondary-background text-foreground">
       <CardHeader>
-        <CardTitle>Bar Chart - Stacked + Legend</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Catalog Coverage - Stacked + Legend</CardTitle>
+        <CardDescription>Combined registry and recipe coverage by category</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
           <BarChart accessibilityLayer data={chartData}>
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="category"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
@@ -65,16 +65,21 @@ export default function ChartBarStacked() {
               content={<ChartTooltipContent hideLabel />}
             />
             <ChartLegend content={<ChartLegendContent />} />
-            <Bar dataKey="desktop" stackId="a" fill="var(--color-desktop)" radius={[0, 0, 4, 4]} />
-            <Bar dataKey="mobile" stackId="a" fill="var(--color-mobile)" radius={[4, 4, 0, 0]} />
+            <Bar
+              dataKey="registry"
+              stackId="a"
+              fill="var(--color-registry)"
+              radius={[0, 0, 4, 4]}
+            />
+            <Bar dataKey="recipes" stackId="a" fill="var(--color-recipes)" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          75 entries across both catalog collections <LibraryBig className="h-4 w-4" />
         </div>
-        <div className="leading-none">Showing total visitors for the last 6 months</div>
+        <div className="leading-none">44 registry components and 31 recipes</div>
       </CardFooter>
     </Card>
   );

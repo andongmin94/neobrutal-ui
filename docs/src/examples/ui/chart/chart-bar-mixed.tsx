@@ -1,6 +1,6 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
+import { LibraryBig } from "lucide-react";
 import { Bar, BarChart, XAxis, YAxis } from "recharts";
 
 import {
@@ -18,39 +18,44 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-export const description = "A mixed bar chart";
+export const description = "A mixed-color bar chart of registry components";
 
 const chartData = [
-  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-  { browser: "firefox", visitors: 187, fill: "var(--color-firefox)" },
-  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-  { browser: "other", visitors: 90, fill: "var(--color-other)" },
+  { category: "forms", registry: 12, fill: "var(--color-forms)" },
+  { category: "overlays", registry: 9, fill: "var(--color-overlays)" },
+  { category: "navigation", registry: 7, fill: "var(--color-navigation)" },
+  { category: "data", registry: 8, fill: "var(--color-data)" },
+  { category: "feedback", registry: 4, fill: "var(--color-feedback)" },
+  { category: "layout", registry: 4, fill: "var(--color-layout)" },
 ];
 
 const chartConfig = {
-  visitors: {
-    label: "Visitors",
+  registry: {
+    label: "Registry",
   },
-  chrome: {
-    label: "Chrome",
+  forms: {
+    label: "Forms",
     color: "var(--chart-1)",
   },
-  safari: {
-    label: "Safari",
+  overlays: {
+    label: "Overlays",
     color: "var(--chart-2)",
   },
-  firefox: {
-    label: "Firefox",
+  navigation: {
+    label: "Navigation",
     color: "var(--chart-3)",
   },
-  edge: {
-    label: "Edge",
+  data: {
+    label: "Data",
     color: "var(--chart-4)",
   },
-  other: {
-    label: "Other",
+  feedback: {
+    label: "Feedback",
     color: "var(--chart-5)",
+  },
+  layout: {
+    label: "Layout",
+    color: "var(--chart-1)",
   },
 } satisfies ChartConfig;
 
@@ -58,8 +63,8 @@ export default function ChartBarMixed() {
   return (
     <Card className="bg-secondary-background text-foreground">
       <CardHeader>
-        <CardTitle>Bar Chart - Mixed</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Registry Catalog - Mixed</CardTitle>
+        <CardDescription>Published components with category colors</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -72,24 +77,24 @@ export default function ChartBarMixed() {
             }}
           >
             <YAxis
-              dataKey="browser"
+              dataKey="category"
               type="category"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
               tickFormatter={(value) => chartConfig[value as keyof typeof chartConfig]?.label}
             />
-            <XAxis dataKey="visitors" type="number" hide />
+            <XAxis dataKey="registry" type="number" hide />
             <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-            <Bar dataKey="visitors" radius={5} />
+            <Bar dataKey="registry" radius={5} />
           </BarChart>
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          Forms has the deepest registry coverage <LibraryBig className="h-4 w-4" />
         </div>
-        <div className="leading-none">Showing total visitors for the last 6 months</div>
+        <div className="leading-none">44 components across six catalog categories</div>
       </CardFooter>
     </Card>
   );

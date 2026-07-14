@@ -1,7 +1,8 @@
+import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
+
 import "@/styling/globals.css";
 
 import type { Metadata } from "next";
-import { DM_Sans } from "next/font/google";
 
 import Navbar from "@/components/app/navbar";
 import ScrollToTop from "@/components/app/scroll-to-top";
@@ -10,12 +11,6 @@ import { ThemeProvider } from "@/components/app/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 
 const docsBaseUrl = process.env.NEXT_PUBLIC_DOCS_BASE_URL || "https://neobrutal-ui.andongmin.com";
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  display: "swap",
-  adjustFontFallback: false,
-});
 
 export const metadata: Metadata = {
   title: {
@@ -53,9 +48,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html className="scroll-smooth" suppressHydrationWarning lang="en">
-      <body className={dmSans.className}>
+      <body>
         <ThemeProvider attribute="class" defaultTheme="light" disableTransitionOnChange>
-          <Navbar />
+          <div data-site-navbar>
+            <Navbar />
+          </div>
           {children}
           <SetStylingPref />
           <ScrollToTop />

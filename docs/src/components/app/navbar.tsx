@@ -28,28 +28,22 @@ async function Navbar() {
       : String(repo.stargazers_count);
 
   return (
-    <nav className="fixed left-0 top-0 z-20 mx-auto flex h-[70px] w-full items-center border-b-4 border-border bg-secondary-background px-5">
-      <div className="mx-auto flex w-[1300px] text-foreground max-w-full items-center justify-between">
-        <div className="flex items-center gap-8 xl:gap-10">
-          <Link className="flex items-center gap-2.5 font-heading" href={"/"}>
-            <span className="flex size-8 items-center justify-center rounded-base border-2 border-black bg-signal text-[22px] text-main-foreground">
+    <nav className="fixed left-0 top-0 z-20 mx-auto flex h-[70px] w-full items-center border-b-2 border-border bg-secondary-background px-4 text-foreground sm:px-5">
+      <div className="mx-auto flex w-[1540px] max-w-full items-center justify-between">
+        <div className="flex min-w-0 items-center gap-5 xl:gap-7">
+          <Link className="flex shrink-0 items-center gap-2.5 font-heading" href={"/"}>
+            <span className="flex size-8 items-center justify-center border-2 border-border bg-main text-[22px] text-main-foreground">
               N
             </span>
-            <span className="hidden text-base xl:inline">neobrutal-ui</span>
+            <span className="hidden text-base sm:inline">neobrutal-ui</span>
           </Link>
 
-          <div className="items-center text-base font-base xl:gap-10 lg:flex gap-10 hidden">
+          <div className="hidden items-center gap-6 text-sm font-heading xl:flex">
             <Link href="/docs">Docs</Link>
-
-            <Link href="/docs/accordion">Components</Link>
 
             <Link href="/styling">Styling</Link>
 
-            {/* <Link href="/blocks">Blocks</Link> */}
-
             <Link href="/charts">Charts</Link>
-
-            <Link href="/stars">Stars</Link>
 
             <Link href="/templates">Templates</Link>
 
@@ -57,14 +51,14 @@ async function Navbar() {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <Search />
 
-          <div className="flex items-center justify-end gap-4">
+          <div className="flex items-center justify-end gap-2 sm:gap-3">
             <a
               target="_blank"
               href="https://github.com/andongmin94/neobrutal-ui"
-              className="flex gap-2 items-center justify-center rounded-base border-2 border-border shadow-nav dark:shadow-navDark dark:border-darkBorder px-1.5 h-9 transition-all hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none dark:hover:shadow-none"
+              className="flex h-9 items-center justify-center gap-2 rounded-base border-2 border-border bg-secondary-background px-1.5 text-foreground shadow-[3px_3px_0_#000] transition-all duration-150 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0_#000] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
             >
               <p className="font-semibold sm:inline hidden">{starsCount}</p>
 
@@ -80,7 +74,7 @@ async function Navbar() {
               target="_blank"
               rel="noreferrer"
               href="https://x.com/andongmin94"
-              className="flex size-9 items-center justify-center rounded-base border-2 border-border shadow-nav transition-all hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none dark:border-darkBorder dark:shadow-navDark dark:hover:shadow-none"
+              className="flex size-9 items-center justify-center rounded-base border-2 border-border bg-secondary-background shadow-[3px_3px_0_#000] transition-all duration-150 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0_#000] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
             >
               <svg className="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                 <path

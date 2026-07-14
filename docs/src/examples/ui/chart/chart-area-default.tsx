@@ -18,20 +18,20 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-export const description = "A simple area chart";
+export const description = "Registry installs across six releases";
 
 const chartData = [
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 305 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 73 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 214 },
+  { release: "v0.4", installs: 148 },
+  { release: "v0.5", installs: 232 },
+  { release: "v0.6", installs: 196 },
+  { release: "v0.7", installs: 284 },
+  { release: "v0.8", installs: 341 },
+  { release: "v0.9", installs: 378 },
 ];
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  installs: {
+    label: "Installs",
     color: "var(--chart-1)",
   },
 } satisfies ChartConfig;
@@ -40,8 +40,8 @@ export default function ChartAreaDefault() {
   return (
     <Card className="bg-secondary-background text-foreground">
       <CardHeader>
-        <CardTitle>Area Chart</CardTitle>
-        <CardDescription>Showing total visitors for the last 6 months</CardDescription>
+        <CardTitle>Registry Install Activity</CardTitle>
+        <CardDescription>Installs across the recent six releases</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -55,17 +55,17 @@ export default function ChartAreaDefault() {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="release"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
+              tickFormatter={(value) => value}
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
             <Area
-              dataKey="desktop"
+              dataKey="installs"
               type="natural"
-              fill="var(--color-desktop)"
+              fill="var(--color-installs)"
               activeDot={{
                 fill: "var(--chart-active-dot)",
               }}
@@ -77,9 +77,11 @@ export default function ChartAreaDefault() {
         <div className="flex w-full items-start gap-2 text-sm">
           <div className="grid gap-2">
             <div className="flex items-center gap-2 leading-none font-medium">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+              Install momentum rose 10.9% at v0.9 <TrendingUp className="h-4 w-4" />
             </div>
-            <div className="flex items-center gap-2 leading-none">January - June 2024</div>
+            <div className="flex items-center gap-2 leading-none">
+              Recent six releases: v0.4 to v0.9
+            </div>
           </div>
         </div>
       </CardFooter>

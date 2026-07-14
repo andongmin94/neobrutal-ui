@@ -11,154 +11,137 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import { cn } from "@/lib/utils";
 
-export const description = "An interactive line chart";
+export const description = "Interactive registry pipeline build time";
 
 const chartData = [
-  { date: "2024-04-01", desktop: 222, mobile: 150 },
-  { date: "2024-04-02", desktop: 97, mobile: 180 },
-  { date: "2024-04-03", desktop: 167, mobile: 120 },
-  { date: "2024-04-04", desktop: 242, mobile: 260 },
-  { date: "2024-04-05", desktop: 373, mobile: 290 },
-  { date: "2024-04-06", desktop: 301, mobile: 340 },
-  { date: "2024-04-07", desktop: 245, mobile: 180 },
-  { date: "2024-04-08", desktop: 409, mobile: 320 },
-  { date: "2024-04-09", desktop: 59, mobile: 110 },
-  { date: "2024-04-10", desktop: 261, mobile: 190 },
-  { date: "2024-04-11", desktop: 327, mobile: 350 },
-  { date: "2024-04-12", desktop: 292, mobile: 210 },
-  { date: "2024-04-13", desktop: 342, mobile: 380 },
-  { date: "2024-04-14", desktop: 137, mobile: 220 },
-  { date: "2024-04-15", desktop: 120, mobile: 170 },
-  { date: "2024-04-16", desktop: 138, mobile: 190 },
-  { date: "2024-04-17", desktop: 446, mobile: 360 },
-  { date: "2024-04-18", desktop: 364, mobile: 410 },
-  { date: "2024-04-19", desktop: 243, mobile: 180 },
-  { date: "2024-04-20", desktop: 89, mobile: 150 },
-  { date: "2024-04-21", desktop: 137, mobile: 200 },
-  { date: "2024-04-22", desktop: 224, mobile: 170 },
-  { date: "2024-04-23", desktop: 138, mobile: 230 },
-  { date: "2024-04-24", desktop: 387, mobile: 290 },
-  { date: "2024-04-25", desktop: 215, mobile: 250 },
-  { date: "2024-04-26", desktop: 75, mobile: 130 },
-  { date: "2024-04-27", desktop: 383, mobile: 420 },
-  { date: "2024-04-28", desktop: 122, mobile: 180 },
-  { date: "2024-04-29", desktop: 315, mobile: 240 },
-  { date: "2024-04-30", desktop: 454, mobile: 380 },
-  { date: "2024-05-01", desktop: 165, mobile: 220 },
-  { date: "2024-05-02", desktop: 293, mobile: 310 },
-  { date: "2024-05-03", desktop: 247, mobile: 190 },
-  { date: "2024-05-04", desktop: 385, mobile: 420 },
-  { date: "2024-05-05", desktop: 481, mobile: 390 },
-  { date: "2024-05-06", desktop: 498, mobile: 520 },
-  { date: "2024-05-07", desktop: 388, mobile: 300 },
-  { date: "2024-05-08", desktop: 149, mobile: 210 },
-  { date: "2024-05-09", desktop: 227, mobile: 180 },
-  { date: "2024-05-10", desktop: 293, mobile: 330 },
-  { date: "2024-05-11", desktop: 335, mobile: 270 },
-  { date: "2024-05-12", desktop: 197, mobile: 240 },
-  { date: "2024-05-13", desktop: 197, mobile: 160 },
-  { date: "2024-05-14", desktop: 448, mobile: 490 },
-  { date: "2024-05-15", desktop: 473, mobile: 380 },
-  { date: "2024-05-16", desktop: 338, mobile: 400 },
-  { date: "2024-05-17", desktop: 499, mobile: 420 },
-  { date: "2024-05-18", desktop: 315, mobile: 350 },
-  { date: "2024-05-19", desktop: 235, mobile: 180 },
-  { date: "2024-05-20", desktop: 177, mobile: 230 },
-  { date: "2024-05-21", desktop: 82, mobile: 140 },
-  { date: "2024-05-22", desktop: 81, mobile: 120 },
-  { date: "2024-05-23", desktop: 252, mobile: 290 },
-  { date: "2024-05-24", desktop: 294, mobile: 220 },
-  { date: "2024-05-25", desktop: 201, mobile: 250 },
-  { date: "2024-05-26", desktop: 213, mobile: 170 },
-  { date: "2024-05-27", desktop: 420, mobile: 460 },
-  { date: "2024-05-28", desktop: 233, mobile: 190 },
-  { date: "2024-05-29", desktop: 78, mobile: 130 },
-  { date: "2024-05-30", desktop: 340, mobile: 280 },
-  { date: "2024-05-31", desktop: 178, mobile: 230 },
-  { date: "2024-06-01", desktop: 178, mobile: 200 },
-  { date: "2024-06-02", desktop: 470, mobile: 410 },
-  { date: "2024-06-03", desktop: 103, mobile: 160 },
-  { date: "2024-06-04", desktop: 439, mobile: 380 },
-  { date: "2024-06-05", desktop: 88, mobile: 140 },
-  { date: "2024-06-06", desktop: 294, mobile: 250 },
-  { date: "2024-06-07", desktop: 323, mobile: 370 },
-  { date: "2024-06-08", desktop: 385, mobile: 320 },
-  { date: "2024-06-09", desktop: 438, mobile: 480 },
-  { date: "2024-06-10", desktop: 155, mobile: 200 },
-  { date: "2024-06-11", desktop: 92, mobile: 150 },
-  { date: "2024-06-12", desktop: 492, mobile: 420 },
-  { date: "2024-06-13", desktop: 81, mobile: 130 },
-  { date: "2024-06-14", desktop: 426, mobile: 380 },
-  { date: "2024-06-15", desktop: 307, mobile: 350 },
-  { date: "2024-06-16", desktop: 371, mobile: 310 },
-  { date: "2024-06-17", desktop: 475, mobile: 520 },
-  { date: "2024-06-18", desktop: 107, mobile: 170 },
-  { date: "2024-06-19", desktop: 341, mobile: 290 },
-  { date: "2024-06-20", desktop: 408, mobile: 450 },
-  { date: "2024-06-21", desktop: 169, mobile: 210 },
-  { date: "2024-06-22", desktop: 317, mobile: 270 },
-  { date: "2024-06-23", desktop: 480, mobile: 530 },
-  { date: "2024-06-24", desktop: 132, mobile: 180 },
-  { date: "2024-06-25", desktop: 141, mobile: 190 },
-  { date: "2024-06-26", desktop: 434, mobile: 380 },
-  { date: "2024-06-27", desktop: 448, mobile: 490 },
-  { date: "2024-06-28", desktop: 149, mobile: 200 },
-  { date: "2024-06-29", desktop: 103, mobile: 160 },
-  { date: "2024-06-30", desktop: 446, mobile: 400 },
+  { date: "2026-05-25", cold: 842, cached: 322 },
+  { date: "2026-05-26", cold: 831, cached: 315 },
+  { date: "2026-05-27", cold: 846, cached: 326 },
+  { date: "2026-05-28", cold: 819, cached: 309 },
+  { date: "2026-05-29", cold: 826, cached: 314 },
+  { date: "2026-05-30", cold: 806, cached: 301 },
+  { date: "2026-05-31", cold: 811, cached: 305 },
+  { date: "2026-06-01", cold: 794, cached: 294 },
+  { date: "2026-06-02", cold: 801, cached: 298 },
+  { date: "2026-06-03", cold: 781, cached: 287 },
+  { date: "2026-06-04", cold: 789, cached: 291 },
+  { date: "2026-06-05", cold: 770, cached: 281 },
+  { date: "2026-06-06", cold: 777, cached: 285 },
+  { date: "2026-06-07", cold: 756, cached: 273 },
+  { date: "2026-06-08", cold: 764, cached: 278 },
+  { date: "2026-06-09", cold: 744, cached: 267 },
+  { date: "2026-06-10", cold: 751, cached: 271 },
+  { date: "2026-06-11", cold: 730, cached: 259 },
+  { date: "2026-06-12", cold: 739, cached: 264 },
+  { date: "2026-06-13", cold: 716, cached: 252 },
+  { date: "2026-06-14", cold: 725, cached: 256 },
+  { date: "2026-06-15", cold: 704, cached: 244 },
+  { date: "2026-06-16", cold: 712, cached: 249 },
+  { date: "2026-06-17", cold: 690, cached: 236 },
+  { date: "2026-06-18", cold: 698, cached: 240 },
+  { date: "2026-06-19", cold: 677, cached: 228 },
+  { date: "2026-06-20", cold: 685, cached: 233 },
+  { date: "2026-06-21", cold: 663, cached: 221 },
+  { date: "2026-06-22", cold: 672, cached: 225 },
+  { date: "2026-06-23", cold: 649, cached: 213 },
+  { date: "2026-06-24", cold: 658, cached: 217 },
+  { date: "2026-06-25", cold: 636, cached: 205 },
+  { date: "2026-06-26", cold: 644, cached: 210 },
+  { date: "2026-06-27", cold: 621, cached: 198 },
+  { date: "2026-06-28", cold: 630, cached: 202 },
+  { date: "2026-06-29", cold: 608, cached: 190 },
+  { date: "2026-06-30", cold: 615, cached: 194 },
+  { date: "2026-07-01", cold: 588, cached: 182 },
+  { date: "2026-07-02", cold: 563, cached: 174 },
+  { date: "2026-07-03", cold: 535, cached: 165 },
+  { date: "2026-07-04", cold: 501, cached: 156 },
+  { date: "2026-07-05", cold: 470, cached: 148 },
 ];
 
 const chartConfig = {
-  views: {
-    label: "Page Views",
+  buildTime: {
+    label: "Build time (ms)",
   },
-  desktop: {
-    label: "Desktop",
+  cold: {
+    label: "Cold build",
     color: "var(--chart-1)",
   },
-  mobile: {
-    label: "Mobile",
+  cached: {
+    label: "Cached build",
     color: "var(--chart-2)",
   },
 } satisfies ChartConfig;
 
-export default function ChartLineInteractive() {
-  const [activeChart, setActiveChart] = React.useState<keyof typeof chartConfig>("desktop");
+const rangeDays = {
+  "42d": 42,
+  "21d": 21,
+  "7d": 7,
+} as const;
 
-  const total = React.useMemo(
+type BuildMode = "cold" | "cached";
+type TimeRange = keyof typeof rangeDays;
+
+export default function ChartLineInteractive() {
+  const [activeChart, setActiveChart] = React.useState<BuildMode>("cold");
+  const [timeRange, setTimeRange] = React.useState<TimeRange>("42d");
+
+  const filteredData = React.useMemo(() => chartData.slice(-rangeDays[timeRange]), [timeRange]);
+
+  const average = React.useMemo(
     () => ({
-      desktop: chartData.reduce((acc, curr) => acc + curr.desktop, 0),
-      mobile: chartData.reduce((acc, curr) => acc + curr.mobile, 0),
+      cold: Math.round(
+        filteredData.reduce((total, item) => total + item.cold, 0) / filteredData.length,
+      ),
+      cached: Math.round(
+        filteredData.reduce((total, item) => total + item.cached, 0) / filteredData.length,
+      ),
     }),
-    [],
+    [filteredData],
   );
 
   return (
     <Card className="bg-secondary-background py-0 text-foreground">
-      <CardHeader className="flex flex-col items-stretch space-y-0 p-0 gap-0 border-b-2 border-b-border sm:flex-row">
-        <div className="flex flex-1 flex-col justify-center gap-1 sm:py-0 py-4 px-6">
-          <CardTitle>Line Chart - Interactive</CardTitle>
-          <CardDescription>Showing total visitors for the last 3 months</CardDescription>
+      <CardHeader className="flex flex-col items-stretch gap-0 space-y-0 border-b-2 border-b-border p-0 sm:flex-row">
+        <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-4 sm:py-6">
+          <CardTitle>Registry Build Time - Interactive</CardTitle>
+          <CardDescription>Daily registry builds in ms. Lower is better.</CardDescription>
+          <Select value={timeRange} onValueChange={(value) => setTimeRange(value as TimeRange)}>
+            <SelectTrigger className="mt-2 w-[150px]" aria-label="Select build range">
+              <SelectValue placeholder="Last 42 days" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="42d">Last 42 days</SelectItem>
+              <SelectItem value="21d">Last 21 days</SelectItem>
+              <SelectItem value="7d">Last 7 days</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <div className="flex">
-          {["desktop", "mobile"].map((key) => {
-            const chart = key as keyof typeof chartConfig;
-            return (
-              <button
-                key={chart}
-                data-active={activeChart === chart}
-                className="data-[active=true]:bg-[var(--chart-1)] data-[active=true]:text-main-foreground text-foreground even:data-[active=true]:bg-[var(--chart-2)] relative z-10 flex flex-1 flex-col justify-center gap-1 px-6 py-4 text-left sm:border-t-0 border-t-border border-t-2 even:border-l-2 sm:border-l-2 border-l-border sm:px-8 sm:py-6"
-                onClick={() => setActiveChart(chart)}
-              >
-                <span className="text-xs">{chartConfig[chart].label}</span>
-                <span className="text-lg leading-none font-heading sm:text-3xl">
-                  {total[key as keyof typeof total].toLocaleString()}
-                </span>
-              </button>
-            );
-          })}
+          {(["cold", "cached"] as const).map((chart) => (
+            <button
+              type="button"
+              key={chart}
+              aria-pressed={activeChart === chart}
+              data-active={activeChart === chart}
+              className="data-[active=true]:bg-[var(--chart-1)] data-[active=true]:text-main-foreground text-foreground even:data-[active=true]:bg-[var(--chart-2)] relative z-10 flex flex-1 flex-col justify-center gap-1 px-6 py-4 text-left sm:border-t-0 border-t-border border-t-2 even:border-l-2 sm:border-l-2 border-l-border sm:px-8 sm:py-6"
+              onClick={() => setActiveChart(chart)}
+            >
+              <span className="text-xs">{chartConfig[chart].label}</span>
+              <span className="text-lg leading-none font-heading sm:text-3xl">
+                {average[chart].toLocaleString()} ms
+              </span>
+            </button>
+          ))}
         </div>
       </CardHeader>
       <CardContent className="px-2 p-4 sm:p-6">
@@ -166,13 +149,13 @@ export default function ChartLineInteractive() {
           config={chartConfig}
           className={cn(
             "aspect-auto h-[250px] w-full",
-            activeChart === "mobile" && "[&_.recharts-layer_path]:stroke-[var(--color-mobile)]",
-            activeChart === "desktop" && "[&_.recharts-layer_path]:stroke-[var(--color-desktop)]",
+            activeChart === "cached" && "[&_.recharts-layer_path]:stroke-[var(--color-cached)]",
+            activeChart === "cold" && "[&_.recharts-layer_path]:stroke-[var(--color-cold)]",
           )}
         >
           <LineChart
             accessibilityLayer
-            data={chartData}
+            data={filteredData}
             margin={{
               left: 12,
               right: 12,
@@ -186,7 +169,7 @@ export default function ChartLineInteractive() {
               tickMargin={8}
               minTickGap={32}
               tickFormatter={(value) => {
-                const date = new Date(value);
+                const date = new Date(`${value}T00:00:00`);
                 return date.toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric",
@@ -197,9 +180,9 @@ export default function ChartLineInteractive() {
               content={
                 <ChartTooltipContent
                   className="w-[150px]"
-                  nameKey="views"
+                  nameKey="buildTime"
                   labelFormatter={(value) => {
-                    return new Date(value).toLocaleDateString("en-US", {
+                    return new Date(`${value}T00:00:00`).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                       year: "numeric",

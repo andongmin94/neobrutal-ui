@@ -12,151 +12,132 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-export const description = "An interactive bar chart";
+export const description = "An interactive bar chart of catalog activity";
 
 const chartData = [
-  { date: "2024-04-01", desktop: 222, mobile: 150 },
-  { date: "2024-04-02", desktop: 97, mobile: 180 },
-  { date: "2024-04-03", desktop: 167, mobile: 120 },
-  { date: "2024-04-04", desktop: 242, mobile: 260 },
-  { date: "2024-04-05", desktop: 373, mobile: 290 },
-  { date: "2024-04-06", desktop: 301, mobile: 340 },
-  { date: "2024-04-07", desktop: 245, mobile: 180 },
-  { date: "2024-04-08", desktop: 409, mobile: 320 },
-  { date: "2024-04-09", desktop: 59, mobile: 110 },
-  { date: "2024-04-10", desktop: 261, mobile: 190 },
-  { date: "2024-04-11", desktop: 327, mobile: 350 },
-  { date: "2024-04-12", desktop: 292, mobile: 210 },
-  { date: "2024-04-13", desktop: 342, mobile: 380 },
-  { date: "2024-04-14", desktop: 137, mobile: 220 },
-  { date: "2024-04-15", desktop: 120, mobile: 170 },
-  { date: "2024-04-16", desktop: 138, mobile: 190 },
-  { date: "2024-04-17", desktop: 446, mobile: 360 },
-  { date: "2024-04-18", desktop: 364, mobile: 410 },
-  { date: "2024-04-19", desktop: 243, mobile: 180 },
-  { date: "2024-04-20", desktop: 89, mobile: 150 },
-  { date: "2024-04-21", desktop: 137, mobile: 200 },
-  { date: "2024-04-22", desktop: 224, mobile: 170 },
-  { date: "2024-04-23", desktop: 138, mobile: 230 },
-  { date: "2024-04-24", desktop: 387, mobile: 290 },
-  { date: "2024-04-25", desktop: 215, mobile: 250 },
-  { date: "2024-04-26", desktop: 75, mobile: 130 },
-  { date: "2024-04-27", desktop: 383, mobile: 420 },
-  { date: "2024-04-28", desktop: 122, mobile: 180 },
-  { date: "2024-04-29", desktop: 315, mobile: 240 },
-  { date: "2024-04-30", desktop: 454, mobile: 380 },
-  { date: "2024-05-01", desktop: 165, mobile: 220 },
-  { date: "2024-05-02", desktop: 293, mobile: 310 },
-  { date: "2024-05-03", desktop: 247, mobile: 190 },
-  { date: "2024-05-04", desktop: 385, mobile: 420 },
-  { date: "2024-05-05", desktop: 481, mobile: 390 },
-  { date: "2024-05-06", desktop: 498, mobile: 520 },
-  { date: "2024-05-07", desktop: 388, mobile: 300 },
-  { date: "2024-05-08", desktop: 149, mobile: 210 },
-  { date: "2024-05-09", desktop: 227, mobile: 180 },
-  { date: "2024-05-10", desktop: 293, mobile: 330 },
-  { date: "2024-05-11", desktop: 335, mobile: 270 },
-  { date: "2024-05-12", desktop: 197, mobile: 240 },
-  { date: "2024-05-13", desktop: 197, mobile: 160 },
-  { date: "2024-05-14", desktop: 448, mobile: 490 },
-  { date: "2024-05-15", desktop: 473, mobile: 380 },
-  { date: "2024-05-16", desktop: 338, mobile: 400 },
-  { date: "2024-05-17", desktop: 499, mobile: 420 },
-  { date: "2024-05-18", desktop: 315, mobile: 350 },
-  { date: "2024-05-19", desktop: 235, mobile: 180 },
-  { date: "2024-05-20", desktop: 177, mobile: 230 },
-  { date: "2024-05-21", desktop: 82, mobile: 140 },
-  { date: "2024-05-22", desktop: 81, mobile: 120 },
-  { date: "2024-05-23", desktop: 252, mobile: 290 },
-  { date: "2024-05-24", desktop: 294, mobile: 220 },
-  { date: "2024-05-25", desktop: 201, mobile: 250 },
-  { date: "2024-05-26", desktop: 213, mobile: 170 },
-  { date: "2024-05-27", desktop: 420, mobile: 460 },
-  { date: "2024-05-28", desktop: 233, mobile: 190 },
-  { date: "2024-05-29", desktop: 78, mobile: 130 },
-  { date: "2024-05-30", desktop: 340, mobile: 280 },
-  { date: "2024-05-31", desktop: 178, mobile: 230 },
-  { date: "2024-06-01", desktop: 178, mobile: 200 },
-  { date: "2024-06-02", desktop: 470, mobile: 410 },
-  { date: "2024-06-03", desktop: 103, mobile: 160 },
-  { date: "2024-06-04", desktop: 439, mobile: 380 },
-  { date: "2024-06-05", desktop: 88, mobile: 140 },
-  { date: "2024-06-06", desktop: 294, mobile: 250 },
-  { date: "2024-06-07", desktop: 323, mobile: 370 },
-  { date: "2024-06-08", desktop: 385, mobile: 320 },
-  { date: "2024-06-09", desktop: 438, mobile: 480 },
-  { date: "2024-06-10", desktop: 155, mobile: 200 },
-  { date: "2024-06-11", desktop: 92, mobile: 150 },
-  { date: "2024-06-12", desktop: 492, mobile: 420 },
-  { date: "2024-06-13", desktop: 81, mobile: 130 },
-  { date: "2024-06-14", desktop: 426, mobile: 380 },
-  { date: "2024-06-15", desktop: 307, mobile: 350 },
-  { date: "2024-06-16", desktop: 371, mobile: 310 },
-  { date: "2024-06-17", desktop: 475, mobile: 520 },
-  { date: "2024-06-18", desktop: 107, mobile: 170 },
-  { date: "2024-06-19", desktop: 341, mobile: 290 },
-  { date: "2024-06-20", desktop: 408, mobile: 450 },
-  { date: "2024-06-21", desktop: 169, mobile: 210 },
-  { date: "2024-06-22", desktop: 317, mobile: 270 },
-  { date: "2024-06-23", desktop: 480, mobile: 530 },
-  { date: "2024-06-24", desktop: 132, mobile: 180 },
-  { date: "2024-06-25", desktop: 141, mobile: 190 },
-  { date: "2024-06-26", desktop: 434, mobile: 380 },
-  { date: "2024-06-27", desktop: 448, mobile: 490 },
-  { date: "2024-06-28", desktop: 149, mobile: 200 },
-  { date: "2024-06-29", desktop: 103, mobile: 160 },
-  { date: "2024-06-30", desktop: 446, mobile: 400 },
+  { date: "2026-05-25", publish: 3, install: 24 },
+  { date: "2026-05-26", publish: 5, install: 32 },
+  { date: "2026-05-27", publish: 4, install: 29 },
+  { date: "2026-05-28", publish: 6, install: 41 },
+  { date: "2026-05-29", publish: 7, install: 46 },
+  { date: "2026-05-30", publish: 2, install: 20 },
+  { date: "2026-05-31", publish: 3, install: 23 },
+  { date: "2026-06-01", publish: 4, install: 27 },
+  { date: "2026-06-02", publish: 6, install: 39 },
+  { date: "2026-06-03", publish: 5, install: 35 },
+  { date: "2026-06-04", publish: 8, install: 52 },
+  { date: "2026-06-05", publish: 7, install: 48 },
+  { date: "2026-06-06", publish: 3, install: 25 },
+  { date: "2026-06-07", publish: 2, install: 22 },
+  { date: "2026-06-08", publish: 5, install: 34 },
+  { date: "2026-06-09", publish: 6, install: 43 },
+  { date: "2026-06-10", publish: 9, install: 58 },
+  { date: "2026-06-11", publish: 7, install: 50 },
+  { date: "2026-06-12", publish: 8, install: 55 },
+  { date: "2026-06-13", publish: 4, install: 30 },
+  { date: "2026-06-14", publish: 3, install: 26 },
+  { date: "2026-06-15", publish: 6, install: 42 },
+  { date: "2026-06-16", publish: 7, install: 49 },
+  { date: "2026-06-17", publish: 5, install: 37 },
+  { date: "2026-06-18", publish: 9, install: 61 },
+  { date: "2026-06-19", publish: 8, install: 57 },
+  { date: "2026-06-20", publish: 4, install: 33 },
+  { date: "2026-06-21", publish: 3, install: 28 },
+  { date: "2026-06-22", publish: 7, install: 47 },
+  { date: "2026-06-23", publish: 10, install: 65 },
+  { date: "2026-06-24", publish: 8, install: 59 },
+  { date: "2026-06-25", publish: 9, install: 63 },
+  { date: "2026-06-26", publish: 11, install: 71 },
+  { date: "2026-06-27", publish: 5, install: 38 },
+  { date: "2026-06-28", publish: 4, install: 31 },
+  { date: "2026-06-29", publish: 8, install: 54 },
+  { date: "2026-06-30", publish: 10, install: 68 },
+  { date: "2026-07-01", publish: 9, install: 62 },
+  { date: "2026-07-02", publish: 12, install: 76 },
+  { date: "2026-07-03", publish: 11, install: 73 },
+  { date: "2026-07-04", publish: 6, install: 45 },
+  { date: "2026-07-05", publish: 5, install: 40 },
 ];
 
 const chartConfig = {
-  views: {
-    label: "Page Views",
-  },
-  desktop: {
-    label: "Desktop",
+  publish: {
+    label: "Published",
     color: "var(--chart-1)",
   },
-  mobile: {
-    label: "Mobile",
+  install: {
+    label: "Installs",
     color: "var(--chart-2)",
   },
 } satisfies ChartConfig;
 
+const metrics = ["publish", "install"] as const;
+const timeRanges = ["42d", "21d", "7d"] as const;
+const rangeDays = {
+  "42d": 42,
+  "21d": 21,
+  "7d": 7,
+} satisfies Record<(typeof timeRanges)[number], number>;
+
+type Metric = (typeof metrics)[number];
+type TimeRange = (typeof timeRanges)[number];
+
 export default function ChartBarInteractive() {
-  const [activeChart, setActiveChart] = React.useState<keyof typeof chartConfig>("desktop");
+  const [activeChart, setActiveChart] = React.useState<Metric>("publish");
+  const [timeRange, setTimeRange] = React.useState<TimeRange>("42d");
+
+  const filteredData = React.useMemo(() => chartData.slice(-rangeDays[timeRange]), [timeRange]);
 
   const total = React.useMemo(
     () => ({
-      desktop: chartData.reduce((acc, curr) => acc + curr.desktop, 0),
-      mobile: chartData.reduce((acc, curr) => acc + curr.mobile, 0),
+      publish: filteredData.reduce((acc, curr) => acc + curr.publish, 0),
+      install: filteredData.reduce((acc, curr) => acc + curr.install, 0),
     }),
-    [],
+    [filteredData],
   );
 
   return (
     <Card className="bg-secondary-background py-0 text-foreground">
       <CardHeader className="flex flex-col items-stretch space-y-0 p-0 gap-0 border-b-2 border-b-border sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 sm:py-0 py-4 px-6">
-          <CardTitle>Bar Chart - Interactive</CardTitle>
-          <CardDescription>Showing total visitors for the last 3 months</CardDescription>
+          <CardTitle>Catalog Activity - Interactive</CardTitle>
+          <CardDescription>
+            Publish and install activity over the selected catalog range
+          </CardDescription>
+          <div
+            className="mt-2 flex w-fit border-2 border-border"
+            role="group"
+            aria-label="Catalog activity range"
+          >
+            {timeRanges.map((range) => (
+              <button
+                type="button"
+                key={range}
+                aria-pressed={timeRange === range}
+                data-active={timeRange === range}
+                className="border-l-2 border-border px-2 py-1 text-xs font-heading first:border-l-0 data-[active=true]:bg-main data-[active=true]:text-main-foreground"
+                onClick={() => setTimeRange(range)}
+              >
+                {range}
+              </button>
+            ))}
+          </div>
         </div>
         <div className="flex">
-          {["desktop", "mobile"].map((key) => {
-            const chart = key as keyof typeof chartConfig;
-            return (
-              <button
-                key={chart}
-                data-active={activeChart === chart}
-                className="data-[active=true]:bg-[var(--chart-1)] data-[active=true]:text-main-foreground text-foreground even:data-[active=true]:bg-[var(--chart-2)] relative z-10 flex flex-1 flex-col justify-center gap-1 px-6 py-4 text-left sm:border-t-0 border-t-border border-t-2 even:border-l-2 sm:border-l-2 border-l-border sm:px-8 sm:py-6"
-                onClick={() => setActiveChart(chart)}
-              >
-                <span className="text-xs">{chartConfig[chart].label}</span>
-                <span className="text-lg leading-none font-heading sm:text-3xl">
-                  {total[key as keyof typeof total].toLocaleString()}
-                </span>
-              </button>
-            );
-          })}
+          {metrics.map((chart) => (
+            <button
+              type="button"
+              key={chart}
+              aria-pressed={activeChart === chart}
+              data-active={activeChart === chart}
+              className="data-[active=true]:bg-[var(--chart-1)] data-[active=true]:text-main-foreground text-foreground even:data-[active=true]:bg-[var(--chart-2)] relative z-10 flex flex-1 flex-col justify-center gap-1 px-6 py-4 text-left sm:border-t-0 border-t-border border-t-2 even:border-l-2 sm:border-l-2 border-l-border sm:px-8 sm:py-6"
+              onClick={() => setActiveChart(chart)}
+            >
+              <span className="text-xs">{chartConfig[chart].label}</span>
+              <span className="text-lg leading-none font-heading sm:text-3xl">
+                {total[chart].toLocaleString()}
+              </span>
+            </button>
+          ))}
         </div>
       </CardHeader>
       <CardContent className="px-2 p-4 sm:p-6">
@@ -164,7 +145,7 @@ export default function ChartBarInteractive() {
           <BarChart
             accessibilityLayer
             className="[&_.recharts-layer_path]:![stroke-width:1]"
-            data={chartData}
+            data={filteredData}
             margin={{
               left: 12,
               right: 12,
@@ -190,7 +171,7 @@ export default function ChartBarInteractive() {
               content={
                 <ChartTooltipContent
                   className="w-[150px]"
-                  nameKey="views"
+                  nameKey={activeChart}
                   labelFormatter={(value) => {
                     return new Date(value).toLocaleDateString("en-US", {
                       month: "short",
@@ -201,7 +182,7 @@ export default function ChartBarInteractive() {
                 />
               }
             />
-            <Bar dataKey={activeChart} fill={`var(--color-${activeChart})`} />
+            <Bar dataKey={activeChart} fill={"var(--color-" + activeChart + ")"} />
           </BarChart>
         </ChartContainer>
       </CardContent>

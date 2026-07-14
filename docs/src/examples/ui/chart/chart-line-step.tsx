@@ -1,6 +1,6 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
+import { TrendingDown } from "lucide-react";
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 
 import {
@@ -18,20 +18,20 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-export const description = "A line chart with step";
+export const description = "Registry pipeline cold build time with a step line";
 
 const chartData = [
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 305 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 73 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 214 },
+  { stage: "Resolve", cold: 820 },
+  { stage: "Fetch", cold: 710 },
+  { stage: "Write", cold: 640 },
+  { stage: "Format", cold: 590 },
+  { stage: "Verify", cold: 520 },
+  { stage: "Ready", cold: 470 },
 ];
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  cold: {
+    label: "Cold build (ms)",
     color: "var(--chart-1)",
   },
 } satisfies ChartConfig;
@@ -40,8 +40,8 @@ export default function ChartLineStep() {
   return (
     <Card className="bg-secondary-background text-foreground">
       <CardHeader>
-        <CardTitle>Line Chart - Step</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Registry Build Time - Step</CardTitle>
+        <CardDescription>Cold build by pipeline stage (ms)</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer
@@ -58,7 +58,7 @@ export default function ChartLineStep() {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="stage"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
@@ -66,9 +66,9 @@ export default function ChartLineStep() {
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
             <Line
-              dataKey="desktop"
+              dataKey="cold"
               type="step"
-              stroke="var(--color-desktop)"
+              stroke="var(--color-cold)"
               strokeWidth={2}
               dot={false}
             />
@@ -77,9 +77,9 @@ export default function ChartLineStep() {
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          Cold builds improved by 350 ms <TrendingDown className="h-4 w-4" />
         </div>
-        <div className="leading-none">Showing total visitors for the last 6 months</div>
+        <div className="leading-none">Lower build time means better pipeline performance.</div>
       </CardFooter>
     </Card>
   );

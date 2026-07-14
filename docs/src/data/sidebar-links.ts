@@ -1,13 +1,6 @@
-import { transformToSlug } from "@/lib/utils";
+import { COMPONENT_DIRECTORY_LINKS } from "./component-directory";
 
-import COMPONENTS from "./components";
-
-const COMPONENTS_LINKS = COMPONENTS.map((component) => {
-  return {
-    href: `/docs/${transformToSlug(component.name)}`,
-    text: component.name,
-  };
-});
+const COMPONENTS_LINKS = COMPONENT_DIRECTORY_LINKS;
 
 const GETTING_STARTED_LINKS = [
   {

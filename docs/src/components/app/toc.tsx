@@ -1,6 +1,7 @@
 // @ts-nocheck
 "use client";
 
+import { ListTree } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
@@ -27,17 +28,21 @@ export function TableOfContents({ items }: TocProps) {
   }
 
   return (
-    <div className="overflow-y-auto toc-scrollbar">
-      <h3 className="text-xl p-3 font-bold">On this page</h3>
-      <div>
+    <div className="toc-scrollbar overflow-y-auto p-4">
+      <h3 className="flex items-center gap-2 border-b-2 border-border pb-3 text-sm font-heading">
+        <ListTree className="size-4" />
+        On this page
+      </h3>
+      <div className="mt-3 space-y-0.5">
         {items.map(({ depth, id, value }) => (
           <a
             key={id}
             href={`#${id}`}
             className={cn(
-              "block border-t-3 text-foreground border-t-border last:border-b-3 last:border-b-border hover:bg-main/70 hover:text-main-foreground font-base py-1 pr-3",
+              "block border-l-4 border-transparent py-2 pr-2 text-sm text-foreground hover:border-border hover:bg-background",
               depth === 2 ? "pl-3" : depth === 3 ? "pl-6" : "pl-9",
-              id === activeHeading && "bg-main hover:bg-main text-main-foreground",
+              id === activeHeading &&
+                "border-border bg-main font-heading text-main-foreground hover:bg-main",
             )}
           >
             {value}
@@ -81,10 +86,4 @@ function useActiveItem(itemIds: string[]) {
   }, [itemIds]);
 
   return activeId;
-}
-
-interface TreeProps {
-  tree: TableOfContents;
-  depth?: number;
-  activeItem?: string;
 }

@@ -18,28 +18,28 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-export const description = "A stacked area chart with expand stacking";
+export const description = "Normalized registry activity share by release";
 
 const chartData = [
-  { month: "January", desktop: 186, mobile: 80, other: 45 },
-  { month: "February", desktop: 305, mobile: 200, other: 100 },
-  { month: "March", desktop: 237, mobile: 120, other: 150 },
-  { month: "April", desktop: 73, mobile: 190, other: 50 },
-  { month: "May", desktop: 209, mobile: 130, other: 100 },
-  { month: "June", desktop: 214, mobile: 140, other: 160 },
+  { release: "v0.4", installs: 148, updates: 62, copies: 34 },
+  { release: "v0.5", installs: 232, updates: 104, copies: 58 },
+  { release: "v0.6", installs: 196, updates: 88, copies: 47 },
+  { release: "v0.7", installs: 284, updates: 132, copies: 76 },
+  { release: "v0.8", installs: 341, updates: 176, copies: 92 },
+  { release: "v0.9", installs: 378, updates: 209, copies: 118 },
 ];
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  installs: {
+    label: "Installs",
     color: "var(--chart-1)",
   },
-  mobile: {
-    label: "Mobile",
+  updates: {
+    label: "Updates",
     color: "var(--chart-2)",
   },
-  other: {
-    label: "Other",
+  copies: {
+    label: "Copies",
     color: "var(--chart-3)",
   },
 } satisfies ChartConfig;
@@ -48,8 +48,8 @@ export default function ChartAreaStackedExpand() {
   return (
     <Card className="bg-secondary-background text-foreground">
       <CardHeader>
-        <CardTitle>Area Chart - Stacked Expanded</CardTitle>
-        <CardDescription>Showing total visitors for the last 6months</CardDescription>
+        <CardTitle>Registry Activity Share</CardTitle>
+        <CardDescription>Channel mix across recent six releases</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -65,38 +65,38 @@ export default function ChartAreaStackedExpand() {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="release"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
+              tickFormatter={(value) => value}
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="line" />} />
             <Area
-              dataKey="other"
+              dataKey="copies"
               type="natural"
-              fill="var(--color-other)"
-              stroke="var(--color-other)"
+              fill="var(--color-copies)"
+              stroke="var(--color-copies)"
               stackId="a"
               activeDot={{
                 fill: "var(--chart-active-dot)",
               }}
             />
             <Area
-              dataKey="mobile"
+              dataKey="updates"
               type="natural"
-              fill="var(--color-mobile)"
-              stroke="var(--color-mobile)"
+              fill="var(--color-updates)"
+              stroke="var(--color-updates)"
               stackId="a"
               activeDot={{
                 fill: "var(--chart-active-dot)",
               }}
             />
             <Area
-              dataKey="desktop"
+              dataKey="installs"
               type="natural"
-              fill="var(--color-desktop)"
-              stroke="var(--color-desktop)"
+              fill="var(--color-installs)"
+              stroke="var(--color-installs)"
               stackId="a"
               activeDot={{
                 fill: "var(--chart-active-dot)",
@@ -109,9 +109,11 @@ export default function ChartAreaStackedExpand() {
         <div className="flex w-full items-start gap-2 text-sm">
           <div className="grid gap-2">
             <div className="flex items-center gap-2 leading-none font-medium">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+              Copy share reached its release high at v0.9 <TrendingUp className="h-4 w-4" />
             </div>
-            <div className="flex items-center gap-2 leading-none">January - June 2024</div>
+            <div className="flex items-center gap-2 leading-none">
+              Recent six releases: v0.4 to v0.9
+            </div>
           </div>
         </div>
       </CardFooter>
