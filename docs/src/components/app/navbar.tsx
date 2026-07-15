@@ -4,19 +4,44 @@ import Search from "@/components/app/search";
 import { ThemeSwitcher } from "@/components/app/theme-switcher";
 
 async function getRepoData() {
-  const res = await fetch("https://api.github.com/repos/andongmin94/neobrutal-ui", {
-    cache: "force-cache",
-    headers: {
-      "X-GitHub-Api-Version": "2022-11-28",
-      Authorization: `Bearer ${process.env.GH_API_KEY}`,
-    },
-  });
+  const fallback = { stargazers_count: 0 };
+  const headers: Record<string, string> = {
+    Accept: "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28",
+  };
+  const apiKey = process.env.GH_API_KEY?.trim();
 
-  if (!res.ok) {
-    return { stargazers_count: 0 };
+  if (apiKey) {
+    headers.Authorization = `Bearer ${apiKey}`;
   }
 
-  return res.json();
+  try {
+    const res = await fetch("https://api.github.com/repos/andongmin94/neobrutal-ui", {
+      cache: "force-cache",
+      headers,
+      signal: AbortSignal.timeout(5_000),
+    });
+
+    if (!res.ok) {
+      return fallback;
+    }
+
+    const data: unknown = await res.json();
+
+    if (
+      typeof data === "object" &&
+      data !== null &&
+      "stargazers_count" in data &&
+      typeof data.stargazers_count === "number" &&
+      Number.isFinite(data.stargazers_count)
+    ) {
+      return { stargazers_count: data.stargazers_count };
+    }
+  } catch {
+    return fallback;
+  }
+
+  return fallback;
 }
 
 async function Navbar() {
