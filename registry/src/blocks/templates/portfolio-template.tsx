@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, Mail } from "lucide-react";
+import { ArrowUpRight, ChevronDown, Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -17,19 +17,19 @@ const PROJECTS = [
     title: "Wayline",
     type: "Product design and front-end",
     year: "2026",
-    href: "https://example.com/wayline",
+    summary: "A dispatch planning workspace that turns route changes into clear next actions.",
   },
   {
     title: "Ledgerline",
     type: "Product design",
     year: "2025",
-    href: "https://example.com/ledgerline",
+    summary: "A calm reporting system for finance teams reviewing a busy monthly close.",
   },
   {
     title: "Open Index",
     type: "Web design and development",
     year: "2025",
-    href: "https://example.com/open-index",
+    summary: "An accessible public directory for shared tools, datasets, and practical guides.",
   },
 ] as const;
 
@@ -78,21 +78,24 @@ export default function PortfolioTemplate() {
             <ul className="mt-3 border-y-2 border-border">
               {PROJECTS.map((project) => (
                 <li key={project.title} className="border-b-2 border-border last:border-b-0">
-                  <a
-                    href={project.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="group flex items-center justify-between gap-6 py-3 hover:bg-secondary-background sm:px-3"
-                  >
-                    <span className="min-w-0">
-                      <span className="block font-heading">{project.title}</span>
-                      <span className="mt-1 block text-sm opacity-70">{project.type}</span>
-                    </span>
-                    <span className="flex shrink-0 items-center gap-3 text-sm">
-                      {project.year}
-                      <ArrowUpRight className="size-4" aria-hidden="true" />
-                    </span>
-                  </a>
+                  <details className="group">
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-3 hover:bg-secondary-background sm:px-3 [&::-webkit-details-marker]:hidden">
+                      <span className="min-w-0">
+                        <span className="block font-heading">{project.title}</span>
+                        <span className="mt-1 block text-sm opacity-70">{project.type}</span>
+                      </span>
+                      <span className="flex shrink-0 items-center gap-3 text-sm">
+                        {project.year}
+                        <ChevronDown
+                          className="size-4 transition-transform group-open:rotate-180"
+                          aria-hidden="true"
+                        />
+                      </span>
+                    </summary>
+                    <p className="border-t-2 border-border px-0 py-3 text-sm leading-relaxed text-foreground/75 sm:px-3">
+                      {project.summary}
+                    </p>
+                  </details>
                 </li>
               ))}
             </ul>
