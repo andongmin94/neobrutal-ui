@@ -43,7 +43,7 @@ export default function BlogTemplate({ basePath = "/blog" }: BlogTemplateProps) 
             className="group flex items-center gap-2 font-heading"
             aria-label="Worklog home"
           >
-            <span className="grid size-7 place-items-center rounded-base border-2 border-border bg-main text-main-foreground shadow-shadow transition-all duration-150 group-hover:translate-x-boxShadowX group-hover:translate-y-boxShadowY group-hover:shadow-none">
+            <span className="grid size-7 place-items-center rounded-base border-2 border-border bg-main text-main-foreground shadow-shadow transition-[transform,box-shadow] duration-[140ms] ease-[ease] motion-reduce:transition-none group-hover:translate-x-pressX group-hover:translate-y-pressY group-hover:shadow-press group-focus-visible:translate-x-pressX group-focus-visible:translate-y-pressY group-focus-visible:shadow-press group-active:translate-x-boxShadowX group-active:translate-y-boxShadowY group-active:shadow-none">
               <FileText aria-hidden="true" className="size-3.5" />
             </span>
             <span className="text-sm">WORKLOG</span>

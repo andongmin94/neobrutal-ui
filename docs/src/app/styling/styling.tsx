@@ -197,7 +197,11 @@ export default function Styling() {
   --border: oklch(0% 0 0);
   --ring: oklch(0% 0 0);
   --overlay: oklch(0% 0 0 / 0.8);
-  --shadow: ${boxShadowLength[0]}px ${boxShadowLength[1]}px 0px 0px var(--border);
+  --box-shadow-x: ${boxShadowLength[0]}px;
+  --box-shadow-y: ${boxShadowLength[1]}px;
+  --reverse-box-shadow-x: calc(0px - var(--box-shadow-x));
+  --reverse-box-shadow-y: calc(0px - var(--box-shadow-y));
+  --shadow: var(--box-shadow-x) var(--box-shadow-y) 0px 0px var(--border);
   --chart-1: ${chart1};
   --chart-2: ${chart2};
   --chart-3: ${chart3};
@@ -214,7 +218,7 @@ export default function Styling() {
   --main: ${darkMain};
   --border: oklch(0% 0 0);
   --ring: oklch(100% 0 0);
-  --shadow: ${boxShadowLength[0]}px ${boxShadowLength[1]}px 0px 0px var(--border);
+  --shadow: var(--box-shadow-x) var(--box-shadow-y) 0px 0px var(--border);
   --chart-1: ${darkChart1};
   --chart-2: ${darkChart2};
   --chart-3: ${darkChart3};
@@ -238,12 +242,20 @@ export default function Styling() {
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
 
-  --spacing-boxShadowX: ${boxShadowLength[0]}px;
-  --spacing-boxShadowY: ${boxShadowLength[1]}px;
-  --spacing-reverseBoxShadowX: -${boxShadowLength[0]}px;
-  --spacing-reverseBoxShadowY: -${boxShadowLength[1]}px;
+  --spacing-boxShadowX: var(--box-shadow-x);
+  --spacing-boxShadowY: var(--box-shadow-y);
+  --spacing-reverseBoxShadowX: var(--reverse-box-shadow-x);
+  --spacing-reverseBoxShadowY: var(--reverse-box-shadow-y);
+  --spacing-pressX: calc(
+    var(--box-shadow-x) - clamp(-1px, var(--box-shadow-x), 1px)
+  );
+  --spacing-pressY: calc(
+    var(--box-shadow-y) - clamp(-1px, var(--box-shadow-y), 1px)
+  );
   --radius-base: ${borderRadius}px;
   --shadow-shadow: var(--shadow);
+  --shadow-press: clamp(-1px, var(--box-shadow-x), 1px)
+    clamp(-1px, var(--box-shadow-y), 1px) 0px 0px var(--border);
   --font-weight-base: ${fontWeight[1]};
   --font-weight-heading: ${fontWeight[0]};
 }

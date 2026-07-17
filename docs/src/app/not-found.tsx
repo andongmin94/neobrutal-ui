@@ -2,6 +2,8 @@ import { ArrowUpRight } from "lucide-react";
 
 import Link from "next/link";
 
+import { raisedPress } from "@/lib/raised-press";
+
 export default function NotFound() {
   return (
     <div className="text-foreground max-h-[100dvh] h-[100dvh] portrait:max-h-[100dvh] portrait:h-[100dvh] w-full flex items-center justify-center bg-background prose-headings:font-heading prose-h1:md:text-5xl prose-h1:text-3xl">
@@ -13,7 +15,7 @@ export default function NotFound() {
         </p>
 
         <Link
-          className="flex items-center font-base gap-2.5 w-max text-main-foreground rounded-base border-2 border-border bg-main md:px-10 px-4 md:py-3 py-2 md:text-[22px] text-base shadow-shadow transition-all hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none"
+          className={`flex w-max items-center gap-2.5 rounded-base border-2 border-border bg-main px-4 py-2 font-base text-base text-main-foreground shadow-shadow md:px-10 md:py-3 md:text-[22px] ${raisedPress}`}
           href={"/"}
         >
           Return home

@@ -38,7 +38,7 @@ starFiles.forEach((file) => {
   const filePath = path.join(starsDir, file);
 
   try {
-    const code = fs.readFileSync(filePath, "utf-8");
+    const code = fs.readFileSync(filePath, "utf-8").replaceAll("\r\n", "\n");
 
     imports.push(`import ${componentName} from "${importPath}";`);
     starsArray.push(

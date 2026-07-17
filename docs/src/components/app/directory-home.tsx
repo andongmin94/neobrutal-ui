@@ -10,6 +10,7 @@ import {
   type ComponentGroup,
   type ComponentInstallMode,
 } from "@/data/component-directory";
+import { raisedPress } from "@/lib/raised-press";
 
 export type DirectoryEntry = {
   category: ComponentGroup;
@@ -152,7 +153,7 @@ export default function DirectoryHome({ entries }: DirectoryHomeProps) {
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {filteredEntries.map((entry) => (
                 <Link
-                  className="group flex min-h-48 flex-col border-2 border-border bg-main p-4 text-main-foreground shadow-shadow transition-all duration-150 hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  className={`group flex min-h-48 flex-col border-2 border-border bg-main p-4 text-main-foreground shadow-shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${raisedPress}`}
                   href={entry.href}
                   key={entry.slug}
                 >

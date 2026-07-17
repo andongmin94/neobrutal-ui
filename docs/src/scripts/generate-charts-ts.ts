@@ -7,7 +7,7 @@ const outputFilePath = path.resolve(__dirname, "../data/charts.ts");
 
 // Function to read file content
 function readFileContent(filePath: string): string {
-  return fs.readFileSync(filePath, "utf8");
+  return fs.readFileSync(filePath, "utf8").replaceAll("\r\n", "\n");
 }
 
 // Function to get component name from file path
