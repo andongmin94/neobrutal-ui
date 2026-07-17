@@ -167,7 +167,7 @@ export default function DirectoryHome({ entries }: DirectoryHomeProps) {
                   <p className="mt-1 text-sm leading-5">{entry.description}</p>
                   <div className="mt-auto flex items-end justify-between pt-6">
                     <span className="font-mono text-[10px] uppercase">{entry.category}</span>
-                    <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                    <ArrowRight className="size-4" />
                   </div>
                 </Link>
               ))}
