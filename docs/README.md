@@ -28,8 +28,11 @@ https://neobrutal-ui.andongmin.com/r/registry.json
 Local development:
 
 ```txt
-http://127.0.0.1:5177/r/registry.json
+http://127.0.0.1:3000/r/registry.json
 ```
 
-Run `npm run build` in `../registry` before deploying docs so `public/r` stays
-up to date.
+The registry development server also exposes the catalog at
+`http://127.0.0.1:5177/r/registry.json`.
+
+Run `npm run build` in `../registry` before deploying docs. That command rebuilds
+the registry JSON and synchronizes it into `docs/public/r`.

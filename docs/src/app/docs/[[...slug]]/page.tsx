@@ -6,12 +6,13 @@ import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { MAIN_SIDEBAR } from "@/data/sidebar-links";
-
+import ComponentWorkbench from "@/components/app/component-workbench";
 import { MDXContent, MDXTableOfContents } from "@/components/app/mdx-components";
 import Pagination from "@/components/app/pagination";
 import { TableOfContents } from "@/components/app/toc";
 import { Badge } from "@/components/ui/badge";
+import { getComponentCategory, getComponentInstallMode } from "@/data/component-directory";
+import { MAIN_SIDEBAR } from "@/data/sidebar-links";
 import { cn } from "@/lib/utils";
 
 interface DocPageProps {
@@ -102,8 +103,25 @@ export default async function DocPage(props: DocPageProps) {
     next: nextItem ? { name: nextItem.text, path: nextItem.href } : undefined,
   };
 
+  if (slug.startsWith("components/")) {
+    return (
+      <ComponentWorkbench
+        category={getComponentCategory(slugAsParams)}
+        description={description}
+        installMode={getComponentInstallMode(slugAsParams)}
+        shadcnDocsLink={shadcnDocsLink}
+        title={title}
+      >
+        <MDXContent code={body} />
+
+        <div className="mt-16 border-t-2 border-border pt-8">
+          <Pagination {...paginationProps} />
+        </div>
+      </ComponentWorkbench>
+    );
+  }
+
   const isTocEmpty = tableOfContents.length < 2;
-  const directorySection = slug.startsWith("components/") ? "Components" : "Documentation";
 
   return (
     <div className="docs min-h-[100dvh] w-full bg-background pt-[70px]">
@@ -115,7 +133,7 @@ export default async function DocPage(props: DocPageProps) {
                 Directory
               </Link>
               <span className="opacity-45">/</span>
-              <span>{directorySection}</span>
+              <span>Documentation</span>
             </div>
             <h1 className="text-4xl font-black leading-none sm:text-5xl">{title}</h1>
             {description && (

@@ -32,7 +32,7 @@ export default function SheetDemo() {
           </div>
           <div className="grid gap-3">
             <Label htmlFor="sheet-demo-username">Username</Label>
-            <Input id="sheet-demo-username" defaultValue="@peduarte" />
+            <Input id="sheet-demo-username" defaultValue="@andongmin94" />
           </div>
         </div>
         <SheetFooter>

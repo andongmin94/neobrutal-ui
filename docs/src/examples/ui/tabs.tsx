@@ -33,7 +33,7 @@ export default function TabsDemo() {
             </div>
             <div className="grid gap-3">
               <Label htmlFor="tabs-demo-username">Username</Label>
-              <Input id="tabs-demo-username" defaultValue="@peduarte" />
+              <Input id="tabs-demo-username" defaultValue="@andongmin94" />
             </div>
           </CardContent>
           <CardFooter>

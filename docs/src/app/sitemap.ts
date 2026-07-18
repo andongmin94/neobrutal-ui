@@ -5,7 +5,7 @@ import TEMPLATES from "@/data/templates";
 
 const root = process.env.NEXT_PUBLIC_DOCS_BASE_URL || "https://neobrutal-ui.andongmin.com";
 
-const SITE_PAGES = ["/templates", "/showcase", "/stars", "/styling", "/charts"];
+const SITE_PAGES = ["/templates", "/stars", "/styling", "/charts"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

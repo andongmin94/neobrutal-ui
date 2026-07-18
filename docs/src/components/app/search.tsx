@@ -5,7 +5,12 @@ import { Search as SearchIcon } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { COMPONENTS_LINKS, GETTING_STARTED_LINKS } from "@/data/sidebar-links";
+import {
+  COMPONENTS_LINKS,
+  EXPLORE_LINKS,
+  GETTING_STARTED_LINKS,
+  PROJECT_LINKS,
+} from "@/data/sidebar-links";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -27,6 +32,14 @@ export default function Search() {
     {
       heading: "Components",
       links: [...COMPONENTS_LINKS],
+    },
+    {
+      heading: "Explore",
+      links: [...EXPLORE_LINKS],
+    },
+    {
+      heading: "Project",
+      links: [...PROJECT_LINKS],
     },
   ];
 
@@ -87,7 +100,7 @@ export default function Search() {
                     );
                   })}
                 </CommandGroup>
-                {i < 2 && <CommandSeparator />}
+                {i < DOCS_LINKS.length - 1 && <CommandSeparator />}
               </React.Fragment>
             );
           })}

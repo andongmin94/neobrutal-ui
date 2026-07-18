@@ -14,23 +14,24 @@ const docsBaseUrl = process.env.NEXT_PUBLIC_DOCS_BASE_URL || "https://neobrutal-
 
 export const metadata: Metadata = {
   title: {
-    default: "neobrutal-ui - Modern neobrutalist components for shadcn/ui",
+    default: "neobrutal-ui - Neobrutalist components for Base UI",
     template: `%s - neobrutal-ui`,
   },
-  description: "A collection of neobrutalism-styled components based on shadcn/ui.",
+  description:
+    "A source-owned neobrutalist component registry built with Base UI, Tailwind CSS, and shadcn.",
   keywords: [
     "neobrutalism",
-    "neobrutalism components",
-    "neobrutalism tailwind",
-    "react neobrutalism",
-    "react tailwind components",
-    "shadcn components",
-    "shadcn neobrutalism",
+    "Base UI components",
+    "Tailwind CSS components",
+    "React components",
+    "shadcn registry",
+    "source-owned UI",
   ],
   authors: [{ name: "andongmin94", url: "https://github.com/andongmin94" }],
   openGraph: {
     type: "website",
-    description: "A collection of neobrutalism-styled components based on shadcn/ui.",
+    description:
+      "A source-owned neobrutalist component registry built with Base UI and Tailwind CSS.",
     images: [`${docsBaseUrl}/preview.png`],
     url: docsBaseUrl,
     title: "neobrutal-ui",
@@ -38,8 +39,9 @@ export const metadata: Metadata = {
   metadataBase: new URL(docsBaseUrl),
   twitter: {
     card: "summary_large_image",
-    title: "neobrutal-ui - Modern neobrutalist components",
-    description: "A collection of neobrutalism-styled components based on shadcn/ui.",
+    title: "neobrutal-ui - Neobrutalist components for Base UI",
+    description:
+      "A source-owned neobrutalist component registry built with Base UI and Tailwind CSS.",
     images: [`${docsBaseUrl}/preview.png`],
     creator: "@andongmin94",
   },
@@ -47,7 +49,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html className="scroll-smooth" suppressHydrationWarning lang="en">
+    <html
+      className="scroll-smooth"
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
+      lang="en"
+    >
       <body>
         <ThemeProvider attribute="class" defaultTheme="light" disableTransitionOnChange>
           <div data-site-navbar>
