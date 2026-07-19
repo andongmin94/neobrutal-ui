@@ -1,30 +1,24 @@
 :root {
-  --font-sans: "Pretendard", "Apple SD Gothic Neo", "Segoe UI", sans-serif;
-  --font-mono: Consolas, "SFMono-Regular", "Liberation Mono", monospace;
+  --font-sans: var(--site-font-body);
+  --font-heading: var(--site-font-display);
+  --font-mono: var(--site-font-code);
 
-  --background: #edf4ff;
-  --secondary-background: #ffffff;
-  --surface-muted: #dce9ff;
-  --surface-quiet: #f7f9fc;
-  --foreground: #111318;
-  --foreground-muted: #515762;
-  --main: #4f8ff7;
-  --main-hover: #3e7de3;
-  --main-foreground: #0b1020;
-  --border: #111318;
-  --ring: #236ad6;
+  --surface-muted: color-mix(in srgb, var(--main) 18%, var(--secondary-background));
+  --surface-quiet: color-mix(in srgb, var(--background) 35%, var(--secondary-background));
+  --foreground-muted: color-mix(in srgb, var(--foreground) 64%, transparent);
+  --main-hover: color-mix(in srgb, var(--main) 86%, var(--border));
   --utility: #ffd43b;
   --danger: #ff5757;
 
   --border-width: 2px;
   --radius-small: 3px;
-  --radius: 5px;
-  --shadow-x: 4px;
-  --shadow-y: 4px;
-  --shadow: var(--shadow-x) var(--shadow-y) 0 var(--border);
-  --shadow-small: 2px 2px 0 var(--border);
-  --header-height: 66px;
-  --content-max: 830px;
+  --radius: var(--border-radius);
+  --shadow-x: var(--box-shadow-x);
+  --shadow-y: var(--box-shadow-y);
+  --shadow-small: clamp(-2px, var(--box-shadow-x), 2px) clamp(-2px, var(--box-shadow-y), 2px) 0
+    var(--border);
+  --header-height: 70px;
+  --content-max: 760px;
 
   --vp-c-bg: var(--background);
   --vp-c-bg-alt: var(--secondary-background);
@@ -44,17 +38,6 @@
 }
 
 :root.dark {
-  --background: #13171d;
-  --secondary-background: #1d232c;
-  --surface-muted: #26334a;
-  --surface-quiet: #181d24;
-  --foreground: #f5f7fb;
-  --foreground-muted: #b6bfcc;
-  --main: #78a9ff;
-  --main-hover: #91b9ff;
-  --main-foreground: #101722;
-  --border: #f5f7fb;
-  --ring: #a8c7ff;
   --utility: #ffd84d;
   --danger: #ff7474;
   --vp-code-block-bg: #080b10;

@@ -1,39 +1,73 @@
-@import "./tokens.css";
-@import "./shell.css";
-@import "./content.css";
-@import "./directory.css";
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--header-height) + 28px);
+  }
 
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: calc(var(--header-height) + 28px);
+  body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100dvh;
+    overflow-wrap: break-word;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    letter-spacing: 0;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    scrollbar-width: thin;
+    scrollbar-color: var(--main) var(--secondary-background);
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    color: inherit;
+    font: inherit;
+    letter-spacing: 0;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  svg {
+    display: block;
+    flex: none;
+  }
+
+  ::selection {
+    background: var(--main);
+    color: var(--main-foreground);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 3px;
+  }
 }
 
 html.menu-open,
 html.search-open {
   overflow: hidden;
-}
-
-body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100dvh;
-  overflow-wrap: break-word;
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans);
-  font-size: 16px;
-  line-height: 1.55;
-  letter-spacing: 0;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  scrollbar-width: thin;
-  scrollbar-color: var(--main) var(--secondary-background);
 }
 
 body::-webkit-scrollbar {
@@ -49,43 +83,6 @@ body::-webkit-scrollbar-thumb {
   border: 3px solid var(--secondary-background);
   border-radius: 0;
   background: var(--main);
-}
-
-button,
-input,
-textarea,
-select {
-  color: inherit;
-  font: inherit;
-  letter-spacing: 0;
-}
-
-button,
-a {
-  -webkit-tap-highlight-color: transparent;
-}
-
-button {
-  cursor: pointer;
-}
-
-a {
-  color: inherit;
-}
-
-svg {
-  display: block;
-  flex: none;
-}
-
-::selection {
-  background: var(--main);
-  color: var(--main-foreground);
-}
-
-:focus-visible {
-  outline: 3px solid var(--ring);
-  outline-offset: 3px;
 }
 
 .site-frame {

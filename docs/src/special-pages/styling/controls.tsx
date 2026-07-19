@@ -34,6 +34,21 @@ import {
 
 import { cn } from "@/lib/utils";
 
+type ColorPalette = (typeof colors)[number];
+
+function applyColorPalette(color: ColorPalette) {
+  const root = document.documentElement;
+  const isDarkMode = root.classList.contains("dark");
+
+  root.style.setProperty("--background", isDarkMode ? color.darkBg : color.bg);
+  root.style.setProperty("--main", isDarkMode ? color.darkMain : color.main);
+  root.style.setProperty("--chart-1", isDarkMode ? color.darkChart1 : color.chart1);
+  root.style.setProperty("--chart-2", isDarkMode ? color.darkChart2 : color.chart2);
+  root.style.setProperty("--chart-3", isDarkMode ? color.darkChart3 : color.chart3);
+  root.style.setProperty("--chart-4", isDarkMode ? color.darkChart4 : color.chart4);
+  root.style.setProperty("--chart-5", isDarkMode ? color.darkChart5 : color.chart5);
+}
+
 export default function Styling() {
   const defaultColorPalette = colors[10];
   const [customizerOpen, setCustomizerOpen] = useState(false);
@@ -85,6 +100,48 @@ export default function Styling() {
     }
   }, []);
 
+  useLayoutEffect(() => {
+    const applyCurrentPalette = () =>
+      applyColorPalette({
+        bg,
+        darkBg,
+        darkMain,
+        main,
+        name,
+        chart1,
+        chart2,
+        chart3,
+        chart4,
+        chart5,
+        darkChart1,
+        darkChart2,
+        darkChart3,
+        darkChart4,
+        darkChart5,
+      });
+
+    applyCurrentPalette();
+    window.addEventListener("neobrutal-ui:theme", applyCurrentPalette);
+
+    return () => window.removeEventListener("neobrutal-ui:theme", applyCurrentPalette);
+  }, [
+    bg,
+    darkBg,
+    darkMain,
+    main,
+    name,
+    chart1,
+    chart2,
+    chart3,
+    chart4,
+    chart5,
+    darkChart1,
+    darkChart2,
+    darkChart3,
+    darkChart4,
+    darkChart5,
+  ]);
+
   const updateColor = (value: string) => {
     const r = window.document.querySelector(":root") as HTMLElement;
     const color = colors.find((color) => color.name === value)!;
@@ -92,26 +149,7 @@ export default function Styling() {
     setColor(color);
 
     localStorage.setItem("color", JSON.stringify(color));
-
-    const isDarkMode = document.documentElement.classList.contains("dark");
-
-    if (isDarkMode) {
-      r.style.setProperty("--background", color.darkBg);
-      r.style.setProperty("--main", color.darkMain);
-      r.style.setProperty("--chart-1", color.darkChart1);
-      r.style.setProperty("--chart-2", color.darkChart2);
-      r.style.setProperty("--chart-3", color.darkChart3);
-      r.style.setProperty("--chart-4", color.darkChart4);
-      r.style.setProperty("--chart-5", color.darkChart5);
-    } else {
-      r.style.setProperty("--background", color.bg);
-      r.style.setProperty("--main", color.main);
-      r.style.setProperty("--chart-1", color.chart1);
-      r.style.setProperty("--chart-2", color.chart2);
-      r.style.setProperty("--chart-3", color.chart3);
-      r.style.setProperty("--chart-4", color.chart4);
-      r.style.setProperty("--chart-5", color.chart5);
-    }
+    applyColorPalette(color);
 
     r.style.setProperty("--dark-background", color.darkBg);
     r.style.setProperty("--dark-main", color.darkMain);
@@ -180,7 +218,10 @@ export default function Styling() {
     setBoxShadowLength([4, 4]);
     setFontWeight([700, 500]);
 
-    localStorage.clear();
+    localStorage.removeItem("color");
+    localStorage.removeItem("borderRadius");
+    localStorage.removeItem("boxShadow");
+    localStorage.removeItem("fontWeight");
   };
 
   const styling = `@import "tailwindcss";

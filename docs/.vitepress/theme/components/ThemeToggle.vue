@@ -4,6 +4,8 @@ import { onMounted, ref } from "vue";
 
 type Theme = "light" | "dark";
 
+const STORAGE_KEY = "vitepress-theme-appearance";
+const LEGACY_STORAGE_KEY = "neobrutal-ui-theme";
 const theme = ref<Theme>("light");
 
 function applyTheme(nextTheme: Theme) {
@@ -11,7 +13,8 @@ function applyTheme(nextTheme: Theme) {
   document.documentElement.classList.toggle("dark", nextTheme === "dark");
   document.documentElement.dataset.theme = nextTheme;
   document.documentElement.style.colorScheme = nextTheme;
-  window.localStorage.setItem("neobrutal-ui-theme", nextTheme);
+  window.localStorage.setItem(STORAGE_KEY, nextTheme);
+  window.localStorage.removeItem(LEGACY_STORAGE_KEY);
   window.dispatchEvent(new CustomEvent("neobrutal-ui:theme", { detail: nextTheme }));
 }
 
@@ -20,7 +23,8 @@ function toggleTheme() {
 }
 
 onMounted(() => {
-  const stored = window.localStorage.getItem("neobrutal-ui-theme") as Theme | null;
+  const stored = (window.localStorage.getItem(STORAGE_KEY) ??
+    window.localStorage.getItem(LEGACY_STORAGE_KEY)) as Theme | null;
   const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   applyTheme(stored === "light" || stored === "dark" ? stored : preferred);
 });

@@ -2,6 +2,10 @@ import type { Theme } from "vitepress";
 
 import "../../src/styling/globals.css";
 import "pretendard/dist/web/variable/pretendardvariable.css";
+import "./styles/tokens.css";
+import "./styles/shell.css";
+import "./styles/content.css";
+import "./styles/directory.css";
 import "./styles/index.css";
 
 import Layout from "./Layout.vue";

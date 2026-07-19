@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { List, MoveUp } from "@lucide/vue";
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
-import { useData, useRoute } from "vitepress";
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { useRoute } from "vitepress";
 
 type TocHeader = {
   level: number;
@@ -9,16 +9,27 @@ type TocHeader = {
   title: string;
 };
 
-const { page } = useData();
 const route = useRoute();
 const activeId = ref("");
+const headers = ref<TocHeader[]>([]);
 let observer: IntersectionObserver | undefined;
 
-const headers = computed<TocHeader[]>(() =>
-  ((page.value.headers ?? []) as TocHeader[]).filter(
-    (header) => header.level === 2 || header.level === 3,
-  ),
-);
+function collectHeaders() {
+  const content = document.querySelector(".docs-content");
+
+  headers.value = Array.from(content?.querySelectorAll<HTMLElement>("h2[id], h3[id]") ?? []).map(
+    (element) => {
+      const title = element.cloneNode(true) as HTMLElement;
+      title.querySelectorAll(".header-anchor").forEach((anchor) => anchor.remove());
+
+      return {
+        level: Number(element.tagName.slice(1)),
+        link: `#${element.id}`,
+        title: (title.textContent ?? "").replaceAll("\u200B", "").trim(),
+      };
+    },
+  );
+}
 
 function connectObserver() {
   observer?.disconnect();
@@ -41,16 +52,19 @@ function connectObserver() {
   elements.forEach((element) => observer?.observe(element));
 }
 
+async function refreshHeaders() {
+  activeId.value = "";
+  await nextTick();
+  collectHeaders();
+  connectObserver();
+}
+
 watch(
   () => route.path,
-  async () => {
-    activeId.value = "";
-    await nextTick();
-    connectObserver();
-  },
+  () => void refreshHeaders(),
 );
 
-onMounted(connectObserver);
+onMounted(() => void refreshHeaders());
 onBeforeUnmount(() => observer?.disconnect());
 </script>
 

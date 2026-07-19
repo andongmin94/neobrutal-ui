@@ -70,6 +70,22 @@
   padding-left: 25px;
 }
 
+.docs-content ul {
+  list-style-type: disc;
+}
+
+.docs-content ol {
+  list-style-type: decimal;
+}
+
+.docs-content ul ul {
+  list-style-type: circle;
+}
+
+.docs-content ol ol {
+  list-style-type: lower-alpha;
+}
+
 .docs-content li {
   margin: 7px 0;
   padding-left: 4px;
@@ -188,7 +204,7 @@
   z-index: 3;
   top: 8px;
   right: 8px;
-  width: 34px;
+  width: 44px;
   height: 34px;
   border: 1px solid #dce2ec;
   border-radius: 2px;
@@ -196,8 +212,37 @@
   color: #ffffff;
 }
 
+.docs-content .copy::before {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 800;
+  content: "Copy";
+}
+
+.docs-content .copy.copied::before {
+  content: "Done";
+}
+
 .docs-content .copy + .lang {
   display: none;
+}
+
+.docs-content .vp-code span,
+.docs-content .shiki span {
+  color: var(--shiki-light);
+  background-color: var(--shiki-light-bg);
+  font-style: var(--shiki-light-font-style);
+  font-weight: var(--shiki-light-font-weight);
+  text-decoration: var(--shiki-light-text-decoration);
+}
+
+:root.dark .docs-content .vp-code span,
+:root.dark .docs-content .shiki span {
+  color: var(--shiki-dark);
+  background-color: var(--shiki-dark-bg);
+  font-style: var(--shiki-dark-font-style);
+  font-weight: var(--shiki-dark-font-weight);
+  text-decoration: var(--shiki-dark-text-decoration);
 }
 
 .docs-content .custom-block {
