@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "unicorn", "typescript", "oxc", "jsx-a11y", "nextjs"],
-  "ignorePatterns": [".next/**", ".velite/**", "node_modules/**"],
+  "plugins": ["react", "unicorn", "typescript", "oxc", "jsx-a11y"],
+  "ignorePatterns": [".vitepress/cache/**", ".vitepress/dist/**", "node_modules/**"],
   "settings": {
     "react": {
       "version": "19.2.7"

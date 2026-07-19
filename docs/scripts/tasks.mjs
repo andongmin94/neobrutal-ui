@@ -105,22 +105,13 @@ function formatJsonValue(value, indent, sectionName) {
 }
 
 function lint() {
-  run("oxlint", [
-    "--fix",
-    "--no-error-on-unmatched-pattern",
-    "src",
-    "scripts",
-    "next.config.mjs",
-    "velite.config.ts",
-  ]);
+  run("oxlint", ["--fix", "--no-error-on-unmatched-pattern", "src", ".vitepress", "scripts"]);
   run("oxfmt", [
     "--write",
     "--no-error-on-unmatched-pattern",
     "src",
+    ".vitepress",
     "scripts",
-    "next.config.mjs",
-    "velite.config.ts",
-    "postcss.config.js",
     "tsconfig.json",
     ".oxlintrc.json",
     ".oxfmtrc.json",
@@ -132,17 +123,20 @@ function lint() {
 switch (command) {
   case "dev":
     generateDocsData();
-    run("next", ["dev", ...passthroughArgs]);
+    run("vitepress", ["dev", ".", ...passthroughArgs]);
     break;
   case "build":
     generateDocsData();
-    run("next", ["build", ...passthroughArgs]);
+    run("vitepress", ["build", ".", ...passthroughArgs]);
     break;
   case "start":
-    run("next", ["start", ...passthroughArgs]);
+    run("vitepress", ["preview", ".", ...passthroughArgs]);
     break;
   case "lint":
     lint();
+    break;
+  case "typecheck":
+    run("vue-tsc", ["--noEmit", ...passthroughArgs]);
     break;
   default:
     console.error(`Unknown task: ${command ?? "(missing)"}`);

@@ -2,6 +2,9 @@
 @import "tw-animate-css";
 
 @plugin "@tailwindcss/typography";
+@source "..";
+@source "../../.vitepress/theme";
+@source "../../content";
 
 @custom-variant dark (&:is(.dark *));
 
