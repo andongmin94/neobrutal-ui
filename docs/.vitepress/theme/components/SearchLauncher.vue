@@ -115,7 +115,13 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <button class="search-launcher pressable" type="button" @click="show">
+  <button
+    class="search-launcher pressable"
+    type="button"
+    aria-label="Search documentation"
+    title="Search documentation"
+    @click="show"
+  >
     <Search :size="16" :stroke-width="2.4" />
     <span>Search</span>
     <kbd><Command :size="11" />K</kbd>

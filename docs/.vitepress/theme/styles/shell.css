@@ -41,6 +41,13 @@
   font-size: 22px;
   font-weight: 700;
   line-height: 1;
+  transition: background-color 120ms ease;
+}
+
+@media (hover: hover) {
+  .site-brand:hover .site-brand__mark {
+    background: var(--main-hover);
+  }
 }
 
 .primary-nav {
@@ -223,6 +230,11 @@
 .sidebar-filter:focus-within {
   background: var(--secondary-background);
   box-shadow: var(--shadow-small);
+}
+
+.sidebar-filter:has(input:focus-visible) {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }
 
 .sidebar-filter input {
@@ -448,6 +460,13 @@
   text-transform: uppercase;
 }
 
+@media (hover: hover) {
+  .back-to-top:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
 .sidebar-scrim {
   display: none;
 }
@@ -490,6 +509,10 @@
   background: transparent;
   font-size: 16px;
   font-weight: 650;
+}
+
+.search-dialog__input:has(input:focus-visible) {
+  box-shadow: inset 0 0 0 2px var(--ring);
 }
 
 .search-dialog__results {
@@ -695,7 +718,6 @@
     width: 38px;
     padding: 0;
     justify-content: center;
-    box-shadow: none;
   }
 
   .search-launcher > span,

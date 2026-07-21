@@ -284,6 +284,9 @@
   background: var(--secondary-background);
   font-size: 14px;
   font-weight: 800;
+  transition:
+    background-color 120ms ease,
+    color 120ms ease;
 }
 
 .installation-tabs__list button:last-child {
@@ -292,6 +295,17 @@
 
 .installation-tabs__list button[aria-selected="true"] {
   background: var(--main);
+  color: var(--main-foreground);
+}
+
+@media (hover: hover) {
+  .installation-tabs__list button:not([aria-selected="true"]):hover {
+    background: var(--surface-muted);
+  }
+}
+
+.installation-tabs__list button:not([aria-selected="true"]):active {
+  background: var(--main-hover);
   color: var(--main-foreground);
 }
 
