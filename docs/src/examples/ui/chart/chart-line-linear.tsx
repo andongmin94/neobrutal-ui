@@ -1,6 +1,6 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
+import { TrendingDown } from "lucide-react";
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 
 import {
@@ -18,20 +18,20 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-export const description = "A linear line chart";
+export const description = "Registry pipeline cached build time with a linear line";
 
 const chartData = [
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 305 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 73 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 214 },
+  { release: "v0.4", cached: 310 },
+  { release: "v0.5", cached: 265 },
+  { release: "v0.6", cached: 228 },
+  { release: "v0.7", cached: 204 },
+  { release: "v0.8", cached: 176 },
+  { release: "v0.9", cached: 148 },
 ];
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  cached: {
+    label: "Cached build (ms)",
     color: "var(--chart-1)",
   },
 } satisfies ChartConfig;
@@ -40,8 +40,8 @@ export default function ChartLineLinear() {
   return (
     <Card className="bg-secondary-background text-foreground">
       <CardHeader>
-        <CardTitle>Line Chart - Linear</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Registry Build Time - Linear</CardTitle>
+        <CardDescription>Cached build from v0.4 to v0.9 (ms)</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer
@@ -58,17 +58,17 @@ export default function ChartLineLinear() {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="release"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
+              tickFormatter={(value) => value}
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
             <Line
-              dataKey="desktop"
+              dataKey="cached"
               type="linear"
-              stroke="var(--color-desktop)"
+              stroke="var(--color-cached)"
               strokeWidth={2}
               dot={false}
             />
@@ -77,9 +77,9 @@ export default function ChartLineLinear() {
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          Cached builds improved by 162 ms <TrendingDown className="h-4 w-4" />
         </div>
-        <div className="leading-none">Showing total visitors for the last 6 months</div>
+        <div className="leading-none">Lower build time means better pipeline performance.</div>
       </CardFooter>
     </Card>
   );

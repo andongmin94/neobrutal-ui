@@ -14,6 +14,9 @@
 
   --heading-font-weight: 700;
   --base-font-weight: 500;
+  --site-font-body: "Pretendard Variable", Pretendard, sans-serif;
+  --site-font-display: "Pretendard Variable", Pretendard, sans-serif;
+  --site-font-code: Consolas, "Liberation Mono", monospace;
 
   --background: oklch(93.46% 0.0304 254.32);
   --secondary-background: oklch(100% 0 0);
@@ -21,7 +24,6 @@
   --main-foreground: oklch(0% 0 0);
 
   --main: oklch(67.47% 0.1725 259.61);
-  --signal: oklch(86.03% 0.176 92.36);
   --border: oklch(0% 0 0);
   --ring: oklch(0% 0 0);
   --overlay: oklch(0% 0 0 / 0.8);
@@ -52,7 +54,6 @@
 
 @theme inline {
   --color-main: var(--main);
-  --color-signal: var(--signal);
   --color-background: var(--background);
   --color-secondary-background: var(--secondary-background);
   --color-foreground: var(--foreground);
@@ -105,6 +106,20 @@
   }
 }
 
+@layer utilities {
+  .font-base {
+    font-family: var(--site-font-body);
+  }
+
+  .font-heading {
+    font-family: var(--site-font-display);
+  }
+
+  .font-mono {
+    font-family: var(--site-font-code);
+  }
+}
+
 @layer base {
   body {
     @apply text-foreground font-base;
@@ -118,6 +133,38 @@
   h6 {
     @apply font-heading;
   }
+}
+
+body {
+  font-family: var(--site-font-body);
+}
+
+body:has([data-template-preview]) [data-site-navbar] {
+  display: none;
+}
+
+html:has([data-template-preview][data-capture="true"]) {
+  scrollbar-width: none;
+}
+
+html:has([data-template-preview][data-capture="true"])::-webkit-scrollbar {
+  display: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--site-font-display);
+}
+
+code,
+kbd,
+pre,
+samp {
+  font-family: var(--site-font-code);
 }
 
 body,

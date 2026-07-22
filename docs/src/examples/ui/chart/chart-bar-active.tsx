@@ -1,6 +1,6 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
+import { LibraryBig } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Rectangle, XAxis } from "recharts";
 
 import {
@@ -18,39 +18,44 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-export const description = "A bar chart with an active bar";
+export const description = "A registry bar chart with an active category";
 
 const chartData = [
-  { browser: "chrome", visitors: 187, fill: "var(--color-chrome)" },
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-  { browser: "firefox", visitors: 275, fill: "var(--color-firefox)" },
-  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-  { browser: "other", visitors: 90, fill: "var(--color-other)" },
+  { category: "forms", registry: 12, fill: "var(--color-forms)" },
+  { category: "overlays", registry: 9, fill: "var(--color-overlays)" },
+  { category: "navigation", registry: 7, fill: "var(--color-navigation)" },
+  { category: "data", registry: 8, fill: "var(--color-data)" },
+  { category: "feedback", registry: 4, fill: "var(--color-feedback)" },
+  { category: "layout", registry: 4, fill: "var(--color-layout)" },
 ];
 
 const chartConfig = {
-  visitors: {
-    label: "Visitors",
+  registry: {
+    label: "Registry",
   },
-  chrome: {
-    label: "Chrome",
+  forms: {
+    label: "Forms",
     color: "var(--chart-1)",
   },
-  safari: {
-    label: "Safari",
+  overlays: {
+    label: "Overlays",
     color: "var(--chart-2)",
   },
-  firefox: {
-    label: "Firefox",
+  navigation: {
+    label: "Navigation",
     color: "var(--chart-3)",
   },
-  edge: {
-    label: "Edge",
+  data: {
+    label: "Data",
     color: "var(--chart-4)",
   },
-  other: {
-    label: "Other",
+  feedback: {
+    label: "Feedback",
     color: "var(--chart-5)",
+  },
+  layout: {
+    label: "Layout",
+    color: "var(--chart-1)",
   },
 } satisfies ChartConfig;
 
@@ -58,15 +63,15 @@ export default function ChartBarActive() {
   return (
     <Card className="bg-secondary-background text-foreground">
       <CardHeader>
-        <CardTitle>Bar Chart - Active</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Registry Catalog - Active</CardTitle>
+        <CardDescription>Active category inspection for published components</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
           <BarChart accessibilityLayer data={chartData}>
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="browser"
+              dataKey="category"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
@@ -79,7 +84,7 @@ export default function ChartBarActive() {
               content={<ChartTooltipContent hideLabel />}
             />
             <Bar
-              dataKey="visitors"
+              dataKey="registry"
               strokeWidth={2}
               radius={8}
               activeBar={({ ...props }) => {
@@ -98,9 +103,9 @@ export default function ChartBarActive() {
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          Navigation is selected for comparison <LibraryBig className="h-4 w-4" />
         </div>
-        <div className="leading-none">Showing total visitors for the last 6 months</div>
+        <div className="leading-none">44 components across six catalog categories</div>
       </CardFooter>
     </Card>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
+import { LibraryBig } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Cell, LabelList } from "recharts";
 
 import {
@@ -18,20 +18,20 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-export const description = "A bar chart with negative values";
+export const description = "A bar chart of components added and removed by release";
 
 const chartData = [
-  { month: "January", visitors: 186 },
-  { month: "February", visitors: 205 },
-  { month: "March", visitors: -207 },
-  { month: "April", visitors: 173 },
-  { month: "May", visitors: -209 },
-  { month: "June", visitors: 214 },
+  { release: "v0.8", change: 6 },
+  { release: "v0.9", change: 4 },
+  { release: "v0.10", change: -2 },
+  { release: "v0.11", change: 5 },
+  { release: "v0.12", change: -1 },
+  { release: "v0.13", change: 3 },
 ];
 
 const chartConfig = {
-  visitors: {
-    label: "Visitors",
+  change: {
+    label: "Added / Removed",
   },
 } satisfies ChartConfig;
 
@@ -39,8 +39,8 @@ export default function ChartBarNegative() {
   return (
     <Card className="bg-secondary-background text-foreground">
       <CardHeader>
-        <CardTitle>Bar Chart - Negative</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Registry Churn by Release</CardTitle>
+        <CardDescription>Components added and removed in recent releases</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -50,12 +50,12 @@ export default function ChartBarNegative() {
               cursor={false}
               content={<ChartTooltipContent hideLabel hideIndicator />}
             />
-            <Bar className="[&_.recharts-text]:fill-foreground" dataKey="visitors">
-              <LabelList position="top" dataKey="month" fillOpacity={1} />
+            <Bar className="[&_.recharts-text]:fill-foreground" dataKey="change">
+              <LabelList position="top" dataKey="release" fillOpacity={1} />
               {chartData.map((item) => (
                 <Cell
-                  key={item.month}
-                  fill={item.visitors > 0 ? "var(--chart-1)" : "var(--chart-2)"}
+                  key={item.release}
+                  fill={item.change > 0 ? "var(--chart-1)" : "var(--chart-2)"}
                 />
               ))}
             </Bar>
@@ -64,9 +64,9 @@ export default function ChartBarNegative() {
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          Net catalog growth: 15 components <LibraryBig className="h-4 w-4" />
         </div>
-        <div className="leading-none">Showing total visitors for the last 6 months</div>
+        <div className="leading-none">18 added and 3 removed across six releases</div>
       </CardFooter>
     </Card>
   );

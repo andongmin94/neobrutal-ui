@@ -1,9 +1,6 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
-import { Label, Pie, PieChart } from "recharts";
-
-import * as React from "react";
+import { Pie, PieChart } from "recharts";
 
 import {
   Card,
@@ -20,52 +17,52 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-export const description = "A pie chart with stacked sections";
+export const description = "A stacked pie chart comparing registry composition";
 
-const desktopData = [
-  { month: "january", desktop: 186, fill: "var(--color-january)" },
-  { month: "february", desktop: 305, fill: "var(--color-february)" },
-  { month: "march", desktop: 237, fill: "var(--color-march)" },
-  { month: "april", desktop: 173, fill: "var(--color-april)" },
-  { month: "may", desktop: 209, fill: "var(--color-may)" },
+const registryData = [
+  { category: "forms", registry: 12, fill: "var(--color-forms)" },
+  { category: "overlays", registry: 9, fill: "var(--color-overlays)" },
+  { category: "data", registry: 8, fill: "var(--color-data)" },
+  { category: "navigation", registry: 7, fill: "var(--color-navigation)" },
+  { category: "other", registry: 11, fill: "var(--color-other)" },
 ];
 
-const mobileData = [
-  { month: "january", mobile: 80, fill: "var(--color-january)" },
-  { month: "february", mobile: 200, fill: "var(--color-february)" },
-  { month: "march", mobile: 120, fill: "var(--color-march)" },
-  { month: "april", mobile: 190, fill: "var(--color-april)" },
-  { month: "may", mobile: 130, fill: "var(--color-may)" },
+const recipesData = [
+  { category: "forms", recipes: 8, fill: "var(--color-forms)" },
+  { category: "overlays", recipes: 7, fill: "var(--color-overlays)" },
+  { category: "data", recipes: 6, fill: "var(--color-data)" },
+  { category: "navigation", recipes: 5, fill: "var(--color-navigation)" },
+  { category: "other", recipes: 7, fill: "var(--color-other)" },
 ];
 
 const chartConfig = {
-  visitors: {
-    label: "Visitors",
+  components: {
+    label: "Components",
   },
-  desktop: {
-    label: "Desktop",
+  registry: {
+    label: "Registry",
   },
-  mobile: {
-    label: "Mobile",
+  recipes: {
+    label: "Recipes",
   },
-  january: {
-    label: "January",
+  forms: {
+    label: "Forms",
     color: "var(--chart-1)",
   },
-  february: {
-    label: "February",
+  overlays: {
+    label: "Overlays",
     color: "var(--chart-2)",
   },
-  march: {
-    label: "March",
+  data: {
+    label: "Data",
     color: "var(--chart-3)",
   },
-  april: {
-    label: "April",
+  navigation: {
+    label: "Navigation",
     color: "var(--chart-4)",
   },
-  may: {
-    label: "May",
+  other: {
+    label: "Other",
     color: "var(--chart-5)",
   },
 } satisfies ChartConfig;
@@ -74,8 +71,8 @@ export default function ChartPieStacked() {
   return (
     <Card className="flex flex-col bg-secondary-background text-foreground">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Pie Chart - Stacked</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Registry vs. Recipes</CardTitle>
+        <CardDescription>Catalog coverage compared across two rings</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px]">
@@ -83,8 +80,8 @@ export default function ChartPieStacked() {
             <ChartTooltip
               content={
                 <ChartTooltipContent
-                  labelKey="visitors"
-                  nameKey="month"
+                  labelKey="components"
+                  nameKey="category"
                   indicator="line"
                   labelFormatter={(_, payload) => {
                     return chartConfig[payload?.[0].dataKey as keyof typeof chartConfig].label;
@@ -92,16 +89,14 @@ export default function ChartPieStacked() {
                 />
               }
             />
-            <Pie data={desktopData} dataKey="desktop" outerRadius={60} />
-            <Pie data={mobileData} dataKey="mobile" innerRadius={70} outerRadius={90} />
+            <Pie data={registryData} dataKey="registry" outerRadius={60} />
+            <Pie data={recipesData} dataKey="recipes" innerRadius={70} outerRadius={90} />
           </PieChart>
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none">Showing total visitors for the last 6 months</div>
+        <div className="leading-none font-medium">Registry and recipe catalog composition</div>
+        <div className="leading-none">The same categories compared across both rings</div>
       </CardFooter>
     </Card>
   );

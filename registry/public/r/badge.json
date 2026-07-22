@@ -3,9 +3,6 @@
   "name": "badge",
   "title": "Badge",
   "author": "andongmin94",
-  "dependencies": [
-    "@base-ui/react"
-  ],
   "files": [
     {
       "path": "src/components/ui/badge.tsx",

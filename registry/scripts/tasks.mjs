@@ -55,6 +55,7 @@ function generateRegistry() {
 }
 
 function buildRegistry() {
+  fs.rmSync(path.join(root, "public", "r"), { force: true, recursive: true });
   run("shadcn", ["build", "--output", "public/r"]);
   run("tsx", ["src/scripts/add-registry-styles.ts"]);
 }

@@ -145,7 +145,7 @@ const UI = [
     name: "chart",
     title: "Chart",
     type: "registry:ui",
-    dependencies: ["recharts", "lucide-react"],
+    dependencies: ["recharts"],
     registryDependencies: ["ncard"],
     files: [
       {
@@ -254,7 +254,7 @@ const UI = [
     name: "form",
     title: "Form",
     type: "registry:ui",
-    dependencies: ["@base-ui/react", "@hookform/resolvers", "zod", "react-hook-form"],
+    dependencies: ["@base-ui/react", "react-hook-form"],
     registryDependencies: ["nbutton", "nlabel"],
     files: [
       {
@@ -335,7 +335,6 @@ const UI = [
   {
     name: "nlabel",
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     files: [
       {
         path: "src/components/ui/label.tsx",
@@ -347,7 +346,6 @@ const UI = [
     name: "label",
     title: "Label",
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     files: [
       {
         path: "src/components/ui/label.tsx",
@@ -639,6 +637,116 @@ const UI = [
       {
         path: "src/components/ui/tooltip.tsx",
         type: "registry:ui",
+      },
+    ],
+  },
+];
+
+const TEMPLATES = [
+  {
+    name: "blog-template",
+    title: "Blog template",
+    description: "A focused blog archive with search and readable post rows.",
+    type: "registry:block",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["neobrutal-ui", "button", "input"],
+    categories: ["template", "blog"],
+    files: [
+      {
+        path: "src/lib/blog-posts.ts",
+        type: "registry:lib",
+        target: "lib/blog-posts.ts",
+      },
+      {
+        path: "src/blocks/templates/blog-post-template.tsx",
+        type: "registry:component",
+        target: "components/templates/blog-post-template.tsx",
+      },
+      {
+        path: "src/blocks/templates/blog-template.tsx",
+        type: "registry:component",
+        target: "components/templates/blog-template.tsx",
+      },
+      {
+        path: "src/blocks/templates/pages/blog/page.tsx",
+        type: "registry:page",
+        target: "app/blog/page.tsx",
+      },
+      {
+        path: "src/blocks/templates/pages/blog/[slug]/page.tsx",
+        type: "registry:page",
+        target: "app/blog/[slug]/page.tsx",
+      },
+    ],
+  },
+  {
+    name: "portfolio-template",
+    title: "Portfolio template",
+    description: "A minimal portfolio with an introduction, selected work, and contact links.",
+    type: "registry:block",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["neobrutal-ui", "button"],
+    categories: ["template", "portfolio"],
+    files: [
+      {
+        path: "src/blocks/templates/portfolio-template.tsx",
+        type: "registry:component",
+        target: "components/templates/portfolio-template.tsx",
+      },
+      {
+        path: "src/blocks/templates/pages/portfolio/page.tsx",
+        type: "registry:page",
+        target: "app/portfolio/page.tsx",
+      },
+    ],
+  },
+  {
+    name: "cms-template",
+    title: "CMS template",
+    description: "A compact CMS for finding, editing, and publishing posts.",
+    type: "registry:block",
+    dependencies: ["lucide-react"],
+    registryDependencies: [
+      "neobrutal-ui",
+      "badge",
+      "button",
+      "input",
+      "switch",
+      "tabs",
+      "textarea",
+    ],
+    categories: ["template", "cms"],
+    files: [
+      {
+        path: "src/blocks/templates/cms-template.tsx",
+        type: "registry:component",
+        target: "components/templates/cms-template.tsx",
+      },
+      {
+        path: "src/blocks/templates/pages/cms/page.tsx",
+        type: "registry:page",
+        target: "app/cms/page.tsx",
+      },
+    ],
+  },
+  {
+    name: "link-hub-template",
+    title: "Link in bio template",
+    description: "A compact profile and link grid for projects, social profiles, and contact.",
+    type: "registry:block",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["neobrutal-ui", "button"],
+    categories: ["template", "profile", "links"],
+    files: [
+      {
+        path: "src/blocks/templates/link-hub-template.tsx",
+        type: "registry:component",
+        target: "components/templates/link-hub-template.tsx",
+      },
+      {
+        path: "src/blocks/templates/pages/links/page.tsx",
+        type: "registry:page",
+        target: "app/links/page.tsx",
       },
     ],
   },
@@ -1127,6 +1235,6 @@ const STARS = [
   },
 ];
 
-const REGISTRY = [...UI, ...STARS];
+const REGISTRY = [...UI, ...TEMPLATES, ...STARS];
 
 export default REGISTRY;

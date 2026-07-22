@@ -1,6 +1,5 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
 import { Pie, PieChart } from "recharts";
 
 import {
@@ -18,34 +17,34 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-export const description = "A pie chart with a custom label";
+export const description = "A registry composition pie chart with custom labels";
 
 const chartData = [
-  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-  { browser: "firefox", visitors: 187, fill: "var(--color-firefox)" },
-  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-  { browser: "other", visitors: 90, fill: "var(--color-other)" },
+  { category: "forms", components: 12, fill: "var(--color-forms)" },
+  { category: "overlays", components: 9, fill: "var(--color-overlays)" },
+  { category: "data", components: 8, fill: "var(--color-data)" },
+  { category: "navigation", components: 7, fill: "var(--color-navigation)" },
+  { category: "other", components: 11, fill: "var(--color-other)" },
 ];
 
 const chartConfig = {
-  visitors: {
-    label: "Visitors",
+  components: {
+    label: "Components",
   },
-  chrome: {
-    label: "Chrome",
+  forms: {
+    label: "Forms",
     color: "var(--chart-1)",
   },
-  safari: {
-    label: "Safari",
+  overlays: {
+    label: "Overlays",
     color: "var(--chart-2)",
   },
-  firefox: {
-    label: "Firefox",
+  data: {
+    label: "Data",
     color: "var(--chart-3)",
   },
-  edge: {
-    label: "Edge",
+  navigation: {
+    label: "Navigation",
     color: "var(--chart-4)",
   },
   other: {
@@ -58,16 +57,16 @@ export default function ChartPieLabelCustom() {
   return (
     <Card className="flex flex-col bg-secondary-background text-foreground">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Pie Chart - Custom Label</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Composition - Values</CardTitle>
+        <CardDescription>Direct component counts without leader lines</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px] px-0">
           <PieChart>
-            <ChartTooltip content={<ChartTooltipContent nameKey="visitors" hideLabel />} />
+            <ChartTooltip content={<ChartTooltipContent nameKey="components" hideLabel />} />
             <Pie
               data={chartData}
-              dataKey="visitors"
+              dataKey="components"
               labelLine={false}
               label={({ payload, ...props }) => {
                 return (
@@ -80,20 +79,18 @@ export default function ChartPieLabelCustom() {
                     dominantBaseline={props.dominantBaseline}
                     fill="hsla(var(--foreground))"
                   >
-                    {payload.visitors}
+                    {payload.components}
                   </text>
                 );
               }}
-              nameKey="browser"
+              nameKey="category"
             />
           </PieChart>
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none">Showing total visitors for the last 6 months</div>
+        <div className="leading-none font-medium">Catalog composition by category</div>
+        <div className="leading-none">Source-owned registry components</div>
       </CardFooter>
     </Card>
   );

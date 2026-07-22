@@ -1,6 +1,6 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
+import { TrendingDown } from "lucide-react";
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 
 import {
@@ -18,24 +18,24 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-export const description = "A multiple line chart";
+export const description = "Registry pipeline cold and cached build times";
 
 const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
+  { release: "v0.4", cold: 820, cached: 310 },
+  { release: "v0.5", cold: 710, cached: 265 },
+  { release: "v0.6", cold: 640, cached: 228 },
+  { release: "v0.7", cold: 590, cached: 204 },
+  { release: "v0.8", cold: 520, cached: 176 },
+  { release: "v0.9", cold: 470, cached: 148 },
 ];
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  cold: {
+    label: "Cold build (ms)",
     color: "var(--chart-1)",
   },
-  mobile: {
-    label: "Mobile",
+  cached: {
+    label: "Cached build (ms)",
     color: "var(--chart-2)",
   },
 } satisfies ChartConfig;
@@ -44,8 +44,8 @@ export default function ChartLineMultiple() {
   return (
     <Card className="bg-secondary-background text-foreground">
       <CardHeader>
-        <CardTitle>Line Chart - Multiple</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Registry Build Time - Multiple</CardTitle>
+        <CardDescription>Cold and cached builds from v0.4 to v0.9 (ms)</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer
@@ -62,24 +62,24 @@ export default function ChartLineMultiple() {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="release"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
+              tickFormatter={(value) => value}
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <Line
-              dataKey="desktop"
+              dataKey="cold"
               type="monotone"
-              stroke="var(--color-desktop)"
+              stroke="var(--color-cold)"
               strokeWidth={2}
               dot={false}
             />
             <Line
-              dataKey="mobile"
+              dataKey="cached"
               type="monotone"
-              stroke="var(--color-mobile)"
+              stroke="var(--color-cached)"
               strokeWidth={2}
               dot={false}
             />
@@ -90,10 +90,10 @@ export default function ChartLineMultiple() {
         <div className="flex w-full items-start gap-2 text-sm">
           <div className="grid gap-2">
             <div className="flex items-center gap-2 leading-none font-medium">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+              Cold builds improved by 350 ms <TrendingDown className="h-4 w-4" />
             </div>
             <div className="flex items-center gap-2 leading-none">
-              Showing total visitors for the last 6 months
+              Lower build time means better pipeline performance.
             </div>
           </div>
         </div>

@@ -4,8 +4,7 @@
   "title": "Chart",
   "author": "andongmin94",
   "dependencies": [
-    "recharts",
-    "lucide-react"
+    "recharts"
   ],
   "registryDependencies": [
     "https://neobrutal-ui.andongmin.com/r/ncard.json"

@@ -460,7 +460,9 @@ function SelectContent({
   const popupChildren = (
     <>
       <SelectScrollUpButton />
-      <SelectPrimitive.List>{child ? child.props.children : children}</SelectPrimitive.List>
+      <SelectPrimitive.List className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+        {child ? child.props.children : children}
+      </SelectPrimitive.List>
       <SelectScrollDownButton />
     </>
   );
@@ -547,7 +549,7 @@ function SelectContent({
         render={renderElement}
         style={mergePopupStyle(style)}
         className={cn(
-          "relative isolate z-50 max-h-96 w-[calc(var(--anchor-width)+4px)] min-w-[8rem] origin-(--transform-origin) overflow-hidden rounded-base border-2 border-border bg-main font-base text-main-foreground duration-100 data-[align-trigger=true]:animate-none data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "relative isolate z-50 flex max-h-96 w-[calc(var(--anchor-width)+4px)] min-w-[8rem] origin-(--transform-origin) flex-col overflow-hidden rounded-base border-2 border-border bg-main font-base text-main-foreground duration-100 data-[align-trigger=true]:animate-none data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           className,
         )}
         {...props}

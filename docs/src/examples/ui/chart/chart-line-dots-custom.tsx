@@ -1,6 +1,6 @@
 "use client";
 
-import { GitCommitVertical, TrendingUp } from "lucide-react";
+import { GitCommitVertical, TrendingDown } from "lucide-react";
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 
 import {
@@ -18,25 +18,21 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-export const description = "A line chart with custom dots";
+export const description = "Registry pipeline cold build time with custom dots";
 
 const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
+  { stage: "Resolve", cold: 820 },
+  { stage: "Fetch", cold: 710 },
+  { stage: "Write", cold: 640 },
+  { stage: "Format", cold: 590 },
+  { stage: "Verify", cold: 520 },
+  { stage: "Ready", cold: 470 },
 ];
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  cold: {
+    label: "Cold build (ms)",
     color: "var(--chart-1)",
-  },
-  mobile: {
-    label: "Mobile",
-    color: "var(--chart-2)",
   },
 } satisfies ChartConfig;
 
@@ -44,8 +40,8 @@ export default function ChartLineDotsCustom() {
   return (
     <Card className="bg-secondary-background text-foreground">
       <CardHeader>
-        <CardTitle>Line Chart - Custom Dots</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Registry Build Time - Custom Dots</CardTitle>
+        <CardDescription>Cold build by pipeline stage (ms)</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer
@@ -62,7 +58,7 @@ export default function ChartLineDotsCustom() {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="stage"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
@@ -70,9 +66,9 @@ export default function ChartLineDotsCustom() {
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
             <Line
-              dataKey="desktop"
+              dataKey="cold"
               type="natural"
-              stroke="var(--color-desktop)"
+              stroke="var(--color-cold)"
               strokeWidth={2}
               dot={({ cx, cy, payload }) => {
                 const r = 24;
@@ -83,13 +79,13 @@ export default function ChartLineDotsCustom() {
 
                 return (
                   <GitCommitVertical
-                    key={payload?.month}
+                    key={payload?.stage}
                     x={cx - r / 2}
                     y={cy - r / 2}
                     width={r}
                     height={r}
                     fill="hsl(var(--background))"
-                    stroke="var(--color-desktop)"
+                    stroke="var(--color-cold)"
                   />
                 );
               }}
@@ -99,9 +95,9 @@ export default function ChartLineDotsCustom() {
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          Cold builds improved by 350 ms <TrendingDown className="h-4 w-4" />
         </div>
-        <div className="leading-none">Showing total visitors for the last 6 months</div>
+        <div className="leading-none">Lower build time means better pipeline performance.</div>
       </CardFooter>
     </Card>
   );

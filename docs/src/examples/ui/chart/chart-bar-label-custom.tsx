@@ -1,6 +1,6 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
+import { LibraryBig } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from "recharts";
 
 import {
@@ -18,28 +18,24 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-export const description = "A bar chart with a custom label";
+export const description = "A registry bar chart with custom labels";
 
 const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
+  { category: "Forms", registry: 12 },
+  { category: "Overlays", registry: 9 },
+  { category: "Navigation", registry: 7 },
+  { category: "Data", registry: 8 },
+  { category: "Feedback", registry: 4 },
+  { category: "Layout", registry: 4 },
 ];
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  registry: {
+    label: "Registry",
     color: "var(--chart-1)",
   },
-  mobile: {
-    label: "Mobile",
-    color: "var(--chart-2)",
-  },
   label: {
-    color: "var(--background)",
+    color: "var(--main-foreground)",
   },
 } satisfies ChartConfig;
 
@@ -47,8 +43,8 @@ export default function ChartBarLabelCustom() {
   return (
     <Card className="bg-secondary-background text-foreground">
       <CardHeader>
-        <CardTitle>Bar Chart - Custom Label</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Registry Catalog - Custom Labels</CardTitle>
+        <CardDescription>Published components with category labels</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -62,7 +58,7 @@ export default function ChartBarLabelCustom() {
           >
             <CartesianGrid horizontal={false} />
             <YAxis
-              dataKey="month"
+              dataKey="category"
               type="category"
               tickLine={false}
               tickMargin={10}
@@ -70,18 +66,18 @@ export default function ChartBarLabelCustom() {
               tickFormatter={(value) => value.slice(0, 3)}
               hide
             />
-            <XAxis dataKey="desktop" type="number" hide />
+            <XAxis dataKey="registry" type="number" hide />
             <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="line" />} />
-            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4}>
+            <Bar dataKey="registry" fill="var(--color-registry)" radius={4}>
               <LabelList
-                dataKey="month"
+                dataKey="category"
                 position="insideLeft"
                 offset={8}
-                className="fill-(--color-main-foreground)"
+                fill="var(--color-label)"
                 fontSize={12}
               />
               <LabelList
-                dataKey="desktop"
+                dataKey="registry"
                 position="right"
                 offset={8}
                 className="fill-foreground"
@@ -93,9 +89,9 @@ export default function ChartBarLabelCustom() {
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          44 components published to the registry <LibraryBig className="h-4 w-4" />
         </div>
-        <div className="leading-none">Showing total visitors for the last 6 months</div>
+        <div className="leading-none">Category and registry values are labeled directly</div>
       </CardFooter>
     </Card>
   );
