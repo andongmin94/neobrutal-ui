@@ -58,7 +58,7 @@ async function Navbar() {
             <a
               target="_blank"
               href="https://github.com/andongmin94/neobrutal-ui"
-              className="flex h-9 items-center justify-center gap-2 rounded-base border-2 border-border bg-secondary-background px-1.5 text-foreground shadow-[3px_3px_0_#000] transition-all duration-150 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0_#000] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
+              className="flex h-9 items-center justify-center gap-2 rounded-base border-2 border-border bg-secondary-background px-1.5 text-foreground shadow-shadow transition-all duration-150 hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none"
             >
               <p className="font-semibold sm:inline hidden">{starsCount}</p>
 
@@ -74,7 +74,7 @@ async function Navbar() {
               target="_blank"
               rel="noreferrer"
               href="https://x.com/andongmin94"
-              className="flex size-9 items-center justify-center rounded-base border-2 border-border bg-secondary-background shadow-[3px_3px_0_#000] transition-all duration-150 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0_#000] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
+              className="flex size-9 items-center justify-center rounded-base border-2 border-border bg-secondary-background shadow-shadow transition-all duration-150 hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none"
             >
               <svg className="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                 <path

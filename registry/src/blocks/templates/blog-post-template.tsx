@@ -21,10 +21,10 @@ export default function BlogPostTemplate({ backHref = "/blog", post }: BlogPostT
         <div className="mx-auto flex h-12 w-full max-w-3xl items-center justify-between px-4 sm:px-6">
           <a
             href={backHref}
-            className="flex items-center gap-2 font-heading"
+            className="group flex items-center gap-2 font-heading"
             aria-label="Worklog home"
           >
-            <span className="grid size-7 place-items-center rounded-base border-2 border-border bg-main text-main-foreground shadow-shadow">
+            <span className="grid size-7 place-items-center rounded-base border-2 border-border bg-main text-main-foreground shadow-shadow transition-all duration-150 group-hover:translate-x-boxShadowX group-hover:translate-y-boxShadowY group-hover:shadow-none">
               <FileText aria-hidden="true" className="size-3.5" />
             </span>
             <span className="text-sm">WORKLOG</span>

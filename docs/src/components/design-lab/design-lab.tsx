@@ -863,7 +863,7 @@ export function DirectoryPrototype() {
           </nav>
           <button
             aria-label="Open GitHub"
-            className="grid size-9 place-items-center border-2 border-black bg-white shadow-[3px_3px_0_#000]"
+            className="grid size-9 place-items-center border-2 border-black bg-white shadow-[3px_3px_0_#000] transition-all duration-150 hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none"
             title="Open GitHub"
             type="button"
           >
@@ -951,7 +951,7 @@ export function DirectoryPrototype() {
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {filtered.map((item, index) => (
                 <Link
-                  className={`group flex min-h-44 flex-col border-2 border-black p-4 shadow-[3px_3px_0_#000] transition-all duration-150 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0_#000] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 ${
+                  className={`group flex min-h-44 flex-col border-2 border-black p-4 shadow-[4px_4px_0_#000] transition-all duration-150 hover:translate-x-1 hover:translate-y-1 hover:shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 ${
                     index % 4 === 0
                       ? "bg-[#5294ff]"
                       : index % 4 === 1
@@ -1017,7 +1017,7 @@ export function HybridPrototype() {
             </span>
             <button
               aria-label="GitHub repository"
-              className="grid size-9 place-items-center border-2 border-black bg-[#5294ff] shadow-[3px_3px_0_#000]"
+              className="grid size-9 place-items-center border-2 border-black bg-[#5294ff] shadow-[3px_3px_0_#000] transition-all duration-150 hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none"
               title="GitHub repository"
               type="button"
             >

@@ -152,7 +152,7 @@ export default function DirectoryHome({ entries }: DirectoryHomeProps) {
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {filteredEntries.map((entry) => (
                 <Link
-                  className="group flex min-h-48 flex-col border-2 border-border bg-main p-4 text-main-foreground shadow-[3px_3px_0_#000] transition-all duration-150 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0_#000] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  className="group flex min-h-48 flex-col border-2 border-border bg-main p-4 text-main-foreground shadow-shadow transition-all duration-150 hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   href={entry.href}
                   key={entry.slug}
                 >

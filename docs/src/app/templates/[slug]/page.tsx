@@ -51,7 +51,7 @@ export default async function TemplatePage({ params, searchParams }: TemplatePag
     >
       {capture !== "1" && (
         <Link
-          className="fixed bottom-4 left-4 z-50 border-2 border-border bg-secondary-background px-3 py-2 text-sm font-heading text-foreground shadow-shadow transition-[transform,box-shadow] hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none"
+          className="fixed bottom-4 left-4 z-50 border-2 border-border bg-secondary-background px-3 py-2 text-sm font-heading text-foreground shadow-shadow transition-all duration-150 hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none"
           href="/templates"
         >
           Back to templates

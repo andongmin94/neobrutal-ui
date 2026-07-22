@@ -36,7 +36,7 @@ const TEMPLATES: TemplateEntry[] = [
     slug: "links",
     title: "Link in bio",
     description: "A profile and link grid for sharing your work in one place.",
-    preview: "/template-previews/link-hub-b034636455.png",
+    preview: "/template-previews/link-hub-3bc1514ce7.png",
     installCommand: "npx shadcn@latest add @neobrut-ui/link-hub-template",
     color: "#5093fe",
   },
