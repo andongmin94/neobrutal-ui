@@ -57,12 +57,12 @@ export default function NavigationMenuDemo() {
         <NavigationMenuItem className="sm:block hidden">
           <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid w-[500px] gap-3 p-2 lg:grid-cols-[.75fr_1fr]">
+            <ul className="grid w-[min(500px,calc(100vw-2rem))] gap-3 p-2 lg:grid-cols-[.75fr_1fr]">
               <li className="row-span-3">
                 <NavigationMenuLink asChild>
                   <a
                     className="flex h-full w-full select-none flex-col justify-end rounded-base p-6 no-underline outline-hidden"
-                    href="/docs"
+                    href="/docs/"
                   >
                     <div className="mb-2 mt-4 text-lg font-heading">neobrutal-ui</div>
                     <p className="text-sm font-base leading-tight">
@@ -71,7 +71,7 @@ export default function NavigationMenuDemo() {
                   </a>
                 </NavigationMenuLink>
               </li>
-              <ListItem href="/docs" title="Introduction">
+              <ListItem href="/docs/" title="Introduction">
                 Learn the project model and how the registry fits into your app.
               </ListItem>
               <ListItem href="/docs/installation" title="Installation">
@@ -86,7 +86,7 @@ export default function NavigationMenuDemo() {
         <NavigationMenuItem>
           <NavigationMenuTrigger>Components</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid w-[400px] gap-3 p-2 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+            <ul className="grid w-[min(400px,calc(100vw-2rem))] gap-1 p-2 sm:w-[500px] sm:grid-cols-2 sm:gap-3 lg:w-[600px]">
               {components.map((component) => (
                 <ListItem key={component.title} title={component.title} href={component.href}>
                   {component.description}
@@ -96,7 +96,7 @@ export default function NavigationMenuDemo() {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/docs">
+          <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/docs/">
             Documentation
           </NavigationMenuLink>
         </NavigationMenuItem>
@@ -111,13 +111,13 @@ function ListItem({ className, title, children, ...props }: React.ComponentProps
       <NavigationMenuLink asChild>
         <a
           className={cn(
-            "hover:bg-accent block text-main-foreground select-none space-y-1 rounded-base border-2 border-transparent p-3 leading-none no-underline outline-hidden transition-colors hover:border-border",
+            "hover:bg-accent block text-main-foreground select-none space-y-1 rounded-base border-2 border-transparent p-2 leading-none no-underline outline-hidden transition-colors hover:border-border sm:p-3",
             className,
           )}
           {...props}
         >
           <div className="text-base font-heading leading-none">{title}</div>
-          <p className="font-base line-clamp-2 text-sm leading-snug">{children}</p>
+          <p className="font-base hidden text-sm leading-snug sm:line-clamp-2">{children}</p>
         </a>
       </NavigationMenuLink>
     </li>

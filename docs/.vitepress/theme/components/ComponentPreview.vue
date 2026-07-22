@@ -20,6 +20,11 @@ const activeTab = ref<"code" | "preview">("preview");
 const instanceId = useId();
 const isPrimaryPreview = computed(() => props.type === "component" && !props.example);
 
+const previewLabel = computed(() => {
+  const example = props.example?.replaceAll("-", " ") ?? "primary";
+  return `${props.component} ${example} preview`;
+});
+
 function handleTabKeydown(event: KeyboardEvent) {
   if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
 
@@ -39,7 +44,11 @@ function handleTabKeydown(event: KeyboardEvent) {
 </script>
 
 <template>
-  <section class="component-preview" :class="{ 'component-preview--primary': isPrimaryPreview }">
+  <section
+    class="component-preview"
+    :class="{ 'component-preview--primary': isPrimaryPreview }"
+    :data-component="component"
+  >
     <header class="component-preview__header">
       <div v-if="isPrimaryPreview" class="component-preview__label">
         <span aria-hidden="true" />
@@ -49,7 +58,7 @@ function handleTabKeydown(event: KeyboardEvent) {
       <div
         class="component-preview__tabs"
         role="tablist"
-        :aria-label="`${component} preview`"
+        :aria-label="previewLabel"
         @keydown="handleTabKeydown"
       >
         <button
@@ -87,7 +96,7 @@ function handleTabKeydown(event: KeyboardEvent) {
       role="tabpanel"
       :aria-labelledby="`${instanceId}-preview-tab`"
     >
-      <ReactHost :component="component" :example="example" :type="type" />
+      <ReactHost :component="component" :eager="isPrimaryPreview" :example="example" :type="type" />
     </div>
 
     <div
@@ -230,8 +239,8 @@ function handleTabKeydown(event: KeyboardEvent) {
 }
 
 .component-preview--primary .component-preview__canvas {
-  min-height: 27.5rem;
-  padding: 5rem 3rem;
+  min-height: 18rem;
+  padding: 3.5rem 2.5rem;
 }
 
 .component-preview__code {
@@ -257,7 +266,7 @@ function handleTabKeydown(event: KeyboardEvent) {
 }
 
 .component-preview--primary .component-preview__code :deep(pre) {
-  min-height: 27.5rem;
+  min-height: 18rem;
 }
 
 @media (max-width: 640px) {
@@ -277,12 +286,12 @@ function handleTabKeydown(event: KeyboardEvent) {
   }
 
   .component-preview--primary .component-preview__canvas {
-    min-height: 22.5rem;
-    padding: 3.5rem 1.25rem;
+    min-height: 15rem;
+    padding: 2.5rem 1.25rem;
   }
 
   .component-preview--primary .component-preview__code :deep(pre) {
-    min-height: 22.5rem;
+    min-height: 15rem;
   }
 }
 </style>

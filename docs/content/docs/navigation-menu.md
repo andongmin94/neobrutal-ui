@@ -91,7 +91,7 @@ export default function NavigationMenuDemo() {
                 <NavigationMenuLink asChild>
                   <a
                     className="flex h-full w-full select-none flex-col justify-end rounded-base p-6 no-underline outline-hidden"
-                    href="/docs"
+                    href="/docs/"
                   >
                     <div className="mb-2 mt-4 text-lg font-heading">neobrutal-ui</div>
                     <p className="text-sm font-base leading-tight">
@@ -100,7 +100,7 @@ export default function NavigationMenuDemo() {
                   </a>
                 </NavigationMenuLink>
               </li>
-              <ListItem href="/docs" title="Introduction">
+              <ListItem href="/docs/" title="Introduction">
                 Learn the project model and how the registry fits into your app.
               </ListItem>
               <ListItem href="/docs/installation" title="Installation">
@@ -125,7 +125,7 @@ export default function NavigationMenuDemo() {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/docs">
+          <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/docs/">
             Documentation
           </NavigationMenuLink>
         </NavigationMenuItem>

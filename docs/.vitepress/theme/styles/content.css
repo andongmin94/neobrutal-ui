@@ -336,7 +336,10 @@
 }
 
 .installation-tabs__manual {
+  max-height: min(68vh, 40rem);
+  overflow: auto;
   padding: 0;
+  scrollbar-width: thin;
 }
 
 .installation-tabs__manual > :first-child,

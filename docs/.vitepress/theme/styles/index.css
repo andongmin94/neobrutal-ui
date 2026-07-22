@@ -146,8 +146,8 @@ body::-webkit-scrollbar-thumb {
 
 .icon-button {
   display: inline-grid;
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   flex: none;
   place-items: center;
   border: var(--border-width) solid var(--border);

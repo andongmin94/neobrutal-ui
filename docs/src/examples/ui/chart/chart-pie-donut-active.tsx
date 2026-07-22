@@ -21,11 +21,11 @@ import {
 export const description = "A registry composition donut chart with an active sector";
 
 const chartData = [
-  { category: "forms", components: 12, fill: "var(--color-forms)" },
+  { category: "forms", components: 13, fill: "var(--color-forms)" },
   { category: "overlays", components: 9, fill: "var(--color-overlays)" },
   { category: "data", components: 8, fill: "var(--color-data)" },
   { category: "navigation", components: 7, fill: "var(--color-navigation)" },
-  { category: "other", components: 11, fill: "var(--color-other)" },
+  { category: "other", components: 12, fill: "var(--color-other)" },
 ];
 
 const chartConfig = {
@@ -59,7 +59,7 @@ export default function ChartPieDonutActive() {
     <Card className="flex flex-col bg-secondary-background text-foreground">
       <CardHeader className="items-center pb-0">
         <CardTitle>Composition - Active</CardTitle>
-        <CardDescription>Forms highlighted within the 47-component catalog</CardDescription>
+        <CardDescription>Forms highlighted within the 49-component catalog</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px]">

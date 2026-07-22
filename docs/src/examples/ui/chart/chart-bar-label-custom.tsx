@@ -26,7 +26,7 @@ const chartData = [
   { category: "Navigation", registry: 7 },
   { category: "Data", registry: 8 },
   { category: "Feedback", registry: 4 },
-  { category: "Layout", registry: 4 },
+  { category: "Layout", registry: 5 },
 ];
 
 const chartConfig = {
@@ -89,7 +89,7 @@ export default function ChartBarLabelCustom() {
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 leading-none font-medium">
-          44 components published to the registry <LibraryBig className="h-4 w-4" />
+          46 components published to the registry <LibraryBig className="h-4 w-4" />
         </div>
         <div className="leading-none">Category and registry values are labeled directly</div>
       </CardFooter>

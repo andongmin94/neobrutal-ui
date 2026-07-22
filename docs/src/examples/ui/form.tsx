@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -23,6 +24,7 @@ const formSchema = z.object({
 });
 
 export default function FormDemo() {
+  const [message, setMessage] = useState("");
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -31,7 +33,7 @@ export default function FormDemo() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    setMessage(`${values.username} was saved.`);
   }
 
   return (
@@ -52,6 +54,9 @@ export default function FormDemo() {
           )}
         />
         <Button type="submit">Submit</Button>
+        <output className="block min-h-5 text-sm" aria-live="polite">
+          {message}
+        </output>
       </form>
     </Form>
   );

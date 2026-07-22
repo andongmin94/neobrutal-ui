@@ -6,10 +6,16 @@ import { useRoute, withBase } from "vitepress";
 import SearchLauncher from "./SearchLauncher.vue";
 import ThemeToggle from "./ThemeToggle.vue";
 
-defineProps<{
-  menuOpen: boolean;
-  showMenu: boolean;
-}>();
+const props = withDefaults(
+  defineProps<{
+    menuLabel?: string;
+    menuOpen: boolean;
+    showMenu: boolean;
+  }>(),
+  {
+    menuLabel: "Toggle site navigation",
+  },
+);
 
 defineEmits<{
   toggleMenu: [];
@@ -18,17 +24,17 @@ defineEmits<{
 const route = useRoute();
 
 const primaryLinks = [
-  { href: "/docs", label: "Docs" },
+  { href: "/docs/", label: "Docs" },
   { href: "/styling", label: "Styling" },
   { href: "/charts", label: "Charts" },
-  { href: "/templates", label: "Templates" },
+  { href: "/templates/", label: "Templates" },
 ];
 
 const normalizedPath = computed(() => route.path.replace(/\/+$/, "") || "/");
 
 function isActive(href: string) {
   if (href === "/") return normalizedPath.value === "/";
-  if (href === "/docs")
+  if (href === "/docs/")
     return normalizedPath.value === "/docs" || normalizedPath.value.startsWith("/docs/");
   return normalizedPath.value === href || normalizedPath.value.startsWith(`${href}/`);
 }
@@ -38,16 +44,19 @@ function isActive(href: string) {
   <header class="site-header">
     <a class="skip-link" href="#main-content">Skip to content</a>
 
-    <div class="site-header__inner" :class="{ 'site-header__inner--without-menu': !showMenu }">
+    <div
+      class="site-header__inner"
+      :class="{ 'site-header__inner--without-menu': !props.showMenu }"
+    >
       <button
-        v-if="showMenu"
+        v-if="props.showMenu"
         class="icon-button mobile-menu-button"
         type="button"
-        :aria-expanded="menuOpen"
-        aria-label="Toggle documentation navigation"
+        :aria-expanded="props.menuOpen"
+        :aria-label="props.menuLabel"
         @click="$emit('toggleMenu')"
       >
-        <CloseIcon v-if="menuOpen" :size="19" :stroke-width="2.4" />
+        <CloseIcon v-if="props.menuOpen" :size="19" :stroke-width="2.4" />
         <Menu v-else :size="19" :stroke-width="2.4" />
       </button>
 

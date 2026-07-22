@@ -21,12 +21,12 @@ import {
 export const description = "A registry bar chart with an active category";
 
 const chartData = [
-  { category: "forms", registry: 12, fill: "var(--color-forms)" },
+  { category: "forms", registry: 13, fill: "var(--color-forms)" },
   { category: "overlays", registry: 9, fill: "var(--color-overlays)" },
   { category: "navigation", registry: 7, fill: "var(--color-navigation)" },
   { category: "data", registry: 8, fill: "var(--color-data)" },
   { category: "feedback", registry: 4, fill: "var(--color-feedback)" },
-  { category: "layout", registry: 4, fill: "var(--color-layout)" },
+  { category: "layout", registry: 5, fill: "var(--color-layout)" },
 ];
 
 const chartConfig = {
@@ -105,7 +105,7 @@ export default function ChartBarActive() {
         <div className="flex gap-2 leading-none font-medium">
           Navigation is selected for comparison <LibraryBig className="h-4 w-4" />
         </div>
-        <div className="leading-none">44 components across six catalog categories</div>
+        <div className="leading-none">46 components across six catalog categories</div>
       </CardFooter>
     </Card>
   );

@@ -34,13 +34,13 @@ export default function ExampleComponents() {
         <AlertDemo />
         <CardDemo2 />
       </div>
-      <div className="lg:flex hidden flex-col gap-5">
+      <div className="flex flex-col gap-5">
         <ScrollAreaDemo />
         <AlertDemo />
         <CardDemo3 />
         <ImageCardDemo />
       </div>
-      <div className="sm:flex hidden flex-col gap-5">
+      <div className="flex flex-col gap-5">
         <ResizableDemo />
         <CommandDemo />
         <CardDemo />

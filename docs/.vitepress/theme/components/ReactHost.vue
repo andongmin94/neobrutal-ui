@@ -7,11 +7,13 @@ type ReactUnmount = () => void;
 const props = withDefaults(
   defineProps<{
     component: string;
+    eager?: boolean;
     example?: string;
     loadingLabel?: string;
     type?: ReactHostType;
   }>(),
   {
+    eager: false,
     loadingLabel: "Loading preview...",
     type: "component",
   },
@@ -22,13 +24,16 @@ const emit = defineEmits<{
   mounted: [];
 }>();
 
+const hostElement = ref<HTMLElement | null>(null);
 const mountElement = ref<HTMLElement | null>(null);
 const errorMessage = ref("");
 const loading = ref(true);
 
 let dispose: ReactUnmount | undefined;
 let mountController: AbortController | undefined;
+let visibilityObserver: IntersectionObserver | undefined;
 let mountSequence = 0;
+let mountRequested = false;
 
 function cleanup() {
   mountController?.abort();
@@ -79,21 +84,47 @@ async function mountPreview() {
   }
 }
 
-onMounted(() => void mountPreview());
+function beginMounting() {
+  if (mountRequested) return;
+  mountRequested = true;
+  visibilityObserver?.disconnect();
+  visibilityObserver = undefined;
+  void mountPreview();
+}
+
+onMounted(() => {
+  if (props.eager || typeof IntersectionObserver === "undefined") {
+    beginMounting();
+    return;
+  }
+
+  visibilityObserver = new IntersectionObserver(
+    (entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) beginMounting();
+    },
+    { rootMargin: "500px 0px" },
+  );
+
+  if (hostElement.value) visibilityObserver.observe(hostElement.value);
+});
 
 watch(
   () => [props.component, props.example, props.type],
-  () => void mountPreview(),
+  () => {
+    if (mountRequested) void mountPreview();
+  },
 );
 
 onBeforeUnmount(() => {
   mountSequence += 1;
+  visibilityObserver?.disconnect();
   cleanup();
 });
 </script>
 
 <template>
   <div
+    ref="hostElement"
     class="react-host"
     :data-react-host="type"
     :data-react-component="component"
