@@ -4,6 +4,8 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue"
 import { useRoute, withBase } from "vitepress";
 
 import { COMPONENT_DIRECTORY_LINKS } from "../../../src/data/component-directory";
+import { trapTabFocus } from "../focus";
+import { isNavigationPathActive, SITE_NAVIGATION_LINKS } from "../navigation";
 
 const props = withDefaults(
   defineProps<{
@@ -43,13 +45,7 @@ const documentGroups = [
 const siteGroups = [
   {
     label: "Explore",
-    links: [
-      { href: "/", text: "Component directory" },
-      { href: "/docs/", text: "Docs" },
-      { href: "/styling", text: "Styling" },
-      { href: "/charts", text: "Charts" },
-      { href: "/templates/", text: "Templates" },
-    ],
+    links: SITE_NAVIGATION_LINKS,
   },
   {
     label: "Project",
@@ -77,10 +73,8 @@ const filteredComponents = computed(() => {
   return COMPONENT_DIRECTORY_LINKS.filter((link) => link.text.toLowerCase().includes(query));
 });
 
-const normalizedPath = computed(() => route.path.replace(/\/+$/, "") || "/");
-
 function isActive(href: string) {
-  return normalizedPath.value === (href.replace(/\/+$/, "") || "/");
+  return isNavigationPathActive(route.path, href);
 }
 
 function setBackgroundInert(inert: boolean) {
@@ -113,27 +107,8 @@ function onSidebarKeydown(event: KeyboardEvent) {
     void closeAndRestoreFocus();
     return;
   }
-  if (event.key !== "Tab") return;
 
-  const container = event.currentTarget as HTMLElement;
-  const focusable = Array.from(
-    container.querySelectorAll<HTMLElement>(
-      'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
-    ),
-  ).filter((element) => element.getClientRects().length > 0);
-  if (focusable.length === 0) return;
-
-  const first = focusable[0];
-  const last = focusable[focusable.length - 1];
-  const activeElement = document.activeElement;
-
-  if (event.shiftKey && (activeElement === first || !container.contains(activeElement))) {
-    event.preventDefault();
-    last.focus();
-  } else if (!event.shiftKey && activeElement === last) {
-    event.preventDefault();
-    first.focus();
-  }
+  trapTabFocus(event);
 }
 
 async function revealActiveLink() {
@@ -257,6 +232,22 @@ onBeforeUnmount(() => {
       </template>
 
       <template v-else>
+        <section class="docs-nav__group docs-nav__mobile-site">
+          <h2>
+            <BookOpen :size="13" />
+            Explore site
+          </h2>
+          <a
+            v-for="link in SITE_NAVIGATION_LINKS"
+            :key="link.href"
+            :aria-current="isActive(link.href) ? 'page' : undefined"
+            :class="{ 'is-active': isActive(link.href) }"
+            :href="withBase(link.href)"
+          >
+            {{ link.text }}
+          </a>
+        </section>
+
         <section v-for="group in documentGroups" :key="group.label" class="docs-nav__group">
           <h2>
             <BookOpen :size="13" />

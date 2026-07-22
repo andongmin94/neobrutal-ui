@@ -15,7 +15,7 @@ export default function BlogPostTemplate({ backHref = "/blog", post }: BlogPostT
   return (
     <div
       id="top"
-      className={`flex min-h-[calc(100dvh-var(--header-height))] flex-col bg-background text-foreground ${TEMPLATE_THEME}`}
+      className={`flex min-h-dvh flex-col bg-background text-foreground ${TEMPLATE_THEME}`}
     >
       <header className="border-b-2 border-border bg-secondary-background">
         <div className="mx-auto flex h-12 w-full max-w-3xl items-center justify-between px-4 sm:px-6">

@@ -38,15 +38,6 @@ const [date, setDate] = useState<Date | undefined>(new Date());
 
 ## Examples
 
-### Default
-
-<ComponentPreview component="calendar" example="default">
-
-```tsx file=<rootDir>/src/examples/ui/calendar/index.tsx
-```
-
-</ComponentPreview>
-
 ### Range
 
 <ComponentPreview component="calendar" example="range">

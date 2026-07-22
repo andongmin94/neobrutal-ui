@@ -46,15 +46,6 @@ import { Button } from "@/components/ui/button";
 
 ## Examples
 
-### Default
-
-<ComponentPreview component="sonner" example="default">
-
-```tsx file=<rootDir>/src/examples/ui/sonner/index.tsx
-```
-
-</ComponentPreview>
-
 ### Success
 
 <ComponentPreview component="sonner" example="success">

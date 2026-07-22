@@ -62,15 +62,6 @@ import {
 
 ## Examples
 
-### Default
-
-<ComponentPreview component="drawer" example="default">
-
-```tsx file=<rootDir>/src/examples/ui/drawer/index.tsx
-```
-
-</ComponentPreview>
-
 ### With Scrollable Content
 
 <ComponentPreview component="drawer" example="scrollable-content">

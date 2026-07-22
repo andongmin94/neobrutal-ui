@@ -60,9 +60,7 @@ const LINKS = [
 
 export default function LinkHubTemplate() {
   return (
-    <div
-      className={`flex min-h-[calc(100dvh-var(--header-height))] flex-col bg-background text-foreground ${TEMPLATE_THEME}`}
-    >
+    <div className={`min-h-dvh flex flex-col bg-background text-foreground ${TEMPLATE_THEME}`}>
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
         <section aria-labelledby="profile-name" className="text-center">
           <div className="mx-auto grid size-24 place-items-center rounded-full border-2 border-border bg-main text-main-foreground">

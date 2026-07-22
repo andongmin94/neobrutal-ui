@@ -22,8 +22,10 @@ type Post = {
   status: PostStatus;
   summary: string;
   title: string;
-  updatedAt: string;
+  updatedLabel: string;
 };
+
+type PostChanges = Partial<Pick<Post, "status" | "summary" | "title">>;
 
 const INITIAL_POSTS: Post[] = [
   {
@@ -32,7 +34,7 @@ const INITIAL_POSTS: Post[] = [
     status: "published",
     summary: "Highlights from the latest workspace release.",
     title: "July product update",
-    updatedAt: "12 min",
+    updatedLabel: "12 min",
   },
   {
     dirty: false,
@@ -40,7 +42,7 @@ const INITIAL_POSTS: Post[] = [
     status: "draft",
     summary: "A practical structure for growing teams.",
     title: "Organize your first team space",
-    updatedAt: "38 min",
+    updatedLabel: "38 min",
   },
   {
     dirty: false,
@@ -48,7 +50,7 @@ const INITIAL_POSTS: Post[] = [
     status: "published",
     summary: "How Verdant Studio simplified editorial review.",
     title: "A faster review process",
-    updatedAt: "2 hr",
+    updatedLabel: "2 hr",
   },
   {
     dirty: false,
@@ -56,7 +58,7 @@ const INITIAL_POSTS: Post[] = [
     status: "draft",
     summary: "Final ownership, access, and link checks.",
     title: "Public page checklist",
-    updatedAt: "Yesterday",
+    updatedLabel: "Yesterday",
   },
   {
     dirty: false,
@@ -64,7 +66,7 @@ const INITIAL_POSTS: Post[] = [
     status: "published",
     summary: "Set routing rules and keep requests visible.",
     title: "Shared inbox routing",
-    updatedAt: "Jul 11",
+    updatedLabel: "Jul 11",
   },
 ];
 
@@ -74,8 +76,12 @@ const STATUS_TABS: Array<{ label: string; value: StatusFilter }> = [
   { label: "Published", value: "published" },
 ];
 
-function getPostTitle(post: Post) {
+function getDisplayPostTitle(post: Post) {
   return post.title.trim() || "Untitled post";
+}
+
+function resolveSelectedPostId(posts: Post[], selectedId: string) {
+  return posts.some((post) => post.id === selectedId) ? selectedId : (posts[0]?.id ?? "");
 }
 
 function PostStatusBadge({ status }: { status: PostStatus }) {
@@ -86,16 +92,176 @@ function PostStatusBadge({ status }: { status: PostStatus }) {
   );
 }
 
+function isStatusFilter(value: string): value is StatusFilter {
+  return STATUS_TABS.some((tab) => tab.value === value);
+}
+
+function PostListPane({
+  onSelect,
+  posts,
+  selectedId,
+}: {
+  onSelect: (postId: string) => void;
+  posts: Post[];
+  selectedId: string;
+}) {
+  return (
+    <section aria-label="Posts" className="min-w-0">
+      {posts.length === 0 ? (
+        <p className="px-4 py-12 text-center text-sm text-foreground/60">No posts found.</p>
+      ) : (
+        <ul>
+          {posts.map((post) => {
+            const isSelected = post.id === selectedId;
+
+            return (
+              <li key={post.id} className="border-b-2 border-border last:border-b-0">
+                <button
+                  type="button"
+                  aria-pressed={isSelected}
+                  className={
+                    "grid min-h-[4.5rem] w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-l-4 px-3 py-3 text-left outline-none transition-colors hover:bg-background focus-visible:bg-background sm:px-4 " +
+                    (isSelected ? "border-l-main bg-background" : "border-l-transparent")
+                  }
+                  onClick={() => onSelect(post.id)}
+                >
+                  <span className="min-w-0">
+                    <span className="block truncate text-sm font-heading">
+                      {getDisplayPostTitle(post)}
+                    </span>
+                    <span className="mt-0.5 block truncate text-xs text-foreground/60">
+                      {post.summary || "No summary"}
+                    </span>
+                  </span>
+
+                  <span className="grid justify-items-end gap-1.5">
+                    <PostStatusBadge status={post.status} />
+                    <span className="text-xs text-foreground/60">
+                      {post.dirty ? "Unsaved" : post.updatedLabel}
+                    </span>
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+function PostEditorPane({
+  onSubmit,
+  onUpdate,
+  post,
+  titleInputRef,
+}: {
+  onSubmit: React.FormEventHandler<HTMLFormElement>;
+  onUpdate: (changes: PostChanges) => void;
+  post: Post;
+  titleInputRef: React.RefObject<HTMLInputElement | null>;
+}) {
+  return (
+    <form className="flex h-full min-h-[24rem] flex-col" onSubmit={onSubmit}>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-border bg-background px-4 py-3">
+        <div className="min-w-0">
+          <h2 id="post-editor-title" className="text-sm font-heading">
+            Edit post
+          </h2>
+          <p className="mt-0.5 text-xs text-foreground/60">
+            {post.dirty ? "Unsaved changes" : `Updated ${post.updatedLabel}`}
+          </p>
+        </div>
+
+        <Button type="submit" size="sm" disabled={!post.dirty}>
+          <Save aria-hidden="true" />
+          Save
+        </Button>
+      </div>
+
+      <div className="grid flex-1 content-start gap-5 p-4 sm:p-5">
+        <div className="space-y-1.5">
+          <label htmlFor="post-title" className="block text-sm font-heading">
+            Title
+          </label>
+          <Input
+            ref={titleInputRef}
+            id="post-title"
+            value={post.title}
+            onChange={(event) => onUpdate({ title: event.target.value })}
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <label htmlFor="post-summary" className="block text-sm font-heading">
+            Summary
+          </label>
+          <Textarea
+            id="post-summary"
+            className="min-h-40 resize-y"
+            value={post.summary}
+            onChange={(event) => onUpdate({ summary: event.target.value })}
+          />
+        </div>
+
+        <div className="flex items-center justify-between gap-4 border-t-2 border-border pt-4">
+          <label htmlFor="post-published" className="text-sm font-heading">
+            Published
+          </label>
+          <Switch
+            id="post-published"
+            size="sm"
+            checked={post.status === "published"}
+            onCheckedChange={(checked) =>
+              onUpdate({
+                status: checked ? "published" : "draft",
+              })
+            }
+          />
+        </div>
+      </div>
+    </form>
+  );
+}
+
+function EmptyPostEditor({
+  onClearFilters,
+  onCreatePost,
+}: {
+  onClearFilters: () => void;
+  onCreatePost: () => void;
+}) {
+  return (
+    <div className="grid min-h-[24rem] place-content-center justify-items-center gap-3 p-6 text-center">
+      <Search aria-hidden="true" className="size-6 text-foreground/60" />
+      <h2 id="post-editor-title" className="text-base font-heading">
+        No post selected
+      </h2>
+      <p className="max-w-xs text-sm text-foreground/60">
+        Clear the current filters or start a new post.
+      </p>
+      <div className="mt-2 flex flex-wrap justify-center gap-3">
+        <Button type="button" variant="neutral" onClick={onClearFilters}>
+          Clear filters
+        </Button>
+        <Button type="button" onClick={onCreatePost}>
+          <Plus aria-hidden="true" />
+          New post
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 export default function CmsTemplate() {
   const [posts, setPosts] = React.useState<Post[]>(INITIAL_POSTS);
   const [query, setQuery] = React.useState("");
   const [selectedId, setSelectedId] = React.useState(INITIAL_POSTS[0].id);
   const [statusFilter, setStatusFilter] = React.useState<StatusFilter>("all");
 
-  const nextPostId = React.useRef(106);
+  const nextPostNumber = React.useRef(106);
   const titleInputRef = React.useRef<HTMLInputElement>(null);
 
-  const selectedPost = posts.find((post) => post.id === selectedId);
   const normalizedQuery = query.trim().toLowerCase();
   const filteredPosts = React.useMemo(
     () =>
@@ -106,29 +272,42 @@ export default function CmsTemplate() {
       }),
     [normalizedQuery, posts, statusFilter],
   );
+  const resolvedSelectedId = resolveSelectedPostId(filteredPosts, selectedId);
+  const selectedPost = filteredPosts.find((post) => post.id === resolvedSelectedId);
+
+  React.useEffect(() => {
+    if (resolvedSelectedId !== selectedId) setSelectedId(resolvedSelectedId);
+  }, [resolvedSelectedId, selectedId]);
 
   const handleFilterChange = (value: string) => {
-    if (value === "all" || value === "draft" || value === "published") {
+    if (isStatusFilter(value)) {
       setStatusFilter(value);
     }
   };
 
-  const updateSelected = (changes: Partial<Pick<Post, "status" | "summary" | "title">>) => {
+  const clearFilters = () => {
+    setQuery("");
+    setStatusFilter("all");
+  };
+
+  const updateSelectedPost = (changes: PostChanges) => {
     setPosts((current) =>
-      current.map((post) => (post.id === selectedId ? { ...post, ...changes, dirty: true } : post)),
+      current.map((post) =>
+        post.id === resolvedSelectedId ? { ...post, ...changes, dirty: true } : post,
+      ),
     );
   };
 
-  const saveSelected = () => {
+  const saveSelectedPost = () => {
     setPosts((current) =>
       current.map((post) =>
-        post.id === selectedId
+        post.id === resolvedSelectedId
           ? {
               ...post,
               dirty: false,
               summary: post.summary.trim(),
-              title: getPostTitle(post),
-              updatedAt: "Just now",
+              title: getDisplayPostTitle(post),
+              updatedLabel: "Just now",
             }
           : post,
       ),
@@ -137,20 +316,20 @@ export default function CmsTemplate() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    saveSelected();
+    saveSelectedPost();
   };
 
-  const createPost = () => {
+  const createDraftPost = () => {
     const post: Post = {
       dirty: true,
-      id: "post-" + nextPostId.current,
+      id: "post-" + nextPostNumber.current,
       status: "draft",
       summary: "",
       title: "Untitled post",
-      updatedAt: "Now",
+      updatedLabel: "Now",
     };
 
-    nextPostId.current += 1;
+    nextPostNumber.current += 1;
     setPosts((current) => [post, ...current]);
     setSelectedId(post.id);
     setQuery("");
@@ -169,7 +348,7 @@ export default function CmsTemplate() {
       <header className="border-b-2 border-border bg-secondary-background">
         <div className="mx-auto flex h-12 w-full max-w-screen-xl items-center justify-between px-4 sm:px-6">
           <h1 className="text-base font-heading">Folio CMS</h1>
-          <Button type="button" size="sm" onClick={createPost}>
+          <Button type="button" size="sm" onClick={createDraftPost}>
             <Plus aria-hidden="true" />
             New post
           </Button>
@@ -215,111 +394,24 @@ export default function CmsTemplate() {
               </Tabs>
             </div>
 
-            <section aria-label="Posts" className="min-w-0">
-              {filteredPosts.length === 0 ? (
-                <p className="px-4 py-12 text-center text-sm text-foreground/60">No posts found.</p>
-              ) : (
-                <ul>
-                  {filteredPosts.map((post) => {
-                    const isSelected = post.id === selectedId;
-
-                    return (
-                      <li key={post.id} className="border-b-2 border-border last:border-b-0">
-                        <button
-                          type="button"
-                          aria-pressed={isSelected}
-                          className={
-                            "grid min-h-[4.5rem] w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-l-4 px-3 py-3 text-left outline-none transition-colors hover:bg-background focus-visible:bg-background sm:px-4 " +
-                            (isSelected ? "border-l-main bg-background" : "border-l-transparent")
-                          }
-                          onClick={() => setSelectedId(post.id)}
-                        >
-                          <span className="min-w-0">
-                            <span className="block truncate text-sm font-heading">
-                              {getPostTitle(post)}
-                            </span>
-                            <span className="mt-0.5 block truncate text-xs text-foreground/60">
-                              {post.summary || "No summary"}
-                            </span>
-                          </span>
-
-                          <span className="grid justify-items-end gap-1.5">
-                            <PostStatusBadge status={post.status} />
-                            <span className="text-xs text-foreground/60">
-                              {post.dirty ? "Unsaved" : post.updatedAt}
-                            </span>
-                          </span>
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </section>
+            <PostListPane
+              posts={filteredPosts}
+              selectedId={resolvedSelectedId}
+              onSelect={setSelectedId}
+            />
           </div>
 
           <section aria-labelledby="post-editor-title" className="min-w-0">
             {selectedPost ? (
-              <form className="flex h-full min-h-[24rem] flex-col" onSubmit={handleSubmit}>
-                <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-border bg-background px-4 py-3">
-                  <div className="min-w-0">
-                    <h2 id="post-editor-title" className="text-sm font-heading">
-                      Edit post
-                    </h2>
-                    <p className="mt-0.5 text-xs text-foreground/60">
-                      {selectedPost.dirty ? "Unsaved changes" : `Updated ${selectedPost.updatedAt}`}
-                    </p>
-                  </div>
-
-                  <Button type="submit" size="sm" disabled={!selectedPost.dirty}>
-                    <Save aria-hidden="true" />
-                    Save
-                  </Button>
-                </div>
-
-                <div className="grid flex-1 content-start gap-5 p-4 sm:p-5">
-                  <div className="space-y-1.5">
-                    <label htmlFor="post-title" className="block text-sm font-heading">
-                      Title
-                    </label>
-                    <Input
-                      ref={titleInputRef}
-                      id="post-title"
-                      value={selectedPost.title}
-                      onChange={(event) => updateSelected({ title: event.target.value })}
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label htmlFor="post-summary" className="block text-sm font-heading">
-                      Summary
-                    </label>
-                    <Textarea
-                      id="post-summary"
-                      className="min-h-40 resize-y"
-                      value={selectedPost.summary}
-                      onChange={(event) => updateSelected({ summary: event.target.value })}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between gap-4 border-t-2 border-border pt-4">
-                    <label htmlFor="post-published" className="text-sm font-heading">
-                      Published
-                    </label>
-                    <Switch
-                      id="post-published"
-                      size="sm"
-                      checked={selectedPost.status === "published"}
-                      onCheckedChange={(checked) =>
-                        updateSelected({
-                          status: checked ? "published" : "draft",
-                        })
-                      }
-                    />
-                  </div>
-                </div>
-              </form>
-            ) : null}
+              <PostEditorPane
+                post={selectedPost}
+                titleInputRef={titleInputRef}
+                onSubmit={handleSubmit}
+                onUpdate={updateSelectedPost}
+              />
+            ) : (
+              <EmptyPostEditor onClearFilters={clearFilters} onCreatePost={createDraftPost} />
+            )}
           </section>
         </section>
       </main>

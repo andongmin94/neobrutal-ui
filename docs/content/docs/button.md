@@ -32,15 +32,6 @@ import { Button } from "@/components/ui/button";
 
 ## Examples
 
-### Default
-
-<ComponentPreview component="button" example="default">
-
-```tsx file=<rootDir>/src/examples/ui/button/index.tsx
-```
-
-</ComponentPreview>
-
 ### Reverse
 
 <ComponentPreview component="button" example="reverse">

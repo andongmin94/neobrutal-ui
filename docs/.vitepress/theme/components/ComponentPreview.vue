@@ -274,7 +274,7 @@ function handleTabKeydown(event: KeyboardEvent) {
     flex-direction: column;
   }
 
-  .component-preview__tabs {
+  .component-preview--primary .component-preview__tabs {
     width: 100%;
     border-top: 2px solid var(--border);
     border-left: 0;

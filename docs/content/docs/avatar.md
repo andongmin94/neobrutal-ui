@@ -35,15 +35,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 ## Examples
 
-### Default
-
-<ComponentPreview component="avatar" example="default">
-
-```tsx file=<rootDir>/src/examples/ui/avatar/index.tsx
-```
-
-</ComponentPreview>
-
 ### Fallback
 
 <ComponentPreview component="avatar" example="fallback">

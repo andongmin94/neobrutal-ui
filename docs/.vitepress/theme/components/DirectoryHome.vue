@@ -7,6 +7,7 @@ import {
   COMPONENT_CATEGORIES,
   COMPONENT_DIRECTORY_LINKS,
   type ComponentCategory,
+  type ComponentGroup,
   getComponentCategory,
   getComponentInstallMode,
 } from "../../../src/data/component-directory";
@@ -16,7 +17,7 @@ const category = ref<ComponentCategory>("All");
 const searchInput = ref<HTMLInputElement | null>(null);
 let filtersReady = false;
 
-const categoryDescriptions: Record<string, string> = {
+const categoryDescriptions: Record<ComponentGroup, string> = {
   Actions: "Controls that turn intent into an immediate action.",
   Forms: "Inputs and selection controls for structured user data.",
   Navigation: "Patterns that keep movement and context predictable.",
@@ -72,13 +73,21 @@ function handleShortcut(event: KeyboardEvent) {
   searchInput.value?.focus();
 }
 
+function isComponentCategory(value: string | null): value is ComponentCategory {
+  return COMPONENT_CATEGORIES.some((category) => category === value);
+}
+
 function restoreFilters() {
   const params = new URLSearchParams(window.location.search);
-  const savedCategory = params.get("category") as ComponentCategory | null;
+  const savedCategory = params.get("category");
 
   query.value = params.get("q") ?? "";
-  category.value =
-    savedCategory && COMPONENT_CATEGORIES.includes(savedCategory) ? savedCategory : "All";
+  category.value = isComponentCategory(savedCategory) ? savedCategory : "All";
+}
+
+function resetFilters() {
+  query.value = "";
+  category.value = "All";
 }
 
 function syncFilters() {
@@ -113,7 +122,7 @@ onBeforeUnmount(() => document.removeEventListener("keydown", handleShortcut));
         <div class="directory-hero__copy">
           <p class="eyebrow">Registry index · {{ entries.length }} components</p>
           <h1>Find the piece.<br />Own the source.</h1>
-          <p>
+          <p class="directory-hero__description">
             Browse the library by job, inspect the live behavior, then install editable React source
             into your project.
           </p>
@@ -198,7 +207,7 @@ onBeforeUnmount(() => document.removeEventListener("keydown", handleShortcut));
               <Box :size="18" :stroke-width="2.4" />
               <span>{{ entry.installMode }}</span>
             </div>
-            <div>
+            <div class="directory-card__body">
               <p>{{ entry.category }}</p>
               <h2>{{ entry.text }}</h2>
               <span>{{ entry.description }}</span>
@@ -211,16 +220,7 @@ onBeforeUnmount(() => document.removeEventListener("keydown", handleShortcut));
           <Search :size="25" :stroke-width="2.3" />
           <h2>No components found</h2>
           <p>Try another term or reset the filters.</p>
-          <button
-            class="pressable"
-            type="button"
-            @click="
-              query = '';
-              category = 'All';
-            "
-          >
-            Reset filters
-          </button>
+          <button class="pressable" type="button" @click="resetFilters">Reset filters</button>
         </div>
       </section>
     </div>

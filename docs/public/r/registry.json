@@ -1002,6 +1002,32 @@
       "author": "andongmin94"
     },
     {
+      "name": "data-table",
+      "title": "Data table",
+      "description": "A sortable, filterable data table recipe built with TanStack Table.",
+      "type": "registry:block",
+      "dependencies": [
+        "@tanstack/react-table",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json",
+        "https://neobrutal-ui.andongmin.com/r/nbutton.json",
+        "https://neobrutal-ui.andongmin.com/r/checkbox.json",
+        "https://neobrutal-ui.andongmin.com/r/dropdown-menu.json",
+        "https://neobrutal-ui.andongmin.com/r/ninput.json",
+        "https://neobrutal-ui.andongmin.com/r/table.json"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/data-table.tsx",
+          "type": "registry:component",
+          "target": "components/ui/data-table.tsx"
+        }
+      ],
+      "author": "andongmin94"
+    },
+    {
       "name": "blog-template",
       "title": "Blog template",
       "description": "A focused blog archive with search and readable post rows.",

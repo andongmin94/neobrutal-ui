@@ -38,15 +38,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 ## Examples
 
-### Default
-
-<ComponentPreview component="alert" example="default">
-
-```tsx file=<rootDir>/src/examples/ui/alert/index.tsx
-```
-
-</ComponentPreview>
-
 ### Destructive
 
 <ComponentPreview component="alert" example="destructive">

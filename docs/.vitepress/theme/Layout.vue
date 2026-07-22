@@ -1,40 +1,30 @@
 <script setup lang="ts">
 import { ExternalLink } from "@lucide/vue";
 import { computed, nextTick, ref, watch } from "vue";
-import { Content, useData, useRoute } from "vitepress";
+import { Content, useData, useRoute, withBase } from "vitepress";
 
+import { COMPONENT_DIRECTORY_LINKS } from "../../src/data/component-directory";
 import DirectoryHome from "./components/DirectoryHome.vue";
 import SidebarNav from "./components/SidebarNav.vue";
 import SiteHeader from "./components/SiteHeader.vue";
 import TableOfContents from "./components/TableOfContents.vue";
+import { normalizePath } from "./navigation";
 
 const route = useRoute();
 const { frontmatter, page } = useData();
 const mobileMenuOpen = ref(false);
+const componentPaths = new Set(COMPONENT_DIRECTORY_LINKS.map((link) => normalizePath(link.href)));
+const specialPagePaths = new Set(["/styling", "/charts", "/stars", "/templates"]);
 
-const normalizedPath = computed(() => route.path.replace(/\/+$/, "") || "/");
+const normalizedPath = computed(() => normalizePath(route.path));
 const isDirectoryHome = computed(
   () => normalizedPath.value === "/" || frontmatter.value.layout === "directory",
 );
 const isDocsPage = computed(
   () => normalizedPath.value === "/docs" || normalizedPath.value.startsWith("/docs/"),
 );
-const isComponentPage = computed(
-  () =>
-    isDocsPage.value &&
-    ![
-      "/docs",
-      "/docs/installation",
-      "/docs/registry",
-      "/docs/design-tokens",
-      "/docs/resources",
-      "/docs/credits",
-      "/docs/stars",
-    ].includes(normalizedPath.value),
-);
-const showsSpecialHeader = computed(() =>
-  ["/styling", "/charts", "/stars", "/templates"].includes(normalizedPath.value),
-);
+const isComponentPage = computed(() => componentPaths.has(normalizedPath.value));
+const isSpecialIndexPage = computed(() => specialPagePaths.has(normalizedPath.value));
 const pageDescription = computed(() => frontmatter.value.description as string | undefined);
 const upstreamUrl = computed(() => frontmatter.value.shadcnDocsLink as string | undefined);
 
@@ -53,7 +43,6 @@ watch(
     <SiteHeader
       :menu-open="mobileMenuOpen"
       :menu-label="isDocsPage ? 'Toggle documentation navigation' : 'Toggle site navigation'"
-      :show-menu="true"
       @toggle-menu="mobileMenuOpen = !mobileMenuOpen"
     />
 
@@ -102,27 +91,24 @@ watch(
 
         <TableOfContents variant="inline" />
 
-        <article class="docs-content">
+        <article
+          class="docs-content"
+          :class="isComponentPage ? 'docs-content--component' : 'docs-content--guide'"
+        >
           <Content />
         </article>
 
         <footer class="docs-page-footer">
           <span>Source-owned React components</span>
-          <a href="/docs/credits">MIT license and credits</a>
+          <a :href="withBase('/docs/credits')">MIT license and credits</a>
         </footer>
       </main>
 
       <TableOfContents />
     </div>
 
-    <main
-      v-else
-      id="main-content"
-      class="special-main"
-      :class="{ 'special-main--index': showsSpecialHeader }"
-      tabindex="-1"
-    >
-      <header v-if="showsSpecialHeader" class="special-page-header">
+    <main v-else id="main-content" class="special-main" tabindex="-1">
+      <header v-if="isSpecialIndexPage" class="special-page-header">
         <div class="special-page-header__inner">
           <div class="docs-page-kicker">
             <span>Explore</span>
@@ -134,9 +120,18 @@ watch(
         </div>
       </header>
 
-      <article class="special-content" :class="{ 'special-content--index': showsSpecialHeader }">
+      <article class="special-content" :class="{ 'special-content--index': isSpecialIndexPage }">
         <Content />
       </article>
+
+      <footer v-if="isSpecialIndexPage" class="special-page-footer">
+        <strong>neobrutal-ui</strong>
+        <span>Source-owned components for the shadcn registry.</span>
+        <nav aria-label="Project links">
+          <a :href="withBase('/docs/')">Docs</a>
+          <a :href="withBase('/docs/credits')">Credits</a>
+        </nav>
+      </footer>
     </main>
   </div>
 </template>
