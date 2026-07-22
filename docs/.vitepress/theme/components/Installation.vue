@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Check, Copy, SquareTerminal } from "@lucide/vue";
-import { computed, ref } from "vue";
+import { computed, ref, useId } from "vue";
 
 const props = defineProps<{
   component: string;
@@ -8,6 +8,7 @@ const props = defineProps<{
 
 const activeTab = ref<"cli" | "manual">("cli");
 const copied = ref(false);
+const instanceId = useId();
 
 const registryBaseUrl =
   (import.meta.env.VITE_REGISTRY_BASE_URL as string | undefined) ??
@@ -23,27 +24,58 @@ async function copyCommand() {
     copied.value = false;
   }, 1600);
 }
+
+function handleTabKeydown(event: KeyboardEvent) {
+  if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+
+  event.preventDefault();
+  const tabs = ["cli", "manual"] as const;
+  const currentIndex = tabs.indexOf(activeTab.value);
+  const nextIndex =
+    event.key === "Home"
+      ? 0
+      : event.key === "End"
+        ? tabs.length - 1
+        : (currentIndex + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
+  activeTab.value = tabs[nextIndex];
+
+  const tabList = event.currentTarget as HTMLElement;
+  requestAnimationFrame(() => {
+    tabList
+      .querySelector<HTMLButtonElement>(`[data-installation-tab="${activeTab.value}"]`)
+      ?.focus();
+  });
+}
 </script>
 
 <template>
   <section class="installation-tabs">
-    <div class="installation-tabs__list" role="tablist" aria-label="Installation method">
+    <div
+      class="installation-tabs__list"
+      role="tablist"
+      aria-label="Installation method"
+      @keydown="handleTabKeydown"
+    >
       <button
-        id="installation-cli-tab"
+        :id="`${instanceId}-cli-tab`"
         type="button"
         role="tab"
+        data-installation-tab="cli"
         :aria-selected="activeTab === 'cli'"
-        aria-controls="installation-cli-panel"
+        :aria-controls="`${instanceId}-cli-panel`"
+        :tabindex="activeTab === 'cli' ? 0 : -1"
         @click="activeTab = 'cli'"
       >
         Shadcn CLI
       </button>
       <button
-        id="installation-manual-tab"
+        :id="`${instanceId}-manual-tab`"
         type="button"
         role="tab"
+        data-installation-tab="manual"
         :aria-selected="activeTab === 'manual'"
-        aria-controls="installation-manual-panel"
+        :aria-controls="`${instanceId}-manual-panel`"
+        :tabindex="activeTab === 'manual' ? 0 : -1"
         @click="activeTab = 'manual'"
       >
         Manual
@@ -52,10 +84,10 @@ async function copyCommand() {
 
     <div
       v-show="activeTab === 'cli'"
-      id="installation-cli-panel"
+      :id="`${instanceId}-cli-panel`"
       class="installation-tabs__panel installation-tabs__command"
       role="tabpanel"
-      aria-labelledby="installation-cli-tab"
+      :aria-labelledby="`${instanceId}-cli-tab`"
       tabindex="0"
     >
       <SquareTerminal :size="18" :stroke-width="2.3" aria-hidden="true" />
@@ -74,10 +106,10 @@ async function copyCommand() {
 
     <div
       v-show="activeTab === 'manual'"
-      id="installation-manual-panel"
+      :id="`${instanceId}-manual-panel`"
       class="installation-tabs__panel installation-tabs__manual"
       role="tabpanel"
-      aria-labelledby="installation-manual-tab"
+      :aria-labelledby="`${instanceId}-manual-tab`"
       tabindex="0"
     >
       <slot />

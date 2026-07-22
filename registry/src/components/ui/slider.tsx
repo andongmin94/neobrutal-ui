@@ -12,6 +12,7 @@ type SliderProps = Omit<
 > & {
   defaultValue?: number[];
   dir?: "ltr" | "rtl";
+  getAriaLabel?: (index: number) => string;
   inverted?: boolean;
   minStepsBetweenThumbs?: number;
   minStepsBetweenValues?: number;
@@ -284,12 +285,14 @@ function createSliderCommitDetails<Reason extends "drag" | "keyboard" | "track-p
 function SliderThumb({
   index,
   inputRef,
+  getAriaLabel,
   onKeyDown,
   orientation,
   style,
 }: {
   index: number;
   inputRef: React.Ref<HTMLInputElement>;
+  getAriaLabel?: (index: number) => string;
   onKeyDown: React.KeyboardEventHandler<HTMLInputElement>;
   orientation: "horizontal" | "vertical";
   style?: React.CSSProperties;
@@ -306,6 +309,7 @@ function SliderThumb({
       data-slot="slider-thumb"
       index={index}
       inputRef={inputRef}
+      getAriaLabel={getAriaLabel}
       onKeyDown={onKeyDown}
       style={aliasedStyle}
       className="relative block size-5 shrink-0 rounded-full border-2 border-border bg-white ring-offset-white transition-colors select-none after:absolute after:-inset-2 has-focus-visible:outline-none has-focus-visible:ring-2 has-focus-visible:ring-ring has-focus-visible:ring-offset-2 data-disabled:pointer-events-none data-disabled:opacity-50"
@@ -319,6 +323,7 @@ function Slider({
   dir,
   disabled = false,
   form,
+  getAriaLabel,
   inverted = false,
   largeStep,
   max = 100,
@@ -693,6 +698,7 @@ function Slider({
         {currentValues.map((currentValue, index) => (
           <SliderThumb
             index={index}
+            getAriaLabel={getAriaLabel}
             inputRef={getInputRef(index)}
             key={index}
             onKeyDown={(event) => handleThumbKeyDown(index, event)}

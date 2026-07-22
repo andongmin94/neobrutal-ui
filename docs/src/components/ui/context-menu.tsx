@@ -155,10 +155,6 @@ type ContextMenuRootProps = Omit<ContextMenuPrimitive.Root.Props, "onOpenChange"
   onOpenChange?: (open: boolean) => void;
 };
 
-const ContextMenuRootPrimitive = ContextMenuPrimitive.Root as React.ComponentType<
-  ContextMenuPrimitive.Root.Props & { modal?: boolean }
->;
-
 type ContextMenuSubProps = Omit<ContextMenuPrimitive.SubmenuRoot.Props, "onOpenChange"> & {
   onOpenChange?: (open: boolean) => void;
 };
@@ -305,19 +301,22 @@ function ContextMenu({
   ...props
 }: ContextMenuRootProps) {
   const adapter = useContextMenuAdapter(open, defaultOpen, onOpenChange);
+
+  // Base UI context menus are modal by design; consume the Radix prop without forwarding it.
+  void modal;
+
   const root = (
-    <ContextMenuRootPrimitive
+    <ContextMenuPrimitive.Root
       data-slot="context-menu"
       defaultOpen={defaultOpen}
       disabled={disabled ?? adapter.triggerDisabled}
       loopFocus={loopFocus ?? adapter.loopFocus}
-      modal={modal}
       onOpenChange={adapter.handleOpenChange}
       open={open}
       {...props}
     >
       {children}
-    </ContextMenuRootPrimitive>
+    </ContextMenuPrimitive.Root>
   );
 
   return (

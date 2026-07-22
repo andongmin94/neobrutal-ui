@@ -662,12 +662,19 @@
     height: 100dvh;
     border-right: var(--border-width) solid var(--border);
     transform: translateX(calc(-100% - 8px));
-    transition: transform 180ms ease;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      transform 180ms ease,
+      visibility 0s linear 180ms;
     box-shadow: 8px 0 0 var(--border);
   }
 
   .docs-sidebar.is-open {
     transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
   }
 
   .docs-sidebar__mobile-head {

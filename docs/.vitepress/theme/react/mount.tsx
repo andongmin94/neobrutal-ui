@@ -59,14 +59,15 @@ async function resolveComponentPreview(component: string, example?: string): Pro
     throw new Error(`Unknown component preview: ${component}`);
   }
 
-  const Preview = example ? componentData.examples?.[example] : componentData.exampleComponent;
+  const loadPreview = example ? componentData.examples?.[example] : componentData.exampleComponent;
 
-  if (!Preview) {
+  if (!loadPreview) {
     const suffix = example ? ` example "${example}"` : "";
     throw new Error(`No preview is registered for ${component}${suffix}.`);
   }
 
-  return createElement(Preview as ComponentType);
+  const { default: Preview } = await loadPreview();
+  return createElement(Preview);
 }
 
 async function resolveStarPreview(component: string): Promise<ReactElement> {

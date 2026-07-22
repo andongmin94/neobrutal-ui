@@ -13,13 +13,14 @@ shadcnDocsLink: https://ui.shadcn.com/docs/components/data-table
 
 ## Installation
 
-You'll have to go to <a target="_blank" href="https://ui.shadcn.com/docs/components/data-table">shadcn-ui docs</a> for this component and follow the instructions there. When you're done, you can copy the data-table component and paste it in inside your project:
+Install the table recipe and its TanStack Table dependency from this registry:
 
-<br />
+<Installation component="data-table">
 
 ```tsx file=<rootDir>/src/components/ui/data-table.tsx
-
 ```
+
+</Installation>
 
 ## Usage
 

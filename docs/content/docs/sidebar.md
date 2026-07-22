@@ -99,23 +99,23 @@ import {
 // This is sample data.
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    name: "andongmin94",
+    email: "hello@example.com",
+    avatar: "https://github.com/andongmin94.png?size=40",
   },
   teams: [
     {
-      name: "Acme Inc",
+      name: "Northstar Studio",
       logo: GalleryVerticalEnd,
       plan: "Enterprise",
     },
     {
-      name: "Acme Corp.",
+      name: "Draft Lab",
       logo: AudioWaveform,
       plan: "Startup",
     },
     {
-      name: "Evil Corp.",
+      name: "Common Ground",
       logo: Command,
       plan: "Free",
     },
@@ -123,86 +123,86 @@ const data = {
   navMain: [
     {
       title: "Playground",
-      url: "#",
+      url: "/docs/sidebar",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
           title: "History",
-          url: "#",
+          url: "/docs/sidebar",
         },
         {
           title: "Starred",
-          url: "#",
+          url: "/docs/sidebar",
         },
         {
           title: "Settings",
-          url: "#",
+          url: "/docs/sidebar",
         },
       ],
     },
     {
       title: "Models",
-      url: "#",
+      url: "/docs/sidebar",
       icon: Bot,
       items: [
         {
           title: "Genesis",
-          url: "#",
+          url: "/docs/sidebar",
         },
         {
           title: "Explorer",
-          url: "#",
+          url: "/docs/sidebar",
         },
         {
           title: "Quantum",
-          url: "#",
+          url: "/docs/sidebar",
         },
       ],
     },
     {
       title: "Documentation",
-      url: "#",
+      url: "/docs/sidebar",
       icon: BookOpen,
       items: [
         {
           title: "Introduction",
-          url: "#",
+          url: "/docs",
         },
         {
           title: "Get Started",
-          url: "#",
+          url: "/docs/installation",
         },
         {
           title: "Tutorials",
-          url: "#",
+          url: "/docs/resources",
         },
         {
           title: "Changelog",
-          url: "#",
+          url: "/docs/credits",
         },
       ],
     },
     {
       title: "Settings",
-      url: "#",
+      url: "/docs/sidebar",
       icon: Settings2,
       items: [
         {
           title: "General",
-          url: "#",
+          url: "/docs/sidebar",
         },
         {
           title: "Team",
-          url: "#",
+          url: "/docs/sidebar",
         },
         {
           title: "Billing",
-          url: "#",
+          url: "/docs/sidebar",
         },
         {
           title: "Limits",
-          url: "#",
+          url: "/docs/sidebar",
         },
       ],
     },
@@ -210,17 +210,17 @@ const data = {
   projects: [
     {
       name: "Design Engineering",
-      url: "#",
+      url: "/docs/sidebar",
       icon: Frame,
     },
     {
       name: "Sales & Marketing",
-      url: "#",
+      url: "/docs/sidebar",
       icon: PieChart,
     },
     {
       name: "Travel",
-      url: "#",
+      url: "/docs/sidebar",
       icon: Map,
     },
   ],
@@ -386,8 +386,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   size="lg"
                 >
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src="https://github.com/shadcn.png?size=40" alt="CN" />
-                    <AvatarFallback>CN</AvatarFallback>
+                    <AvatarImage src={data.user.avatar} alt="@andongmin94" />
+                    <AvatarFallback>AM</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-heading">{data.user.name}</span>
@@ -405,8 +405,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <DropdownMenuLabel className="p-0 font-base">
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src="https://github.com/shadcn.png?size=40" alt="CN" />
-                      <AvatarFallback>CN</AvatarFallback>
+                      <AvatarImage src={data.user.avatar} alt="@andongmin94" />
+                      <AvatarFallback>AM</AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-heading">{data.user.name}</span>

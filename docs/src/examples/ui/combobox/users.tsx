@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 const users = [
   {
     id: "1",
-    username: "shadcn",
+    username: "andongmin94",
   },
   {
     id: "2",
@@ -37,6 +37,7 @@ const users = [
 export default function UserCombobox() {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("1");
+  const contentId = React.useId();
 
   const selectedUser = React.useMemo(() => users.find((user) => user.id === value), [value]);
 
@@ -47,12 +48,16 @@ export default function UserCombobox() {
           variant="noShadow"
           role="combobox"
           aria-expanded={open}
+          aria-controls={open ? contentId : undefined}
           className="w-full justify-between px-2 md:max-w-[200px]"
         >
           {selectedUser ? (
             <div className="flex items-center gap-2">
               <Avatar className="size-5">
-                <AvatarImage src={`https://github.com/${selectedUser.username}.png`} />
+                <AvatarImage
+                  src={`https://github.com/${selectedUser.username}.png`}
+                  alt={`@${selectedUser.username}`}
+                />
                 <AvatarFallback>{selectedUser.username[0]}</AvatarFallback>
               </Avatar>
               {selectedUser.username}
@@ -63,7 +68,7 @@ export default function UserCombobox() {
           <ChevronsUpDown className="text-muted-foreground" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-(--anchor-width) border-0 p-0">
+      <PopoverContent id={contentId} className="w-(--anchor-width) border-0 p-0">
         <Command className="**:data-[slot=command-input-wrapper]:h-11">
           <CommandInput placeholder="Search user..." />
           <CommandList className="p-1">
@@ -79,7 +84,10 @@ export default function UserCombobox() {
                   }}
                 >
                   <Avatar className="size-5">
-                    <AvatarImage src={`https://github.com/${user.username}.png`} />
+                    <AvatarImage
+                      src={`https://github.com/${user.username}.png`}
+                      alt={`@${user.username}`}
+                    />
                     <AvatarFallback>{user.username[0]}</AvatarFallback>
                   </Avatar>
                   {user.username}

@@ -42,14 +42,14 @@ function CommandDialog({
 }) {
   return (
     <Dialog {...props}>
-      <DialogHeader className="sr-only">
-        <DialogTitle>{title}</DialogTitle>
-        <DialogDescription>{description}</DialogDescription>
-      </DialogHeader>
       <DialogContent
         className={cn("overflow-hidden rounded-[0px]! border-0 p-0 shadow-shadow", className)}
         showCloseButton={showCloseButton}
       >
+        <DialogHeader className="sr-only">
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+        </DialogHeader>
         <Command className="**:data-[slot=command-input-wrapper]:h-12 [&_[cmdk-group-heading]]:mb-1 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-heading [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:size-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:size-5">
           {children}
         </Command>
@@ -60,6 +60,8 @@ function CommandDialog({
 
 function CommandInput({
   className,
+  "aria-label": ariaLabel,
+  placeholder,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Input>) {
   return (
@@ -74,6 +76,8 @@ function CommandInput({
           "flex h-10 w-full rounded-base bg-transparent py-3 text-sm outline-hidden placeholder:text-main-foreground placeholder:opacity-50 disabled:cursor-not-allowed disabled:opacity-50",
           className,
         )}
+        aria-label={ariaLabel ?? placeholder ?? "Command search"}
+        placeholder={placeholder}
         {...props}
       />
     </div>
