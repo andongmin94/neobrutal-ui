@@ -1,0 +1,8 @@
+@import "pretendard/dist/web/variable/pretendardvariable.css";
+@import "../src/styling/globals.css";
+@import "./styles/tokens.css";
+@import "./styles/shell.css";
+@import "./styles/content.css";
+@import "./styles/directory.css";
+@import "./styles/index.css";
+@import "./styles/components.css";

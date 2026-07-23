@@ -1,0 +1,44 @@
+---
+title: Input Group
+description: Combines inputs with icons, text, and actions inside one field boundary.
+shadcnDocsLink: https://ui.shadcn.com/docs/components/input-group
+---
+
+<ComponentPreview component="input-group">
+
+<include cwd lang="tsx">
+  ./src/examples/ui/input-group.tsx
+</include>
+
+</ComponentPreview>
+
+## Installation
+
+<Installation component="input-group">
+
+<include cwd lang="tsx">
+  ./src/components/ui/input-group.tsx
+</include>
+
+</Installation>
+
+## Usage
+
+```tsx
+import { Search } from "lucide-react";
+
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+```
+
+```tsx
+<InputGroup>
+  <InputGroupAddon>
+    <Search aria-hidden="true" />
+  </InputGroupAddon>
+  <InputGroupInput aria-label="Search components" placeholder="Search components..." />
+</InputGroup>
+```

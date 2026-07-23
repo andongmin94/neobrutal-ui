@@ -1,6 +1,7 @@
 node_modules
-.vitepress/cache
-.vitepress/dist
+build
+.react-router
+.source
 .env
 .env.*
 !.env.example

@@ -1,0 +1,43 @@
+---
+title: Tooltip
+description: Displays contextual information on keyboard focus or mouse hover.
+shadcnDocsLink: https://ui.shadcn.com/docs/components/tooltip
+---
+
+<ComponentPreview component="tooltip">
+
+<include cwd lang="tsx">
+  ./src/examples/ui/tooltip.tsx
+</include>
+
+</ComponentPreview>
+
+## Installation
+
+<Installation component="tooltip">
+
+<include cwd lang="tsx">
+  ./src/components/ui/tooltip.tsx
+</include>
+
+</Installation>
+
+## Usage
+
+```ts
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+```
+
+```tsx
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <Button example="noShadow">Hover</Button>
+    </TooltipTrigger>
+    <TooltipContent>
+      <p>Add to library</p>
+    </TooltipContent>
+  </Tooltip>
+</TooltipProvider>
+```
