@@ -86,7 +86,9 @@ body::-webkit-scrollbar-thumb {
 }
 
 .site-frame {
+  display: flex;
   min-height: 100dvh;
+  flex-direction: column;
 }
 
 .pressable,

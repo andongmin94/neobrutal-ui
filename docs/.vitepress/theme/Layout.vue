@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ExternalLink } from "@lucide/vue";
 import { computed, nextTick, ref, watch } from "vue";
-import { Content, useData, useRoute, withBase } from "vitepress";
+import { Content, useData, useRoute } from "vitepress";
 
 import { COMPONENT_DIRECTORY_LINKS } from "../../src/data/component-directory";
 import DirectoryHome from "./components/DirectoryHome.vue";
 import SidebarNav from "./components/SidebarNav.vue";
+import SiteFooter from "./components/SiteFooter.vue";
 import SiteHeader from "./components/SiteHeader.vue";
 import TableOfContents from "./components/TableOfContents.vue";
 import { normalizePath } from "./navigation";
@@ -25,6 +26,7 @@ const isDocsPage = computed(
 );
 const isComponentPage = computed(() => componentPaths.has(normalizedPath.value));
 const isSpecialIndexPage = computed(() => specialPagePaths.has(normalizedPath.value));
+const isTemplatePreviewPage = computed(() => normalizedPath.value.startsWith("/templates/"));
 const pageDescription = computed(() => frontmatter.value.description as string | undefined);
 const upstreamUrl = computed(() => frontmatter.value.shadcnDocsLink as string | undefined);
 
@@ -97,11 +99,6 @@ watch(
         >
           <Content />
         </article>
-
-        <footer class="docs-page-footer">
-          <span>Source-owned React components</span>
-          <a :href="withBase('/docs/credits')">MIT license and credits</a>
-        </footer>
       </main>
 
       <TableOfContents />
@@ -123,15 +120,8 @@ watch(
       <article class="special-content" :class="{ 'special-content--index': isSpecialIndexPage }">
         <Content />
       </article>
-
-      <footer v-if="isSpecialIndexPage" class="special-page-footer">
-        <strong>neobrutal-ui</strong>
-        <span>Source-owned components for the shadcn registry.</span>
-        <nav aria-label="Project links">
-          <a :href="withBase('/docs/')">Docs</a>
-          <a :href="withBase('/docs/credits')">Credits</a>
-        </nav>
-      </footer>
     </main>
+
+    <SiteFooter v-if="!isTemplatePreviewPage" />
   </div>
 </template>
