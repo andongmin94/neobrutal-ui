@@ -56,6 +56,12 @@ function formatPackageJson() {
   fs.writeFileSync(packagePath, `${stringifyPackage(pkg)}\n`, "utf8");
 }
 
+function generateDocsData() {
+  run("tsx", ["src/scripts/generate-stars-ts.ts"]);
+  run("tsx", ["src/scripts/generate-charts-ts.ts"]);
+  run("oxfmt", ["--write", "src/data/stars.ts", "src/data/charts.ts"]);
+}
+
 function stringifyPackage(value) {
   return formatJsonValue(value, 0);
 }
@@ -125,9 +131,11 @@ function lint() {
 
 switch (command) {
   case "dev":
+    generateDocsData();
     run("next", ["dev", ...passthroughArgs]);
     break;
   case "build":
+    generateDocsData();
     run("next", ["build", ...passthroughArgs]);
     break;
   case "start":
@@ -135,12 +143,6 @@ switch (command) {
     break;
   case "lint":
     lint();
-    break;
-  case "generate-stars-ts":
-    run("tsx", ["src/scripts/generate-stars-ts.ts", ...passthroughArgs]);
-    break;
-  case "generate-charts-ts":
-    run("tsx", ["src/scripts/generate-charts-ts.ts", ...passthroughArgs]);
     break;
   default:
     console.error(`Unknown task: ${command ?? "(missing)"}`);

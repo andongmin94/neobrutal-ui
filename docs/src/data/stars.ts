@@ -67,11 +67,11 @@ export default function Star1({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -90,7 +90,7 @@ export default function Star1({
         d="M158.682 195 100 127.008 41.219 195l43.344-79.687L5 77.551l85.5 18.732L100 5l9.5 91.283L195 77.65l-79.661 37.663z"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -109,11 +109,11 @@ export default function Star2({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -132,7 +132,7 @@ export default function Star2({
         d="m100 5 67.175 27.825L195 100l-27.825 67.175L100 195l-67.175-27.825L5 100l27.825-67.175z"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -151,11 +151,11 @@ export default function Star3({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -174,7 +174,7 @@ export default function Star3({
         d="m100 5 3.277 63.822 16.475-61.746-10.064 63.108 28.952-56.97-22.965 59.636 40.165-49.707-34.863 53.56 49.622-40.27-45.236 45.14L182.272 52.5 128.64 87.249l61.71-16.606-59.685 22.839 63.815-3.412-63.13 9.93 63.13 9.93-63.815-3.412 59.685 22.839-61.71-16.606 53.632 34.749-56.909-29.073 45.236 45.14-49.622-40.269 34.863 53.559-40.165-49.707 22.965 59.637-28.952-56.971 10.064 63.108-16.475-61.746L100 195l-3.277-63.822-16.475 61.746 10.064-63.108-28.952 56.971 22.965-59.637-40.165 49.707 34.863-53.559L29.4 163.567l45.236-45.14-56.91 29.073 53.633-34.749-61.71 16.606 59.685-22.839L5.52 109.93 68.65 100 5.52 90.07l63.815 3.412L9.65 70.643 71.36 87.25 17.728 52.5l56.91 29.073L29.4 36.433l49.622 40.27-34.863-53.56L84.325 72.85 61.36 13.213l28.952 56.971L80.248 7.076l16.475 61.746z"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -193,11 +193,11 @@ export default function Star4({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -216,7 +216,7 @@ export default function Star4({
         d="M158.727 195 100 150.193 41.273 195l22.353-72.545L5 77.545l72.546-.101L100 5l22.455 72.444 72.545.102-58.626 44.909z"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -235,11 +235,11 @@ export default function Star5({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -258,7 +258,7 @@ export default function Star5({
         d="m100 5 82.272 47.5v95L100 195l-82.272-47.5v-95z"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -277,11 +277,11 @@ export default function Star6({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -300,7 +300,7 @@ export default function Star6({
         d="m100 5 25.659 69.341L195 100l-69.341 25.659L100 195l-25.659-69.341L5 100l69.341-25.659z"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -319,11 +319,11 @@ export default function Star7({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -342,7 +342,7 @@ export default function Star7({
         d="m100 5 6.718 88.283L195 100l-88.282 6.718L100 195l-6.718-88.282L5 100l88.283-6.718z"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -361,11 +361,11 @@ export default function Star8({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -384,7 +384,7 @@ export default function Star8({
         d="M100 5s5.088 49.035 25.527 69.473C145.965 94.912 195 100 195 100s-49.035 5.088-69.473 25.527C105.088 145.965 100 195 100 195s-5.088-49.035-25.527-69.473C54.035 105.088 5 100 5 100s49.035-5.088 69.473-25.527C94.912 54.035 100 5 100 5"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -403,11 +403,11 @@ export default function Star9({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -426,7 +426,7 @@ export default function Star9({
         d="M195 100c-87.305 4.275-90.725 7.695-95 95-4.275-87.305-7.695-90.725-95-95 87.305-4.275 90.725-7.695 95-95 4.275 87.305 7.695 90.725 95 95"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -445,11 +445,11 @@ export default function Star10({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -468,7 +468,7 @@ export default function Star10({
         d="m100 5 4.75 86.773L182.272 52.5 109.5 100l72.772 47.5-77.522-39.273L100 195l-4.75-86.773L17.728 147.5 90.5 100 17.728 52.5 95.25 91.773z"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -487,11 +487,11 @@ export default function Star11({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -510,7 +510,7 @@ export default function Star11({
         d="m100 5 18.05 63.737L182.272 52.5 136.1 100l46.172 47.5-64.222-16.236L100 195l-18.05-63.736L17.728 147.5 63.9 100 17.728 52.5 81.95 68.737z"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -529,11 +529,11 @@ export default function Star12({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -552,7 +552,7 @@ export default function Star12({
         d="m100 5 3.635 86.223 63.54-58.398-58.398 63.54L195 100l-86.223 3.635 58.398 63.54-63.54-58.398L100 195l-3.635-86.223-63.54 58.398 58.398-63.54L5 100l86.223-3.635-58.398-63.54 63.54 58.398z"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -571,11 +571,11 @@ export default function Star13({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -594,7 +594,7 @@ export default function Star13({
         d="M99.006 14.395c.126-1.193 1.862-1.193 1.988 0l7.08 66.88a1 1 0 0 0 1.532.738l56.703-36.164c1.011-.645 2.094.712 1.24 1.555l-47.875 47.233a1 1 0 0 0 .378 1.658l63.628 21.784c1.135.389.749 2.082-.442 1.939l-66.779-7.98a1 1 0 0 0-1.06 1.33l22.64 63.328c.404 1.13-1.161 1.883-1.792.863l-35.397-57.185a1 1 0 0 0-1.7 0l-35.397 57.185c-.631 1.02-2.196.267-1.792-.863l22.64-63.328a1 1 0 0 0-1.06-1.33l-66.779 7.98c-1.19.143-1.577-1.55-.442-1.939l63.628-21.784a1 1 0 0 0 .378-1.657L32.451 47.403c-.854-.842.229-2.2 1.24-1.554l56.703 36.164a1 1 0 0 0 1.532-.738z"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -613,11 +613,11 @@ export default function Star14({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -636,7 +636,7 @@ export default function Star14({
         d="m100 5 10.403 29.319 18.954-24.67.833 31.1 25.65-17.606-8.817 29.834 29.834-8.817-17.605 25.65 31.098.833-24.669 18.954L195 100l-29.319 10.403 24.669 18.954-31.098.833 17.605 25.65-29.834-8.817 8.817 29.834-25.65-17.605-.833 31.098-18.954-24.669L100 195l-10.403-29.319-18.954 24.669-.833-31.098-25.65 17.605 8.817-29.834-29.834 8.817 17.605-25.65-31.098-.833 24.669-18.954L5 100l29.319-10.403-24.67-18.954 31.1-.833-17.606-25.65 29.834 8.817-8.817-29.834 25.65 17.605.833-31.098 18.954 24.669z"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -655,11 +655,11 @@ export default function Star15({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -678,7 +678,7 @@ export default function Star15({
         d="M95.713 9.378a6 6 0 0 1 8.574 0l9.515 9.717a6 6 0 0 0 6.496 1.381l12.645-5.007a6 6 0 0 1 7.833 3.487l4.74 12.748a6 6 0 0 0 5.372 3.903l13.589.57a6 6 0 0 1 5.737 6.371l-.855 13.573a6 6 0 0 0 3.321 5.752l12.182 6.046a6 6 0 0 1 2.649 8.154l-6.301 12.053a6 6 0 0 0 .694 6.604l8.67 10.479a6 6 0 0 1-.897 8.527l-10.658 8.447a6 6 0 0 0-2.052 6.316l3.657 13.099a6 6 0 0 1-4.287 7.426l-13.173 3.381a6 6 0 0 0-4.443 4.936l-1.987 13.454a6 6 0 0 1-6.936 5.04l-13.41-2.269a6 6 0 0 0-6.066 2.701l-7.287 11.483a6 6 0 0 1-8.387 1.783l-11.327-7.527a6 6 0 0 0-6.641 0l-11.328 7.527a6 6 0 0 1-8.387-1.783l-7.287-11.483a6 6 0 0 0-6.066-2.701l-13.41 2.269a6 6 0 0 1-6.936-5.04l-1.987-13.454a6 6 0 0 0-4.443-4.936l-13.173-3.381a6 6 0 0 1-4.287-7.426l3.657-13.099a6 6 0 0 0-2.052-6.316l-10.658-8.447a6 6 0 0 1-.897-8.527l8.67-10.479a6 6 0 0 0 .694-6.604l-6.301-12.053a6 6 0 0 1 2.65-8.154l12.181-6.046a6 6 0 0 0 3.32-5.752l-.854-13.573a6 6 0 0 1 5.737-6.372l13.588-.569a6 6 0 0 0 5.373-3.903l4.74-12.748a6 6 0 0 1 7.833-3.487l12.645 5.007a6 6 0 0 0 6.496-1.38z"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -697,11 +697,11 @@ export default function Star16({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -720,7 +720,7 @@ export default function Star16({
         d="m100 5 17.211 30.766L147.5 17.728l-.477 35.25 35.249-.478-18.038 30.289L195 100l-30.766 17.211 18.038 30.289-35.249-.477.477 35.249-30.289-18.038L100 195l-17.211-30.766L52.5 182.272l.477-35.249-35.25.477 18.039-30.289L5 100l30.766-17.211L17.728 52.5l35.25.477-.478-35.25 30.289 18.039z"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -739,11 +739,11 @@ export default function Star17({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -762,7 +762,7 @@ export default function Star17({
         d="m100 5 14.542 59.893 52.633-32.068-32.068 52.633L195 100l-59.893 14.542 32.068 52.633-52.633-32.068L100 195l-14.542-59.893-52.633 32.068 32.068-52.633L5 100l59.893-14.542-32.068-52.633 52.633 32.068z"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -781,11 +781,11 @@ export default function Star18({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -804,7 +804,7 @@ export default function Star18({
         d="m100 5 3.757 72.678c.053 1.022 1.426 1.314 1.89.401l32.993-64.866-26.128 67.923c-.368.955.768 1.78 1.563 1.135l56.524-45.838-51.496 51.422c-.725.724-.023 1.94.966 1.674l70.281-18.886-67.959 26.032c-.956.366-.809 1.762.202 1.922l71.887 11.333-72.673-3.86c-1.022-.054-1.456 1.28-.597 1.838l61.062 39.592-64.819-33.085c-.912-.465-1.851.578-1.293 1.436l39.68 61.006-45.759-56.589c-.643-.797-1.926-.226-1.765.786l11.436 71.87-18.786-70.308c-.264-.989-1.668-.989-1.932 0l-18.786 70.308 11.436-71.87c.16-1.012-1.121-1.582-1.765-.786L44.16 176.857l39.68-61.006c.558-.858-.381-1.901-1.293-1.436L17.727 147.5l61.063-39.592c.859-.558.425-1.892-.598-1.838L5.52 109.93l71.887-11.333c1.011-.16 1.158-1.556.202-1.922L9.649 70.643 79.932 89.53c.989.266 1.69-.95.966-1.674L29.401 36.433 85.925 82.27c.795.645 1.93-.18 1.563-1.136L61.36 13.213 94.353 78.08c.464.913 1.837.621 1.89-.401z"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -823,11 +823,11 @@ export default function Star19({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -848,7 +848,7 @@ export default function Star19({
         fillRule="evenodd"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -867,11 +867,11 @@ export default function Star20({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -892,7 +892,7 @@ export default function Star20({
         fillRule="evenodd"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -911,11 +911,11 @@ export default function Star21({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -936,7 +936,7 @@ export default function Star21({
         fillRule="evenodd"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -955,11 +955,11 @@ export default function Star22({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -978,7 +978,7 @@ export default function Star22({
         d="M158.603 100c78.169 75.604 16.906 136.867-58.603 58.603C24.396 236.867-36.867 175.604 41.397 100-36.867 24.396 24.396-36.867 100 41.397 175.604-36.867 236.867 24.396 158.603 100"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -997,11 +997,11 @@ export default function Star23({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -1020,7 +1020,7 @@ export default function Star23({
         d="M108.264 100c149.028 86.91 78.646 157.387-8.264 8.264C13.09 257.387-57.387 186.91 91.737 100-57.387 13.09 13.09-57.387 100 91.737 186.91-57.387 257.387 13.09 108.264 100"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -1039,11 +1039,11 @@ export default function Star24({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -1064,7 +1064,7 @@ export default function Star24({
         fillRule="evenodd"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -1083,11 +1083,11 @@ export default function Star25({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -1106,7 +1106,7 @@ export default function Star25({
         d="M118.05 118.05c102.6 102.6-138.7 102.6-36.1 0-102.6 102.6-102.6-138.7 0-36.1-102.6-102.6 138.7-102.6 36.1 0 102.6-102.6 102.6 138.7 0 36.1"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -1125,11 +1125,11 @@ export default function Star26({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -1148,7 +1148,7 @@ export default function Star26({
         d="M87.13 123.661c-1.994 8.837-.95 17.77 0 27.557 1.995 8.837 4.94 17.769 7.884 26.607.95 3.896.95 7.887 0 10.832-.95.951-.95 1.996-1.995 2.946-1.994.95-3.894 1.996-5.888 2.946-22.605 2.946-42.36-8.837-56.131-26.607-.95-1.995-1.995-2.946-2.945-4.941-7.883-13.779-8.833-28.602-3.894-43.331 1.995-4.941 4.939-9.883 7.883-14.824 3.894-3.896 6.934-7.887 11.777-10.833 9.878-5.891 20.705-7.887 32.482-6.936-8.832-1.996-17.76-.95-27.543 0-8.833 1.995-17.76 4.941-26.593 7.887-3.894.95-7.883.95-10.828 0-.95-.95-1.994-.95-2.944-1.996-.95-1.995-1.994-3.896-2.944-5.891-2.944-22.616 8.833-42.381 26.593-56.16 1.995-.95 2.945-1.995 4.939-2.945 13.772-7.792 28.493-8.742 43.31-3.801 4.938 1.995 9.877 4.941 14.816 7.887 3.894 3.896 7.883 6.937 10.827 11.783 5.889 9.882 7.883 20.715 6.933 32.498 1.995-8.837.95-17.77 0-27.557-1.994-8.837-4.938-17.77-7.883-26.607-.949-3.896-.949-7.887 0-10.833.95-.95.95-1.995 1.995-2.945 1.994-.95 3.894-1.996 5.888-2.946 22.605-2.946 42.36 8.837 56.132 26.607.949 1.995 1.994 2.946 2.944 4.941 7.883 13.779 8.833 28.602 3.894 43.331-1.995 4.941-4.939 9.883-7.883 14.824-3.894 3.896-6.934 7.887-11.777 10.833-9.878 5.891-20.705 7.887-32.482 6.936 8.832 1.996 17.76.951 27.543 0 8.833-1.995 17.761-4.941 26.593-7.887 3.894-.95 7.883-.95 10.828 0 .949.951 1.994.951 2.944 1.996.95 1.995 1.994 3.896 2.944 5.891 2.944 22.616-8.833 42.381-26.593 56.16-1.995.95-2.945 1.995-4.939 2.945-13.772 7.887-28.588 8.838-43.309 3.896-4.939-1.995-9.878-4.941-14.817-7.887-3.894-3.896-7.883-6.937-10.827-11.783-5.889-9.977-7.883-20.81-6.933-32.593"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -1167,11 +1167,11 @@ export default function Star27({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -1190,7 +1190,7 @@ export default function Star27({
         d="M195 195c-54.245-54.245-135.755-54.245-190 0C59.245 140.755 59.245 59.245 5 5c54.245 54.245 135.755 54.245 190 0-54.245 54.245-54.245 135.755 0 190"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -1209,11 +1209,11 @@ export default function Star28({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -1234,7 +1234,7 @@ export default function Star28({
         fillRule="evenodd"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -1253,11 +1253,11 @@ export default function Star29({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -1276,7 +1276,7 @@ export default function Star29({
         d="M80.895 8.558 100 60.811l18.915-52.253c2.186-6.175 11.406-3.705 10.266 2.756l-9.6 54.722 42.583-35.817c5.038-4.18 11.691 2.47 7.509 7.506l-35.74 42.657 54.75-9.69c6.464-1.14 8.935 8.075 2.757 10.26l-52.279 19.095 52.279 18.906c6.178 2.185 3.707 11.401-2.757 10.261l-54.75-9.596 35.835 42.562c4.182 5.035-2.471 11.686-7.509 7.506l-42.678-35.722 9.695 54.722c1.141 6.461-8.079 8.931-10.266 2.756l-19.105-52.253-18.915 52.253c-2.186 6.175-11.406 3.705-10.266-2.756l9.6-54.722-42.583 35.817c-5.038 4.18-11.691-2.471-7.509-7.506l35.74-42.657-54.655 9.691c-6.464 1.14-8.935-8.076-2.757-10.261l52.28-19.095L8.56 81.047c-6.178-2.185-3.707-11.4 2.757-10.26l54.75 9.595L30.232 37.82c-4.182-5.035 2.471-11.686 7.51-7.506l42.677 35.722-9.79-54.722c-1.14-6.46 7.984-8.93 10.266-2.756"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -1295,11 +1295,11 @@ export default function Star30({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -1318,7 +1318,7 @@ export default function Star30({
         d="m96.165 11.506 3.795 21.14 3.701-21.14c1.708-9.86 16.415-7.964 15.561 1.99l-1.803 21.425 9.109-19.434c4.27-9.006 17.839-3.413 14.423 5.972l-7.306 20.193 13.758-16.4c6.452-7.68 18.123 1.326 12.43 9.48l-12.335 17.632 17.554-12.324c8.16-5.688 17.174 5.972 9.583 12.419l-16.415 13.84 20.211-7.3c9.393-3.412 15.086 10.239 5.977 14.41l-19.451 9.1 21.444-1.895c9.963-.854 11.861 13.745 2.088 15.547l-21.16 3.792 21.16 3.697c9.868 1.706 7.97 16.4-1.993 15.547l-21.444-1.801 19.451 9.1c9.014 4.266 3.416 17.822-5.977 14.41l-20.211-7.3 16.415 13.841c7.686 6.446-1.328 18.106-9.488 12.418l-17.649-12.323 12.335 17.537c5.693 8.153-5.978 17.159-12.43 9.575l-13.853-16.4 7.306 20.192c3.416 9.385-10.248 15.073-14.423 5.972l-9.109-19.434 1.898 21.425c.854 9.954-13.758 11.85-15.561 2.085l-3.796-21.14-3.7 21.14c-1.708 9.86-16.415 7.964-15.561-1.99l1.802-21.425-9.014 19.15c-4.27 9.005-17.838 3.412-14.422-5.973l7.306-20.192-13.853 16.4c-6.453 7.679-18.123-1.327-12.43-9.48l12.335-17.632-17.554 12.324c-8.16 5.688-17.174-5.973-9.583-12.419l16.415-13.84-20.21 7.299c-9.3 3.508-14.993-10.143-5.979-14.315l19.452-9.1-21.444 1.896c-9.963.853-11.86-13.746-2.088-15.547l21.16-3.792-21.065-3.697c-9.773-1.707-7.875-16.306 2.088-15.452l21.444 1.8-19.547-9.1c-9.014-4.266-3.415-17.822 5.978-14.41l20.21 7.3-16.414-13.84c-7.686-6.447 1.328-18.107 9.488-12.42l17.649 12.325-12.335-17.538c-5.693-8.153 5.977-17.159 12.43-9.575l13.853 16.4-7.306-20.192c-3.511-9.29 10.153-14.978 14.328-5.972L82.5 34.921l-1.897-21.33c-.854-9.954 13.853-11.85 15.561-2.085"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -1337,11 +1337,11 @@ export default function Star31({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -1360,7 +1360,7 @@ export default function Star31({
         d="M110.83 109.968c86.446 139.251-10.83 85.773-10.83-5.984 0 91.662-97.276 145.235-10.83 5.984-86.446 139.251-67.922 25.931 2.09-12.633-69.917 38.469-148.669-41.795-8.74-8.93-139.929-32.865-31.158-49.392 12.065-1.804C51.362 39.013 100-64.143 100 75.108c0-139.251 48.638-36.095 5.415 11.493 43.223-47.588 151.994-31.06 12.064 1.805 139.93-32.866 61.178 47.398-8.739 8.929 69.917 38.469 88.536 151.884 2.09 12.633"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -1379,11 +1379,11 @@ export default function Star32({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -1404,7 +1404,7 @@ export default function Star32({
         fillRule="evenodd"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -1423,11 +1423,11 @@ export default function Star33({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -1446,7 +1446,7 @@ export default function Star33({
         d="M92.874 82.969C36.151-54.164 100 16.636 100 90.762c0-74.221 63.849-144.926 7.126-7.888 56.818-137.038 51.877-41.91-.57 10.548 52.447-52.458 147.65-57.305 10.546-.57 137.104-56.735 66.319 7.128-7.886 7.128 74.205 0 144.895 63.862 7.886 7.127 137.009 56.83 41.901 51.888-10.546-.57 52.447 52.458 57.293 147.682.57 10.549 56.723 137.133-7.126 66.333-7.126-7.888 0 74.221-63.849 144.926-7.126 7.888-56.818 137.038-51.877 41.909.57-10.549-52.447 52.458-147.65 57.305-10.546.57-137.104 56.735-66.32-7.127 7.886-7.127-74.205 0-144.895-63.863-7.886-7.128-137.009-56.83-41.901-51.888 10.546.57-52.447-52.363-57.293-147.586-.57-10.453"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -1465,11 +1465,11 @@ export default function Star34({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -1490,7 +1490,7 @@ export default function Star34({
         fillRule="evenodd"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -1509,11 +1509,11 @@ export default function Star35({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -1532,7 +1532,7 @@ export default function Star35({
         d="M60.575 5.095C81.665 28.37 118.24 28.37 139.235 5c-1.615 31.35 24.32 57.19 55.67 55.575-23.275 21.09-23.275 57.665.095 78.66-31.35-1.615-57.19 24.32-55.575 55.67-21.09-23.275-57.665-23.275-78.66.095 1.615-31.35-24.32-57.19-55.67-55.575C28.37 118.335 28.37 81.76 5 60.765c31.35 1.52 57.19-24.32 55.575-55.67"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -1551,11 +1551,11 @@ export default function Star36({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -1574,7 +1574,7 @@ export default function Star36({
         d="M136.96 12.6C131 10.5 125 8.5 118.954 6.9c2.843 6.65 5.686 13.3 5.686 20.9 0 9.5.948 19-2.843 28.5 0-19-8.529-37.05-20.849-51.3-6.982.174-9.982.23-17.982 1.316 12.32 12.35 18.929 28.134 20.825 45.234-9.477-17.1-21.797-32.3-39.803-39.9-5.686 2.85-10.425 5.7-16.111 8.55 15.163 7.6 29.378 18.05 36.96 33.25-14.215-12.35-32.222-19-51.175-21.85-4.739 4.75-8.53 9.5-12.32 15.2 17.058 0 34.117 5.7 47.384 16.15-18.006-6.65-37.907-5.7-55.914 0C9.022 67.7 9.022 75.3 7.126 81c6.634-2.85 13.268-5.7 20.85-5.7 9.476 0 18.953-.95 28.43 2.85-18.954 0-36.96 8.55-51.175 20.9.269 6.95.769 12.45.948 19 12.32-12.35 28.43-19.95 45.489-21.85-17.059 9.5-32.222 21.85-39.803 39.9 2.843 5.7 5.686 10.45 8.529 16.15 7.581-15.2 18.006-29.45 33.17-37.05-12.32 14.25-18.955 32.3-21.798 51.3 4.739 4.75 9.477 8.55 15.163 12.35 0-17.1 5.686-34.2 16.111-47.5-6.634 18.05-5.686 38 0 56.05 4.738 3.8 12.32 3.8 18.006 5.7-2.843-6.65-5.686-13.3-5.686-20.9 0-9.5-.948-19 2.843-28.5 0 19 8.53 37.05 20.85 51.3 6.412-.304 12.412-.805 18.953-.95-12.32-12.35-19.901-28.5-21.797-45.6 9.477 17.1 21.797 32.3 39.803 39.9 5.686-2.85 10.425-5.7 16.111-8.55-15.163-7.6-29.378-18.05-36.96-33.25 14.215 12.35 32.222 19 51.175 21.85 4.739-4.75 8.53-9.5 12.32-15.2-17.058 0-34.116-5.7-47.384-16.15 18.006 6.65 37.908 5.7 55.914 0 3.79-4.75 3.79-12.35 5.686-18.05-6.634 2.85-13.268 5.7-20.849 5.7-9.477 0-18.954.95-28.431-2.85 18.954 0 36.96-8.55 51.175-20.9-.402-6.45-.759-11.95-.947-19-12.32 12.35-28.431 19.95-45.49 21.85 17.059-9.5 32.222-21.85 39.803-39.9-2.843-5.7-5.686-10.45-8.529-16.15-7.581 15.2-18.006 29.45-33.169 37.05 12.32-14.25 18.954-32.3 21.797-51.3-5.686-3.8-9.477-8.55-15.163-12.35 0 17.1-5.686 34.2-16.111 47.5 6.634-18.05 5.686-38 0-56.05"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -1593,11 +1593,11 @@ export default function Star37({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -1616,7 +1616,7 @@ export default function Star37({
         d="M165.01 168.59c0-16.72-8.826-36.955-26.384-41.325 0 28.12-17.557 53.675-41.283 67.735 12.337-12.35 18.411-31.635 11.388-48.355-20.214 18.43-50.964 26.41-77.347 18.43 16.703 0 36.918-8.835 41.283-26.41-28.092 0-53.621-17.575-67.667-41.325 12.338 12.35 31.603 18.43 48.307 11.4C34.99 88.6 27.018 57.82 34.99 31.41c0 16.72 8.826 36.955 26.384 41.325 0-28.12 17.557-53.675 41.283-67.735C90.32 17.35 84.246 36.635 91.269 53.355c20.215-18.43 50.964-26.41 77.347-18.43-16.703 0-36.918 8.835-41.283 26.41 28.092 0 53.621 17.575 67.667 41.325-12.338-12.35-31.603-18.43-48.307-11.4 18.317 20.14 26.289 50.92 18.317 77.33"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -1635,11 +1635,11 @@ export default function Star38({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -1658,7 +1658,7 @@ export default function Star38({
         d="M179.8 49.65c-23.75-2.85-51.3 3.8-64.6 25.65 16.15-10.45 36.1-11.4 54.15-6.65 9.5 2.85 17.1 6.65 24.7 12.35.95.95.95 2.85.95 3.8-8.55-1.9-15.2-7.6-23.75-9.5-7.6-1.9-14.25-2.85-20.9-1.9-9.5 1.9-19 2.85-26.6 9.5 12.35-2.85 25.65.95 37.05 5.7 10.45 5.7 19.95 13.3 28.5 21.85 1.9 2.85 6.65 8.55 3.8 12.35-14.25-19.95-38.95-35.15-64.6-29.45 8.55.95 16.15 6.65 23.75 11.4 15.2 12.35 25.65 29.45 27.55 48.45 0 .95-.95 2.85-1.9 3.8-6.65-23.75-22.8-48.45-49.4-52.25 10.45 7.6 18.05 18.05 22.8 29.45 4.75 14.25 6.65 30.4 1.9 45.6l-1.9 1.9c.95-24.7-3.8-52.25-26.6-66.5 10.45 16.15 11.4 36.1 6.65 54.15-2.85 9.5-6.65 17.1-12.35 24.7-.95.95-2.85.95-3.8.95 1.9-8.55 7.6-15.2 9.5-23.75 1.9-7.6 2.85-14.25 1.9-20.9-1.9-9.5-2.85-19-9.5-26.6 2.85 12.35-.95 25.65-5.7 37.05-5.7 10.45-13.3 19.95-21.85 28.5-2.85 1.9-8.55 6.65-12.35 3.8 19.95-14.25 35.15-38.95 29.45-64.6-.95 8.55-6.65 16.15-11.4 23.75C82.9 167.45 65.8 177.9 46.8 179.8c-.95 0-2.85-.95-3.8-1.9 23.75-6.65 48.45-22.8 52.25-49.4-7.6 10.45-18.05 18.05-29.45 22.8-14.25 4.75-30.4 6.65-45.6 1.9l-1.9-1.9c24.7.95 52.25-3.8 66.5-26.6-16.15 10.45-36.1 11.4-54.15 6.65-9.5-2.85-17.1-6.65-24.7-12.35-.95-.95-.95-2.85-.95-3.8 8.55 1.9 15.2 7.6 23.75 9.5 7.6 1.9 14.25 2.85 20.9 1.9 9.5-1.9 19-2.85 26.6-9.5-12.35 2.85-25.65-.95-37.05-5.7-10.45-5.7-19.95-13.3-28.5-21.85C8.8 86.7 4.05 81 6.9 77.2c14.25 19.95 38.95 35.15 64.6 29.45-8.55-.95-16.15-6.65-23.75-11.4C32.55 82.9 22.1 65.8 20.2 46.8c0-.95.95-2.85 1.9-3.8 6.65 23.75 22.8 48.45 49.4 52.25-10.45-7.6-18.05-18.05-22.8-29.45-4.75-14.25-6.65-30.4-1.9-45.6l1.9-1.9c-.95 24.7 3.8 52.25 26.6 66.5-10.45-16.15-11.4-36.1-6.65-54.15 2.85-9.5 6.65-17.1 12.35-24.7C81.95 5 83.85 5 84.8 5c-1.9 8.55-7.6 15.2-9.5 23.75-1.9 7.6-2.85 14.25-1.9 20.9 1.9 9.5 2.85 19 9.5 26.6-2.85-12.35.95-25.65 5.7-37.05 5.7-10.45 13.3-19.95 21.85-28.5 2.85-1.9 8.55-6.65 12.35-3.8-19.95 14.25-35.15 38.95-29.45 64.6.95-8.55 6.65-16.15 11.4-23.75C117.1 32.55 134.2 22.1 153.2 20.2c.95 0 2.85.95 3.8 1.9-23.75 6.65-48.45 22.8-52.25 49.4 7.6-10.45 18.05-18.05 29.45-22.8 14.25-4.75 30.4-6.65 45.6-1.9.95.95 2.85 1.9 1.9 2.85z"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -1677,11 +1677,11 @@ export default function Star39({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -1700,7 +1700,7 @@ export default function Star39({
         d="M190.791 9.21c14.055 48.529-7.693 106.08-56.222 126.593-10.257 34.474 26.876 54.988 56.222 54.988-48.53 14.055-106.081-7.693-126.594-56.222-34.474-10.257-54.988 26.781-54.988 56.222-14.055-48.53 7.693-106.081 56.222-126.594C75.688 29.723 38.65 9.209 9.21 9.209c48.53-14.055 106.08 7.693 126.593 56.222 34.474 10.257 54.988-26.781 54.988-56.222"
       />
     </svg>
-  )
+  );
 }
 `,
   },
@@ -1719,11 +1719,11 @@ export default function Star40({
   height,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
-  color?: string
-  size?: number
-  stroke?: string
-  pathClassName?: string
-  strokeWidth?: number
+  color?: string;
+  size?: number;
+  stroke?: string;
+  pathClassName?: string;
+  strokeWidth?: number;
 }) {
   return (
     <svg
@@ -1744,7 +1744,7 @@ export default function Star40({
         fillRule="evenodd"
       />
     </svg>
-  )
+  );
 }
 `,
   },

@@ -1,8 +1,6 @@
 "use client";
 
-/* oxlint-disable next/no-img-element -- This shared template also runs outside Next.js. */
-
-import { AtSign, BookOpen, Boxes, GitFork, LayoutGrid, Mail } from "lucide-react";
+import { AtSign, BookOpen, GitFork, LayoutGrid, Mail, UserRound } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -11,49 +9,49 @@ const TEMPLATE_THEME =
 
 const LINKS = [
   {
-    title: "Neobrutalism",
-    detail: "neobrutal-ui.andongmin.com",
-    href: "https://neobrutal-ui.andongmin.com",
+    title: "Portfolio",
+    detail: "example.com",
+    href: "https://example.com",
     icon: LayoutGrid,
     highlighted: true,
     external: true,
   },
   {
     title: "GitHub",
-    detail: "@andongmin94",
-    href: "https://github.com/andongmin94",
+    detail: "github.com",
+    href: "https://github.com",
     icon: GitFork,
     highlighted: false,
     external: true,
   },
   {
     title: "X",
-    detail: "@andongmin94",
-    href: "https://x.com/andongmin94",
+    detail: "x.com",
+    href: "https://x.com",
     icon: AtSign,
     highlighted: false,
     external: true,
   },
   {
-    title: "Docs",
-    detail: "neobrutal-ui.andongmin.com/docs",
-    href: "https://neobrutal-ui.andongmin.com/docs",
+    title: "Newsletter",
+    detail: "buttondown.email",
+    href: "https://buttondown.email",
     icon: BookOpen,
     highlighted: false,
     external: true,
   },
   {
-    title: "Components",
-    detail: "neobrutal-ui.andongmin.com/docs/button",
-    href: "https://neobrutal-ui.andongmin.com/docs/button",
-    icon: Boxes,
+    title: "LinkedIn",
+    detail: "linkedin.com",
+    href: "https://www.linkedin.com",
+    icon: UserRound,
     highlighted: false,
     external: true,
   },
   {
     title: "Email",
-    detail: "andongmin94@gmail.com",
-    href: "mailto:andongmin94@gmail.com",
+    detail: "hello@example.com",
+    href: "mailto:hello@example.com",
     icon: Mail,
     highlighted: false,
     external: false,
@@ -65,22 +63,18 @@ export default function LinkHubTemplate() {
     <div className={`min-h-dvh flex flex-col bg-background text-foreground ${TEMPLATE_THEME}`}>
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
         <section aria-labelledby="profile-name" className="text-center">
-          <div className="mx-auto size-24 overflow-hidden rounded-full border-2 border-border bg-secondary-background">
-            <img
-              src="https://github.com/andongmin94.png"
-              alt="Andong Min"
-              width={256}
-              height={256}
-              className="size-full object-cover"
-            />
+          <div className="mx-auto grid size-24 place-items-center rounded-full border-2 border-border bg-main text-main-foreground">
+            <span className="font-heading text-2xl" aria-hidden="true">
+              AD
+            </span>
           </div>
 
           <h1 id="profile-name" className="mt-4 font-heading text-2xl sm:text-3xl">
-            Andong Min
+            Alex Doe
           </h1>
-          <p className="mt-1 text-sm text-foreground/65">@andongmin94</p>
+          <p className="mt-1 text-sm text-foreground/65">@alexbuilds</p>
           <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-foreground/80 sm:text-base">
-            I build open-source interfaces and tools for the web.
+            Designer and developer sharing small tools, notes, and experiments.
           </p>
         </section>
 
@@ -122,7 +116,7 @@ export default function LinkHubTemplate() {
       </main>
 
       <footer className="px-4 py-4 text-center text-xs text-foreground/60">
-        <p>(c) 2026 Andong Min</p>
+        <p>(c) 2026 Alex Doe</p>
       </footer>
     </div>
   );
