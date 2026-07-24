@@ -5,10 +5,13 @@
   "author": "andongmin94",
   "dependencies": [
     "@base-ui/react",
-    "react-hook-form"
+    "@hookform/resolvers",
+    "react-hook-form",
+    "zod"
   ],
   "registryDependencies": [
     "https://neobrutal-ui.andongmin.com/r/nbutton.json",
+    "https://neobrutal-ui.andongmin.com/r/ninput.json",
     "https://neobrutal-ui.andongmin.com/r/nlabel.json"
   ],
   "files": [

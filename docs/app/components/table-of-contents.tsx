@@ -3,11 +3,12 @@ import { List, MoveUp } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router";
 
-function scrollToHash(hash: string) {
+function scrollToHash(hash: string, focusTarget = false) {
   const target = document.getElementById(decodeURIComponent(hash.replace(/^#/, "")));
   if (!target) return;
 
   window.history.pushState(null, "", hash);
+  if (focusTarget) target.focus({ preventScroll: true });
   target.scrollIntoView({ block: "start" });
 }
 
@@ -81,7 +82,7 @@ export function TableOfContents({
         href="#main-content"
         onClick={(event) => {
           event.preventDefault();
-          scrollToHash("#main-content");
+          scrollToHash("#main-content", true);
         }}
       >
         <MoveUp aria-hidden="true" size={13} />

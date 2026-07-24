@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@/components/templates/*": ["./src/blocks/templates/*"],
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/blocks/templates/pages/**/*.tsx"],
+  "exclude": []
+}

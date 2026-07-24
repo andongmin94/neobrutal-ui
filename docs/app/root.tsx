@@ -10,6 +10,7 @@ import { ReactRouterProvider } from "fumadocs-core/framework/react-router";
 
 import type { Route } from "./+types/root";
 import { BridgeToaster } from "~/components/toaster";
+import { SITE_NAME, SOCIAL_IMAGE_URL } from "~/lib/site";
 import NotFound from "~/routes/not-found";
 
 import "./app.css";
@@ -27,10 +28,7 @@ const themeScript = `
 })();
 `;
 
-export const links: Route.LinksFunction = () => [
-  { rel: "icon", href: "/favicon.ico" },
-  { rel: "preload", href: "/preview.png", as: "image" },
-];
+export const links: Route.LinksFunction = () => [{ rel: "icon", href: "/favicon.ico" }];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -39,6 +37,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#ffcc00" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content={SITE_NAME} />
+        <meta property="og:image" content={SOCIAL_IMAGE_URL} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content={SOCIAL_IMAGE_URL} />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <Meta />
         <Links />

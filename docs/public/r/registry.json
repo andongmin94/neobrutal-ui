@@ -169,7 +169,7 @@
           "spacing-reverseBoxShadowY": "var(--reverse-box-shadow-y)",
           "spacing-pressX": "calc(var(--box-shadow-x) - clamp(-1px, var(--box-shadow-x), 1px))",
           "spacing-pressY": "calc(var(--box-shadow-y) - clamp(-1px, var(--box-shadow-y), 1px))",
-          "radius-base": "5px",
+          "radius-base": "var(--radius)",
           "radius-sm": "calc(var(--radius) * 0.6)",
           "radius-md": "calc(var(--radius) * 0.8)",
           "radius-lg": "var(--radius)",
@@ -516,10 +516,13 @@
       "type": "registry:ui",
       "dependencies": [
         "@base-ui/react",
-        "react-hook-form"
+        "@hookform/resolvers",
+        "react-hook-form",
+        "zod"
       ],
       "registryDependencies": [
         "https://neobrutal-ui.andongmin.com/r/nbutton.json",
+        "https://neobrutal-ui.andongmin.com/r/ninput.json",
         "https://neobrutal-ui.andongmin.com/r/nlabel.json"
       ],
       "files": [
@@ -840,12 +843,15 @@
       "title": "Sidebar",
       "type": "registry:ui",
       "registryDependencies": [
+        "https://neobrutal-ui.andongmin.com/r/avatar.json",
+        "https://neobrutal-ui.andongmin.com/r/collapsible.json",
+        "https://neobrutal-ui.andongmin.com/r/dropdown-menu.json",
         "https://neobrutal-ui.andongmin.com/r/nbutton.json",
-        "https://neobrutal-ui.andongmin.com/r/nsheet.json",
-        "https://neobrutal-ui.andongmin.com/r/ntooltip.json",
         "https://neobrutal-ui.andongmin.com/r/ninput.json",
-        "https://neobrutal-ui.andongmin.com/r/separator.json",
-        "https://neobrutal-ui.andongmin.com/r/nskeleton.json"
+        "https://neobrutal-ui.andongmin.com/r/nsheet.json",
+        "https://neobrutal-ui.andongmin.com/r/nskeleton.json",
+        "https://neobrutal-ui.andongmin.com/r/ntooltip.json",
+        "https://neobrutal-ui.andongmin.com/r/separator.json"
       ],
       "files": [
         {

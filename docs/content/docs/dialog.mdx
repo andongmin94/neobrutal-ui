@@ -42,11 +42,11 @@ import { Label } from "@/components/ui/label";
 
 ```tsx
 <Dialog>
-  <form>
-    <DialogTrigger asChild>
-      <Button>Edit Profile</Button>
-    </DialogTrigger>
-    <DialogContent className="sm:max-w-[425px]">
+  <DialogTrigger asChild>
+    <Button>Edit Profile</Button>
+  </DialogTrigger>
+  <DialogContent className="sm:max-w-[425px]">
+    <form className="contents">
       <DialogHeader>
         <DialogTitle>Edit profile</DialogTitle>
         <DialogDescription>
@@ -65,12 +65,14 @@ import { Label } from "@/components/ui/label";
       </div>
       <DialogFooter>
         <DialogClose asChild>
-          <Button variant="neutral">Cancel</Button>
+          <Button type="button" variant="neutral">
+            Cancel
+          </Button>
         </DialogClose>
         <Button type="submit">Save changes</Button>
       </DialogFooter>
-    </DialogContent>
-  </form>
+    </form>
+  </DialogContent>
 </Dialog>
 ```
 

@@ -144,6 +144,7 @@ function lintAndFormat() {
     "src",
     "scripts",
     "tsconfig.json",
+    "tsconfig.consumer.json",
     ".oxlintrc.json",
     ".oxfmtrc.json",
   ]);
@@ -180,6 +181,10 @@ switch (command) {
     break;
   case "list:local":
     run("shadcn", ["list", "http://127.0.0.1:5177/r/registry.json", ...passthroughArgs]);
+    break;
+  case "typecheck":
+    run("tsc", ["--project", "tsconfig.json", ...passthroughArgs]);
+    run("tsc", ["--project", "tsconfig.consumer.json", ...passthroughArgs]);
     break;
   default:
     console.error(`Unknown task: ${command ?? "(missing)"}`);

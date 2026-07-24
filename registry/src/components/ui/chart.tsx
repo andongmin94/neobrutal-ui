@@ -8,6 +8,28 @@ import { cn } from "@/lib/utils";
 
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: "", dark: ".dark" } as const;
+const CHART_KEY_PATTERN = /^[a-zA-Z0-9_-]+$/;
+const CHART_COLOR_PATTERN = /^[\w\s#(),.%+\-/]+$/;
+const SAFE_COLOR_FUNCTIONS = new Set([
+  "calc",
+  "clamp",
+  "color",
+  "color-mix",
+  "contrast-color",
+  "hsl",
+  "hsla",
+  "hwb",
+  "lab",
+  "lch",
+  "light-dark",
+  "max",
+  "min",
+  "oklab",
+  "oklch",
+  "rgb",
+  "rgba",
+  "var",
+]);
 
 const INITIAL_DIMENSION = { width: 320, height: 200 } as const;
 type TooltipNameType = number | string;
@@ -55,7 +77,7 @@ function ChartContainer({
   };
 }) {
   const uniqueId = React.useId();
-  const chartId = `chart-${id ?? uniqueId.replace(/:/g, "")}`;
+  const chartId = normalizeChartId(`chart-${id ?? uniqueId}`);
 
   return (
     <ChartContext.Provider value={{ config }}>
@@ -78,33 +100,54 @@ function ChartContainer({
 }
 
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
-  const colorConfig = Object.entries(config).filter(([, config]) => config.theme ?? config.color);
+  const css = Object.entries(THEMES)
+    .flatMap(([theme, prefix]) => {
+      const variables = Object.entries(config).flatMap(([key, itemConfig]) => {
+        if (!CHART_KEY_PATTERN.test(key)) {
+          return [];
+        }
 
-  if (!colorConfig.length) {
+        const color = itemConfig.theme?.[theme as keyof typeof THEMES] ?? itemConfig.color;
+
+        if (!isSafeChartColor(color)) {
+          return [];
+        }
+
+        return [`  --color-${key}: ${color.trim()};`];
+      });
+
+      if (!variables.length) {
+        return [];
+      }
+
+      return [`${prefix} [data-chart="${normalizeChartId(id)}"] {\n${variables.join("\n")}\n}`];
+    })
+    .join("\n");
+
+  if (!css) {
     return null;
   }
 
-  return (
-    <style
-      dangerouslySetInnerHTML={{
-        __html: Object.entries(THEMES)
-          .map(
-            ([theme, prefix]) => `
-${prefix} [data-chart=${id}] {
-${colorConfig
-  .map(([key, itemConfig]) => {
-    const color = itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ?? itemConfig.color;
-    return color ? `  --color-${key}: ${color};` : null;
-  })
-  .join("\n")}
-}
-`,
-          )
-          .join("\n"),
-      }}
-    />
-  );
+  return <style>{css}</style>;
 };
+
+function normalizeChartId(id: string) {
+  return id.replace(/[^a-zA-Z0-9_-]/g, "-");
+}
+
+function isSafeChartColor(color: string | undefined): color is string {
+  if (!color || color.length > 256 || !CHART_COLOR_PATTERN.test(color)) {
+    return false;
+  }
+
+  for (const [, name] of color.matchAll(/([a-zA-Z-]+)\s*\(/g)) {
+    if (!SAFE_COLOR_FUNCTIONS.has(name.toLowerCase())) {
+      return false;
+    }
+  }
+
+  return true;
+}
 
 const ChartTooltip = RechartsPrimitive.Tooltip;
 

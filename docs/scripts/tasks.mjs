@@ -59,7 +59,6 @@ function formatPackageJson() {
 function generateDocsData() {
   run("tsx", ["src/scripts/generate-stars-ts.ts"]);
   run("tsx", ["src/scripts/generate-charts-ts.ts"]);
-  run("oxfmt", ["--write", "src/data/stars.ts", "src/data/charts.ts"]);
 }
 
 function stringifyPackage(value) {

@@ -15,6 +15,7 @@ export default {
 
     paths.add("/");
     paths.add("/api/search");
+    paths.add("/sitemap.xml");
 
     for await (const entry of glob("**/*.mdx", { cwd: "content" })) {
       paths.add(contentUrl(entry));

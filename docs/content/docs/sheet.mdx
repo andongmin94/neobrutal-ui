@@ -52,20 +52,29 @@ import {
         Make changes to your profile here. Click save when you&apos;re done.
       </SheetDescription>
     </SheetHeader>
-    <div className="grid flex-1 auto-rows-min gap-6 px-4">
+    <form id="sheet-profile-form" className="grid flex-1 auto-rows-min gap-6 px-4">
       <div className="grid gap-3">
         <Label htmlFor="sheet-demo-name">Name</Label>
-        <Input id="sheet-demo-name" defaultValue="Pedro Duarte" />
+        <Input id="sheet-demo-name" name="name" defaultValue="Pedro Duarte" required />
       </div>
       <div className="grid gap-3">
         <Label htmlFor="sheet-demo-username">Username</Label>
-        <Input id="sheet-demo-username" defaultValue="@andongmin94" />
+        <Input
+          id="sheet-demo-username"
+          name="username"
+          defaultValue="@andongmin94"
+          required
+        />
       </div>
-    </div>
+    </form>
     <SheetFooter>
-      <Button type="submit">Save changes</Button>
+      <Button form="sheet-profile-form" type="submit">
+        Save changes
+      </Button>
       <SheetClose asChild>
-        <Button variant="neutral">Close</Button>
+        <Button type="button" variant="neutral">
+          Close
+        </Button>
       </SheetClose>
     </SheetFooter>
   </SheetContent>

@@ -98,7 +98,7 @@ export default function Styling() {
 
     if (parsedBorderRadius !== null && Number.isFinite(parsedBorderRadius)) {
       setBorderRadius(parsedBorderRadius);
-      root.style.setProperty("--border-radius", `${parsedBorderRadius}px`);
+      root.style.setProperty("--radius", `${parsedBorderRadius}px`);
     } else if (storedBorderRadius !== null) {
       localStorage.removeItem("borderRadius");
     }
@@ -183,7 +183,7 @@ export default function Styling() {
 
   const updateBorderRadius = (value: number) => {
     const r = window.document.querySelector(":root") as HTMLElement;
-    r.style.setProperty("--border-radius", `${value}px`);
+    r.style.setProperty("--radius", `${value}px`);
 
     localStorage.setItem("borderRadius", value.toString());
 
@@ -231,7 +231,7 @@ export default function Styling() {
 
     updateColor(defaultColorPalette.name);
 
-    r.style.setProperty("--border-radius", "5px");
+    r.style.setProperty("--radius", "5px");
     r.style.setProperty("--box-shadow-x", "4px");
     r.style.setProperty("--box-shadow-y", "4px");
     r.style.setProperty("--heading-font-weight", "700");
@@ -267,6 +267,7 @@ export default function Styling() {
   --reverse-box-shadow-x: calc(0px - var(--box-shadow-x));
   --reverse-box-shadow-y: calc(0px - var(--box-shadow-y));
   --shadow: var(--box-shadow-x) var(--box-shadow-y) 0px 0px var(--border);
+  --radius: ${borderRadius}px;
   --chart-1: ${chart1};
   --chart-2: ${chart2};
   --chart-3: ${chart3};
@@ -317,7 +318,14 @@ export default function Styling() {
   --spacing-pressY: calc(
     var(--box-shadow-y) - clamp(-1px, var(--box-shadow-y), 1px)
   );
-  --radius-base: ${borderRadius}px;
+  --radius-base: var(--radius);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
   --shadow-shadow: var(--shadow);
   --shadow-press: clamp(-1px, var(--box-shadow-x), 1px)
     clamp(-1px, var(--box-shadow-y), 1px) 0px 0px var(--border);
