@@ -3,6 +3,7 @@
   "name": "s26",
   "title": "Star 26",
   "author": "andongmin94",
+  "description": "A neobrutalist star graphic variant 26 for decorative accents.",
   "files": [
     {
       "path": "src/components/stars/s26.tsx",
@@ -10,6 +11,11 @@
       "type": "registry:component",
       "target": "components/stars/s26.tsx"
     }
+  ],
+  "categories": [
+    "graphic",
+    "icon",
+    "decoration"
   ],
   "type": "registry:component"
 }

@@ -3,6 +3,7 @@
   "name": "s35",
   "title": "Star 35",
   "author": "andongmin94",
+  "description": "A neobrutalist star graphic variant 35 for decorative accents.",
   "files": [
     {
       "path": "src/components/stars/s35.tsx",
@@ -10,6 +11,11 @@
       "type": "registry:component",
       "target": "components/stars/s35.tsx"
     }
+  ],
+  "categories": [
+    "graphic",
+    "icon",
+    "decoration"
   ],
   "type": "registry:component"
 }

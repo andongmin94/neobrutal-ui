@@ -13,19 +13,16 @@ description: A scrolling text component that animates horizontally.
 
 ## Installation
 
+The CLI installation includes the animation tokens and keyframes automatically.
+
 <Installation component="marquee">
 
 <include cwd lang="tsx">
   ./src/components/ui/marquee.tsx
 </include>
 
-</Installation>
-
-## Before using
-
-You'll have to add this to `@theme inline` section inside your styling:
-
-<br />
+When installing manually, also add these animation tokens and keyframes inside your
+`@theme inline` block:
 
 ```css
 --animate-marquee: marquee 5s linear infinite;
@@ -49,6 +46,8 @@ You'll have to add this to `@theme inline` section inside your styling:
   }
 }
 ```
+
+</Installation>
 
 Make sure there is enough content in items so it loops perfectly.
 

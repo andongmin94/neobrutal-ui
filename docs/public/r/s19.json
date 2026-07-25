@@ -3,6 +3,7 @@
   "name": "s19",
   "title": "Star 19",
   "author": "andongmin94",
+  "description": "A neobrutalist star graphic variant 19 for decorative accents.",
   "files": [
     {
       "path": "src/components/stars/s19.tsx",
@@ -10,6 +11,11 @@
       "type": "registry:component",
       "target": "components/stars/s19.tsx"
     }
+  ],
+  "categories": [
+    "graphic",
+    "icon",
+    "decoration"
   ],
   "type": "registry:component"
 }

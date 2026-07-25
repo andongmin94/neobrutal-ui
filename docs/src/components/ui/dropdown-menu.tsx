@@ -421,7 +421,7 @@ function DropdownMenuContent({
         if (typeof finalFocus === "object" && finalFocus !== null) {
           return finalFocus.current;
         }
-        return finalFocus ?? true;
+        return typeof finalFocus === "boolean" ? finalFocus : true;
       }
     : finalFocus;
 

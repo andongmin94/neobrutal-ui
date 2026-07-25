@@ -3,6 +3,7 @@
   "name": "s2",
   "title": "Star 2",
   "author": "andongmin94",
+  "description": "A neobrutalist star graphic variant 2 for decorative accents.",
   "files": [
     {
       "path": "src/components/stars/s2.tsx",
@@ -10,6 +11,11 @@
       "type": "registry:component",
       "target": "components/stars/s2.tsx"
     }
+  ],
+  "categories": [
+    "graphic",
+    "icon",
+    "decoration"
   ],
   "type": "registry:component"
 }

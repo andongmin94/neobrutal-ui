@@ -3,6 +3,7 @@
   "name": "s4",
   "title": "Star 4",
   "author": "andongmin94",
+  "description": "A neobrutalist star graphic variant 4 for decorative accents.",
   "files": [
     {
       "path": "src/components/stars/s4.tsx",
@@ -10,6 +11,11 @@
       "type": "registry:component",
       "target": "components/stars/s4.tsx"
     }
+  ],
+  "categories": [
+    "graphic",
+    "icon",
+    "decoration"
   ],
   "type": "registry:component"
 }

@@ -169,6 +169,15 @@ switch (command) {
   case "registry:build":
     buildRegistry();
     break;
+  case "registry:validate":
+    run("shadcn", ["registry", "validate", "./registry.json", ...passthroughArgs]);
+    break;
+  case "registry:check":
+    run("node", ["scripts/check-registry.mjs", ...passthroughArgs]);
+    break;
+  case "consumer:verify":
+    run("node", ["scripts/verify-consumer.mjs", ...passthroughArgs]);
+    break;
   case "registry:sync-docs":
     syncDocsPublic();
     break;

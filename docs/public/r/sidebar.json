@@ -3,18 +3,19 @@
   "name": "sidebar",
   "title": "Sidebar",
   "author": "andongmin94",
+  "description": "A responsive, collapsible application sidebar with navigation primitives.",
   "dependencies": [
-    "@base-ui/react"
+    "@base-ui/react@^1.6.0"
   ],
   "registryDependencies": [
     "https://neobrutal-ui.andongmin.com/r/avatar.json",
     "https://neobrutal-ui.andongmin.com/r/collapsible.json",
     "https://neobrutal-ui.andongmin.com/r/dropdown-menu.json",
-    "https://neobrutal-ui.andongmin.com/r/nbutton.json",
-    "https://neobrutal-ui.andongmin.com/r/ninput.json",
-    "https://neobrutal-ui.andongmin.com/r/nsheet.json",
-    "https://neobrutal-ui.andongmin.com/r/nskeleton.json",
-    "https://neobrutal-ui.andongmin.com/r/ntooltip.json",
+    "https://neobrutal-ui.andongmin.com/r/button.json",
+    "https://neobrutal-ui.andongmin.com/r/input.json",
+    "https://neobrutal-ui.andongmin.com/r/sheet.json",
+    "https://neobrutal-ui.andongmin.com/r/skeleton.json",
+    "https://neobrutal-ui.andongmin.com/r/tooltip.json",
     "https://neobrutal-ui.andongmin.com/r/separator.json"
   ],
   "files": [
@@ -28,6 +29,10 @@
       "content": "import * as React from \"react\";\n\nconst MOBILE_BREAKPOINT = 768;\n\nexport function useIsMobile() {\n  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined);\n\n  React.useEffect(() => {\n    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);\n    const onChange = () => {\n      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);\n    };\n    mql.addEventListener(\"change\", onChange);\n    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);\n    return () => mql.removeEventListener(\"change\", onChange);\n  }, []);\n\n  return !!isMobile;\n}\n",
       "type": "registry:hook"
     }
+  ],
+  "categories": [
+    "layout",
+    "navigation"
   ],
   "type": "registry:ui"
 }

@@ -3,6 +3,7 @@
   "name": "s8",
   "title": "Star 8",
   "author": "andongmin94",
+  "description": "A neobrutalist star graphic variant 8 for decorative accents.",
   "files": [
     {
       "path": "src/components/stars/s8.tsx",
@@ -10,6 +11,11 @@
       "type": "registry:component",
       "target": "components/stars/s8.tsx"
     }
+  ],
+  "categories": [
+    "graphic",
+    "icon",
+    "decoration"
   ],
   "type": "registry:component"
 }
