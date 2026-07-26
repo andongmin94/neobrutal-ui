@@ -6,6 +6,7 @@ import Link from "next/link";
 import * as React from "react";
 
 import type { TemplateEntry } from "@/data/templates";
+import { raisedPress } from "@/lib/raised-press";
 
 export default function TemplateCatalog({ items }: { items: TemplateEntry[] }) {
   const [copied, setCopied] = React.useState<string | null>(null);
@@ -81,7 +82,7 @@ export default function TemplateCatalog({ items }: { items: TemplateEntry[] }) {
 
               <div className="mt-5 grid grid-cols-2 gap-3">
                 <Link
-                  className="inline-flex h-10 items-center justify-center gap-2 rounded-[3px] border-2 border-border bg-[var(--template-color)] px-4 font-heading text-black shadow-[4px_4px_0_0_var(--border)] transition-all duration-150 hover:translate-x-1 hover:translate-y-1 hover:shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 motion-reduce:transition-none"
+                  className={`inline-flex h-10 items-center justify-center gap-2 rounded-[3px] border-2 border-border bg-[var(--template-color)] px-4 font-heading text-black shadow-[4px_4px_0_0_var(--border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${raisedPress}`}
                   href={`/templates/${item.slug}`}
                   target="_blank"
                 >
@@ -90,7 +91,7 @@ export default function TemplateCatalog({ items }: { items: TemplateEntry[] }) {
                 </Link>
                 <button
                   aria-label={`Copy ${item.title} install command`}
-                  className="inline-flex h-10 items-center justify-center gap-2 rounded-[3px] border-2 border-border bg-[var(--template-color)] px-4 font-heading text-black shadow-[4px_4px_0_0_var(--border)] transition-all duration-150 hover:translate-x-1 hover:translate-y-1 hover:shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 motion-reduce:transition-none"
+                  className={`inline-flex h-10 items-center justify-center gap-2 rounded-[3px] border-2 border-border bg-[var(--template-color)] px-4 font-heading text-black shadow-[4px_4px_0_0_var(--border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${raisedPress}`}
                   onClick={() => copyInstallCommand(item)}
                   title="Copy install command"
                   type="button"

@@ -54,10 +54,34 @@ function generateRegistry() {
   run("tsx", ["src/scripts/generate-registry-json.ts", ...passthroughArgs]);
 }
 
+function normalizeRegistryOutput(directory) {
+  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    const filePath = path.join(directory, entry.name);
+
+    if (entry.isDirectory()) {
+      normalizeRegistryOutput(filePath);
+      continue;
+    }
+
+    if (!entry.isFile() || path.extname(entry.name) !== ".json") {
+      continue;
+    }
+
+    const normalized = fs
+      .readFileSync(filePath, "utf8")
+      .replaceAll("\\r\\n", "\\n")
+      .replaceAll("\r\n", "\n");
+    fs.writeFileSync(filePath, normalized.trimEnd(), "utf8");
+  }
+}
+
 function buildRegistry() {
-  fs.rmSync(path.join(root, "public", "r"), { force: true, recursive: true });
+  const outputDirectory = path.join(root, "public", "r");
+
+  fs.rmSync(outputDirectory, { force: true, recursive: true });
   run("shadcn", ["build", "--output", "public/r"]);
   run("tsx", ["src/scripts/add-registry-styles.ts"]);
+  normalizeRegistryOutput(outputDirectory);
 }
 
 function syncDocsPublic() {

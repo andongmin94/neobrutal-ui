@@ -2,6 +2,8 @@ import clsx from "clsx";
 
 import { StaticImageData } from "next/image";
 
+import { raisedPress } from "@/lib/raised-press";
+
 export default function ShowcaseContainer({
   items,
 }: {
@@ -29,7 +31,8 @@ export default function ShowcaseContainer({
             <div className="grid grid-cols-2 md:text-base text-sm gap-5 mt-8">
               <a
                 className={clsx(
-                  "rounded-base border-2 border-border bg-main py-1.5 text-center font-base text-main-foreground shadow-shadow transition-all hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none dark:hover:shadow-none",
+                  "rounded-base border-2 border-border bg-main py-1.5 text-center font-base text-main-foreground shadow-shadow",
+                  raisedPress,
                   !repoUrl && "col-span-2",
                 )}
                 target="_blank"
@@ -39,7 +42,10 @@ export default function ShowcaseContainer({
               </a>
               {repoUrl && (
                 <a
-                  className="rounded-base border-2 border-border bg-main py-1.5 text-center font-base text-main-foreground shadow-shadow transition-all hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none dark:hover:shadow-none"
+                  className={clsx(
+                    "rounded-base border-2 border-border bg-main py-1.5 text-center font-base text-main-foreground shadow-shadow",
+                    raisedPress,
+                  )}
                   target="_blank"
                   href={repoUrl}
                 >

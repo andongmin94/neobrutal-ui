@@ -7,6 +7,7 @@ import CmsTemplate from "@/components/templates/cms-template";
 import LinkHubTemplate from "@/components/templates/link-hub-template";
 import PortfolioTemplate from "@/components/templates/portfolio-template";
 import TEMPLATES from "@/data/templates";
+import { raisedPress } from "@/lib/raised-press";
 
 const templateComponents = {
   blog: BlogTemplate,
@@ -51,7 +52,7 @@ export default async function TemplatePage({ params, searchParams }: TemplatePag
     >
       {capture !== "1" && (
         <Link
-          className="fixed bottom-4 left-4 z-50 border-2 border-border bg-secondary-background px-3 py-2 text-sm font-heading text-foreground shadow-shadow transition-all duration-150 hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none"
+          className={`fixed bottom-4 left-4 z-50 border-2 border-border bg-secondary-background px-3 py-2 text-sm font-heading text-foreground shadow-shadow ${raisedPress}`}
           href="/templates"
         >
           Back to templates

@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import Search from "@/components/app/search";
 import { ThemeSwitcher } from "@/components/app/theme-switcher";
+import { raisedPress } from "@/lib/raised-press";
 
 async function getRepoData() {
   const fallback = { stargazers_count: 0 };
@@ -83,7 +84,7 @@ async function Navbar() {
             <a
               target="_blank"
               href="https://github.com/andongmin94/neobrutal-ui"
-              className="flex h-9 items-center justify-center gap-2 rounded-base border-2 border-border bg-secondary-background px-1.5 text-foreground shadow-shadow transition-all duration-150 hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none"
+              className={`flex h-9 items-center justify-center gap-2 rounded-base border-2 border-border bg-secondary-background px-1.5 text-foreground shadow-shadow ${raisedPress}`}
             >
               <p className="font-semibold sm:inline hidden">{starsCount}</p>
 
@@ -99,7 +100,7 @@ async function Navbar() {
               target="_blank"
               rel="noreferrer"
               href="https://x.com/andongmin94"
-              className="flex size-9 items-center justify-center rounded-base border-2 border-border bg-secondary-background shadow-shadow transition-all duration-150 hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none"
+              className={`flex size-9 items-center justify-center rounded-base border-2 border-border bg-secondary-background shadow-shadow ${raisedPress}`}
             >
               <svg className="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                 <path

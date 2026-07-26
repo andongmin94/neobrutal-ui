@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import BlogPostTemplate from "@/components/templates/blog-post-template";
 import { BLOG_POSTS, getBlogPost } from "@/lib/blog-posts";
+import { raisedPress } from "@/lib/raised-press";
 
 type BlogPostPreviewPageProps = {
   params: Promise<{ postSlug: string }>;
@@ -34,7 +35,7 @@ export default async function BlogPostPreviewPage({ params }: BlogPostPreviewPag
   return (
     <main data-template-preview className="relative min-h-dvh">
       <Link
-        className="fixed bottom-4 left-4 z-50 border-2 border-border bg-secondary-background px-3 py-2 text-sm font-heading text-foreground shadow-shadow transition-all duration-150 hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none"
+        className={`fixed bottom-4 left-4 z-50 border-2 border-border bg-secondary-background px-3 py-2 text-sm font-heading text-foreground shadow-shadow ${raisedPress}`}
         href="/templates"
       >
         Back to templates
