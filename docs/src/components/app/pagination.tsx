@@ -29,21 +29,21 @@ export default function Pagination({ prev, next }: Props) {
   return (
     <div className={`${justifyContent} flex w-full items-center`}>
       {prev?.name && (
-        <Link href={prev.path}>
-          <Button className="sm:px-5 px-3.5 py-2 h-[unset] sm:text-sm text-xs">
+        <Button asChild className="h-[unset] px-3.5 py-2 text-xs sm:px-5 sm:text-sm">
+          <Link href={prev.path}>
             <ArrowLeft />
             {prev.name}
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       )}
 
       {next?.name && (
-        <Link href={next.path}>
-          <Button className="sm:px-5 px-3.5 py-2 h-[unset] sm:text-sm text-xs">
+        <Button asChild className="h-[unset] px-3.5 py-2 text-xs sm:px-5 sm:text-sm">
+          <Link href={next.path}>
             {next.name}
             <ArrowRight />
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       )}
     </div>
   );

@@ -973,7 +973,7 @@ export function DirectoryPrototype() {
                   <p className="mt-1 text-sm leading-5">{item.description}</p>
                   <div className="mt-auto flex items-end justify-between pt-5">
                     <span className="font-mono text-[10px] uppercase">{item.category}</span>
-                    <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                    <ArrowRight className="size-4" />
                   </div>
                 </Link>
               ))}
