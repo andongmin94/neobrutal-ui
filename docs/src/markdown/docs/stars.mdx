@@ -1,13 +1,16 @@
 ---
-title: Stars Installation
-description: Get started with adding neobrutalism stars to your project.
+title: Stars
+description: Install and customize the decorative star components in the registry.
 ---
 
-You can install it in the same way you would install main components.
-You can copy the shadcn cli command or copy the component directly.
+The star collection contains standalone SVG components. Browse every shape on the [Stars page](/stars),
+then install only the item you need.
 
-If you choose to install it via shadcn cli command, you'll have
-to choose desired package manager.
+```bash
+npx shadcn@latest add @neobrutal-ui/s1
+```
+
+Each star is copied into `components/stars` and accepts standard SVG attributes.
 
 ## Component Props
 
@@ -48,9 +51,10 @@ to choose desired package manager.
   </TableBody>
 </Table>
 
-If color prop isn't present fallback value will be `currentColor`.
+If `color` is omitted, the component uses `currentColor`.
 
-Rest of the props are extended from `<React.SVGProps>` (basically all attributes an svg can have, such as className, width, height, aria attributes etc.).
+The remaining props extend `React.SVGProps`, including `className`, dimensions, and ARIA
+attributes.
 
 ## Examples
 

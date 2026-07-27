@@ -1,0 +1,68 @@
+---
+title: Design tokens
+description: The color, type, border, radius, and shadow variables shared by every component.
+---
+
+The base registry item defines the visual contract used by every component. Tokens are plain
+CSS variables, so they can be changed without replacing component source.
+
+## Core colors
+
+<Table>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Token</TableHead>
+      <TableHead>Purpose</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell>--background</TableCell>
+      <TableCell>Page and canvas background</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>--secondary-background</TableCell>
+      <TableCell>Inputs, panels, and contrasting surfaces</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>--foreground</TableCell>
+      <TableCell>Default text and icon color</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>--main</TableCell>
+      <TableCell>Primary accent and selected state</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>--main-foreground</TableCell>
+      <TableCell>Content displayed on the main accent</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>--border</TableCell>
+      <TableCell>Outlines and hard-shadow color</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+
+## Shape and depth
+
+- `--radius-base` controls the shared component corner radius.
+- `--box-shadow-x` and `--box-shadow-y` control hard-shadow direction and depth.
+- `--shadow` combines those values into the standard raised surface shadow.
+- Pressed controls translate by the shadow distance and reduce the shadow to its final edge.
+- `--font-weight-base` and `--font-weight-heading` keep body and heading weight consistent.
+
+## Extended tokens
+
+The base item also defines chart colors, sidebar colors, destructive states, focus rings, and
+light and dark theme values. Components consume semantic names instead of hard-coded palette
+values.
+
+## Customize
+
+Use the <Link href="/styling">Styling tool</Link> to change the palette, radius, and shadow
+direction and copy the generated CSS into your project.
+
+## Design handoff
+
+The registry CSS is the current source of truth. A design kit will be linked only when it
+mirrors the shipped tokens and is maintained alongside component changes.

@@ -72,8 +72,6 @@ async function Navbar() {
             <Link href="/charts">Charts</Link>
 
             <Link href="/templates">Templates</Link>
-
-            <Link href="/showcase">Showcase</Link>
           </div>
         </div>
 

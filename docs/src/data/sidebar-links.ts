@@ -4,10 +4,6 @@ const COMPONENTS_LINKS = COMPONENT_DIRECTORY_LINKS;
 
 const GETTING_STARTED_LINKS = [
   {
-    href: "/docs/migrating-from-v3",
-    text: "Migrating from V3",
-  },
-  {
     href: "/docs",
     text: "Introduction",
   },
@@ -16,17 +12,12 @@ const GETTING_STARTED_LINKS = [
     text: "Installation",
   },
   {
-    href: "/docs/resources",
-    text: "Resources",
+    href: "/docs/registry",
+    text: "Registry",
   },
-  {
-    href: "/docs/figma",
-    text: "Figma",
-  },
-  {
-    href: "/docs/changelog",
-    text: "Changelog",
-  },
+];
+
+const EXPLORE_LINKS = [
   {
     href: "/styling",
     text: "Styling",
@@ -43,45 +34,36 @@ const GETTING_STARTED_LINKS = [
     href: "/templates",
     text: "Templates",
   },
-  {
-    href: "/showcase",
-    text: "Showcase",
-  },
 ];
 
-const MAIN_SIDEBAR = [
-  "Getting started",
-  {
-    href: "/docs/migrating-from-v3",
-    text: "Migrating from V3",
-  },
-  {
-    href: "/docs",
-    text: "Introduction",
-  },
-  {
-    href: "/docs/installation",
-    text: "Installation",
-  },
+const PROJECT_LINKS = [
   {
     href: "/docs/resources",
     text: "Resources",
   },
   {
-    href: "/docs/figma",
-    text: "Figma",
-  },
-  {
-    href: "/docs/changelog",
-    text: "Changelog",
-  },
-  "Components",
-  ...COMPONENTS_LINKS,
-  "Stars",
-  {
-    href: "/docs/stars",
-    text: "Installation",
+    href: "/docs/credits",
+    text: "Credits & license",
   },
 ];
 
-export { MAIN_SIDEBAR, COMPONENTS_LINKS, GETTING_STARTED_LINKS };
+const MAIN_SIDEBAR = [
+  "Getting started",
+  ...GETTING_STARTED_LINKS,
+  "Foundation",
+  {
+    href: "/docs/design-tokens",
+    text: "Design tokens",
+  },
+  "Components",
+  ...COMPONENTS_LINKS,
+  "Extras",
+  {
+    href: "/docs/stars",
+    text: "Stars",
+  },
+  "Project",
+  ...PROJECT_LINKS,
+];
+
+export { MAIN_SIDEBAR, COMPONENTS_LINKS, EXPLORE_LINKS, GETTING_STARTED_LINKS, PROJECT_LINKS };

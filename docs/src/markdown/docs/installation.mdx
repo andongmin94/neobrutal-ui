@@ -1,19 +1,26 @@
 ---
 title: Installation
-description: Learn how to install neobrutal-ui components.
+description: Configure the registry and add neobrutal-ui source files with the shadcn CLI.
 ---
+
+## Requirements
+
+Use a React project with Tailwind CSS v4. You also need a `components.json` file for the
+shadcn CLI.
 
 ## 1. Initialize shadcn
 
-neobrutal-ui targets the current shadcn Base UI setup.
+Current shadcn projects use Base UI by default. If the CLI asks you to choose a component
+library, select Base UI.
 
 ```bash
-pnpm dlx shadcn@latest init -b base
+npx shadcn@latest init
 ```
 
 ## 2. Configure the registry namespace
 
-Add the neobrutal-ui registry to `components.json`. The `{name}` placeholder is replaced by the CLI when you install an item.
+Add the neobrutal-ui registry to `components.json`. The CLI replaces `{name}` with the item
+you request.
 
 ```json
 {
@@ -23,24 +30,68 @@ Add the neobrutal-ui registry to `components.json`. The `{name}` placeholder is 
 }
 ```
 
-## 3. Add the base registry
+The namespace is configured manually until `@neobrutal-ui` is accepted into the official
+shadcn registry directory.
 
-Install the neobrutal-ui base item first. It adds the CSS variables, aliases, imports, and shared dependencies used by the components.
+## 3. Inspect the base item
+
+Review the files, dependencies, and theme variables before installation.
 
 ```bash
-pnpm dlx shadcn@latest add @neobrutal-ui/neobrutal-ui
+npx shadcn@latest view @neobrutal-ui/neobrutal-ui
 ```
 
-## 4. Install components
+## 4. Add the base item
+
+Install the base item once per project. It adds the shared CSS variables, Tailwind theme
+mapping, aliases, and dependencies used by the components.
+
+```bash
+npx shadcn@latest add @neobrutal-ui/neobrutal-ui
+```
+
+## 5. Install components
 
 Install the component you need from the registry.
 
 ```bash
-pnpm dlx shadcn@latest add @neobrutal-ui/button
+npx shadcn@latest add @neobrutal-ui/button
 ```
 
-Component pages include the exact CLI command and source code. If a component has extra dependencies, the registry item installs them with the component.
+You can install several items in one command.
+
+```bash
+npx shadcn@latest add @neobrutal-ui/button @neobrutal-ui/dialog
+```
+
+Component pages include a direct install command and the source preview. Registry items also
+declare their npm and registry dependencies, so the CLI can resolve them with the component.
+
+## Direct URL install
+
+The namespace is optional. A registry item can also be installed from its production URL.
+
+```bash
+npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json
+```
 
 ## Manual install
 
-You can still copy component files manually, but install the base item first so the theme tokens and Tailwind imports exist in your project.
+You can copy source files manually, but install or reproduce the base item first so the
+design tokens and Tailwind theme mapping exist in your project.
+
+## Updating installed source
+
+Registry items are copied into your repository, so updates are never applied silently. Preview
+the current registry version before replacing a customized file.
+
+```bash
+npx shadcn@latest add @neobrutal-ui/button --dry-run
+```
+
+Use `--diff` to inspect a file-level change. When you have reviewed or backed up local edits,
+run the command again with `--overwrite`.
+
+```bash
+npx shadcn@latest add @neobrutal-ui/button --overwrite
+```

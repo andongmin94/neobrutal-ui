@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 
 import { MAIN_SIDEBAR } from "@/data/sidebar-links";
 
@@ -9,9 +10,24 @@ import { cn } from "@/lib/utils";
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const activeLinkRef = useRef<HTMLAnchorElement>(null);
+  const sidebarRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const activeLink = activeLinkRef.current;
+    const sidebar = sidebarRef.current;
+
+    if (!activeLink || !sidebar) return;
+
+    sidebar.scrollTop =
+      activeLink.offsetTop - sidebar.clientHeight / 2 + activeLink.offsetHeight / 2;
+  }, [pathname]);
 
   return (
-    <aside className="scrollbar fixed top-[70px] hidden h-[calc(100svh-70px)] max-h-[calc(100svh-70px)] w-[260px] overflow-y-auto border-r-2 border-border bg-secondary-background lg:block">
+    <aside
+      className="scrollbar fixed top-[70px] hidden h-[calc(100svh-70px)] max-h-[calc(100svh-70px)] w-[260px] overflow-y-auto border-r-2 border-border bg-secondary-background lg:block"
+      ref={sidebarRef}
+    >
       <nav className="p-3">
         {MAIN_SIDEBAR.map((item, id) => {
           if (typeof item === "string") {
@@ -37,6 +53,7 @@ export default function Sidebar() {
               )}
               href={item.href}
               key={id}
+              ref={active ? activeLinkRef : undefined}
             >
               {item.text}
             </Link>
