@@ -247,7 +247,7 @@
 .docs-main {
   width: 100%;
   min-width: 0;
-  padding: 58px clamp(32px, 5vw, 76px) 42px;
+  padding: 58px clamp(24px, 3vw, 40px) 42px;
   background: var(--background);
 }
 
