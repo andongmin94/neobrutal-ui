@@ -1,38 +1,38 @@
-# neobrutal-ui-docs
+# neobrutal-ui docs
 
-Docs site for `neobrutal-ui`.
+VitePress documentation and live React previews for `neobrutal-ui`.
 
-This project is intentionally separated from the registry source:
+The monorepo keeps the two deployable concerns separate:
 
-- Registry source: `../registry`
-- Docs app and hosted registry output: `../docs`
+- `../registry`: source and build pipeline for the shadcn registry
+- `../docs`: documentation site and hosted registry artifacts
 
-The docs app serves the registry build artifacts from `public/r`, so the same
-deployment hosts both the documentation and shadcn registry JSON files.
+The registry build synchronizes JSON files into `public/r`, so the docs deployment
+also serves `https://neobrutal-ui.andongmin.com/r/registry.json`.
 
-## Development
+## Commands
 
 ```bash
 npm install
 npm run dev
+npm run lint
+npm run typecheck
+npm run build
+npm run start
 ```
 
-## Registry URL
+`dev` and `build` regenerate the chart and star catalogs before starting
+VitePress. Run `npm run build` in `../registry` whenever registry source changes;
+that build refreshes `docs/public/r`.
 
-Production:
+## Vercel
 
-```txt
-https://neobrutal-ui.andongmin.com/r/registry.json
-```
+Create a Vercel project with these settings:
 
-Local development:
+- Root Directory: `docs`
+- Framework Preset: `Other`
+- Build Command: `npm run build`
+- Output Directory: `.vitepress/dist`
 
-```txt
-http://127.0.0.1:3000/r/registry.json
-```
-
-The registry development server also exposes the catalog at
-`http://127.0.0.1:5177/r/registry.json`.
-
-Run `npm run build` in `../registry` before deploying docs. That command rebuilds
-the registry JSON and synchronizes it into `docs/public/r`.
+The same values are committed in `vercel.json`. VitePress produces static HTML,
+the local search index, the sitemap, and the hosted registry files in one build.

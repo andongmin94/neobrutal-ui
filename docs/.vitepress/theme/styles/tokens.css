@@ -1,0 +1,61 @@
+:root {
+  --font-sans: "Pretendard", "Apple SD Gothic Neo", "Segoe UI", sans-serif;
+  --font-mono: Consolas, "SFMono-Regular", "Liberation Mono", monospace;
+
+  --background: #edf4ff;
+  --secondary-background: #ffffff;
+  --surface-muted: #dce9ff;
+  --surface-quiet: #f7f9fc;
+  --foreground: #111318;
+  --foreground-muted: #515762;
+  --main: #4f8ff7;
+  --main-hover: #3e7de3;
+  --main-foreground: #0b1020;
+  --border: #111318;
+  --ring: #236ad6;
+  --utility: #ffd43b;
+  --danger: #ff5757;
+
+  --border-width: 2px;
+  --radius-small: 3px;
+  --radius: 5px;
+  --shadow-x: 4px;
+  --shadow-y: 4px;
+  --shadow: var(--shadow-x) var(--shadow-y) 0 var(--border);
+  --shadow-small: 2px 2px 0 var(--border);
+  --header-height: 66px;
+  --content-max: 830px;
+
+  --vp-c-bg: var(--background);
+  --vp-c-bg-alt: var(--secondary-background);
+  --vp-c-bg-soft: var(--surface-muted);
+  --vp-c-text-1: var(--foreground);
+  --vp-c-text-2: var(--foreground-muted);
+  --vp-c-brand-1: var(--main);
+  --vp-code-font-size: 14px;
+  --vp-code-line-height: 1.65;
+  --vp-code-block-bg: #141820;
+  --vp-code-color: #f6f7f9;
+  --vp-code-tab-text-color: #dfe4eb;
+  --vp-code-tab-hover-text-color: #ffffff;
+  --vp-code-tab-active-text-color: #ffffff;
+  --vp-code-copy-code-bg: #222936;
+  --vp-code-copy-code-hover-bg: #303949;
+}
+
+:root.dark {
+  --background: #13171d;
+  --secondary-background: #1d232c;
+  --surface-muted: #26334a;
+  --surface-quiet: #181d24;
+  --foreground: #f5f7fb;
+  --foreground-muted: #b6bfcc;
+  --main: #78a9ff;
+  --main-hover: #91b9ff;
+  --main-foreground: #101722;
+  --border: #f5f7fb;
+  --ring: #a8c7ff;
+  --utility: #ffd84d;
+  --danger: #ff7474;
+  --vp-code-block-bg: #080b10;
+}
