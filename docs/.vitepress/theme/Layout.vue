@@ -56,7 +56,11 @@ watch(
 
     <DirectoryHome v-if="isDirectoryHome" />
 
-    <div v-else-if="isDocsPage" class="docs-frame">
+    <div
+      v-else-if="isDocsPage"
+      class="docs-frame"
+      :class="{ 'docs-frame--component': isComponentPage }"
+    >
       <SidebarNav :mobile-open="mobileMenuOpen" @close="mobileMenuOpen = false" />
 
       <main id="main-content" class="docs-main" tabindex="-1">

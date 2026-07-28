@@ -2,7 +2,7 @@ import { fileURLToPath, URL } from "node:url";
 
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vitepress";
+import { defineConfig, postcssIsolateStyles } from "vitepress";
 
 import codeImport from "./markdown/code-import";
 
@@ -52,6 +52,15 @@ export default defineConfig({
   vite: {
     publicDir: fileURLToPath(new URL("../public", import.meta.url)),
     plugins: [tailwindcss(), react()],
+    css: {
+      postcss: {
+        plugins: [
+          postcssIsolateStyles({
+            includeFiles: [/content\.css$/],
+          }),
+        ],
+      },
+    },
     resolve: {
       alias: {
         "@": fileURLToPath(new URL("../src", import.meta.url)),

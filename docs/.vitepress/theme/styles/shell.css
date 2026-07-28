@@ -1,6 +1,6 @@
 .site-header {
   position: sticky;
-  z-index: 80;
+  z-index: 30;
   top: 0;
   height: var(--header-height);
   border-bottom: var(--border-width) solid var(--border);
@@ -37,7 +37,10 @@
   border-radius: var(--radius-small);
   background: var(--main);
   color: var(--main-foreground);
-  box-shadow: var(--shadow-small);
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .primary-nav {
@@ -116,7 +119,11 @@
   width: min(100%, 1720px);
   min-height: calc(100dvh - var(--header-height));
   margin: 0 auto;
-  grid-template-columns: 276px minmax(0, 1fr) 232px;
+  grid-template-columns: 260px minmax(0, 1fr);
+}
+
+.docs-frame--component {
+  --content-max: 960px;
 }
 
 .docs-sidebar {
@@ -134,37 +141,8 @@
   display: none;
 }
 
-.directory-shortcut {
-  display: flex;
-  margin: 18px 16px 22px;
-  padding: 12px;
-  align-items: center;
-  gap: 11px;
-  border: var(--border-width) solid var(--border);
-  border-radius: var(--radius-small);
-  background: var(--main);
-  color: var(--main-foreground);
-  text-decoration: none;
-}
-
-.directory-shortcut span {
-  display: grid;
-  min-width: 0;
-}
-
-.directory-shortcut strong {
-  font-size: 14px;
-  line-height: 1.25;
-}
-
-.directory-shortcut small {
-  margin-top: 2px;
-  font-family: var(--font-mono);
-  font-size: 10px;
-}
-
 .docs-nav {
-  padding: 0 16px 28px;
+  padding: 20px 16px 28px;
 }
 
 .docs-nav__group {
@@ -400,6 +378,7 @@
 }
 
 .docs-toc {
+  display: none;
   position: relative;
   border-left: var(--border-width) solid var(--border);
   background: var(--surface-quiet);
@@ -613,17 +592,17 @@
   transform: translateY(-10px);
 }
 
-@media (max-width: 1180px) {
+@media (min-width: 1500px) {
   .docs-frame {
-    grid-template-columns: 260px minmax(0, 1fr);
+    grid-template-columns: 260px minmax(0, 1fr) 220px;
   }
 
   .docs-toc {
-    display: none;
+    display: block;
   }
 }
 
-@media (max-width: 980px) {
+@media (max-width: 1023px) {
   .primary-nav {
     display: none;
   }
@@ -642,7 +621,7 @@
   }
 }
 
-@media (max-width: 860px) {
+@media (max-width: 1023px) {
   .icon-button.mobile-menu-button {
     display: inline-grid;
   }

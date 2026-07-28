@@ -82,7 +82,7 @@ function handleTabKeydown(event: KeyboardEvent) {
     <div
       v-show="activeTab === 'preview'"
       :id="`${instanceId}-preview-panel`"
-      class="component-preview__panel component-preview__canvas"
+      class="component-preview__panel component-preview__canvas vp-raw"
       :class="wrapperClassName"
       role="tabpanel"
       :aria-labelledby="`${instanceId}-preview-tab`"
@@ -197,7 +197,8 @@ function handleTabKeydown(event: KeyboardEvent) {
   min-height: 13.75rem;
   align-items: center;
   justify-content: center;
-  overflow: visible;
+  overflow-x: auto;
+  overflow-y: visible;
   padding: 2.5rem 2rem;
   background-color: var(--background);
   background-image:
@@ -227,11 +228,22 @@ function handleTabKeydown(event: KeyboardEvent) {
   box-shadow: none;
 }
 
+.component-preview__code :deep(div[class*="language-"]) {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
 .component-preview__code :deep(pre) {
   max-height: 32.5rem;
   margin: 0;
   border: 0;
   border-radius: 0;
+}
+
+.component-preview--primary .component-preview__code :deep(pre) {
+  min-height: 27.5rem;
 }
 
 @media (max-width: 640px) {
@@ -245,10 +257,18 @@ function handleTabKeydown(event: KeyboardEvent) {
     border-left: 0;
   }
 
-  .component-preview__canvas,
-  .component-preview--primary .component-preview__canvas {
+  .component-preview__canvas {
     min-height: 11.25rem;
     padding: 2rem 1rem;
+  }
+
+  .component-preview--primary .component-preview__canvas {
+    min-height: 22.5rem;
+    padding: 3.5rem 1.25rem;
+  }
+
+  .component-preview--primary .component-preview__code :deep(pre) {
+    min-height: 22.5rem;
   }
 }
 </style>

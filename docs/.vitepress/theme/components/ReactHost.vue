@@ -93,7 +93,12 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="react-host" :data-react-host="type" :aria-busy="loading ? 'true' : undefined">
+  <div
+    class="react-host"
+    :data-react-host="type"
+    :data-react-component="component"
+    :aria-busy="loading ? 'true' : undefined"
+  >
     <div ref="mountElement" class="react-host__mount" />
 
     <div v-if="loading" class="react-host__status" role="status">
@@ -117,6 +122,13 @@ onBeforeUnmount(() => {
 .react-host__mount {
   width: 100%;
   min-width: 0;
+}
+
+.react-host[data-react-host="component"] .react-host__mount,
+.react-host[data-react-host="star"] .react-host__mount {
+  display: flex;
+  align-items: center;
+  justify-content: safe center;
 }
 
 .react-host__status {

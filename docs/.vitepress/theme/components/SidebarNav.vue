@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BookOpen, Box, Home, Search, X } from "@lucide/vue";
+import { BookOpen, Box, Search, X } from "@lucide/vue";
 import { computed, nextTick, onMounted, ref, watch } from "vue";
 import { useRoute, withBase } from "vitepress";
 
@@ -127,14 +127,6 @@ watch(
         <X :size="18" :stroke-width="2.4" />
       </button>
     </div>
-
-    <a class="directory-shortcut pressable" :href="withBase('/')">
-      <Home :size="16" :stroke-width="2.4" />
-      <span>
-        <strong>Component directory</strong>
-        <small>Browse all {{ COMPONENT_DIRECTORY_LINKS.length }}</small>
-      </span>
-    </a>
 
     <nav class="docs-nav">
       <section v-for="group in documentGroups" :key="group.label" class="docs-nav__group">
