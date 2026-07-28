@@ -89,25 +89,59 @@ body::-webkit-scrollbar-thumb {
   min-height: 100dvh;
 }
 
-.pressable {
+.pressable,
+.icon-button {
   box-shadow: var(--shadow);
+  translate: 0 0;
   transition:
     box-shadow 140ms ease,
-    transform 140ms ease,
+    translate 140ms ease,
     background-color 140ms ease,
     color 140ms ease;
 }
 
 @media (hover: hover) {
-  .pressable:hover {
-    box-shadow: 0 0 0 var(--border);
-    transform: translate(var(--shadow-x), var(--shadow-y));
+  .pressable:not(:disabled):not([aria-disabled="true"]):not([data-disabled]):hover,
+  .icon-button:not(:disabled):not([aria-disabled="true"]):not([data-disabled]):hover {
+    box-shadow: var(--shadow-press);
+    translate: var(--spacing-pressX) var(--spacing-pressY);
   }
 }
 
-.pressable:active {
+.pressable:not(:disabled):not([aria-disabled="true"]):not([data-disabled]):focus-visible,
+.icon-button:not(:disabled):not([aria-disabled="true"]):not([data-disabled]):focus-visible {
+  outline-width: 2px;
+  outline-offset: 2px;
+  box-shadow: var(--shadow-press);
+  translate: var(--spacing-pressX) var(--spacing-pressY);
+}
+
+.pressable:not(:disabled):not([aria-disabled="true"]):not([data-disabled]):active,
+.icon-button:not(:disabled):not([aria-disabled="true"]):not([data-disabled]):active {
   box-shadow: 0 0 0 var(--border);
-  transform: translate(var(--shadow-x), var(--shadow-y));
+  translate: var(--shadow-x) var(--shadow-y);
+}
+
+.pressable:is(:disabled, [aria-disabled="true"], [data-disabled]),
+.icon-button:is(:disabled, [aria-disabled="true"], [data-disabled]) {
+  cursor: not-allowed;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.template-preview-link img {
+  scale: 1;
+  transition: scale 150ms ease;
+}
+
+@media (hover: hover) {
+  .template-preview-link:hover img {
+    scale: 1.01;
+  }
+}
+
+.template-preview-link:focus-visible img {
+  scale: 1.01;
 }
 
 .icon-button {
@@ -120,10 +154,6 @@ body::-webkit-scrollbar-thumb {
   border-radius: var(--radius-small);
   background: var(--secondary-background);
   color: var(--foreground);
-  transition:
-    background-color 130ms ease,
-    color 130ms ease,
-    transform 130ms ease;
 }
 
 @media (hover: hover) {
@@ -131,10 +161,6 @@ body::-webkit-scrollbar-thumb {
     background: var(--main);
     color: var(--main-foreground);
   }
-}
-
-.icon-button:active {
-  transform: translateY(1px);
 }
 
 .skip-link {
@@ -162,5 +188,10 @@ body::-webkit-scrollbar-thumb {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+
+  .template-preview-link:hover img,
+  .template-preview-link:focus-visible img {
+    scale: 1;
   }
 }

@@ -51,7 +51,7 @@ function isActive(href: string) {
         <Menu v-else :size="19" :stroke-width="2.4" />
       </button>
 
-      <a class="site-brand" :href="withBase('/')">
+      <a class="site-brand" :href="withBase('/')" aria-label="neobrutal-ui home">
         <span class="site-brand__mark" aria-hidden="true">N</span>
         <span>neobrutal-ui</span>
       </a>

@@ -168,6 +168,9 @@ function handleTabKeydown(event: KeyboardEvent) {
   font: inherit;
   font-weight: var(--heading-font-weight, 700);
   cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    color 120ms ease;
 }
 
 .component-preview__tabs button:last-child {
@@ -176,6 +179,17 @@ function handleTabKeydown(event: KeyboardEvent) {
 
 .component-preview__tabs button[aria-selected="true"] {
   background: var(--main);
+  color: var(--main-foreground);
+}
+
+@media (hover: hover) {
+  .component-preview__tabs button:not([aria-selected="true"]):hover {
+    background: var(--surface-muted);
+  }
+}
+
+.component-preview__tabs button:not([aria-selected="true"]):active {
+  background: var(--main-hover);
   color: var(--main-foreground);
 }
 
