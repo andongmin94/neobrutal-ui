@@ -170,6 +170,10 @@ onBeforeUnmount(() => {
   font-size: 0.875rem;
 }
 
+.react-host[data-react-host="special"] .react-host__status {
+  min-height: 12rem;
+}
+
 .react-host__mount:not(:empty) + .react-host__status {
   display: none;
 }

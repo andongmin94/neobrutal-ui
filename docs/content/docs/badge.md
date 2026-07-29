@@ -32,15 +32,6 @@ import { Badge } from "@/components/ui/badge";
 
 ## Examples
 
-### Default
-
-<ComponentPreview component="badge" example="default">
-
-```tsx file=<rootDir>/src/examples/ui/badge/index.tsx
-```
-
-</ComponentPreview>
-
 ### Neutral
 
 <ComponentPreview component="badge" example="neutral">

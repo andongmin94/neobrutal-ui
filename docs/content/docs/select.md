@@ -54,15 +54,6 @@ import {
 
 ## Examples
 
-### Default
-
-<ComponentPreview component="select" example="default">
-
-```tsx file=<rootDir>/src/examples/ui/select/index.tsx
-```
-
-</ComponentPreview>
-
 ### Large List
 
 <ComponentPreview component="select" example="large-list">

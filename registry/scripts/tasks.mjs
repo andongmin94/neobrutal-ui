@@ -50,8 +50,8 @@ function quoteCmdArg(value) {
   return `"${value.replaceAll('"', '""')}"`;
 }
 
-function generateRegistry() {
-  run("tsx", ["src/scripts/generate-registry-json.ts", ...passthroughArgs]);
+function generateRegistry(args = []) {
+  run("tsx", ["src/scripts/generate-registry-json.ts", ...args]);
 }
 
 function normalizeRegistryOutput(directory) {
@@ -136,7 +136,7 @@ function formatJsonValue(value, indent, sectionName) {
   return `{\n${lines.join(",\n")}\n${indentation}}`;
 }
 
-function lint() {
+function lintAndFormat() {
   run("oxlint", ["--fix", "--no-error-on-unmatched-pattern", "src", "scripts"]);
   run("oxfmt", [
     "--write",
@@ -146,7 +146,6 @@ function lint() {
     "tsconfig.json",
     ".oxlintrc.json",
     ".oxfmtrc.json",
-    "package.json",
   ]);
   formatPackageJson();
 }
@@ -156,15 +155,15 @@ switch (command) {
     run("vite", ["--host", "127.0.0.1", ...passthroughArgs]);
     break;
   case "build":
-    generateRegistry();
+    generateRegistry(passthroughArgs);
     buildRegistry();
     syncDocsPublic();
     break;
   case "lint":
-    lint();
+    lintAndFormat();
     break;
   case "registry:generate":
-    generateRegistry();
+    generateRegistry(passthroughArgs);
     break;
   case "registry:build":
     buildRegistry();

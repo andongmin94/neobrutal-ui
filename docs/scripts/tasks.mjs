@@ -104,7 +104,7 @@ function formatJsonValue(value, indent, sectionName) {
   return `{\n${lines.join(",\n")}\n${indentation}}`;
 }
 
-function lint() {
+function lintAndFormat() {
   run("oxlint", ["--fix", "--no-error-on-unmatched-pattern", "src", ".vitepress", "scripts"]);
   run("oxfmt", [
     "--write",
@@ -115,7 +115,6 @@ function lint() {
     "tsconfig.json",
     ".oxlintrc.json",
     ".oxfmtrc.json",
-    "package.json",
   ]);
   formatPackageJson();
 }
@@ -133,7 +132,7 @@ switch (command) {
     run("vitepress", ["preview", ".", ...passthroughArgs]);
     break;
   case "lint":
-    lint();
+    lintAndFormat();
     break;
   case "typecheck":
     run("vue-tsc", ["--noEmit", ...passthroughArgs]);

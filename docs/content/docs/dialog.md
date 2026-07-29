@@ -74,15 +74,6 @@ import { Label } from "@/components/ui/label";
 
 ## Examples
 
-### Default
-
-<ComponentPreview component="dialog" example="default">
-
-```tsx file=<rootDir>/src/examples/ui/dialog/index.tsx
-```
-
-</ComponentPreview>
-
 ### With Scrollable Content
 
 <ComponentPreview component="dialog" example="scrollable-content">

@@ -37,7 +37,7 @@ export default function PortfolioTemplate() {
   return (
     <div
       id="top"
-      className={`flex min-h-[calc(100dvh-var(--header-height))] flex-col bg-background text-foreground selection:bg-main selection:text-main-foreground ${TEMPLATE_THEME}`}
+      className={`min-h-dvh flex flex-col bg-background text-foreground selection:bg-main selection:text-main-foreground ${TEMPLATE_THEME}`}
     >
       <header className="border-b-2 border-border">
         <div className="mx-auto flex h-12 w-full max-w-3xl items-center justify-between gap-4 px-4 sm:px-6">

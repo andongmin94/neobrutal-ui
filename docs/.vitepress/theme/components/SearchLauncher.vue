@@ -17,6 +17,8 @@ import { useRoute, useRouter } from "vitepress";
 import { COMPONENT_DIRECTORY_LINKS } from "../../../src/data/component-directory";
 import TEMPLATES from "../../../src/data/templates";
 import { BLOG_POSTS } from "../../../src/lib/blog-posts";
+import { trapTabFocus } from "../focus";
+import { PRIMARY_NAVIGATION_LINKS } from "../navigation";
 
 type SearchEntry = {
   group: string;
@@ -45,6 +47,13 @@ let returnFocus: HTMLElement | null = null;
 
 const resultListId = "docs-search-results";
 const searchIndexLoaders = localSearchIndex as Record<string, () => Promise<{ default: string }>>;
+const exploreEntries: SearchEntry[] = PRIMARY_NAVIGATION_LINKS.filter(
+  (link) => link.href !== "/docs/",
+).map((link) => ({
+  group: "Explore",
+  href: link.href,
+  label: link.text,
+}));
 
 const staticEntries: SearchEntry[] = [
   { group: "Directory", href: "/", label: "Component directory", terms: "home registry browse" },
@@ -52,11 +61,8 @@ const staticEntries: SearchEntry[] = [
   { group: "Getting started", href: "/docs/installation", label: "Installation" },
   { group: "Getting started", href: "/docs/registry", label: "Registry" },
   { group: "Foundation", href: "/docs/design-tokens", label: "Design tokens" },
-  { group: "Explore", href: "/styling", label: "Styling" },
-  { group: "Explore", href: "/charts", label: "Charts" },
-  { group: "Explore", href: "/stars", label: "Stars" },
+  ...exploreEntries,
   { group: "Project", href: "/docs/stars", label: "GitHub stars data" },
-  { group: "Explore", href: "/templates/", label: "Templates" },
   { group: "Project", href: "/docs/resources", label: "Resources" },
   { group: "Project", href: "/docs/credits", label: "Credits & license" },
 ];
@@ -194,30 +200,6 @@ function onInputKeydown(event: KeyboardEvent) {
   }
 }
 
-function onDialogKeydown(event: KeyboardEvent) {
-  if (event.key !== "Tab") return;
-
-  const dialog = event.currentTarget as HTMLElement;
-  const focusable = Array.from(
-    dialog.querySelectorAll<HTMLElement>(
-      'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
-    ),
-  ).filter((element) => element.getClientRects().length > 0);
-  if (focusable.length === 0) return;
-
-  const first = focusable[0];
-  const last = focusable[focusable.length - 1];
-  const activeElement = document.activeElement;
-
-  if (event.shiftKey && (activeElement === first || !dialog.contains(activeElement))) {
-    event.preventDefault();
-    last.focus();
-  } else if (!event.shiftKey && activeElement === last) {
-    event.preventDefault();
-    first.focus();
-  }
-}
-
 watch(open, async (isOpen) => {
   document.documentElement.classList.toggle("search-open", isOpen);
   document.querySelector<HTMLElement>(".site-frame")?.toggleAttribute("inert", isOpen);
@@ -276,7 +258,7 @@ onBeforeUnmount(() => {
           role="dialog"
           aria-modal="true"
           aria-label="Search documentation"
-          @keydown="onDialogKeydown"
+          @keydown="trapTabFocus"
         >
           <div class="search-dialog__input">
             <Search :size="20" :stroke-width="2.3" aria-hidden="true" />

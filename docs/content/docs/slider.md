@@ -32,15 +32,6 @@ import { Slider } from "@/components/ui/slider";
 
 ## Examples
 
-### Default
-
-<ComponentPreview component="slider" example="default">
-
-```tsx file=<rootDir>/src/examples/ui/slider/index.tsx
-```
-
-</ComponentPreview>
-
 ### Two Thumbs
 
 <ComponentPreview component="slider" example="two-thumbs">

@@ -34,7 +34,7 @@ export default function BlogTemplate({ basePath = "/blog" }: BlogTemplateProps) 
   return (
     <div
       id="top"
-      className={`flex min-h-[calc(100dvh-var(--header-height))] flex-col bg-background text-foreground ${TEMPLATE_THEME}`}
+      className={`flex min-h-dvh flex-col bg-background text-foreground ${TEMPLATE_THEME}`}
     >
       <header className="border-b-2 border-border bg-secondary-background">
         <div className="mx-auto flex h-12 max-w-3xl items-center justify-between px-4 sm:px-6">
@@ -124,7 +124,7 @@ export default function BlogTemplate({ basePath = "/blog" }: BlogTemplateProps) 
                     <div className="min-w-0">
                       <h2 className="text-lg leading-snug font-heading sm:text-xl">
                         <a
-                          className="block underline-offset-4 hover:underline"
+                          className="underline-offset-4 hover:underline"
                           href={getPostHref(basePath, post.slug)}
                         >
                           {post.title}

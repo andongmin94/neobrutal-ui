@@ -149,15 +149,6 @@ import {
 
 ## Examples
 
-### Default
-
-<ComponentPreview component="dropdown-menu" example="default">
-
-```tsx file=<rootDir>/src/examples/ui/dropdown-menu/index.tsx
-```
-
-</ComponentPreview>
-
 ### Checkboxes
 
 <ComponentPreview component="dropdown-menu" example="checkboxes">

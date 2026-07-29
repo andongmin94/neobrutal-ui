@@ -19,15 +19,6 @@ See installation instructions for the <Link href="/docs/popover">Popover</Link> 
 
 ## Examples
 
-### Default
-
-<ComponentPreview component="combobox" example="default">
-
-```tsx file=<rootDir>/src/examples/ui/combobox/index.tsx
-```
-
-</ComponentPreview>
-
 ### Users
 
 <ComponentPreview component="combobox" example="users">

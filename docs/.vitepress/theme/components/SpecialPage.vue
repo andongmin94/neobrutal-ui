@@ -1,45 +1,23 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-import DirectoryHome from "./DirectoryHome.vue";
 import ReactHost from "./ReactHost.vue";
 
-type SpecialPageName =
-  | "blog-post"
-  | "charts"
-  | "stars"
-  | "styling"
-  | "template-detail"
-  | "templates";
-
-type SpecialPageKind = "directory" | "template" | SpecialPageName;
+type SpecialPageKind = "blog-post" | "charts" | "stars" | "styling" | "template" | "templates";
 
 const props = defineProps<{
-  kind?: SpecialPageKind;
-  name?: SpecialPageKind;
-  page?: SpecialPageKind;
-  postSlug?: string;
+  kind: SpecialPageKind;
   slug?: string;
-  type?: SpecialPageKind;
 }>();
 
-const resolvedKind = computed(() => props.kind ?? props.page ?? props.name ?? props.type ?? "");
-const resolvedPage = computed(() =>
-  resolvedKind.value === "template" ? "template-detail" : resolvedKind.value,
-);
-const resolvedArgument = computed(() =>
-  resolvedPage.value === "blog-post"
-    ? (props.postSlug ?? props.slug)
-    : (props.slug ?? props.postSlug),
-);
+const component = computed(() => (props.kind === "template" ? "template-detail" : props.kind));
 </script>
 
 <template>
-  <DirectoryHome v-if="resolvedKind === 'directory'" />
-  <div v-else class="special-page" :data-special-page="resolvedPage || 'unknown'">
+  <div class="special-page" :data-special-page="component">
     <ReactHost
-      :component="resolvedPage"
-      :example="resolvedArgument"
+      :component="component"
+      :example="props.slug"
       loading-label="Loading interactive page..."
       type="special"
     />

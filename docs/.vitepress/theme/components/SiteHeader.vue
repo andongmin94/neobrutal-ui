@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Menu, X as CloseIcon } from "@lucide/vue";
-import { computed } from "vue";
 import { useRoute, withBase } from "vitepress";
 
+import { isNavigationPathActive, PRIMARY_NAVIGATION_LINKS } from "../navigation";
 import SearchLauncher from "./SearchLauncher.vue";
 import ThemeToggle from "./ThemeToggle.vue";
 
@@ -10,7 +10,6 @@ const props = withDefaults(
   defineProps<{
     menuLabel?: string;
     menuOpen: boolean;
-    showMenu: boolean;
   }>(),
   {
     menuLabel: "Toggle site navigation",
@@ -23,20 +22,8 @@ defineEmits<{
 
 const route = useRoute();
 
-const primaryLinks = [
-  { href: "/docs/", label: "Docs" },
-  { href: "/styling", label: "Styling" },
-  { href: "/charts", label: "Charts" },
-  { href: "/templates/", label: "Templates" },
-];
-
-const normalizedPath = computed(() => route.path.replace(/\/+$/, "") || "/");
-
 function isActive(href: string) {
-  if (href === "/") return normalizedPath.value === "/";
-  if (href === "/docs/")
-    return normalizedPath.value === "/docs" || normalizedPath.value.startsWith("/docs/");
-  return normalizedPath.value === href || normalizedPath.value.startsWith(`${href}/`);
+  return isNavigationPathActive(route.path, href, true);
 }
 </script>
 
@@ -44,12 +31,8 @@ function isActive(href: string) {
   <header class="site-header">
     <a class="skip-link" href="#main-content">Skip to content</a>
 
-    <div
-      class="site-header__inner"
-      :class="{ 'site-header__inner--without-menu': !props.showMenu }"
-    >
+    <div class="site-header__inner">
       <button
-        v-if="props.showMenu"
         class="icon-button mobile-menu-button"
         type="button"
         :aria-expanded="props.menuOpen"
@@ -62,18 +45,18 @@ function isActive(href: string) {
 
       <a class="site-brand" :href="withBase('/')" aria-label="neobrutal-ui home">
         <span class="site-brand__mark" aria-hidden="true">N</span>
-        <span>neobrutal-ui</span>
+        <span class="site-brand__name">neobrutal-ui</span>
       </a>
 
       <nav class="primary-nav" aria-label="Primary navigation">
         <a
-          v-for="link in primaryLinks"
+          v-for="link in PRIMARY_NAVIGATION_LINKS"
           :key="link.href"
           :aria-current="isActive(link.href) ? 'page' : undefined"
           :class="{ 'is-active': isActive(link.href) }"
           :href="withBase(link.href)"
         >
-          {{ link.label }}
+          {{ link.text }}
         </a>
       </nav>
 

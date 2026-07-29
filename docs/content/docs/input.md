@@ -32,15 +32,6 @@ import { Input } from "@/components/ui/input";
 
 ## Examples
 
-### Default
-
-<ComponentPreview component="input" example="default">
-
-```tsx file=<rootDir>/src/examples/ui/input/index.tsx
-```
-
-</ComponentPreview>
-
 ### File
 
 <ComponentPreview component="input" example="file">
