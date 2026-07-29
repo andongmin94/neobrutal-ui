@@ -346,6 +346,7 @@ function ContextMenuTrigger({
   className,
   disabled = false,
   onContextMenu,
+  onKeyDown,
   onTouchStart,
   render,
   ...props
@@ -373,6 +374,27 @@ function ContextMenuTrigger({
       onContextMenu={(event) => {
         onContextMenu?.(event);
         if (disabled) event.preventBaseUIHandler();
+      }}
+      onKeyDown={(event) => {
+        onKeyDown?.(event);
+        if (
+          disabled ||
+          event.defaultPrevented ||
+          (event.key !== "ContextMenu" && !(event.key === "F10" && event.shiftKey))
+        ) {
+          return;
+        }
+
+        event.preventDefault();
+        const rect = event.currentTarget.getBoundingClientRect();
+        event.currentTarget.dispatchEvent(
+          new MouseEvent("contextmenu", {
+            bubbles: true,
+            cancelable: true,
+            clientX: rect.left + rect.width / 2,
+            clientY: rect.top + rect.height / 2,
+          }),
+        );
       }}
       onTouchStart={(event) => {
         onTouchStart?.(event);

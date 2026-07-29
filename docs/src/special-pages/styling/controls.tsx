@@ -489,7 +489,7 @@ export default function Styling() {
             </fieldset>
           </div>
           <SheetFooter>
-            <Button onClick={() => setCustomizerOpen(false)}>Save changes</Button>
+            <Button onClick={() => setCustomizerOpen(false)}>Done</Button>
             <Button variant="neutral" onClick={resetStyling}>
               Reset
             </Button>

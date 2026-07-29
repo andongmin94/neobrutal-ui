@@ -52,8 +52,16 @@ watch(
   <div class="site-frame">
     <SiteHeader
       :menu-open="mobileMenuOpen"
-      :show-menu="isDocsPage"
+      :menu-label="isDocsPage ? 'Toggle documentation navigation' : 'Toggle site navigation'"
+      :show-menu="true"
       @toggle-menu="mobileMenuOpen = !mobileMenuOpen"
+    />
+
+    <SidebarNav
+      v-if="!isDocsPage"
+      mode="site"
+      :mobile-open="mobileMenuOpen"
+      @close="mobileMenuOpen = false"
     />
 
     <DirectoryHome v-if="isDirectoryHome" />
@@ -91,6 +99,8 @@ watch(
             </a>
           </div>
         </header>
+
+        <TableOfContents variant="inline" />
 
         <article class="docs-content">
           <Content />

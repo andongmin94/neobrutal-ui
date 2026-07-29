@@ -5,9 +5,15 @@ import { useRoute, withBase } from "vitepress";
 
 import { COMPONENT_DIRECTORY_LINKS } from "../../../src/data/component-directory";
 
-const props = defineProps<{
-  mobileOpen: boolean;
-}>();
+const props = withDefaults(
+  defineProps<{
+    mobileOpen: boolean;
+    mode?: "docs" | "site";
+  }>(),
+  {
+    mode: "docs",
+  },
+);
 
 const emit = defineEmits<{
   close: [];
@@ -23,7 +29,7 @@ const documentGroups = [
   {
     label: "Getting started",
     links: [
-      { href: "/docs", text: "Introduction" },
+      { href: "/docs/", text: "Introduction" },
       { href: "/docs/installation", text: "Installation" },
       { href: "/docs/registry", text: "Registry" },
     ],
@@ -33,6 +39,31 @@ const documentGroups = [
     links: [{ href: "/docs/design-tokens", text: "Design tokens" }],
   },
 ];
+
+const siteGroups = [
+  {
+    label: "Explore",
+    links: [
+      { href: "/", text: "Component directory" },
+      { href: "/docs/", text: "Docs" },
+      { href: "/styling", text: "Styling" },
+      { href: "/charts", text: "Charts" },
+      { href: "/templates/", text: "Templates" },
+    ],
+  },
+  {
+    label: "Project",
+    links: [
+      { href: "/docs/stars", text: "Stars data" },
+      { href: "/docs/resources", text: "Resources" },
+      { href: "/docs/credits", text: "Credits & license" },
+    ],
+  },
+];
+
+const navigationLabel = computed(() =>
+  props.mode === "site" ? "Site navigation" : "Documentation navigation",
+);
 
 const projectLinks = [
   { href: "/docs/stars", text: "Stars" },
@@ -49,11 +80,15 @@ const filteredComponents = computed(() => {
 const normalizedPath = computed(() => route.path.replace(/\/+$/, "") || "/");
 
 function isActive(href: string) {
-  return normalizedPath.value === href;
+  return normalizedPath.value === (href.replace(/\/+$/, "") || "/");
 }
 
 function setBackgroundInert(inert: boolean) {
-  for (const selector of [".site-header", ".docs-main", ".docs-toc"]) {
+  const selectors =
+    props.mode === "site"
+      ? [".site-header", "#main-content"]
+      : [".site-header", ".docs-main", ".docs-toc"];
+  for (const selector of selectors) {
     document.querySelector<HTMLElement>(selector)?.toggleAttribute("inert", inert);
   }
 }
@@ -145,7 +180,11 @@ watch(
     }
     if (open) {
       await nextTick();
-      searchInput.value?.focus();
+      if (props.mode === "docs") {
+        searchInput.value?.focus();
+      } else {
+        sidebar.value?.querySelector<HTMLAnchorElement>(".docs-nav a")?.focus();
+      }
     }
   },
 );
@@ -170,21 +209,24 @@ onBeforeUnmount(() => {
     v-if="mobileOpen"
     class="sidebar-scrim"
     type="button"
-    aria-label="Close documentation navigation"
+    :aria-label="`Close ${navigationLabel.toLowerCase()}`"
     @click="closeAndRestoreFocus"
   />
 
   <aside
     ref="sidebar"
     class="docs-sidebar"
-    :class="{ 'is-open': mobileOpen }"
-    aria-label="Documentation navigation"
+    :class="{
+      'docs-sidebar--site': props.mode === 'site',
+      'is-open': mobileOpen,
+    }"
+    :aria-label="navigationLabel"
     :role="mobileOpen ? 'dialog' : undefined"
     :aria-modal="mobileOpen ? 'true' : undefined"
     @keydown="onSidebarKeydown"
   >
     <div class="docs-sidebar__mobile-head">
-      <strong>Browse docs</strong>
+      <strong>{{ props.mode === "site" ? "Browse site" : "Browse docs" }}</strong>
       <button
         class="icon-button"
         type="button"
@@ -196,45 +238,14 @@ onBeforeUnmount(() => {
     </div>
 
     <nav class="docs-nav">
-      <section v-for="group in documentGroups" :key="group.label" class="docs-nav__group">
-        <h2>
-          <BookOpen :size="13" />
-          {{ group.label }}
-        </h2>
-        <a
-          v-for="link in group.links"
-          :key="link.href"
-          :aria-current="isActive(link.href) ? 'page' : undefined"
-          :class="{ 'is-active': isActive(link.href) }"
-          :href="withBase(link.href)"
-        >
-          {{ link.text }}
-        </a>
-      </section>
-
-      <section class="docs-nav__group docs-nav__components">
-        <div class="docs-nav__group-heading">
+      <template v-if="props.mode === 'site'">
+        <section v-for="group in siteGroups" :key="group.label" class="docs-nav__group">
           <h2>
-            <Box :size="13" />
-            Components
+            <BookOpen :size="13" />
+            {{ group.label }}
           </h2>
-          <span>{{ filteredComponents.length }}/{{ COMPONENT_DIRECTORY_LINKS.length }}</span>
-        </div>
-
-        <label class="sidebar-filter">
-          <Search :size="14" aria-hidden="true" />
-          <input
-            ref="searchInput"
-            v-model="componentQuery"
-            type="search"
-            placeholder="Filter components"
-            aria-label="Filter components"
-          />
-        </label>
-
-        <div class="component-nav-list">
           <a
-            v-for="link in filteredComponents"
+            v-for="link in group.links"
             :key="link.href"
             :aria-current="isActive(link.href) ? 'page' : undefined"
             :class="{ 'is-active': isActive(link.href) }"
@@ -242,22 +253,73 @@ onBeforeUnmount(() => {
           >
             {{ link.text }}
           </a>
-          <p v-if="filteredComponents.length === 0" class="component-nav-empty">No matches</p>
-        </div>
-      </section>
+        </section>
+      </template>
 
-      <section class="docs-nav__group">
-        <h2>Project</h2>
-        <a
-          v-for="link in projectLinks"
-          :key="link.href"
-          :aria-current="isActive(link.href) ? 'page' : undefined"
-          :class="{ 'is-active': isActive(link.href) }"
-          :href="withBase(link.href)"
-        >
-          {{ link.text }}
-        </a>
-      </section>
+      <template v-else>
+        <section v-for="group in documentGroups" :key="group.label" class="docs-nav__group">
+          <h2>
+            <BookOpen :size="13" />
+            {{ group.label }}
+          </h2>
+          <a
+            v-for="link in group.links"
+            :key="link.href"
+            :aria-current="isActive(link.href) ? 'page' : undefined"
+            :class="{ 'is-active': isActive(link.href) }"
+            :href="withBase(link.href)"
+          >
+            {{ link.text }}
+          </a>
+        </section>
+
+        <section class="docs-nav__group docs-nav__components">
+          <div class="docs-nav__group-heading">
+            <h2>
+              <Box :size="13" />
+              Components
+            </h2>
+            <span>{{ filteredComponents.length }}/{{ COMPONENT_DIRECTORY_LINKS.length }}</span>
+          </div>
+
+          <label class="sidebar-filter">
+            <Search :size="14" aria-hidden="true" />
+            <input
+              ref="searchInput"
+              v-model="componentQuery"
+              type="search"
+              placeholder="Filter components"
+              aria-label="Filter components"
+            />
+          </label>
+
+          <div class="component-nav-list">
+            <a
+              v-for="link in filteredComponents"
+              :key="link.href"
+              :aria-current="isActive(link.href) ? 'page' : undefined"
+              :class="{ 'is-active': isActive(link.href) }"
+              :href="withBase(link.href)"
+            >
+              {{ link.text }}
+            </a>
+            <p v-if="filteredComponents.length === 0" class="component-nav-empty">No matches</p>
+          </div>
+        </section>
+
+        <section class="docs-nav__group">
+          <h2>Project</h2>
+          <a
+            v-for="link in projectLinks"
+            :key="link.href"
+            :aria-current="isActive(link.href) ? 'page' : undefined"
+            :class="{ 'is-active': isActive(link.href) }"
+            :href="withBase(link.href)"
+          >
+            {{ link.text }}
+          </a>
+        </section>
+      </template>
     </nav>
   </aside>
 </template>

@@ -91,7 +91,7 @@
 
 .search-launcher {
   display: inline-flex;
-  height: 38px;
+  height: 40px;
   align-items: center;
   gap: 8px;
   padding: 0 9px 0 12px;
@@ -118,6 +118,10 @@
 }
 
 .icon-button.mobile-menu-button {
+  display: none;
+}
+
+.docs-sidebar--site {
   display: none;
 }
 
@@ -615,13 +619,17 @@
   transform: translateY(-10px);
 }
 
-@media (min-width: 1500px) {
+@media (min-width: 1360px) {
   .docs-frame {
-    grid-template-columns: 260px minmax(0, 1fr) 220px;
+    grid-template-columns: 240px minmax(0, 1fr) 200px;
   }
 
   .docs-toc {
     display: block;
+  }
+
+  .docs-toc-inline {
+    display: none;
   }
 }
 
@@ -647,6 +655,10 @@
 @media (max-width: 1023px) {
   .icon-button.mobile-menu-button {
     display: inline-grid;
+  }
+
+  .docs-sidebar--site {
+    display: block;
   }
 
   .docs-frame {
@@ -722,7 +734,7 @@
   }
 
   .search-launcher {
-    width: 38px;
+    width: 40px;
     padding: 0;
     justify-content: center;
   }
@@ -782,4 +794,74 @@
   .search-dialog__footer {
     display: none;
   }
+}
+
+.docs-toc-inline {
+  width: min(100%, var(--content-max));
+  margin: -8px auto 30px;
+  overflow: hidden;
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-small);
+  background: var(--surface-quiet);
+}
+
+.docs-toc-inline summary {
+  display: flex;
+  min-height: 46px;
+  padding: 10px 13px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 750;
+  text-transform: uppercase;
+}
+
+.docs-toc-inline summary::-webkit-details-marker {
+  display: none;
+}
+
+.docs-toc-inline summary > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.docs-toc-inline summary small {
+  color: var(--foreground-muted);
+  font-size: 10px;
+}
+
+.docs-toc-inline nav {
+  display: grid;
+  max-height: 20rem;
+  overflow: auto;
+  padding: 8px;
+  border-top: var(--border-width) solid var(--border);
+}
+
+.docs-toc-inline nav a {
+  padding: 7px 9px;
+  border-left: 3px solid transparent;
+  color: var(--foreground-muted);
+  font-size: 13px;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.docs-toc-inline nav a.is-nested {
+  padding-left: 21px;
+  font-size: 12px;
+}
+
+.docs-toc-inline nav a.is-active {
+  border-left-color: var(--main);
+  background: var(--surface-muted);
+  color: var(--foreground);
+}
+
+.docs-toc-inline .back-to-top {
+  margin: 0 12px 12px;
 }

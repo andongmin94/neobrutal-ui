@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Check, Copy, SquareTerminal } from "@lucide/vue";
-import { computed, ref, useId } from "vue";
+import { computed, onBeforeUnmount, ref, useId } from "vue";
 
 const props = defineProps<{
   component: string;
@@ -8,7 +8,9 @@ const props = defineProps<{
 
 const activeTab = ref<"cli" | "manual">("cli");
 const copied = ref(false);
+const copyFailed = ref(false);
 const instanceId = useId();
+let copyTimer: number | undefined;
 
 const registryBaseUrl =
   (import.meta.env.VITE_REGISTRY_BASE_URL as string | undefined) ??
@@ -18,12 +20,22 @@ const command = computed(
 );
 
 async function copyCommand() {
-  await navigator.clipboard.writeText(command.value);
-  copied.value = true;
-  window.setTimeout(() => {
+  window.clearTimeout(copyTimer);
+  try {
+    await navigator.clipboard.writeText(command.value);
+    copied.value = true;
+    copyFailed.value = false;
+  } catch {
     copied.value = false;
+    copyFailed.value = true;
+  }
+  copyTimer = window.setTimeout(() => {
+    copied.value = false;
+    copyFailed.value = false;
   }, 1600);
 }
+
+onBeforeUnmount(() => window.clearTimeout(copyTimer));
 
 function handleTabKeydown(event: KeyboardEvent) {
   if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
@@ -95,13 +107,18 @@ function handleTabKeydown(event: KeyboardEvent) {
       <button
         class="icon-button"
         type="button"
-        :aria-label="copied ? 'Command copied' : 'Copy installation command'"
-        :title="copied ? 'Copied' : 'Copy command'"
+        :aria-label="
+          copied ? 'Command copied' : copyFailed ? 'Copy failed' : 'Copy installation command'
+        "
+        :title="copied ? 'Copied' : copyFailed ? 'Copy failed' : 'Copy command'"
         @click="copyCommand"
       >
         <Check v-if="copied" :size="17" :stroke-width="2.5" />
         <Copy v-else :size="17" :stroke-width="2.3" />
       </button>
+      <span class="sr-only" aria-live="polite">
+        {{ copied ? "Command copied" : copyFailed ? "Copy failed" : "" }}
+      </span>
     </div>
 
     <div

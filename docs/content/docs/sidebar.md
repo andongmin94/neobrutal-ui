@@ -167,7 +167,7 @@ const data = {
       items: [
         {
           title: "Introduction",
-          url: "/docs",
+          url: "/docs/",
         },
         {
           title: "Get Started",

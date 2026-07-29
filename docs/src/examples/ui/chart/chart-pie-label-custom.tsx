@@ -20,11 +20,11 @@ import {
 export const description = "A registry composition pie chart with custom labels";
 
 const chartData = [
-  { category: "forms", components: 12, fill: "var(--color-forms)" },
+  { category: "forms", components: 13, fill: "var(--color-forms)" },
   { category: "overlays", components: 9, fill: "var(--color-overlays)" },
   { category: "data", components: 8, fill: "var(--color-data)" },
   { category: "navigation", components: 7, fill: "var(--color-navigation)" },
-  { category: "other", components: 11, fill: "var(--color-other)" },
+  { category: "other", components: 12, fill: "var(--color-other)" },
 ];
 
 const chartConfig = {

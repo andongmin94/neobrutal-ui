@@ -4,6 +4,7 @@ import { Calculator, Calendar, CreditCard, Settings, Smile, User } from "lucide-
 
 import * as React from "react";
 
+import { Button } from "@/components/ui/button";
 import {
   CommandDialog,
   CommandEmpty,
@@ -17,12 +18,18 @@ import {
 
 export default function CommandDemo() {
   const [open, setOpen] = React.useState(false);
+  const [message, setMessage] = React.useState("");
+
+  const runCommand = (label: string) => {
+    setOpen(false);
+    setMessage(`${label} selected.`);
+  };
 
   React.useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setOpen((open) => !open);
+    const down = (event: KeyboardEvent) => {
+      if (event.key === "j" && (event.metaKey || event.ctrlKey)) {
+        event.preventDefault();
+        setOpen((currentOpen) => !currentOpen);
       }
     };
 
@@ -31,11 +38,15 @@ export default function CommandDemo() {
   }, []);
 
   return (
-    <>
-      <p className="text-foreground text-sm">
-        Press{" "}
-        <kbd className="bg-main text-main-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded-base border-2 px-1.5 font-mono text-[10px] font-heading select-none">
-          <span className="text-xs">⌘</span>J
+    <div className="grid justify-items-start gap-3">
+      <Button type="button" onClick={() => setOpen(true)}>
+        Open command menu
+      </Button>
+      <p className="text-sm text-foreground">
+        Or press{" "}
+        <kbd className="pointer-events-none inline-flex h-5 items-center gap-1 rounded-base border-2 bg-main px-1.5 font-mono text-[10px] font-heading text-main-foreground select-none">
+          <span>Ctrl/Command</span>
+          <span>J</span>
         </kbd>
       </p>
       <CommandDialog open={open} onOpenChange={setOpen}>
@@ -43,39 +54,42 @@ export default function CommandDemo() {
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Suggestions">
-            <CommandItem>
+            <CommandItem onSelect={() => runCommand("Calendar")}>
               <Calendar />
               <span>Calendar</span>
             </CommandItem>
-            <CommandItem>
+            <CommandItem onSelect={() => runCommand("Emoji search")}>
               <Smile />
               <span>Search Emoji</span>
             </CommandItem>
-            <CommandItem>
+            <CommandItem onSelect={() => runCommand("Calculator")}>
               <Calculator />
               <span>Calculator</span>
             </CommandItem>
           </CommandGroup>
           <CommandSeparator />
           <CommandGroup heading="Settings">
-            <CommandItem>
+            <CommandItem onSelect={() => runCommand("Profile")}>
               <User />
               <span>Profile</span>
-              <CommandShortcut>⌘P</CommandShortcut>
+              <CommandShortcut>Ctrl+P</CommandShortcut>
             </CommandItem>
-            <CommandItem>
+            <CommandItem onSelect={() => runCommand("Billing")}>
               <CreditCard />
               <span>Billing</span>
-              <CommandShortcut>⌘B</CommandShortcut>
+              <CommandShortcut>Ctrl+B</CommandShortcut>
             </CommandItem>
-            <CommandItem>
+            <CommandItem onSelect={() => runCommand("Settings")}>
               <Settings />
               <span>Settings</span>
-              <CommandShortcut>⌘S</CommandShortcut>
+              <CommandShortcut>Ctrl+S</CommandShortcut>
             </CommandItem>
           </CommandGroup>
         </CommandList>
       </CommandDialog>
-    </>
+      <output className="block min-h-5 text-sm" aria-live="polite">
+        {message}
+      </output>
+    </div>
   );
 }

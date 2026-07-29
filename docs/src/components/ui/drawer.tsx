@@ -509,7 +509,7 @@ function useDrawer() {
 function Drawer({
   actionsRef: actionsRefProp,
   activeSnapPoint,
-  autoFocus = false,
+  autoFocus = true,
   children,
   closeThreshold = 0.25,
   container,

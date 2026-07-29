@@ -9,6 +9,15 @@ type TocHeader = {
   title: string;
 };
 
+withDefaults(
+  defineProps<{
+    variant?: "aside" | "inline";
+  }>(),
+  {
+    variant: "aside",
+  },
+);
+
 const route = useRoute();
 const activeId = ref("");
 const headers = ref<TocHeader[]>([]);
@@ -69,7 +78,37 @@ onBeforeUnmount(() => observer?.disconnect());
 </script>
 
 <template>
-  <aside class="docs-toc" aria-label="On this page">
+  <details v-if="variant === 'inline'" class="docs-toc-inline">
+    <summary>
+      <span>
+        <List :size="15" :stroke-width="2.4" />
+        On this page
+      </span>
+      <small>{{ headers.length }} sections</small>
+    </summary>
+
+    <nav v-if="headers.length > 0">
+      <a
+        v-for="header in headers"
+        :key="header.link"
+        :class="{
+          'is-active': activeId === header.link.replace(/^#/, ''),
+          'is-nested': header.level === 3,
+        }"
+        :href="header.link"
+      >
+        {{ header.title }}
+      </a>
+    </nav>
+    <p v-else class="docs-toc__empty">Overview</p>
+
+    <a class="back-to-top" href="#main-content">
+      <MoveUp :size="13" />
+      Back to top
+    </a>
+  </details>
+
+  <aside v-else class="docs-toc" aria-label="On this page">
     <div class="docs-toc__inner">
       <h2>
         <List :size="14" :stroke-width="2.4" />

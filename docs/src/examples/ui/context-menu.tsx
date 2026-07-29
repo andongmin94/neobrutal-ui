@@ -19,28 +19,32 @@ import {
 export default function ContextMenuDemo() {
   return (
     <ContextMenu>
-      <ContextMenuTrigger className="flex h-[150px] w-[300px] items-center justify-center rounded-base border border-border dark:border-[#fff] border-dashed text-sm font-base">
-        Right click here
+      <ContextMenuTrigger
+        render={<button type="button" aria-label="Open context menu" />}
+        aria-haspopup="menu"
+        className="flex h-[150px] w-[300px] items-center justify-center rounded-base border border-dashed border-border text-sm font-base focus-visible:outline-2 focus-visible:outline-offset-4 dark:border-[#fff]"
+      >
+        Right-click or press Shift+F10
       </ContextMenuTrigger>
       <ContextMenuContent className="w-64">
         <ContextMenuItem inset>
           Back
-          <ContextMenuShortcut>⌘[</ContextMenuShortcut>
+          <ContextMenuShortcut>Alt+Left</ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuItem inset disabled>
           Forward
-          <ContextMenuShortcut>⌘]</ContextMenuShortcut>
+          <ContextMenuShortcut>Alt+Right</ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuItem inset>
           Reload
-          <ContextMenuShortcut>⌘R</ContextMenuShortcut>
+          <ContextMenuShortcut>Ctrl+R</ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuSub>
           <ContextMenuSubTrigger inset>More Tools</ContextMenuSubTrigger>
           <ContextMenuSubContent className="w-48">
             <ContextMenuItem inset>
               Save Page...
-              <ContextMenuShortcut>⇧⌘S</ContextMenuShortcut>
+              <ContextMenuShortcut>Ctrl+S</ContextMenuShortcut>
             </ContextMenuItem>
             <ContextMenuItem>
               <PlusIcon />
@@ -62,7 +66,7 @@ export default function ContextMenuDemo() {
         <ContextMenuSeparator />
         <ContextMenuCheckboxItem checked>
           Show Bookmarks Bar
-          <ContextMenuShortcut>⌘⇧B</ContextMenuShortcut>
+          <ContextMenuShortcut>Ctrl+Shift+B</ContextMenuShortcut>
         </ContextMenuCheckboxItem>
         <ContextMenuCheckboxItem>Show Full URLs</ContextMenuCheckboxItem>
         <ContextMenuSeparator />

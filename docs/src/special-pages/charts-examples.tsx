@@ -1,4 +1,5 @@
 import { Code2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import { type ChartExample, charts } from "@/data/charts";
 
@@ -116,7 +117,7 @@ const chartGroups: ChartGroup[] = [
     id: "pie-chart",
     title: "Registry composition",
     description:
-      "Inspect how the 47 source-owned components are distributed across practical UI categories.",
+      "Inspect how the 49 source-owned components are distributed across practical UI categories.",
     canvasClassName: "md:grid-cols-2 2xl:grid-cols-4",
     items: [
       { name: "ChartPieStacked", className: "md:col-span-2 2xl:col-span-4" },
@@ -154,28 +155,70 @@ const chartGroups: ChartGroup[] = [
 ];
 
 export default function Examples() {
+  const [activeGroupId, setActiveGroupId] = useState(chartGroups[0].id);
+  const activeGroup = chartGroups.find((group) => group.id === activeGroupId) ?? chartGroups[0];
+
+  useEffect(() => {
+    const selectHashGroup = () => {
+      const hash = window.location.hash.slice(1);
+      if (chartGroups.some((group) => group.id === hash)) {
+        setActiveGroupId(hash);
+      }
+    };
+
+    selectHashGroup();
+    window.addEventListener("hashchange", selectHashGroup);
+    return () => window.removeEventListener("hashchange", selectHashGroup);
+  }, []);
+
+  const selectGroup = (id: string) => {
+    setActiveGroupId(id);
+    window.history.replaceState(window.history.state, "", `#${id}`);
+  };
+
   return (
-    <div className="space-y-20 pb-8 sm:space-y-24">
-      {chartGroups.map((group) => (
+    <div className="pb-8">
+      <nav
+        aria-label="Chart series"
+        className="sticky top-[var(--header-height)] z-20 -mx-4 overflow-x-auto border-y-2 border-border bg-background px-4 py-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0"
+      >
+        <div className="flex min-w-max gap-2">
+          {chartGroups.map((group) => (
+            <Button
+              key={group.id}
+              type="button"
+              size="sm"
+              variant={group.id === activeGroup.id ? "default" : "neutral"}
+              aria-pressed={group.id === activeGroup.id}
+              onClick={() => selectGroup(group.id)}
+            >
+              <span aria-hidden="true">{group.index}</span>
+              {group.title}
+            </Button>
+          ))}
+        </div>
+      </nav>
+
+      <div className="mt-12 sm:mt-16">
         <section
-          id={group.id}
-          className="grid scroll-mt-24 gap-8 border-t-2 border-border pt-7 lg:grid-cols-[minmax(220px,260px)_minmax(0,1fr)] lg:gap-10 lg:pt-9 xl:gap-14"
-          key={group.id}
+          id={activeGroup.id}
+          className="grid scroll-mt-36 gap-8 border-t-2 border-border pt-7 lg:grid-cols-[minmax(220px,260px)_minmax(0,1fr)] lg:gap-10 lg:pt-9 xl:gap-14"
+          key={activeGroup.id}
         >
           <header className="lg:sticky lg:top-24 lg:self-start">
             <p className="font-mono text-xs font-bold uppercase">
-              Series {group.index} / {String(group.items.length).padStart(2, "0")}
+              Series {activeGroup.index} / {String(activeGroup.items.length).padStart(2, "0")}
             </p>
-            <h2 className="mt-3 font-heading text-2xl sm:text-3xl">{group.title}</h2>
+            <h2 className="mt-3 font-heading text-2xl sm:text-3xl">{activeGroup.title}</h2>
             <p className="mt-4 max-w-sm text-sm leading-6 text-foreground/80">
-              {group.description}
+              {activeGroup.description}
             </p>
           </header>
 
           <div
-            className={`grid min-w-0 grid-flow-dense items-stretch gap-6 ${group.canvasClassName}`}
+            className={`grid min-w-0 grid-flow-dense items-stretch gap-6 ${activeGroup.canvasClassName}`}
           >
-            {group.items.map((item) => {
+            {activeGroup.items.map((item) => {
               const chart = charts.find((candidate) => candidate.name === item.name);
               if (!chart) return null;
 
@@ -192,7 +235,7 @@ export default function Examples() {
             })}
           </div>
         </section>
-      ))}
+      </div>
     </div>
   );
 }

@@ -28,7 +28,7 @@
     },
     {
       "source": "/showcase",
-      "destination": "/docs",
+      "destination": "/docs/",
       "permanent": true
     }
   ],

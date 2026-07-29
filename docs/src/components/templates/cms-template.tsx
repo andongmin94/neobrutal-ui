@@ -107,6 +107,11 @@ export default function CmsTemplate() {
     [normalizedQuery, posts, statusFilter],
   );
 
+  React.useEffect(() => {
+    if (filteredPosts.some((post) => post.id === selectedId)) return;
+    setSelectedId(filteredPosts[0]?.id ?? "");
+  }, [filteredPosts, selectedId]);
+
   const handleFilterChange = (value: string) => {
     if (value === "all" || value === "draft" || value === "published") {
       setStatusFilter(value);
@@ -165,7 +170,9 @@ export default function CmsTemplate() {
   const publishedCount = posts.filter((post) => post.status === "published").length;
 
   return (
-    <div className={`flex min-h-dvh flex-col bg-background text-foreground ${TEMPLATE_THEME}`}>
+    <div
+      className={`flex min-h-[calc(100dvh-var(--header-height))] flex-col bg-background text-foreground ${TEMPLATE_THEME}`}
+    >
       <header className="border-b-2 border-border bg-secondary-background">
         <div className="mx-auto flex h-12 w-full max-w-screen-xl items-center justify-between px-4 sm:px-6">
           <h1 className="text-base font-heading">Folio CMS</h1>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ArrowRight, Box, Search, SlidersHorizontal, X } from "@lucide/vue";
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { withBase } from "vitepress";
 
 import {
@@ -14,6 +14,7 @@ import {
 const query = ref("");
 const category = ref<ComponentCategory>("All");
 const searchInput = ref<HTMLInputElement | null>(null);
+let filtersReady = false;
 
 const categoryDescriptions: Record<string, string> = {
   Actions: "Controls that turn intent into an immediate action.",
@@ -71,7 +72,37 @@ function handleShortcut(event: KeyboardEvent) {
   searchInput.value?.focus();
 }
 
-onMounted(() => document.addEventListener("keydown", handleShortcut));
+function restoreFilters() {
+  const params = new URLSearchParams(window.location.search);
+  const savedCategory = params.get("category") as ComponentCategory | null;
+
+  query.value = params.get("q") ?? "";
+  category.value =
+    savedCategory && COMPONENT_CATEGORIES.includes(savedCategory) ? savedCategory : "All";
+}
+
+function syncFilters() {
+  const url = new URL(window.location.href);
+  const normalizedQuery = query.value.trim();
+
+  if (normalizedQuery) url.searchParams.set("q", normalizedQuery);
+  else url.searchParams.delete("q");
+
+  if (category.value !== "All") url.searchParams.set("category", category.value);
+  else url.searchParams.delete("category");
+
+  window.history.replaceState(window.history.state, "", url);
+}
+
+watch([query, category], () => {
+  if (filtersReady) syncFilters();
+});
+
+onMounted(() => {
+  restoreFilters();
+  filtersReady = true;
+  document.addEventListener("keydown", handleShortcut);
+});
 onBeforeUnmount(() => document.removeEventListener("keydown", handleShortcut));
 </script>
 

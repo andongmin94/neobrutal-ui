@@ -23,7 +23,7 @@ import {
 export const description = "A stacked catalog coverage chart with a legend";
 
 const chartData = [
-  { category: "Forms", registry: 12, recipes: 8 },
+  { category: "Forms", registry: 13, recipes: 8 },
   { category: "Overlays", registry: 9, recipes: 7 },
   { category: "Navigation", registry: 7, recipes: 5 },
   { category: "Data", registry: 8, recipes: 6 },
@@ -79,7 +79,7 @@ export default function ChartBarStacked() {
         <div className="flex gap-2 leading-none font-medium">
           75 entries across both catalog collections <LibraryBig className="h-4 w-4" />
         </div>
-        <div className="leading-none">44 registry components and 31 recipes</div>
+        <div className="leading-none">46 registry components and 31 recipes</div>
       </CardFooter>
     </Card>
   );

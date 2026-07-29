@@ -51,6 +51,7 @@ export default function FrameworkCombobox() {
         <Button
           variant="noShadow"
           role="combobox"
+          aria-label="Select a framework"
           aria-expanded={open}
           aria-controls={open ? contentId : undefined}
           className="w-full justify-between md:max-w-[200px]"
