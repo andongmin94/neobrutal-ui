@@ -1,98 +1,103 @@
-import AccordionDemo from "@/examples/ui/accordion";
-import AlertDemo from "@/examples/ui/alert";
-import AlertDialogDemo from "@/examples/ui/alert-dialog";
-import AlertDescriptionOnlyDemo from "@/examples/ui/alert/description-only";
-import AlertDestructiveDemo from "@/examples/ui/alert/destructive";
-import AlertIconDescriptionDemo from "@/examples/ui/alert/icon-description";
-import AlertIconTitleDemo from "@/examples/ui/alert/icon-title";
-import AlertLongDescriptionDemo from "@/examples/ui/alert/long-description";
-import AlertLongTitleDemo from "@/examples/ui/alert/long-title";
-import AlertLongTitleAndDescriptionDemo from "@/examples/ui/alert/long-title-and-description";
-import AlertWithButtonDemo from "@/examples/ui/alert/with-button";
-import AvatarDemo from "@/examples/ui/avatar";
-import AvatarFallbackDemo from "@/examples/ui/avatar/fallback";
-import BadgeDemo from "@/examples/ui/badge";
-import BadgeNeutralDemo from "@/examples/ui/badge/neutral";
-import BadgeWithIconDemo from "@/examples/ui/badge/with-icon";
-import BreadcrumbDemo from "@/examples/ui/breadcrumb";
-import ButtonDemo from "@/examples/ui/button";
-import ButtonIconDemo from "@/examples/ui/button/icon";
-import ButtonNeutralDemo from "@/examples/ui/button/neutral";
-import ButtonNoShadowDemo from "@/examples/ui/button/no-shadow";
-import ButtonReverseDemo from "@/examples/ui/button/reverse";
-import ButtonWithIconDemo from "@/examples/ui/button/with-icon";
-import CalendarDemo from "@/examples/ui/calendar/index";
-import CalendarRangeDemo from "@/examples/ui/calendar/range";
-import CardDemo from "@/examples/ui/card";
-import CarouselDemo from "@/examples/ui/carousel";
-import ChartDemo from "@/examples/ui/chart/chart-area-stacked";
-import CheckboxDemo from "@/examples/ui/checkbox";
-import CollapsibleDemo from "@/examples/ui/collapsible";
-import ComboboxDemo from "@/examples/ui/combobox";
-import ComboboxMultiselectDemo from "@/examples/ui/combobox/multiselect";
-import ComboboxTimezonesDemo from "@/examples/ui/combobox/timezones";
-import ComboboxUsersDemo from "@/examples/ui/combobox/users";
-import CommandDemo from "@/examples/ui/command";
-import ContextMenuDemo from "@/examples/ui/context-menu";
-import DataTableDemo from "@/examples/ui/data-table";
-import DatePickerDemo from "@/examples/ui/date-picker";
-import DialogDemo from "@/examples/ui/dialog";
-import DialogWithScrollableContent from "@/examples/ui/dialog/scrollable-content";
-import DialogWithStickyFooter from "@/examples/ui/dialog/sticky-footer";
-import DrawerDemo from "@/examples/ui/drawer";
-import DrawerWithScrollableContent from "@/examples/ui/drawer/scrollable-content";
-import DropdownMenuDemo from "@/examples/ui/dropdown-menu";
-import DropdownMenuCheckboxes from "@/examples/ui/dropdown-menu/checkboxes";
-import DropdownMenuRadioGroupDemo from "@/examples/ui/dropdown-menu/radio";
-import FormDemo from "@/examples/ui/form";
-import HoverCardDemo from "@/examples/ui/hover-card";
-import ImageCardDemo from "@/examples/ui/image-card";
-import InputDemo from "@/examples/ui/input";
-import InputOTPDemo from "@/examples/ui/input-otp";
-import InputDisabledDemo from "@/examples/ui/input/disabled";
-import InputFileDemo from "@/examples/ui/input/file";
-import InputWithButtonDemo from "@/examples/ui/input/with-button";
-import InputWithLabelDemo from "@/examples/ui/input/with-label";
-import LabelDemo from "@/examples/ui/label";
-import MarqueeDemo from "@/examples/ui/marquee";
-import MenubarDemo from "@/examples/ui/menubar";
-import NavigationMenuDemo from "@/examples/ui/navigation-menu";
-import PaginationDemo from "@/examples/ui/pagination";
-import PopoverDemo from "@/examples/ui/popover";
-import ProgressDemo from "@/examples/ui/progress";
-import RadioGroupDemo from "@/examples/ui/radio-group";
-import ResizableDemo from "@/examples/ui/resizable";
-import ScrollAreaDemo from "@/examples/ui/scroll-area";
-import SelectDemo from "@/examples/ui/select";
-import SelectDisabledDemo from "@/examples/ui/select/disabled";
-import SelectLargeListDemo from "@/examples/ui/select/large-list";
-import SelectWithIconDemo from "@/examples/ui/select/with-icon";
-import SheetDemo from "@/examples/ui/sheet";
-import SheetSideDemo from "@/examples/ui/sheet/side";
-import SidebarDemo from "@/examples/ui/sidebar/page";
-import SkeletonDemo from "@/examples/ui/skeleton";
-import SliderDemo from "@/examples/ui/slider";
-import SliderControlled from "@/examples/ui/slider/controlled";
-import TwoThumbsSliderDemo from "@/examples/ui/slider/two-thumbs";
-import VerticalSliderDemo from "@/examples/ui/slider/vertical";
-import SonnerDemo from "@/examples/ui/sonner";
-import SonnerActionDemo from "@/examples/ui/sonner/action";
-import SonnerCancelDemo from "@/examples/ui/sonner/cancel";
-import SonnerErrorDemo from "@/examples/ui/sonner/error";
-import SonnerInfoDemo from "@/examples/ui/sonner/info";
-import SonnerPromiseDemo from "@/examples/ui/sonner/promise";
-import SonnerSuccessDemo from "@/examples/ui/sonner/success";
-import SonnerWarningDemo from "@/examples/ui/sonner/warning";
-import SwitchDemo from "@/examples/ui/switch";
-import TableDemo from "@/examples/ui/table";
-import TabsDemo from "@/examples/ui/tabs";
-import TextareaDemo from "@/examples/ui/textarea";
-import TooltipDemo from "@/examples/ui/tooltip";
+const AccordionDemo = () => import("@/examples/ui/accordion");
+const AlertDemo = () => import("@/examples/ui/alert");
+const AlertDialogDemo = () => import("@/examples/ui/alert-dialog");
+const AlertDescriptionOnlyDemo = () => import("@/examples/ui/alert/description-only");
+const AlertDestructiveDemo = () => import("@/examples/ui/alert/destructive");
+const AlertIconDescriptionDemo = () => import("@/examples/ui/alert/icon-description");
+const AlertIconTitleDemo = () => import("@/examples/ui/alert/icon-title");
+const AlertLongDescriptionDemo = () => import("@/examples/ui/alert/long-description");
+const AlertLongTitleDemo = () => import("@/examples/ui/alert/long-title");
+const AlertLongTitleAndDescriptionDemo = () =>
+  import("@/examples/ui/alert/long-title-and-description");
+const AlertWithButtonDemo = () => import("@/examples/ui/alert/with-button");
+const AvatarDemo = () => import("@/examples/ui/avatar");
+const AvatarFallbackDemo = () => import("@/examples/ui/avatar/fallback");
+const BadgeDemo = () => import("@/examples/ui/badge");
+const BadgeNeutralDemo = () => import("@/examples/ui/badge/neutral");
+const BadgeWithIconDemo = () => import("@/examples/ui/badge/with-icon");
+const BreadcrumbDemo = () => import("@/examples/ui/breadcrumb");
+const ButtonDemo = () => import("@/examples/ui/button");
+const ButtonIconDemo = () => import("@/examples/ui/button/icon");
+const ButtonNeutralDemo = () => import("@/examples/ui/button/neutral");
+const ButtonNoShadowDemo = () => import("@/examples/ui/button/no-shadow");
+const ButtonReverseDemo = () => import("@/examples/ui/button/reverse");
+const ButtonWithIconDemo = () => import("@/examples/ui/button/with-icon");
+const CalendarDemo = () => import("@/examples/ui/calendar/index");
+const CalendarRangeDemo = () => import("@/examples/ui/calendar/range");
+const CardDemo = () => import("@/examples/ui/card");
+const CarouselDemo = () => import("@/examples/ui/carousel");
+const ChartDemo = () => import("@/examples/ui/chart/chart-area-stacked");
+const CheckboxDemo = () => import("@/examples/ui/checkbox");
+const CollapsibleDemo = () => import("@/examples/ui/collapsible");
+const ComboboxDemo = () => import("@/examples/ui/combobox");
+const ComboboxMultiselectDemo = () => import("@/examples/ui/combobox/multiselect");
+const ComboboxTimezonesDemo = () => import("@/examples/ui/combobox/timezones");
+const ComboboxUsersDemo = () => import("@/examples/ui/combobox/users");
+const CommandDemo = () => import("@/examples/ui/command");
+const ContextMenuDemo = () => import("@/examples/ui/context-menu");
+const DataTableDemo = () => import("@/examples/ui/data-table");
+const DatePickerDemo = () => import("@/examples/ui/date-picker");
+const DialogDemo = () => import("@/examples/ui/dialog");
+const DialogWithScrollableContent = () => import("@/examples/ui/dialog/scrollable-content");
+const DialogWithStickyFooter = () => import("@/examples/ui/dialog/sticky-footer");
+const DrawerDemo = () => import("@/examples/ui/drawer");
+const DrawerWithScrollableContent = () => import("@/examples/ui/drawer/scrollable-content");
+const DropdownMenuDemo = () => import("@/examples/ui/dropdown-menu");
+const DropdownMenuCheckboxes = () => import("@/examples/ui/dropdown-menu/checkboxes");
+const DropdownMenuRadioGroupDemo = () => import("@/examples/ui/dropdown-menu/radio");
+const FormDemo = () => import("@/examples/ui/form");
+const HoverCardDemo = () => import("@/examples/ui/hover-card");
+const ImageCardDemo = () => import("@/examples/ui/image-card");
+const InputDemo = () => import("@/examples/ui/input");
+const InputGroupDemo = () => import("@/examples/ui/input-group");
+const InputOTPDemo = () => import("@/examples/ui/input-otp");
+const InputDisabledDemo = () => import("@/examples/ui/input/disabled");
+const InputFileDemo = () => import("@/examples/ui/input/file");
+const InputWithButtonDemo = () => import("@/examples/ui/input/with-button");
+const InputWithLabelDemo = () => import("@/examples/ui/input/with-label");
+const LabelDemo = () => import("@/examples/ui/label");
+const MarqueeDemo = () => import("@/examples/ui/marquee");
+const MenubarDemo = () => import("@/examples/ui/menubar");
+const NavigationMenuDemo = () => import("@/examples/ui/navigation-menu");
+const PaginationDemo = () => import("@/examples/ui/pagination");
+const PopoverDemo = () => import("@/examples/ui/popover");
+const ProgressDemo = () => import("@/examples/ui/progress");
+const RadioGroupDemo = () => import("@/examples/ui/radio-group");
+const ResizableDemo = () => import("@/examples/ui/resizable");
+const ScrollAreaDemo = () => import("@/examples/ui/scroll-area");
+const SelectDemo = () => import("@/examples/ui/select");
+const SelectDisabledDemo = () => import("@/examples/ui/select/disabled");
+const SelectLargeListDemo = () => import("@/examples/ui/select/large-list");
+const SeparatorDemo = () => import("@/examples/ui/separator");
+const SelectWithIconDemo = () => import("@/examples/ui/select/with-icon");
+const SheetDemo = () => import("@/examples/ui/sheet");
+const SheetSideDemo = () => import("@/examples/ui/sheet/side");
+const SidebarDemo = () => import("@/examples/ui/sidebar/page");
+const SkeletonDemo = () => import("@/examples/ui/skeleton");
+const SliderDemo = () => import("@/examples/ui/slider");
+const SliderControlled = () => import("@/examples/ui/slider/controlled");
+const TwoThumbsSliderDemo = () => import("@/examples/ui/slider/two-thumbs");
+const VerticalSliderDemo = () => import("@/examples/ui/slider/vertical");
+const SonnerDemo = () => import("@/examples/ui/sonner");
+const SonnerActionDemo = () => import("@/examples/ui/sonner/action");
+const SonnerCancelDemo = () => import("@/examples/ui/sonner/cancel");
+const SonnerErrorDemo = () => import("@/examples/ui/sonner/error");
+const SonnerInfoDemo = () => import("@/examples/ui/sonner/info");
+const SonnerPromiseDemo = () => import("@/examples/ui/sonner/promise");
+const SonnerSuccessDemo = () => import("@/examples/ui/sonner/success");
+const SonnerWarningDemo = () => import("@/examples/ui/sonner/warning");
+const SwitchDemo = () => import("@/examples/ui/switch");
+const TableDemo = () => import("@/examples/ui/table");
+const TabsDemo = () => import("@/examples/ui/tabs");
+const TextareaDemo = () => import("@/examples/ui/textarea");
+const TooltipDemo = () => import("@/examples/ui/tooltip");
+
+type PreviewLoader = () => Promise<{ default: React.ComponentType }>;
 
 type Component = {
   name: string;
-  exampleComponent?: React.ComponentType;
-  examples?: Record<string, React.ComponentType>;
+  exampleComponent?: PreviewLoader;
+  examples?: Record<string, PreviewLoader>;
   notShadcn?: boolean;
 };
 
@@ -247,6 +252,10 @@ const COMPONENTS: Component[] = [
     notShadcn: true,
   },
   {
+    name: "Input Group",
+    exampleComponent: InputGroupDemo,
+  },
+  {
     name: "Input Otp",
     exampleComponent: InputOTPDemo,
   },
@@ -311,6 +320,10 @@ const COMPONENTS: Component[] = [
       disabled: SelectDisabledDemo,
       "with-icon": SelectWithIconDemo,
     },
+  },
+  {
+    name: "Separator",
+    exampleComponent: SeparatorDemo,
   },
   {
     name: "Sheet",

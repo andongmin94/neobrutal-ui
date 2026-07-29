@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ExternalLink } from "@lucide/vue";
-import { computed, ref, watch } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 import { Content, useData, useRoute } from "vitepress";
 
 import DirectoryHome from "./components/DirectoryHome.vue";
@@ -40,8 +40,10 @@ const upstreamUrl = computed(() => frontmatter.value.shadcnDocsLink as string | 
 
 watch(
   () => route.path,
-  () => {
+  async () => {
     mobileMenuOpen.value = false;
+    await nextTick();
+    document.querySelector<HTMLElement>("#main-content")?.focus({ preventScroll: true });
   },
 );
 </script>

@@ -43,6 +43,7 @@ const frameworks = [
 export default function FrameworkCombobox() {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
+  const contentId = React.useId();
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -51,6 +52,7 @@ export default function FrameworkCombobox() {
           variant="noShadow"
           role="combobox"
           aria-expanded={open}
+          aria-controls={open ? contentId : undefined}
           className="w-full justify-between md:max-w-[200px]"
         >
           {value
@@ -59,7 +61,7 @@ export default function FrameworkCombobox() {
           <ChevronsUpDown />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-(--anchor-width) border-0 p-0">
+      <PopoverContent id={contentId} className="w-(--anchor-width) border-0 p-0">
         <Command className="**:data-[slot=command-input-wrapper]:h-11">
           <CommandInput placeholder="Search framework..." />
           <CommandList className="p-1">

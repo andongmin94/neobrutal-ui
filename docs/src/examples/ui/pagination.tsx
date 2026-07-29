@@ -13,26 +13,26 @@ export default function PaginationDemo() {
     <Pagination>
       <PaginationContent>
         <PaginationItem>
-          <PaginationPrevious href="#" />
+          <PaginationPrevious href="?page=1" />
         </PaginationItem>
         <PaginationItem>
-          <PaginationLink href="#">1</PaginationLink>
+          <PaginationLink href="?page=1">1</PaginationLink>
         </PaginationItem>
         <PaginationItem>
-          <PaginationLink href="#" isActive>
+          <PaginationLink href="?page=2" isActive>
             2
           </PaginationLink>
         </PaginationItem>
         <div className="items-center md:flex hidden">
           <PaginationItem>
-            <PaginationLink href="#">3</PaginationLink>
+            <PaginationLink href="?page=3">3</PaginationLink>
           </PaginationItem>
           <PaginationItem>
             <PaginationEllipsis />
           </PaginationItem>
         </div>
         <PaginationItem>
-          <PaginationNext href="#" />
+          <PaginationNext href="?page=3" />
         </PaginationItem>
       </PaginationContent>
     </Pagination>

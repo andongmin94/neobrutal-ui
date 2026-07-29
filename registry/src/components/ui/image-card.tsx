@@ -14,7 +14,7 @@ export default function ImageCard({ imageUrl, caption, className }: Props) {
         className,
       )}
     >
-      <img className="w-full aspect-4/3" src={imageUrl} alt="image" />
+      <img className="w-full aspect-4/3" src={imageUrl} alt={caption} />
       <figcaption className="border-t-2 text-main-foreground border-border p-4">
         {caption}
       </figcaption>

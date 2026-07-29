@@ -43,6 +43,7 @@ function ComboboxDemo() {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const contentId = React.useId();
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -51,6 +52,7 @@ function ComboboxDemo() {
           variant="noShadow"
           role="combobox"
           aria-expanded={open}
+          aria-controls={open ? contentId : undefined}
           className="w-[200px] justify-between"
         >
           {value
@@ -59,7 +61,11 @@ function ComboboxDemo() {
           <ChevronsUpDown className="ml-2 size-4 shrink-0" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] border-0! p-0 font-base" initialFocus={inputRef}>
+      <PopoverContent
+        id={contentId}
+        className="w-[200px] border-0! p-0 font-base"
+        initialFocus={inputRef}
+      >
         <Command>
           <CommandInput ref={inputRef} placeholder="Search framework..." />
           <CommandEmpty>No framework found.</CommandEmpty>

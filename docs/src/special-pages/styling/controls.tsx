@@ -78,25 +78,49 @@ export default function Styling() {
   const [fontWeight, setFontWeight] = useState([700, 500]);
 
   useLayoutEffect(() => {
-    const colorObj = JSON.parse(localStorage.getItem("color") as string);
-    const borderRadius = Number(localStorage.getItem("borderRadius"));
-    const boxShadow = localStorage.getItem("boxShadow")?.split(",");
-    const fontWeight = localStorage.getItem("fontWeight")?.split(",");
+    const root = document.documentElement;
+    const storedColor = localStorage.getItem("color");
+    const storedBorderRadius = localStorage.getItem("borderRadius");
+    const parsedBorderRadius = storedBorderRadius === null ? null : Number(storedBorderRadius);
+    const boxShadow = localStorage.getItem("boxShadow")?.split(",").map(Number);
+    const storedFontWeight = localStorage.getItem("fontWeight")?.split(",").map(Number);
 
-    if (colorObj) {
-      setColor(colorObj);
+    if (storedColor) {
+      try {
+        const colorObj = JSON.parse(storedColor);
+        if (colorObj) {
+          setColor(colorObj);
+        }
+      } catch {
+        localStorage.removeItem("color");
+      }
     }
 
-    if (borderRadius) {
-      setBorderRadius(borderRadius);
+    if (parsedBorderRadius !== null && Number.isFinite(parsedBorderRadius)) {
+      setBorderRadius(parsedBorderRadius);
+      root.style.setProperty("--border-radius", `${parsedBorderRadius}px`);
+    } else if (storedBorderRadius !== null) {
+      localStorage.removeItem("borderRadius");
     }
 
-    if (boxShadow) {
-      setBoxShadowLength([+boxShadow[0], +boxShadow[1]]);
+    if (boxShadow?.length === 2 && Number.isFinite(boxShadow[0]) && Number.isFinite(boxShadow[1])) {
+      setBoxShadowLength(boxShadow);
+      root.style.setProperty("--box-shadow-x", `${boxShadow[0]}px`);
+      root.style.setProperty("--box-shadow-y", `${boxShadow[1]}px`);
+    } else if (boxShadow) {
+      localStorage.removeItem("boxShadow");
     }
 
-    if (fontWeight) {
-      setFontWeight([+fontWeight[0], +fontWeight[1]]);
+    if (
+      storedFontWeight?.length === 2 &&
+      Number.isFinite(storedFontWeight[0]) &&
+      Number.isFinite(storedFontWeight[1])
+    ) {
+      setFontWeight(storedFontWeight);
+      root.style.setProperty("--heading-font-weight", `${storedFontWeight[0]}`);
+      root.style.setProperty("--base-font-weight", `${storedFontWeight[1]}`);
+    } else if (storedFontWeight) {
+      localStorage.removeItem("fontWeight");
     }
   }, []);
 
@@ -353,11 +377,13 @@ export default function Styling() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="grid gap-3">
-              <Label htmlFor="border-radius">Border Radius</Label>
+            <fieldset className="grid gap-3">
+              <legend className="text-sm font-heading">Border Radius</legend>
               <div className="grid grid-cols-4 gap-2">
                 {[0, 5, 10, 15].map((btn) => (
                   <Button
+                    type="button"
+                    aria-pressed={borderRadius === btn}
                     onClick={() => updateBorderRadius(btn)}
                     className={cn(
                       "h-8",
@@ -372,12 +398,14 @@ export default function Styling() {
                   </Button>
                 ))}
               </div>
-            </div>
-            <div className="grid gap-3">
-              <Label htmlFor="border-radius">Horizontal Box Shadow</Label>
+            </fieldset>
+            <fieldset className="grid gap-3">
+              <legend className="text-sm font-heading">Horizontal Box Shadow</legend>
               <div className="grid grid-cols-5 gap-2">
                 {[-4, -2, 0, 2, 4].map((btn) => (
                   <Button
+                    type="button"
+                    aria-pressed={boxShadowLength[0] === btn}
                     onClick={() => updateHorizontalBoxShadow(btn)}
                     className={cn(
                       "h-8",
@@ -392,12 +420,14 @@ export default function Styling() {
                   </Button>
                 ))}
               </div>
-            </div>
-            <div className="grid gap-3">
-              <Label htmlFor="border-radius">Vertical Box Shadow</Label>
+            </fieldset>
+            <fieldset className="grid gap-3">
+              <legend className="text-sm font-heading">Vertical Box Shadow</legend>
               <div className="grid grid-cols-5 gap-2">
                 {[-4, -2, 0, 2, 4].map((btn) => (
                   <Button
+                    type="button"
+                    aria-pressed={boxShadowLength[1] === btn}
                     onClick={() => updateVerticalBoxShadow(btn)}
                     className={cn(
                       "h-8",
@@ -412,12 +442,14 @@ export default function Styling() {
                   </Button>
                 ))}
               </div>
-            </div>
-            <div className="grid gap-3">
-              <Label htmlFor="border-radius">Heading Font Weight</Label>
+            </fieldset>
+            <fieldset className="grid gap-3">
+              <legend className="text-sm font-heading">Heading Font Weight</legend>
               <div className="grid grid-cols-3 gap-2">
                 {[700, 800, 900].map((btn) => (
                   <Button
+                    type="button"
+                    aria-pressed={fontWeight[0] === btn}
                     onClick={() => updateHeadingFontWeight(btn)}
                     className={cn(
                       "h-8",
@@ -432,12 +464,14 @@ export default function Styling() {
                   </Button>
                 ))}
               </div>
-            </div>
-            <div className="grid gap-3">
-              <Label htmlFor="border-radius">Base Font Weight</Label>
+            </fieldset>
+            <fieldset className="grid gap-3">
+              <legend className="text-sm font-heading">Base Font Weight</legend>
               <div className="grid grid-cols-3 gap-2">
                 {[500, 600, 700].map((btn) => (
                   <Button
+                    type="button"
+                    aria-pressed={fontWeight[1] === btn}
                     onClick={() => updateBaseFontWeight(btn)}
                     className={cn(
                       "h-8",
@@ -452,7 +486,7 @@ export default function Styling() {
                   </Button>
                 ))}
               </div>
-            </div>
+            </fieldset>
           </div>
           <SheetFooter>
             <Button onClick={() => setCustomizerOpen(false)}>Save changes</Button>

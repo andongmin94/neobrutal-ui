@@ -4,6 +4,8 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue"
 import { useRoute, useRouter } from "vitepress";
 
 import { COMPONENT_DIRECTORY_LINKS } from "../../../src/data/component-directory";
+import TEMPLATES from "../../../src/data/templates";
+import { BLOG_POSTS } from "../../../src/lib/blog-posts";
 
 type SearchEntry = {
   group: string;
@@ -18,7 +20,10 @@ const open = ref(false);
 const query = ref("");
 const selectedIndex = ref(0);
 const input = ref<HTMLInputElement | null>(null);
+const launcher = ref<HTMLButtonElement | null>(null);
+let returnFocus: HTMLElement | null = null;
 
+const resultListId = "docs-search-results";
 const staticEntries: SearchEntry[] = [
   { group: "Directory", href: "/", label: "Component directory", terms: "home registry browse" },
   { group: "Getting started", href: "/docs", label: "Introduction" },
@@ -28,6 +33,7 @@ const staticEntries: SearchEntry[] = [
   { group: "Explore", href: "/styling", label: "Styling" },
   { group: "Explore", href: "/charts", label: "Charts" },
   { group: "Explore", href: "/stars", label: "Stars" },
+  { group: "Project", href: "/docs/stars", label: "GitHub stars data" },
   { group: "Explore", href: "/templates", label: "Templates" },
   { group: "Project", href: "/docs/resources", label: "Resources" },
   { group: "Project", href: "/docs/credits", label: "Credits & license" },
@@ -41,6 +47,18 @@ const entries = [
     label: entry.text,
     terms: `component ${entry.text}`,
   })),
+  ...TEMPLATES.map((entry) => ({
+    group: "Templates",
+    href: `/templates/${entry.slug}`,
+    label: `${entry.title} template`,
+    terms: entry.description,
+  })),
+  ...BLOG_POSTS.map((entry) => ({
+    group: "Blog",
+    href: `/templates/blog/${entry.slug}`,
+    label: entry.title,
+    terms: `${entry.topic} ${entry.summary}`,
+  })),
 ];
 
 const results = computed(() => {
@@ -53,11 +71,21 @@ const results = computed(() => {
   return matches.slice(0, 12);
 });
 
+const activeResultId = computed(() =>
+  results.value[selectedIndex.value] ? `docs-search-result-${selectedIndex.value}` : undefined,
+);
+
 function show() {
+  const activeElement = document.activeElement;
+  returnFocus =
+    activeElement instanceof HTMLElement && activeElement !== document.body
+      ? activeElement
+      : launcher.value;
   open.value = true;
 }
 
 function hide() {
+  if (!open.value) return;
   open.value = false;
 }
 
@@ -91,13 +119,44 @@ function onInputKeydown(event: KeyboardEvent) {
   }
 }
 
+function onDialogKeydown(event: KeyboardEvent) {
+  if (event.key !== "Tab") return;
+
+  const dialog = event.currentTarget as HTMLElement;
+  const focusable = Array.from(
+    dialog.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    ),
+  ).filter((element) => element.getClientRects().length > 0);
+  if (focusable.length === 0) return;
+
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  const activeElement = document.activeElement;
+
+  if (event.shiftKey && (activeElement === first || !dialog.contains(activeElement))) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
+}
+
 watch(open, async (isOpen) => {
   document.documentElement.classList.toggle("search-open", isOpen);
+  document.querySelector<HTMLElement>(".site-frame")?.toggleAttribute("inert", isOpen);
+
   if (isOpen) {
     query.value = "";
     selectedIndex.value = 0;
     await nextTick();
     input.value?.focus();
+  } else {
+    await nextTick();
+    const focusTarget = returnFocus?.isConnected ? returnFocus : launcher.value;
+    returnFocus = null;
+    focusTarget?.focus();
   }
 });
 
@@ -111,15 +170,18 @@ onMounted(() => window.addEventListener("keydown", onGlobalKeydown));
 onBeforeUnmount(() => {
   window.removeEventListener("keydown", onGlobalKeydown);
   document.documentElement.classList.remove("search-open");
+  document.querySelector<HTMLElement>(".site-frame")?.removeAttribute("inert");
 });
 </script>
 
 <template>
   <button
+    ref="launcher"
     class="search-launcher pressable"
     type="button"
     aria-label="Search documentation"
     title="Search documentation"
+    aria-haspopup="dialog"
     @click="show"
   >
     <Search :size="16" :stroke-width="2.4" />
@@ -135,6 +197,7 @@ onBeforeUnmount(() => {
           role="dialog"
           aria-modal="true"
           aria-label="Search documentation"
+          @keydown="onDialogKeydown"
         >
           <div class="search-dialog__input">
             <Search :size="20" :stroke-width="2.3" aria-hidden="true" />
@@ -144,6 +207,11 @@ onBeforeUnmount(() => {
               type="search"
               placeholder="Search docs and components"
               aria-label="Search docs and components"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-expanded="true"
+              :aria-controls="resultListId"
+              :aria-activedescendant="activeResultId"
               @keydown="onInputKeydown"
             />
             <button class="icon-button" type="button" aria-label="Close search" @click="hide">
@@ -151,11 +219,14 @@ onBeforeUnmount(() => {
             </button>
           </div>
 
-          <div class="search-dialog__results">
+          <div :id="resultListId" class="search-dialog__results" role="listbox">
             <button
               v-for="(entry, index) in results"
+              :id="`docs-search-result-${index}`"
               :key="`${entry.group}:${entry.href}`"
               type="button"
+              role="option"
+              :aria-selected="selectedIndex === index"
               :class="{ 'is-selected': selectedIndex === index }"
               @mouseenter="selectedIndex = index"
               @click="go(entry)"

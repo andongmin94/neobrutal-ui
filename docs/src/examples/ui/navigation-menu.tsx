@@ -16,35 +16,35 @@ import { cn } from "@/lib/utils";
 const components: { title: string; href: string; description: string }[] = [
   {
     title: "Alert Dialog",
-    href: "https://ui.shadcn.com/docs/components/base/alert-dialog",
+    href: "/docs/alert-dialog",
     description:
       "A modal dialog that interrupts the user with important content and expects a response.",
   },
   {
     title: "Hover Card",
-    href: "https://ui.shadcn.com/docs/components/base/hover-card",
+    href: "/docs/hover-card",
     description: "For sighted users to preview content available behind a link.",
   },
   {
     title: "Progress",
-    href: "https://ui.shadcn.com/docs/components/base/progress",
+    href: "/docs/progress",
     description:
       "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
   },
   {
-    title: "Scroll-area",
-    href: "https://ui.shadcn.com/docs/components/base/scroll-area",
-    description: "Visually or semantically separates content.",
+    title: "Scroll Area",
+    href: "/docs/scroll-area",
+    description: "Provides a consistent scrollable viewport for long content.",
   },
   {
     title: "Tabs",
-    href: "https://ui.shadcn.com/docs/components/base/tabs",
+    href: "/docs/tabs",
     description:
       "A set of layered sections of content, known as tab panels, that are displayed one at a time.",
   },
   {
     title: "Tooltip",
-    href: "https://ui.shadcn.com/docs/components/base/tooltip",
+    href: "/docs/tooltip",
     description:
       "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
   },
@@ -62,27 +62,23 @@ export default function NavigationMenuDemo() {
                 <NavigationMenuLink asChild>
                   <a
                     className="flex h-full w-full select-none flex-col justify-end rounded-base p-6 no-underline outline-hidden"
-                    href="https://ui.shadcn.com"
+                    href="/docs"
                   >
-                    <div className="mb-2 mt-4 text-lg font-heading">shadcn/ui</div>
+                    <div className="mb-2 mt-4 text-lg font-heading">neobrutal-ui</div>
                     <p className="text-sm font-base leading-tight">
-                      Beautifully designed components that you can copy and paste into your apps.
-                      Accessible. Customizable. Open Source.
+                      Source-owned React components built with Base UI and Tailwind CSS.
                     </p>
                   </a>
                 </NavigationMenuLink>
               </li>
-              <ListItem href="https://ui.shadcn.com/docs" title="Introduction">
-                Re-usable components built using Base UI and Tailwind CSS.
+              <ListItem href="/docs" title="Introduction">
+                Learn the project model and how the registry fits into your app.
               </ListItem>
-              <ListItem href="https://ui.shadcn.com/docs/installation" title="Installation">
-                How to install dependencies and structure your app.
+              <ListItem href="/docs/installation" title="Installation">
+                Install components with the shadcn CLI or copy them manually.
               </ListItem>
-              <ListItem
-                href="https://ui.shadcn.com/docs/components/base/typography"
-                title="Typography"
-              >
-                Styles for headings, paragraphs, lists...etc
+              <ListItem href="/docs/design-tokens" title="Design tokens">
+                Customize color, type, borders, radius, and hard shadows.
               </ListItem>
             </ul>
           </NavigationMenuContent>
@@ -100,10 +96,7 @@ export default function NavigationMenuDemo() {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuLink
-            className={navigationMenuTriggerStyle()}
-            href="https://ui.shadcn.com/docs"
-          >
+          <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/docs">
             Documentation
           </NavigationMenuLink>
         </NavigationMenuItem>

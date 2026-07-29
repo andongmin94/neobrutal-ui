@@ -28,8 +28,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 ```tsx
 <Avatar>
-  <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-  <AvatarFallback>CN</AvatarFallback>
+  <AvatarImage src="https://github.com/andongmin94.png?size=80" alt="@andongmin94" />
+  <AvatarFallback>AM</AvatarFallback>
 </Avatar>
 ```
 

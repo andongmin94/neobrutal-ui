@@ -16,6 +16,7 @@ export default function SliderControlled() {
       </div>
       <Slider
         id="slider-demo-temperature"
+        getAriaLabel={(index) => (index === 0 ? "Minimum temperature" : "Maximum temperature")}
         value={value}
         onValueChange={setValue}
         min={0}

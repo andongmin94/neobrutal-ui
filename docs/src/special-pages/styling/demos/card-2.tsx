@@ -44,7 +44,7 @@ export default function CardDemo({ className, ...props }: CardProps) {
             <p className="text-sm font-heading leading-none">Push Notifications</p>
             <p className="text-sm">Send notifications to device.</p>
           </div>
-          <Switch />
+          <Switch aria-label="Push notifications" />
         </div>
         <div>
           {notifications.map((notification, index) => (

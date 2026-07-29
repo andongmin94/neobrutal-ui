@@ -43,6 +43,7 @@ type Framework = (typeof frameworks)[number];
 export default function ComboboxWithCheckbox() {
   const [open, setOpen] = React.useState(false);
   const [selectedFrameworks, setSelectedFrameworks] = React.useState<Framework[]>([]);
+  const contentId = React.useId();
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -51,6 +52,7 @@ export default function ComboboxWithCheckbox() {
           variant="noShadow"
           role="combobox"
           aria-expanded={open}
+          aria-controls={open ? contentId : undefined}
           className="w-fit min-w-[280px] justify-between"
         >
           {selectedFrameworks.length > 0
@@ -59,7 +61,7 @@ export default function ComboboxWithCheckbox() {
           <ChevronsUpDown className="text-muted-foreground" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0 border-0" align="start">
+      <PopoverContent id={contentId} className="w-[300px] p-0 border-0" align="start">
         <Command className="**:data-[slot=command-input-wrapper]:h-11">
           <CommandInput placeholder="Search framework..." />
           <CommandList>

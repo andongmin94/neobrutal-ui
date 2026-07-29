@@ -52,6 +52,7 @@ export default defineConfig({
   vite: {
     publicDir: fileURLToPath(new URL("../public", import.meta.url)),
     plugins: [tailwindcss(), react()],
+    build: { chunkSizeWarningLimit: 520 },
     css: {
       postcss: {
         plugins: [

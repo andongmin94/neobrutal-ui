@@ -229,17 +229,8 @@
 
 .docs-content .vp-code span,
 .docs-content .shiki span {
-  color: var(--shiki-light);
-  background-color: var(--shiki-light-bg);
-  font-style: var(--shiki-light-font-style);
-  font-weight: var(--shiki-light-font-weight);
-  text-decoration: var(--shiki-light-text-decoration);
-}
-
-:root.dark .docs-content .vp-code span,
-:root.dark .docs-content .shiki span {
   color: var(--shiki-dark);
-  background-color: var(--shiki-dark-bg);
+  background-color: transparent;
   font-style: var(--shiki-dark-font-style);
   font-weight: var(--shiki-dark-font-weight);
   text-decoration: var(--shiki-dark-text-decoration);
@@ -324,9 +315,14 @@
   color: var(--vp-code-color);
 }
 
-.installation-tabs__command code {
+.docs-content .installation-tabs__command code {
   min-width: 0;
   overflow-x: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
   font-family: var(--font-mono);
   font-size: 13px;
   white-space: nowrap;
