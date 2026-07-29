@@ -224,11 +224,5 @@ onBeforeUnmount(() => document.removeEventListener("keydown", handleShortcut));
         </div>
       </section>
     </div>
-
-    <footer class="directory-footer">
-      <span>neobrutal-ui</span>
-      <p>Open source under the MIT License.</p>
-      <a :href="withBase('/docs/credits')">Credits and lineage →</a>
-    </footer>
   </main>
 </template>
