@@ -1,0 +1,48 @@
+---
+title: Avatar
+description: An image element with a fallback for representing the user.
+shadcnDocsLink: https://ui.shadcn.com/docs/components/avatar
+---
+
+<ComponentPreview component="avatar">
+
+<include cwd lang="tsx">
+  ./src/examples/ui/avatar/index.tsx
+</include>
+
+</ComponentPreview>
+
+## Installation
+
+<Installation component="avatar">
+
+<include cwd lang="tsx">
+  ./src/components/ui/avatar.tsx
+</include>
+
+</Installation>
+
+## Usage
+
+```ts
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+```
+
+```tsx
+<Avatar>
+  <AvatarImage src="https://github.com/andongmin94.png?size=80" alt="@andongmin94" />
+  <AvatarFallback>AM</AvatarFallback>
+</Avatar>
+```
+
+## Examples
+
+### Fallback
+
+<ComponentPreview component="avatar" example="fallback">
+
+<include cwd lang="tsx">
+  ./src/examples/ui/avatar/fallback.tsx
+</include>
+
+</ComponentPreview>

@@ -1,0 +1,119 @@
+---
+title: Sonner
+description: An opinionated toast component for React.
+shadcnDocsLink: https://ui.shadcn.com/docs/components/sonner
+---
+
+<ComponentPreview component="sonner">
+
+<include cwd lang="tsx">
+  ./src/examples/ui/sonner/index.tsx
+</include>
+
+</ComponentPreview>
+
+## Installation
+
+<Installation component="sonner">
+
+<include cwd lang="tsx">
+  ./src/components/ui/sonner.tsx
+</include>
+
+</Installation>
+
+## Usage
+
+```ts
+import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+```
+
+```tsx
+<Button
+  onClick={() =>
+    toast("Event has been created", {
+      description: "Sunday, December 03, 2023 at 9:00 AM",
+      action: {
+        label: "Undo",
+        onClick: () => console.log("Undo"),
+      },
+    })
+  }
+>
+  Show Toast
+</Button>
+```
+
+## Examples
+
+### Success
+
+<ComponentPreview component="sonner" example="success">
+
+<include cwd lang="tsx">
+  ./src/examples/ui/sonner/success.tsx
+</include>
+
+</ComponentPreview>
+
+### Info
+
+<ComponentPreview component="sonner" example="info">
+
+<include cwd lang="tsx">
+  ./src/examples/ui/sonner/info.tsx
+</include>
+
+</ComponentPreview>
+
+### Warning
+
+<ComponentPreview component="sonner" example="warning">
+
+<include cwd lang="tsx">
+  ./src/examples/ui/sonner/warning.tsx
+</include>
+
+</ComponentPreview>
+
+### Error
+
+<ComponentPreview component="sonner" example="error">
+
+<include cwd lang="tsx">
+  ./src/examples/ui/sonner/error.tsx
+</include>
+
+</ComponentPreview>
+
+### Action
+
+<ComponentPreview component="sonner" example="action">
+
+<include cwd lang="tsx">
+  ./src/examples/ui/sonner/action.tsx
+</include>
+
+</ComponentPreview>
+
+### Cancel
+
+<ComponentPreview component="sonner" example="cancel">
+
+<include cwd lang="tsx">
+  ./src/examples/ui/sonner/cancel.tsx
+</include>
+
+</ComponentPreview>
+
+### Promise
+
+<ComponentPreview component="sonner" example="promise">
+
+<include cwd lang="tsx">
+  ./src/examples/ui/sonner/promise.tsx
+</include>
+
+</ComponentPreview>

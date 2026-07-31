@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-// @ts-expect-error This registry intentionally omits the react-dom type package.
+// @ts-ignore This registry intentionally omits the react-dom type package.
 import { createPortal } from "react-dom";
 import { Select as SelectPrimitive } from "@base-ui/react/select";
 import { DirectionProvider } from "@base-ui/react/direction-provider";

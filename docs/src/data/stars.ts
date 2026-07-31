@@ -1,4 +1,4 @@
-// Auto-generated file. Do not modify manually.
+// This file is auto-generated. Do not edit manually.
 
 import Star1 from "@/examples/stars/s1";
 import Star2 from "@/examples/stars/s2";

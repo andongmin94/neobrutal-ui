@@ -1,0 +1,51 @@
+---
+title: Calendar
+description: A date field component that allows users to enter and edit date.
+shadcnDocsLink: https://ui.shadcn.com/docs/components/calendar
+---
+
+<ComponentPreview component="calendar" >
+
+<include cwd lang="tsx">
+  ./src/examples/ui/calendar/index.tsx
+</include>
+
+</ComponentPreview>
+
+## Installation
+
+<Installation component="calendar">
+
+<include cwd lang="tsx">
+  ./src/components/ui/calendar.tsx
+</include>
+
+</Installation>
+
+## Usage
+
+```ts
+import { useState } from "react";
+
+import { Calendar } from "@/components/ui/calendar";
+```
+
+```tsx
+const [date, setDate] = useState<Date | undefined>(new Date());
+```
+
+```tsx
+<Calendar mode="single" selected={date} onSelect={setDate} />
+```
+
+## Examples
+
+### Range
+
+<ComponentPreview component="calendar" example="range">
+
+<include cwd lang="tsx">
+  ./src/examples/ui/calendar/range.tsx
+</include>
+
+</ComponentPreview>

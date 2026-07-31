@@ -1,0 +1,330 @@
+.component-preview {
+  width: 100%;
+  margin-block: 1.5rem;
+  overflow: visible;
+  border: 2px solid var(--border);
+  background: var(--secondary-background);
+  box-shadow: var(--shadow);
+}
+
+.component-preview--primary {
+  margin-bottom: 2.5rem;
+}
+
+.component-preview__header {
+  display: flex;
+  min-width: 0;
+  border-bottom: 2px solid var(--border);
+}
+
+.component-preview__label {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 0.75rem 1.25rem;
+}
+
+.component-preview__label span {
+  width: 0.75rem;
+  height: 0.75rem;
+  flex: 0 0 auto;
+  border: 2px solid var(--border);
+  background: var(--main);
+}
+
+.component-preview__label strong {
+  overflow: hidden;
+  font-family: var(--font-heading, inherit);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.component-preview__tabs {
+  display: grid;
+  width: 14rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-left: auto;
+  border-left: 2px solid var(--border);
+}
+
+.component-preview:not(.component-preview--primary) .component-preview__tabs {
+  width: 100%;
+  border-left: 0;
+}
+
+.component-preview__tabs button {
+  min-height: 3rem;
+  border: 0;
+  border-right: 2px solid var(--border);
+  background: var(--secondary-background);
+  color: var(--foreground);
+  font: inherit;
+  font-weight: var(--heading-font-weight, 700);
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    color 120ms ease;
+}
+
+.component-preview__tabs button:last-child {
+  border-right: 0;
+}
+
+.component-preview__tabs button[aria-selected="true"] {
+  background: var(--main);
+  color: var(--main-foreground);
+}
+
+@media (hover: hover) {
+  .component-preview__tabs button:not([aria-selected="true"]):hover {
+    background: var(--surface-muted);
+  }
+}
+
+.component-preview__tabs button:not([aria-selected="true"]):active {
+  background: var(--main-hover);
+  color: var(--main-foreground);
+}
+
+.component-preview__tabs button:focus-visible {
+  position: relative;
+  z-index: 1;
+  outline: 2px solid var(--ring);
+  outline-offset: -4px;
+}
+
+.component-preview__panel {
+  min-width: 0;
+}
+
+.component-preview__canvas {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  min-height: 13.75rem;
+  align-items: center;
+  justify-content: center;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding: 2.5rem 2rem;
+  background-color: var(--background);
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--border) 10%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--border) 10%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 40px 40px;
+}
+
+.component-preview--primary .component-preview__canvas {
+  min-height: 18rem;
+  padding: 3.5rem 2.5rem;
+}
+
+.component-preview__code {
+  background: var(--secondary-background);
+}
+
+.component-preview__code [data-slot="pre-wrapper"],
+.component-preview__code div[class*="language-"] {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.component-preview__code pre {
+  max-height: 32.5rem;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+.component-preview--primary .component-preview__code pre {
+  min-height: 18rem;
+}
+
+.react-host {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.react-host__mount {
+  width: 100%;
+  min-width: 0;
+}
+
+.react-host[data-react-host="component"] .react-host__mount,
+.react-host[data-react-host="star"] .react-host__mount {
+  display: flex;
+  align-items: center;
+  justify-content: safe center;
+}
+
+.react-host__status {
+  display: grid;
+  min-height: 7rem;
+  place-items: center;
+  color: color-mix(in srgb, var(--foreground) 65%, transparent);
+  font-size: 0.875rem;
+}
+
+.special-page-loading {
+  min-height: 12rem;
+}
+
+.react-host__error {
+  display: grid;
+  gap: 0.25rem;
+  width: 100%;
+  border: 2px solid var(--border);
+  background: var(--secondary-background);
+  padding: 1rem;
+  color: var(--foreground);
+}
+
+.react-host__error span {
+  overflow-wrap: anywhere;
+  font-size: 0.875rem;
+  opacity: 0.7;
+}
+
+.site-footer {
+  flex: none;
+  border-top: var(--border-width) solid var(--border);
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.site-footer__inner {
+  display: flex;
+  width: min(100%, 1720px);
+  min-height: 72px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.site-footer__copy {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: clamp(24px, 4vw, 56px);
+}
+
+.site-footer__identity {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 12px;
+}
+
+.site-footer__brand {
+  color: inherit;
+  font-size: 17px;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.site-footer__identity > span {
+  padding-left: 12px;
+  border-left: 1px solid currentcolor;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.site-footer p {
+  margin: 0;
+  color: var(--foreground-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.site-footer nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 20px;
+}
+
+.site-footer nav a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  border-bottom: 2px solid transparent;
+  color: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.site-footer nav a:hover,
+.site-footer nav a:focus-visible {
+  border-bottom-color: currentcolor;
+}
+
+@media (max-width: 760px) {
+  .site-footer__copy {
+    display: grid;
+    gap: 0;
+  }
+
+  .site-footer p {
+    margin-top: -4px;
+  }
+}
+
+@media (max-width: 640px) {
+  .component-preview__header {
+    flex-direction: column;
+  }
+
+  .component-preview--primary .component-preview__tabs {
+    width: 100%;
+    border-top: 2px solid var(--border);
+    border-left: 0;
+  }
+
+  .component-preview__canvas {
+    min-height: 11.25rem;
+    padding: 2rem 1rem;
+  }
+
+  .component-preview--primary .component-preview__canvas {
+    min-height: 15rem;
+    padding: 2.5rem 1.25rem;
+  }
+
+  .component-preview--primary .component-preview__code pre {
+    min-height: 15rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .site-footer__inner {
+    display: grid;
+    padding: 18px 17px;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .site-footer nav {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 8px 18px;
+  }
+}

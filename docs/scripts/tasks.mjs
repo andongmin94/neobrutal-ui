@@ -105,13 +105,15 @@ function formatJsonValue(value, indent, sectionName) {
 }
 
 function lintAndFormat() {
-  run("oxlint", ["--fix", "--no-error-on-unmatched-pattern", "src", ".vitepress", "scripts"]);
+  run("oxlint", ["--fix", "--no-error-on-unmatched-pattern", "app", "src", "scripts"]);
   run("oxfmt", [
     "--write",
     "--no-error-on-unmatched-pattern",
+    "app",
     "src",
-    ".vitepress",
     "scripts",
+    "react-router.config.ts",
+    "vite.config.ts",
     "tsconfig.json",
     ".oxlintrc.json",
     ".oxfmtrc.json",
@@ -122,20 +124,22 @@ function lintAndFormat() {
 switch (command) {
   case "dev":
     generateDocsData();
-    run("vitepress", ["dev", ".", ...passthroughArgs]);
+    run("react-router", ["dev", ...passthroughArgs]);
     break;
   case "build":
     generateDocsData();
-    run("vitepress", ["build", ".", ...passthroughArgs]);
+    run("react-router", ["build", ...passthroughArgs]);
     break;
   case "start":
-    run("vitepress", ["preview", ".", ...passthroughArgs]);
+    run("vite", ["preview", "--outDir", "build/client", ...passthroughArgs]);
     break;
   case "lint":
     lintAndFormat();
     break;
   case "typecheck":
-    run("vue-tsc", ["--noEmit", ...passthroughArgs]);
+    generateDocsData();
+    run("react-router", ["typegen"]);
+    run("tsc", ["--noEmit", ...passthroughArgs]);
     break;
   default:
     console.error(`Unknown task: ${command ?? "(missing)"}`);
