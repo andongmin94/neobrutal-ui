@@ -3,12 +3,17 @@
   "name": "textarea",
   "title": "Textarea",
   "author": "andongmin94",
+  "description": "A multiline text field for collecting longer user input.",
   "files": [
     {
       "path": "src/components/ui/textarea.tsx",
       "content": "import * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\nfunction Textarea({ className, ...props }: React.ComponentProps<\"textarea\">) {\n  return (\n    <textarea\n      data-slot=\"textarea\"\n      className={cn(\n        \"flex min-h-[80px] w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base text-foreground selection:bg-main selection:text-main-foreground placeholder:text-foreground/50 focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nexport { Textarea };\n",
       "type": "registry:ui"
     }
+  ],
+  "categories": [
+    "form",
+    "input"
   ],
   "type": "registry:ui"
 }

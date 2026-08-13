@@ -1,99 +1,110 @@
-{
-  "name": "neobrutal-pink",
-  "type": "registry:style",
-  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-  "title": "Neobrutal Pink",
-  "author": "andongmin94",
-  "cssVars": {
-    "light": {
-      "background": "oklch(95.16% 0.0242 343.23)",
-      "foreground": "oklch(0% 0 0)",
-      "card": "oklch(95.16% 0.0242 343.23)",
+import colors from "@/data/colors";
+
+export type ColorPalette = (typeof colors)[number];
+
+function getDefaultColor(): ColorPalette {
+  const color = colors.find((color) => color.name === "yellow");
+
+  if (!color) {
+    throw new Error("The default yellow color palette is missing.");
+  }
+
+  return color;
+}
+
+export const defaultColor = getDefaultColor();
+
+export function createThemeCssVars(color: ColorPalette) {
+  return {
+    light: {
+      background: color.bg,
+      foreground: "oklch(0% 0 0)",
+      card: color.bg,
       "card-foreground": "oklch(0% 0 0)",
-      "popover": "oklch(95.16% 0.0242 343.23)",
+      popover: color.bg,
       "popover-foreground": "oklch(0% 0 0)",
-      "primary": "oklch(71.5% 0.197 354.23)",
+      primary: color.main,
       "primary-foreground": "oklch(0% 0 0)",
-      "secondary": "oklch(23.93% 0 0)",
+      secondary: "oklch(23.93% 0 0)",
       "secondary-foreground": "oklch(100% 0 0)",
-      "muted": "oklch(23.93% 0 0)",
+      muted: "oklch(23.93% 0 0)",
       "muted-foreground": "oklch(100% 0 0)",
-      "accent": "oklch(71.5% 0.197 354.23)",
+      accent: color.main,
       "accent-foreground": "oklch(0% 0 0)",
-      "destructive": "oklch(63.68% 0.2078 25.33)",
-      "border": "oklch(0% 0 0)",
-      "input": "oklch(0% 0 0)",
-      "ring": "oklch(0% 0 0)",
-      "main": "oklch(71.5% 0.197 354.23)",
+      destructive: "oklch(63.68% 0.2078 25.33)",
+      border: "oklch(0% 0 0)",
+      input: "oklch(0% 0 0)",
+      ring: "oklch(0% 0 0)",
+      main: color.main,
       "main-foreground": "oklch(0% 0 0)",
       "secondary-background": "oklch(100% 0 0)",
-      "overlay": "rgba(0, 0, 0, 0.8)",
-      "shadow": "var(--box-shadow-x) var(--box-shadow-y) 0px 0px var(--border)",
+      overlay: "rgba(0, 0, 0, 0.8)",
+      shadow: "var(--box-shadow-x) var(--box-shadow-y) 0px 0px var(--border)",
       "box-shadow-x": "4px",
       "box-shadow-y": "4px",
       "reverse-box-shadow-x": "calc(0px - var(--box-shadow-x))",
       "reverse-box-shadow-y": "calc(0px - var(--box-shadow-y))",
-      "radius": "5px",
+      radius: "5px",
       "base-font-weight": "500",
       "heading-font-weight": "700",
-      "chart-1": "#FC64AB",
-      "chart-2": "#FACC00",
-      "chart-3": "#FF7A05",
-      "chart-4": "#FF4D50",
-      "chart-5": "#7A83FF",
-      "sidebar": "oklch(95.16% 0.0242 343.23)",
+      "chart-1": color.chart1,
+      "chart-2": color.chart2,
+      "chart-3": color.chart3,
+      "chart-4": color.chart4,
+      "chart-5": color.chart5,
+      sidebar: color.bg,
       "sidebar-foreground": "oklch(0% 0 0)",
-      "sidebar-primary": "oklch(71.5% 0.197 354.23)",
+      "sidebar-primary": color.main,
       "sidebar-primary-foreground": "oklch(0% 0 0)",
       "sidebar-accent": "oklch(23.93% 0 0)",
       "sidebar-accent-foreground": "oklch(100% 0 0)",
       "sidebar-border": "oklch(0% 0 0)",
-      "sidebar-ring": "oklch(0% 0 0)"
+      "sidebar-ring": "oklch(0% 0 0)",
     },
-    "dark": {
-      "background": "oklch(26.3% 0.054 358.23)",
-      "foreground": "oklch(92.49% 0 0)",
-      "card": "oklch(26.3% 0.054 358.23)",
+    dark: {
+      background: color.darkBg,
+      foreground: "oklch(92.49% 0 0)",
+      card: color.darkBg,
       "card-foreground": "oklch(92.49% 0 0)",
-      "popover": "oklch(26.3% 0.054 358.23)",
+      popover: color.darkBg,
       "popover-foreground": "oklch(92.49% 0 0)",
-      "primary": "oklch(65.98% 0.2407 358.64)",
+      primary: color.darkMain,
       "primary-foreground": "oklch(0% 0 0)",
-      "secondary": "oklch(100% 0 0)",
+      secondary: "oklch(100% 0 0)",
       "secondary-foreground": "oklch(0% 0 0)",
-      "muted": "oklch(100% 0 0)",
+      muted: "oklch(100% 0 0)",
       "muted-foreground": "oklch(0% 0 0)",
-      "accent": "oklch(65.98% 0.2407 358.64)",
+      accent: color.darkMain,
       "accent-foreground": "oklch(0% 0 0)",
-      "destructive": "oklch(63.68% 0.2078 25.33)",
-      "border": "oklch(0% 0 0)",
-      "input": "oklch(100% 0 0)",
-      "ring": "oklch(100% 0 0)",
-      "main": "oklch(65.98% 0.2407 358.64)",
+      destructive: "oklch(63.68% 0.2078 25.33)",
+      border: "oklch(0% 0 0)",
+      input: "oklch(100% 0 0)",
+      ring: "oklch(100% 0 0)",
+      main: color.darkMain,
       "main-foreground": "oklch(0% 0 0)",
       "secondary-background": "oklch(23.93% 0 0)",
-      "overlay": "rgba(0, 0, 0, 0.8)",
-      "shadow": "var(--box-shadow-x) var(--box-shadow-y) 0px 0px var(--border)",
+      overlay: "rgba(0, 0, 0, 0.8)",
+      shadow: "var(--box-shadow-x) var(--box-shadow-y) 0px 0px var(--border)",
       "box-shadow-x": "4px",
       "box-shadow-y": "4px",
       "reverse-box-shadow-x": "calc(0px - var(--box-shadow-x))",
       "reverse-box-shadow-y": "calc(0px - var(--box-shadow-y))",
-      "radius": "5px",
-      "chart-1": "#FB3290",
-      "chart-2": "#E0B700",
-      "chart-3": "#EB6D00",
-      "chart-4": "#FF6669",
-      "chart-5": "#7A83FF",
-      "sidebar": "oklch(26.3% 0.054 358.23)",
+      radius: "5px",
+      "chart-1": color.darkChart1,
+      "chart-2": color.darkChart2,
+      "chart-3": color.darkChart3,
+      "chart-4": color.darkChart4,
+      "chart-5": color.darkChart5,
+      sidebar: color.darkBg,
       "sidebar-foreground": "oklch(92.49% 0 0)",
-      "sidebar-primary": "oklch(65.98% 0.2407 358.64)",
+      "sidebar-primary": color.darkMain,
       "sidebar-primary-foreground": "oklch(0% 0 0)",
       "sidebar-accent": "oklch(100% 0 0)",
       "sidebar-accent-foreground": "oklch(0% 0 0)",
       "sidebar-border": "oklch(0% 0 0)",
-      "sidebar-ring": "oklch(100% 0 0)"
+      "sidebar-ring": "oklch(100% 0 0)",
     },
-    "theme": {
+    theme: {
       "color-background": "var(--background)",
       "color-foreground": "var(--foreground)",
       "color-card": "var(--card)",
@@ -130,7 +141,8 @@
       "color-sidebar-border": "var(--sidebar-border)",
       "color-sidebar-ring": "var(--sidebar-ring)",
       "shadow-shadow": "var(--shadow)",
-      "shadow-press": "clamp(-1px, var(--box-shadow-x), 1px) clamp(-1px, var(--box-shadow-y), 1px) 0px 0px var(--border)",
+      "shadow-press":
+        "clamp(-1px, var(--box-shadow-x), 1px) clamp(-1px, var(--box-shadow-y), 1px) 0px 0px var(--border)",
       "spacing-boxShadowX": "var(--box-shadow-x)",
       "spacing-boxShadowY": "var(--box-shadow-y)",
       "spacing-reverseBoxShadowX": "var(--reverse-box-shadow-x)",
@@ -146,34 +158,7 @@
       "radius-3xl": "calc(var(--radius) * 2.2)",
       "radius-4xl": "calc(var(--radius) * 2.6)",
       "font-weight-base": "var(--base-font-weight)",
-      "font-weight-heading": "var(--heading-font-weight)"
-    }
-  },
-  "extends": "none",
-  "description": "A modern neobrutalist style preset for neobrutal-ui.",
-  "dependencies": [
-    "@base-ui/react@^1.6.0",
-    "shadcn@^4.13.0",
-    "tw-animate-css@^1.4.0",
-    "class-variance-authority@^0.7.1",
-    "lucide-react@^1.24.0"
-  ],
-  "registryDependencies": [
-    "utils"
-  ],
-  "css": {
-    "@import \"tw-animate-css\"": {},
-    "@import \"shadcn/tailwind.css\"": {},
-    "@layer base": {
-      "*": {
-        "@apply border-border outline-ring/50": {}
-      },
-      "body": {
-        "@apply bg-background text-foreground": {}
-      }
-    }
-  },
-  "meta": {
-    "registryBaseUrl": "https://neobrutal-ui.andongmin.com"
-  }
+      "font-weight-heading": "var(--heading-font-weight)",
+    },
+  };
 }

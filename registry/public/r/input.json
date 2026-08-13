@@ -3,8 +3,9 @@
   "name": "input",
   "title": "Input",
   "author": "andongmin94",
+  "description": "A styled text field for collecting short-form user input.",
   "dependencies": [
-    "@base-ui/react"
+    "@base-ui/react@^1.6.0"
   ],
   "files": [
     {
@@ -12,6 +13,10 @@
       "content": "\"use client\";\n\nimport { Input as InputPrimitive } from \"@base-ui/react/input\";\nimport * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\nfunction Input({ className, type, ...props }: React.ComponentProps<\"input\">) {\n  return (\n    <InputPrimitive\n      type={type}\n      data-slot=\"input\"\n      className={cn(\n        \"flex h-10 w-full rounded-base border-2 border-border bg-secondary-background selection:bg-main selection:text-main-foreground px-3 py-2 text-sm font-base text-foreground file:border-0 file:bg-transparent file:text-sm file:font-heading placeholder:text-foreground/50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nexport { Input };\n",
       "type": "registry:ui"
     }
+  ],
+  "categories": [
+    "form",
+    "input"
   ],
   "type": "registry:ui"
 }

@@ -31,6 +31,12 @@ jobs:
           npm run lint
           npm run typecheck
           npm run build
+          npm run registry:validate
+          npm run registry:check
+
+      - name: Verify fresh Next and Vite consumers
+        working-directory: registry
+        run: npm run consumer:verify
 
       - name: Install docs dependencies
         working-directory: docs
@@ -44,4 +50,10 @@ jobs:
           npm run build
 
       - name: Verify generated files are current
-        run: git diff --exit-code
+        run: |
+          git diff --exit-code
+          if [ -n "$(git ls-files --others --exclude-standard)" ]; then
+            echo "Untracked generated files were created:"
+            git status --short
+            exit 1
+          fi

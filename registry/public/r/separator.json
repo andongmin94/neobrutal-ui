@@ -3,8 +3,9 @@
   "name": "separator",
   "title": "Separator",
   "author": "andongmin94",
+  "description": "A visual divider for separating related content groups.",
   "dependencies": [
-    "@base-ui/react"
+    "@base-ui/react@^1.6.0"
   ],
   "files": [
     {
@@ -12,6 +13,9 @@
       "content": "\"use client\";\n\nimport { Separator as SeparatorPrimitive } from \"@base-ui/react/separator\";\n\nimport { cn } from \"@/lib/utils\";\n\nfunction Separator({ className, orientation = \"horizontal\", ...props }: SeparatorPrimitive.Props) {\n  return (\n    <SeparatorPrimitive\n      data-slot=\"separator\"\n      orientation={orientation}\n      className={cn(\n        \"shrink-0 bg-border data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:w-px data-[orientation=vertical]:self-stretch\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nexport { Separator };\n",
       "type": "registry:ui"
     }
+  ],
+  "categories": [
+    "layout"
   ],
   "type": "registry:ui"
 }

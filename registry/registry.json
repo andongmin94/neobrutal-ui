@@ -11,6 +11,10 @@
       "extends": "none",
       "author": "andongmin94",
       "description": "Base UI powered neobrutalist design-system base.",
+      "categories": [
+        "design-system",
+        "theme"
+      ],
       "config": {
         "style": "neobrutal-ui",
         "iconLibrary": "lucide",
@@ -29,11 +33,11 @@
         }
       },
       "dependencies": [
-        "@base-ui/react",
-        "shadcn",
-        "tw-animate-css",
-        "class-variance-authority",
-        "lucide-react"
+        "@base-ui/react@^1.6.0",
+        "shadcn@^4.13.0",
+        "tw-animate-css@^1.4.0",
+        "class-variance-authority@^0.7.1",
+        "lucide-react@^1.24.0"
       ],
       "registryDependencies": [
         "utils"
@@ -60,7 +64,7 @@
           "ring": "oklch(0% 0 0)",
           "main": "oklch(86.03% 0.176 92.36)",
           "main-foreground": "oklch(0% 0 0)",
-          "secondary-background": "oklch(23.93% 0 0)",
+          "secondary-background": "oklch(100% 0 0)",
           "overlay": "rgba(0, 0, 0, 0.8)",
           "shadow": "var(--box-shadow-x) var(--box-shadow-y) 0px 0px var(--border)",
           "box-shadow-x": "4px",
@@ -68,6 +72,8 @@
           "reverse-box-shadow-x": "calc(0px - var(--box-shadow-x))",
           "reverse-box-shadow-y": "calc(0px - var(--box-shadow-y))",
           "radius": "5px",
+          "base-font-weight": "500",
+          "heading-font-weight": "700",
           "chart-1": "#FACC00",
           "chart-2": "#7A83FF",
           "chart-3": "#FF4D50",
@@ -103,7 +109,7 @@
           "ring": "oklch(100% 0 0)",
           "main": "oklch(79.36% 0.1624 92.49)",
           "main-foreground": "oklch(0% 0 0)",
-          "secondary-background": "oklch(100% 0 0)",
+          "secondary-background": "oklch(23.93% 0 0)",
           "overlay": "rgba(0, 0, 0, 0.8)",
           "shadow": "var(--box-shadow-x) var(--box-shadow-y) 0px 0px var(--border)",
           "box-shadow-x": "4px",
@@ -177,8 +183,8 @@
           "radius-2xl": "calc(var(--radius) * 1.8)",
           "radius-3xl": "calc(var(--radius) * 2.2)",
           "radius-4xl": "calc(var(--radius) * 2.6)",
-          "font-weight-base": "500",
-          "font-weight-heading": "700"
+          "font-weight-base": "var(--base-font-weight)",
+          "font-weight-heading": "var(--heading-font-weight)"
         }
       },
       "css": {
@@ -197,9 +203,14 @@
     {
       "name": "accordion",
       "title": "Accordion",
+      "description": "A vertically stacked set of collapsible content sections.",
+      "categories": [
+        "layout",
+        "disclosure"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ],
       "files": [
         {
@@ -212,6 +223,11 @@
     {
       "name": "alert",
       "title": "Alert",
+      "description": "A prominent message for status updates, notices, and warnings.",
+      "categories": [
+        "feedback",
+        "status"
+      ],
       "type": "registry:ui",
       "files": [
         {
@@ -224,12 +240,18 @@
     {
       "name": "alert-dialog",
       "title": "Alert dialog",
+      "description": "A modal confirmation dialog for important or destructive actions.",
+      "categories": [
+        "overlay",
+        "dialog",
+        "feedback"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ],
       "registryDependencies": [
-        "https://neobrutal-ui.andongmin.com/r/nbutton.json"
+        "https://neobrutal-ui.andongmin.com/r/button.json"
       ],
       "files": [
         {
@@ -242,9 +264,14 @@
     {
       "name": "avatar",
       "title": "Avatar",
+      "description": "An image or fallback that identifies a person or entity.",
+      "categories": [
+        "data-display",
+        "identity"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ],
       "files": [
         {
@@ -257,6 +284,11 @@
     {
       "name": "badge",
       "title": "Badge",
+      "description": "A compact label for statuses, categories, and metadata.",
+      "categories": [
+        "data-display",
+        "status"
+      ],
       "type": "registry:ui",
       "files": [
         {
@@ -269,9 +301,13 @@
     {
       "name": "breadcrumb",
       "title": "Breadcrumb",
+      "description": "A navigation trail that shows the current page hierarchy.",
+      "categories": [
+        "navigation"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ],
       "files": [
         {
@@ -282,25 +318,16 @@
       "author": "andongmin94"
     },
     {
-      "name": "nbutton",
-      "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react"
-      ],
-      "files": [
-        {
-          "path": "src/components/ui/button.tsx",
-          "type": "registry:ui"
-        }
-      ],
-      "author": "andongmin94"
-    },
-    {
       "name": "button",
       "title": "Button",
+      "description": "An interactive control that triggers an action or navigation.",
+      "categories": [
+        "action",
+        "form"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ],
       "files": [
         {
@@ -313,12 +340,17 @@
     {
       "name": "calendar",
       "title": "Calendar",
+      "description": "A date picker calendar with single and range selection support.",
+      "categories": [
+        "form",
+        "date-time"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "react-day-picker"
+        "react-day-picker@^10.0.1"
       ],
       "registryDependencies": [
-        "https://neobrutal-ui.andongmin.com/r/nbutton.json"
+        "https://neobrutal-ui.andongmin.com/r/button.json"
       ],
       "files": [
         {
@@ -329,20 +361,13 @@
       "author": "andongmin94"
     },
     {
-      "name": "ncard",
-      "title": "Card",
-      "type": "registry:ui",
-      "files": [
-        {
-          "path": "src/components/ui/card.tsx",
-          "type": "registry:ui"
-        }
-      ],
-      "author": "andongmin94"
-    },
-    {
       "name": "card",
       "title": "Card",
+      "description": "A bordered container for grouping related content and actions.",
+      "categories": [
+        "layout",
+        "data-display"
+      ],
       "type": "registry:ui",
       "files": [
         {
@@ -355,12 +380,17 @@
     {
       "name": "carousel",
       "title": "Carousel",
+      "description": "A scrollable collection of content with previous and next controls.",
+      "categories": [
+        "data-display",
+        "media"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "embla-carousel-react"
+        "embla-carousel-react@^8.6.0"
       ],
       "registryDependencies": [
-        "https://neobrutal-ui.andongmin.com/r/nbutton.json"
+        "https://neobrutal-ui.andongmin.com/r/button.json"
       ],
       "files": [
         {
@@ -373,12 +403,14 @@
     {
       "name": "chart",
       "title": "Chart",
+      "description": "Composable Recharts helpers with neobrutalist styling and legends.",
+      "categories": [
+        "data-display",
+        "data-visualization"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "recharts"
-      ],
-      "registryDependencies": [
-        "https://neobrutal-ui.andongmin.com/r/ncard.json"
+        "recharts@^3.9.2"
       ],
       "files": [
         {
@@ -391,9 +423,14 @@
     {
       "name": "checkbox",
       "title": "Checkbox",
+      "description": "A control for toggling one or more independent selections.",
+      "categories": [
+        "form",
+        "selection"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ],
       "files": [
         {
@@ -406,9 +443,14 @@
     {
       "name": "collapsible",
       "title": "Collapsible",
+      "description": "An expandable region that reveals or hides related content.",
+      "categories": [
+        "layout",
+        "disclosure"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ],
       "files": [
         {
@@ -421,12 +463,17 @@
     {
       "name": "command",
       "title": "Command",
+      "description": "A searchable command palette for actions and navigation.",
+      "categories": [
+        "navigation",
+        "search"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "cmdk"
+        "cmdk@^1.1.1"
       ],
       "registryDependencies": [
-        "https://neobrutal-ui.andongmin.com/r/ndialog.json"
+        "https://neobrutal-ui.andongmin.com/r/dialog.json"
       ],
       "files": [
         {
@@ -439,9 +486,14 @@
     {
       "name": "context-menu",
       "title": "Context menu",
+      "description": "A contextual action menu opened with a secondary pointer action.",
+      "categories": [
+        "overlay",
+        "menu"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ],
       "files": [
         {
@@ -452,25 +504,19 @@
       "author": "andongmin94"
     },
     {
-      "name": "ndialog",
-      "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react"
-      ],
-      "files": [
-        {
-          "path": "src/components/ui/dialog.tsx",
-          "type": "registry:ui"
-        }
-      ],
-      "author": "andongmin94"
-    },
-    {
       "name": "dialog",
       "title": "Dialog",
+      "description": "A modal overlay for focused content, forms, and actions.",
+      "categories": [
+        "overlay",
+        "dialog"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
+      ],
+      "registryDependencies": [
+        "https://neobrutal-ui.andongmin.com/r/button.json"
       ],
       "files": [
         {
@@ -483,9 +529,14 @@
     {
       "name": "drawer",
       "title": "Drawer",
+      "description": "A panel that slides in from the edge of the viewport.",
+      "categories": [
+        "overlay",
+        "dialog"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ],
       "files": [
         {
@@ -498,9 +549,14 @@
     {
       "name": "dropdown-menu",
       "title": "Dropdown menu",
+      "description": "A button-triggered menu for actions, choices, and nested options.",
+      "categories": [
+        "overlay",
+        "menu"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ],
       "files": [
         {
@@ -513,17 +569,20 @@
     {
       "name": "form",
       "title": "Form",
+      "description": "Accessible form helpers with React Hook Form and Zod validation.",
+      "categories": [
+        "form",
+        "validation"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react",
-        "@hookform/resolvers",
-        "react-hook-form",
-        "zod"
+        "@base-ui/react@^1.6.0",
+        "@hookform/resolvers@^5.4.0",
+        "react-hook-form@^7.81.0",
+        "zod@^4.4.3"
       ],
       "registryDependencies": [
-        "https://neobrutal-ui.andongmin.com/r/nbutton.json",
-        "https://neobrutal-ui.andongmin.com/r/ninput.json",
-        "https://neobrutal-ui.andongmin.com/r/nlabel.json"
+        "https://neobrutal-ui.andongmin.com/r/label.json"
       ],
       "files": [
         {
@@ -536,9 +595,14 @@
     {
       "name": "hover-card",
       "title": "Hover card",
+      "description": "A preview card that appears when a linked element is hovered.",
+      "categories": [
+        "overlay",
+        "data-display"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ],
       "files": [
         {
@@ -551,6 +615,11 @@
     {
       "name": "image-card",
       "title": "Image card",
+      "description": "A neobrutalist card for presenting an image with supporting content.",
+      "categories": [
+        "data-display",
+        "media"
+      ],
       "type": "registry:ui",
       "files": [
         {
@@ -563,6 +632,11 @@
     {
       "name": "input",
       "title": "Input",
+      "description": "A styled text field for collecting short-form user input.",
+      "categories": [
+        "form",
+        "input"
+      ],
       "type": "registry:ui",
       "files": [
         {
@@ -572,16 +646,21 @@
       ],
       "author": "andongmin94",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ]
     },
     {
       "name": "input-group",
       "title": "Input Group",
+      "description": "A text input composed with buttons, icons, or inline controls.",
+      "categories": [
+        "form",
+        "input"
+      ],
       "type": "registry:ui",
       "registryDependencies": [
-        "https://neobrutal-ui.andongmin.com/r/nbutton.json",
-        "https://neobrutal-ui.andongmin.com/r/ninput.json",
+        "https://neobrutal-ui.andongmin.com/r/button.json",
+        "https://neobrutal-ui.andongmin.com/r/input.json",
         "https://neobrutal-ui.andongmin.com/r/textarea.json"
       ],
       "files": [
@@ -593,26 +672,17 @@
       "author": "andongmin94"
     },
     {
-      "name": "ninput",
-      "title": "Input",
-      "type": "registry:ui",
-      "files": [
-        {
-          "path": "src/components/ui/input.tsx",
-          "type": "registry:ui"
-        }
-      ],
-      "author": "andongmin94",
-      "dependencies": [
-        "@base-ui/react"
-      ]
-    },
-    {
       "name": "input-otp",
       "title": "Input OTP",
+      "description": "A segmented input for one-time passwords and verification codes.",
+      "categories": [
+        "form",
+        "input",
+        "authentication"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "input-otp"
+        "input-otp@^1.4.2"
       ],
       "files": [
         {
@@ -623,19 +693,13 @@
       "author": "andongmin94"
     },
     {
-      "name": "nlabel",
-      "type": "registry:ui",
-      "files": [
-        {
-          "path": "src/components/ui/label.tsx",
-          "type": "registry:ui"
-        }
-      ],
-      "author": "andongmin94"
-    },
-    {
       "name": "label",
       "title": "Label",
+      "description": "An accessible text label for a form control.",
+      "categories": [
+        "form",
+        "input"
+      ],
       "type": "registry:ui",
       "files": [
         {
@@ -648,8 +712,37 @@
     {
       "name": "marquee",
       "title": "Marquee",
-      "docs": "Make sure there is enough content in `items` so it loops perfectly. Visit https://jackwhiting.co.uk/posts/creating-a-marquee-with-tailwind to learn more.",
+      "description": "A continuously scrolling row for logos, quotes, or featured content.",
+      "categories": [
+        "animation",
+        "data-display"
+      ],
+      "docs": "Make sure there is enough content in `items` so it loops perfectly. Visit https://jackwhiting.co.uk/posts/creating-a-marquee-with-tailwind-css to learn more.",
       "type": "registry:ui",
+      "cssVars": {
+        "theme": {
+          "animate-marquee": "marquee 5s linear infinite",
+          "animate-marquee2": "marquee2 5s linear infinite"
+        }
+      },
+      "css": {
+        "@keyframes marquee": {
+          "0%": {
+            "transform": "translateX(0%)"
+          },
+          "100%": {
+            "transform": "translateX(-100%)"
+          }
+        },
+        "@keyframes marquee2": {
+          "0%": {
+            "transform": "translateX(100%)"
+          },
+          "100%": {
+            "transform": "translateX(0%)"
+          }
+        }
+      },
       "files": [
         {
           "path": "src/components/ui/marquee.tsx",
@@ -661,9 +754,17 @@
     {
       "name": "menubar",
       "title": "Menubar",
+      "description": "A horizontal application menu with nested commands and shortcuts.",
+      "categories": [
+        "navigation",
+        "menu"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
+      ],
+      "registryDependencies": [
+        "https://neobrutal-ui.andongmin.com/r/dropdown-menu.json"
       ],
       "files": [
         {
@@ -676,9 +777,14 @@
     {
       "name": "navigation-menu",
       "title": "Navigation menu",
+      "description": "A responsive site navigation menu with expandable link panels.",
+      "categories": [
+        "navigation",
+        "menu"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ],
       "files": [
         {
@@ -691,10 +797,11 @@
     {
       "name": "pagination",
       "title": "Pagination",
-      "type": "registry:ui",
-      "registryDependencies": [
-        "https://neobrutal-ui.andongmin.com/r/nbutton.json"
+      "description": "Navigation controls for moving between pages of content.",
+      "categories": [
+        "navigation"
       ],
+      "type": "registry:ui",
       "files": [
         {
           "path": "src/components/ui/pagination.tsx",
@@ -706,9 +813,13 @@
     {
       "name": "popover",
       "title": "Popover",
+      "description": "A floating panel for contextual content and lightweight controls.",
+      "categories": [
+        "overlay"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ],
       "files": [
         {
@@ -721,9 +832,14 @@
     {
       "name": "progress",
       "title": "Progress",
+      "description": "A visual indicator of task or process completion.",
+      "categories": [
+        "feedback",
+        "status"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ],
       "files": [
         {
@@ -736,9 +852,14 @@
     {
       "name": "radio-group",
       "title": "Radio group",
+      "description": "A set of mutually exclusive options for selecting one value.",
+      "categories": [
+        "form",
+        "selection"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ],
       "files": [
         {
@@ -751,9 +872,13 @@
     {
       "name": "resizable",
       "title": "Resizable",
+      "description": "Adjustable panel groups with draggable resize handles.",
+      "categories": [
+        "layout"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "react-resizable-panels"
+        "react-resizable-panels@^4.12.2"
       ],
       "files": [
         {
@@ -766,9 +891,13 @@
     {
       "name": "scroll-area",
       "title": "Scroll area",
+      "description": "A custom scrollable viewport with styled scrollbars.",
+      "categories": [
+        "layout"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ],
       "files": [
         {
@@ -781,9 +910,14 @@
     {
       "name": "select",
       "title": "Select",
+      "description": "A dropdown control for choosing one value from a list.",
+      "categories": [
+        "form",
+        "selection"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ],
       "files": [
         {
@@ -796,6 +930,10 @@
     {
       "name": "separator",
       "title": "Separator",
+      "description": "A visual divider for separating related content groups.",
+      "categories": [
+        "layout"
+      ],
       "type": "registry:ui",
       "files": [
         {
@@ -805,30 +943,23 @@
       ],
       "author": "andongmin94",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ]
     },
     {
       "name": "sheet",
       "title": "Sheet",
+      "description": "A modal panel that enters from a configurable screen edge.",
+      "categories": [
+        "overlay",
+        "dialog"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ],
-      "files": [
-        {
-          "path": "src/components/ui/sheet.tsx",
-          "type": "registry:ui"
-        }
-      ],
-      "author": "andongmin94"
-    },
-    {
-      "name": "nsheet",
-      "title": "Sheet",
-      "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react"
+      "registryDependencies": [
+        "https://neobrutal-ui.andongmin.com/r/button.json"
       ],
       "files": [
         {
@@ -841,16 +972,21 @@
     {
       "name": "sidebar",
       "title": "Sidebar",
+      "description": "A responsive, collapsible application sidebar with navigation primitives.",
+      "categories": [
+        "layout",
+        "navigation"
+      ],
       "type": "registry:ui",
       "registryDependencies": [
         "https://neobrutal-ui.andongmin.com/r/avatar.json",
         "https://neobrutal-ui.andongmin.com/r/collapsible.json",
         "https://neobrutal-ui.andongmin.com/r/dropdown-menu.json",
-        "https://neobrutal-ui.andongmin.com/r/nbutton.json",
-        "https://neobrutal-ui.andongmin.com/r/ninput.json",
-        "https://neobrutal-ui.andongmin.com/r/nsheet.json",
-        "https://neobrutal-ui.andongmin.com/r/nskeleton.json",
-        "https://neobrutal-ui.andongmin.com/r/ntooltip.json",
+        "https://neobrutal-ui.andongmin.com/r/button.json",
+        "https://neobrutal-ui.andongmin.com/r/input.json",
+        "https://neobrutal-ui.andongmin.com/r/sheet.json",
+        "https://neobrutal-ui.andongmin.com/r/skeleton.json",
+        "https://neobrutal-ui.andongmin.com/r/tooltip.json",
         "https://neobrutal-ui.andongmin.com/r/separator.json"
       ],
       "files": [
@@ -865,24 +1001,17 @@
       ],
       "author": "andongmin94",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ]
     },
     {
       "name": "skeleton",
       "title": "Skeleton",
-      "type": "registry:ui",
-      "files": [
-        {
-          "path": "src/components/ui/skeleton.tsx",
-          "type": "registry:ui"
-        }
+      "description": "A placeholder that communicates content is loading.",
+      "categories": [
+        "feedback",
+        "loading"
       ],
-      "author": "andongmin94"
-    },
-    {
-      "name": "nskeleton",
-      "title": "Skeleton",
       "type": "registry:ui",
       "files": [
         {
@@ -895,9 +1024,14 @@
     {
       "name": "slider",
       "title": "Slider",
+      "description": "A draggable control for selecting a value or range.",
+      "categories": [
+        "form",
+        "input"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ],
       "files": [
         {
@@ -910,10 +1044,15 @@
     {
       "name": "sonner",
       "title": "Sonner",
+      "description": "A toast notification provider styled for neobrutalist interfaces.",
+      "categories": [
+        "feedback",
+        "notification"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "sonner",
-        "next-themes"
+        "sonner@^2.0.7",
+        "next-themes@^0.4.6"
       ],
       "files": [
         {
@@ -926,9 +1065,14 @@
     {
       "name": "switch",
       "title": "Switch",
+      "description": "A binary control for turning a setting on or off.",
+      "categories": [
+        "form",
+        "selection"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ],
       "files": [
         {
@@ -941,6 +1085,11 @@
     {
       "name": "table",
       "title": "Table",
+      "description": "Semantic table primitives for structured rows and columns.",
+      "categories": [
+        "data-display",
+        "table"
+      ],
       "type": "registry:ui",
       "files": [
         {
@@ -953,9 +1102,14 @@
     {
       "name": "tabs",
       "title": "Tabs",
+      "description": "A tabbed interface for switching between related content panels.",
+      "categories": [
+        "navigation",
+        "layout"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ],
       "files": [
         {
@@ -968,6 +1122,11 @@
     {
       "name": "textarea",
       "title": "Textarea",
+      "description": "A multiline text field for collecting longer user input.",
+      "categories": [
+        "form",
+        "input"
+      ],
       "type": "registry:ui",
       "files": [
         {
@@ -980,24 +1139,14 @@
     {
       "name": "tooltip",
       "title": "Tooltip",
+      "description": "A concise text hint shown when an element is hovered or focused.",
+      "categories": [
+        "overlay",
+        "feedback"
+      ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react"
-      ],
-      "files": [
-        {
-          "path": "src/components/ui/tooltip.tsx",
-          "type": "registry:ui"
-        }
-      ],
-      "author": "andongmin94"
-    },
-    {
-      "name": "ntooltip",
-      "title": "Tooltip",
-      "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.6.0"
       ],
       "files": [
         {
@@ -1011,17 +1160,22 @@
       "name": "data-table",
       "title": "Data table",
       "description": "A sortable, filterable data table recipe built with TanStack Table.",
+      "categories": [
+        "data-display",
+        "table",
+        "recipe"
+      ],
       "type": "registry:block",
       "dependencies": [
-        "@tanstack/react-table",
-        "lucide-react"
+        "@tanstack/react-table@^8.21.3",
+        "lucide-react@^1.24.0"
       ],
       "registryDependencies": [
         "https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json",
-        "https://neobrutal-ui.andongmin.com/r/nbutton.json",
+        "https://neobrutal-ui.andongmin.com/r/button.json",
         "https://neobrutal-ui.andongmin.com/r/checkbox.json",
         "https://neobrutal-ui.andongmin.com/r/dropdown-menu.json",
-        "https://neobrutal-ui.andongmin.com/r/ninput.json",
+        "https://neobrutal-ui.andongmin.com/r/input.json",
         "https://neobrutal-ui.andongmin.com/r/table.json"
       ],
       "files": [
@@ -1039,7 +1193,7 @@
       "description": "A focused blog archive with search and readable post rows.",
       "type": "registry:block",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.24.0"
       ],
       "registryDependencies": [
         "https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json",
@@ -1085,7 +1239,7 @@
       "description": "A minimal portfolio with an introduction, selected work, and contact links.",
       "type": "registry:block",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.24.0"
       ],
       "registryDependencies": [
         "https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json",
@@ -1115,7 +1269,7 @@
       "description": "A compact CMS for finding, editing, and publishing posts.",
       "type": "registry:block",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.24.0"
       ],
       "registryDependencies": [
         "https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json",
@@ -1150,7 +1304,7 @@
       "description": "A compact profile and link grid for projects, social profiles, and contact.",
       "type": "registry:block",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.24.0"
       ],
       "registryDependencies": [
         "https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json",
@@ -1178,6 +1332,12 @@
     {
       "name": "s1",
       "title": "Star 1",
+      "description": "A neobrutalist star graphic variant 1 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1191,6 +1351,12 @@
     {
       "name": "s2",
       "title": "Star 2",
+      "description": "A neobrutalist star graphic variant 2 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1204,6 +1370,12 @@
     {
       "name": "s3",
       "title": "Star 3",
+      "description": "A neobrutalist star graphic variant 3 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1217,6 +1389,12 @@
     {
       "name": "s4",
       "title": "Star 4",
+      "description": "A neobrutalist star graphic variant 4 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1230,6 +1408,12 @@
     {
       "name": "s5",
       "title": "Star 5",
+      "description": "A neobrutalist star graphic variant 5 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1243,6 +1427,12 @@
     {
       "name": "s6",
       "title": "Star 6",
+      "description": "A neobrutalist star graphic variant 6 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1256,6 +1446,12 @@
     {
       "name": "s7",
       "title": "Star 7",
+      "description": "A neobrutalist star graphic variant 7 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1269,6 +1465,12 @@
     {
       "name": "s8",
       "title": "Star 8",
+      "description": "A neobrutalist star graphic variant 8 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1282,6 +1484,12 @@
     {
       "name": "s9",
       "title": "Star 9",
+      "description": "A neobrutalist star graphic variant 9 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1295,6 +1503,12 @@
     {
       "name": "s10",
       "title": "Star 10",
+      "description": "A neobrutalist star graphic variant 10 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1308,6 +1522,12 @@
     {
       "name": "s11",
       "title": "Star 11",
+      "description": "A neobrutalist star graphic variant 11 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1321,6 +1541,12 @@
     {
       "name": "s12",
       "title": "Star 12",
+      "description": "A neobrutalist star graphic variant 12 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1334,6 +1560,12 @@
     {
       "name": "s13",
       "title": "Star 13",
+      "description": "A neobrutalist star graphic variant 13 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1347,6 +1579,12 @@
     {
       "name": "s14",
       "title": "Star 14",
+      "description": "A neobrutalist star graphic variant 14 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1360,6 +1598,12 @@
     {
       "name": "s15",
       "title": "Star 15",
+      "description": "A neobrutalist star graphic variant 15 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1373,6 +1617,12 @@
     {
       "name": "s16",
       "title": "Star 16",
+      "description": "A neobrutalist star graphic variant 16 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1386,6 +1636,12 @@
     {
       "name": "s17",
       "title": "Star 17",
+      "description": "A neobrutalist star graphic variant 17 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1399,6 +1655,12 @@
     {
       "name": "s18",
       "title": "Star 18",
+      "description": "A neobrutalist star graphic variant 18 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1412,6 +1674,12 @@
     {
       "name": "s19",
       "title": "Star 19",
+      "description": "A neobrutalist star graphic variant 19 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1425,6 +1693,12 @@
     {
       "name": "s20",
       "title": "Star 20",
+      "description": "A neobrutalist star graphic variant 20 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1438,6 +1712,12 @@
     {
       "name": "s21",
       "title": "Star 21",
+      "description": "A neobrutalist star graphic variant 21 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1451,6 +1731,12 @@
     {
       "name": "s22",
       "title": "Star 22",
+      "description": "A neobrutalist star graphic variant 22 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1464,6 +1750,12 @@
     {
       "name": "s23",
       "title": "Star 23",
+      "description": "A neobrutalist star graphic variant 23 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1477,6 +1769,12 @@
     {
       "name": "s24",
       "title": "Star 24",
+      "description": "A neobrutalist star graphic variant 24 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1490,6 +1788,12 @@
     {
       "name": "s25",
       "title": "Star 25",
+      "description": "A neobrutalist star graphic variant 25 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1503,6 +1807,12 @@
     {
       "name": "s26",
       "title": "Star 26",
+      "description": "A neobrutalist star graphic variant 26 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1516,6 +1826,12 @@
     {
       "name": "s27",
       "title": "Star 27",
+      "description": "A neobrutalist star graphic variant 27 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1529,6 +1845,12 @@
     {
       "name": "s28",
       "title": "Star 28",
+      "description": "A neobrutalist star graphic variant 28 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1542,6 +1864,12 @@
     {
       "name": "s29",
       "title": "Star 29",
+      "description": "A neobrutalist star graphic variant 29 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1555,6 +1883,12 @@
     {
       "name": "s30",
       "title": "Star 30",
+      "description": "A neobrutalist star graphic variant 30 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1568,6 +1902,12 @@
     {
       "name": "s31",
       "title": "Star 31",
+      "description": "A neobrutalist star graphic variant 31 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1581,6 +1921,12 @@
     {
       "name": "s32",
       "title": "Star 32",
+      "description": "A neobrutalist star graphic variant 32 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1594,6 +1940,12 @@
     {
       "name": "s33",
       "title": "Star 33",
+      "description": "A neobrutalist star graphic variant 33 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1607,6 +1959,12 @@
     {
       "name": "s34",
       "title": "Star 34",
+      "description": "A neobrutalist star graphic variant 34 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1620,6 +1978,12 @@
     {
       "name": "s35",
       "title": "Star 35",
+      "description": "A neobrutalist star graphic variant 35 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1633,6 +1997,12 @@
     {
       "name": "s36",
       "title": "Star 36",
+      "description": "A neobrutalist star graphic variant 36 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1646,6 +2016,12 @@
     {
       "name": "s37",
       "title": "Star 37",
+      "description": "A neobrutalist star graphic variant 37 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1659,6 +2035,12 @@
     {
       "name": "s38",
       "title": "Star 38",
+      "description": "A neobrutalist star graphic variant 38 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1672,6 +2054,12 @@
     {
       "name": "s39",
       "title": "Star 39",
+      "description": "A neobrutalist star graphic variant 39 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {
@@ -1685,6 +2073,12 @@
     {
       "name": "s40",
       "title": "Star 40",
+      "description": "A neobrutalist star graphic variant 40 for decorative accents.",
+      "categories": [
+        "graphic",
+        "icon",
+        "decoration"
+      ],
       "type": "registry:component",
       "files": [
         {

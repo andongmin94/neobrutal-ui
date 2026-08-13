@@ -2,12 +2,23 @@ import * as fs from "fs";
 import * as path from "path";
 
 import REGISTRY from "@/data/registry";
+import { createThemeCssVars, defaultColor } from "@/data/theme";
 
 const DEFAULT_REGISTRY_BASE_URL = "https://neobrutal-ui.andongmin.com";
 const registryBaseUrl = (process.env.REGISTRY_BASE_URL || DEFAULT_REGISTRY_BASE_URL).replace(
   /\/$/,
   "",
 );
+const packageJson = JSON.parse(
+  fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8"),
+) as {
+  dependencies?: Record<string, string>;
+  devDependencies?: Record<string, string>;
+};
+const dependencyVersions = {
+  ...packageJson.dependencies,
+  ...packageJson.devDependencies,
+};
 
 const BASE_UI_COMPONENTS = new Set([
   "accordion",
@@ -15,18 +26,15 @@ const BASE_UI_COMPONENTS = new Set([
   "avatar",
   "breadcrumb",
   "button",
-  "nbutton",
   "checkbox",
   "collapsible",
   "context-menu",
   "dialog",
-  "ndialog",
   "drawer",
   "dropdown-menu",
   "form",
   "hover-card",
   "input",
-  "ninput",
   "menubar",
   "navigation-menu",
   "popover",
@@ -36,13 +44,11 @@ const BASE_UI_COMPONENTS = new Set([
   "select",
   "separator",
   "sheet",
-  "nsheet",
   "sidebar",
   "slider",
   "switch",
   "tabs",
   "tooltip",
-  "ntooltip",
 ]);
 
 const BASE_ITEM = {
@@ -52,6 +58,7 @@ const BASE_ITEM = {
   extends: "none",
   author: "andongmin94",
   description: "Base UI powered neobrutalist design-system base.",
+  categories: ["design-system", "theme"],
   config: {
     style: "neobrutal-ui",
     iconLibrary: "lucide",
@@ -75,152 +82,9 @@ const BASE_ITEM = {
     "tw-animate-css",
     "class-variance-authority",
     "lucide-react",
-  ],
+  ].map(pinDependency),
   registryDependencies: ["utils"],
-  cssVars: {
-    light: {
-      background: "oklch(96.79% 0.0654 102.26)",
-      foreground: "oklch(0% 0 0)",
-      card: "oklch(96.79% 0.0654 102.26)",
-      "card-foreground": "oklch(0% 0 0)",
-      popover: "oklch(96.79% 0.0654 102.26)",
-      "popover-foreground": "oklch(0% 0 0)",
-      primary: "oklch(86.03% 0.176 92.36)",
-      "primary-foreground": "oklch(0% 0 0)",
-      secondary: "oklch(23.93% 0 0)",
-      "secondary-foreground": "oklch(100% 0 0)",
-      muted: "oklch(23.93% 0 0)",
-      "muted-foreground": "oklch(100% 0 0)",
-      accent: "oklch(86.03% 0.176 92.36)",
-      "accent-foreground": "oklch(0% 0 0)",
-      destructive: "oklch(63.68% 0.2078 25.33)",
-      border: "oklch(0% 0 0)",
-      input: "oklch(0% 0 0)",
-      ring: "oklch(0% 0 0)",
-      main: "oklch(86.03% 0.176 92.36)",
-      "main-foreground": "oklch(0% 0 0)",
-      "secondary-background": "oklch(23.93% 0 0)",
-      overlay: "rgba(0, 0, 0, 0.8)",
-      shadow: "var(--box-shadow-x) var(--box-shadow-y) 0px 0px var(--border)",
-      "box-shadow-x": "4px",
-      "box-shadow-y": "4px",
-      "reverse-box-shadow-x": "calc(0px - var(--box-shadow-x))",
-      "reverse-box-shadow-y": "calc(0px - var(--box-shadow-y))",
-      radius: "5px",
-      "chart-1": "#FACC00",
-      "chart-2": "#7A83FF",
-      "chart-3": "#FF4D50",
-      "chart-4": "#00D696",
-      "chart-5": "#0099FF",
-      sidebar: "oklch(96.79% 0.0654 102.26)",
-      "sidebar-foreground": "oklch(0% 0 0)",
-      "sidebar-primary": "oklch(86.03% 0.176 92.36)",
-      "sidebar-primary-foreground": "oklch(0% 0 0)",
-      "sidebar-accent": "oklch(23.93% 0 0)",
-      "sidebar-accent-foreground": "oklch(100% 0 0)",
-      "sidebar-border": "oklch(0% 0 0)",
-      "sidebar-ring": "oklch(0% 0 0)",
-    },
-    dark: {
-      background: "oklch(29.28% 0.0373 94.38)",
-      foreground: "oklch(92.49% 0 0)",
-      card: "oklch(29.28% 0.0373 94.38)",
-      "card-foreground": "oklch(92.49% 0 0)",
-      popover: "oklch(29.28% 0.0373 94.38)",
-      "popover-foreground": "oklch(92.49% 0 0)",
-      primary: "oklch(79.36% 0.1624 92.49)",
-      "primary-foreground": "oklch(0% 0 0)",
-      secondary: "oklch(100% 0 0)",
-      "secondary-foreground": "oklch(0% 0 0)",
-      muted: "oklch(100% 0 0)",
-      "muted-foreground": "oklch(0% 0 0)",
-      accent: "oklch(79.36% 0.1624 92.49)",
-      "accent-foreground": "oklch(0% 0 0)",
-      destructive: "oklch(63.68% 0.2078 25.33)",
-      border: "oklch(0% 0 0)",
-      input: "oklch(100% 0 0)",
-      ring: "oklch(100% 0 0)",
-      main: "oklch(79.36% 0.1624 92.49)",
-      "main-foreground": "oklch(0% 0 0)",
-      "secondary-background": "oklch(100% 0 0)",
-      overlay: "rgba(0, 0, 0, 0.8)",
-      shadow: "var(--box-shadow-x) var(--box-shadow-y) 0px 0px var(--border)",
-      "box-shadow-x": "4px",
-      "box-shadow-y": "4px",
-      "reverse-box-shadow-x": "calc(0px - var(--box-shadow-x))",
-      "reverse-box-shadow-y": "calc(0px - var(--box-shadow-y))",
-      radius: "5px",
-      "chart-1": "#E0B700",
-      "chart-2": "#7A83FF",
-      "chart-3": "#FF6669",
-      "chart-4": "#00BD84",
-      "chart-5": "#008AE5",
-      sidebar: "oklch(29.28% 0.0373 94.38)",
-      "sidebar-foreground": "oklch(92.49% 0 0)",
-      "sidebar-primary": "oklch(79.36% 0.1624 92.49)",
-      "sidebar-primary-foreground": "oklch(0% 0 0)",
-      "sidebar-accent": "oklch(100% 0 0)",
-      "sidebar-accent-foreground": "oklch(0% 0 0)",
-      "sidebar-border": "oklch(0% 0 0)",
-      "sidebar-ring": "oklch(100% 0 0)",
-    },
-    theme: {
-      "color-background": "var(--background)",
-      "color-foreground": "var(--foreground)",
-      "color-card": "var(--card)",
-      "color-card-foreground": "var(--card-foreground)",
-      "color-popover": "var(--popover)",
-      "color-popover-foreground": "var(--popover-foreground)",
-      "color-primary": "var(--primary)",
-      "color-primary-foreground": "var(--primary-foreground)",
-      "color-secondary": "var(--secondary)",
-      "color-secondary-foreground": "var(--secondary-foreground)",
-      "color-muted": "var(--muted)",
-      "color-muted-foreground": "var(--muted-foreground)",
-      "color-accent": "var(--accent)",
-      "color-accent-foreground": "var(--accent-foreground)",
-      "color-destructive": "var(--destructive)",
-      "color-border": "var(--border)",
-      "color-input": "var(--input)",
-      "color-ring": "var(--ring)",
-      "color-main": "var(--main)",
-      "color-main-foreground": "var(--main-foreground)",
-      "color-secondary-background": "var(--secondary-background)",
-      "color-overlay": "var(--overlay)",
-      "color-chart-1": "var(--chart-1)",
-      "color-chart-2": "var(--chart-2)",
-      "color-chart-3": "var(--chart-3)",
-      "color-chart-4": "var(--chart-4)",
-      "color-chart-5": "var(--chart-5)",
-      "color-sidebar": "var(--sidebar)",
-      "color-sidebar-foreground": "var(--sidebar-foreground)",
-      "color-sidebar-primary": "var(--sidebar-primary)",
-      "color-sidebar-primary-foreground": "var(--sidebar-primary-foreground)",
-      "color-sidebar-accent": "var(--sidebar-accent)",
-      "color-sidebar-accent-foreground": "var(--sidebar-accent-foreground)",
-      "color-sidebar-border": "var(--sidebar-border)",
-      "color-sidebar-ring": "var(--sidebar-ring)",
-      "shadow-shadow": "var(--shadow)",
-      "shadow-press":
-        "clamp(-1px, var(--box-shadow-x), 1px) clamp(-1px, var(--box-shadow-y), 1px) 0px 0px var(--border)",
-      "spacing-boxShadowX": "var(--box-shadow-x)",
-      "spacing-boxShadowY": "var(--box-shadow-y)",
-      "spacing-reverseBoxShadowX": "var(--reverse-box-shadow-x)",
-      "spacing-reverseBoxShadowY": "var(--reverse-box-shadow-y)",
-      "spacing-pressX": "calc(var(--box-shadow-x) - clamp(-1px, var(--box-shadow-x), 1px))",
-      "spacing-pressY": "calc(var(--box-shadow-y) - clamp(-1px, var(--box-shadow-y), 1px))",
-      "radius-base": "var(--radius)",
-      "radius-sm": "calc(var(--radius) * 0.6)",
-      "radius-md": "calc(var(--radius) * 0.8)",
-      "radius-lg": "var(--radius)",
-      "radius-xl": "calc(var(--radius) * 1.4)",
-      "radius-2xl": "calc(var(--radius) * 1.8)",
-      "radius-3xl": "calc(var(--radius) * 2.2)",
-      "radius-4xl": "calc(var(--radius) * 2.6)",
-      "font-weight-base": "500",
-      "font-weight-heading": "700",
-    },
-  },
+  cssVars: createThemeCssVars(defaultColor),
   css: {
     '@import "tw-animate-css"': {},
     '@import "shadcn/tailwind.css"': {},
@@ -251,17 +115,36 @@ function rewriteRegistryDependency(dependency: string) {
 }
 
 function rewriteDependencies(item: RegistryItem): string[] | undefined {
-  const dependencies = new Set(
-    (item.dependencies ?? []).map((dependency) =>
-      dependency.startsWith("react-day-picker@") ? "react-day-picker" : dependency,
-    ),
-  );
+  const dependencies = new Set((item.dependencies ?? []).map(pinDependency));
 
   if (BASE_UI_COMPONENTS.has(item.name)) {
-    dependencies.add("@base-ui/react");
+    dependencies.add(pinDependency("@base-ui/react"));
   }
 
   return dependencies.size ? [...dependencies] : undefined;
+}
+
+function pinDependency(dependency: string) {
+  const packageName = getPackageName(dependency);
+  const version = dependencyVersions[packageName];
+
+  if (!version) {
+    throw new Error(
+      `Registry dependency ${packageName} must be declared in registry/package.json to pin its compatible version.`,
+    );
+  }
+
+  return `${packageName}@${version}`;
+}
+
+function getPackageName(dependency: string) {
+  if (dependency.startsWith("@")) {
+    const versionSeparator = dependency.indexOf("@", dependency.indexOf("/") + 1);
+    return versionSeparator === -1 ? dependency : dependency.slice(0, versionSeparator);
+  }
+
+  const versionSeparator = dependency.indexOf("@");
+  return versionSeparator === -1 ? dependency : dependency.slice(0, versionSeparator);
 }
 
 function rewriteRegistryItem<T extends RegistryItem>(item: T) {

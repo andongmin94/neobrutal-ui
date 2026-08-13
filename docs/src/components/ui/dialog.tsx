@@ -236,7 +236,7 @@ function adaptAutoFocus(
       return focus.current;
     }
 
-    return focus ?? true;
+    return typeof focus === "boolean" ? focus : true;
   };
 }
 

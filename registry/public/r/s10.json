@@ -3,6 +3,7 @@
   "name": "s10",
   "title": "Star 10",
   "author": "andongmin94",
+  "description": "A neobrutalist star graphic variant 10 for decorative accents.",
   "files": [
     {
       "path": "src/components/stars/s10.tsx",
@@ -10,6 +11,11 @@
       "type": "registry:component",
       "target": "components/stars/s10.tsx"
     }
+  ],
+  "categories": [
+    "graphic",
+    "icon",
+    "decoration"
   ],
   "type": "registry:component"
 }

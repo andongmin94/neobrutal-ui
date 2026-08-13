@@ -3,6 +3,7 @@
   "name": "s39",
   "title": "Star 39",
   "author": "andongmin94",
+  "description": "A neobrutalist star graphic variant 39 for decorative accents.",
   "files": [
     {
       "path": "src/components/stars/s39.tsx",
@@ -10,6 +11,11 @@
       "type": "registry:component",
       "target": "components/stars/s39.tsx"
     }
+  ],
+  "categories": [
+    "graphic",
+    "icon",
+    "decoration"
   ],
   "type": "registry:component"
 }

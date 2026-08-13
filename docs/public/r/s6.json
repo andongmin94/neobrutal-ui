@@ -3,6 +3,7 @@
   "name": "s6",
   "title": "Star 6",
   "author": "andongmin94",
+  "description": "A neobrutalist star graphic variant 6 for decorative accents.",
   "files": [
     {
       "path": "src/components/stars/s6.tsx",
@@ -10,6 +11,11 @@
       "type": "registry:component",
       "target": "components/stars/s6.tsx"
     }
+  ],
+  "categories": [
+    "graphic",
+    "icon",
+    "decoration"
   ],
   "type": "registry:component"
 }

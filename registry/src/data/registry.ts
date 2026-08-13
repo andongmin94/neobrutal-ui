@@ -1,9 +1,16 @@
 import type { RegistryItem } from "shadcn/schema";
 
+type DiscoverableRegistryItem = RegistryItem & {
+  description: string;
+  categories: string[];
+};
+
 const UI = [
   {
     name: "accordion",
     title: "Accordion",
+    description: "A vertically stacked set of collapsible content sections.",
+    categories: ["layout", "disclosure"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
     files: [
@@ -16,6 +23,8 @@ const UI = [
   {
     name: "alert",
     title: "Alert",
+    description: "A prominent message for status updates, notices, and warnings.",
+    categories: ["feedback", "status"],
     type: "registry:ui",
     files: [
       {
@@ -27,9 +36,11 @@ const UI = [
   {
     name: "alert-dialog",
     title: "Alert dialog",
+    description: "A modal confirmation dialog for important or destructive actions.",
+    categories: ["overlay", "dialog", "feedback"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
-    registryDependencies: ["nbutton"],
+    registryDependencies: ["button"],
     files: [
       {
         path: "src/components/ui/alert-dialog.tsx",
@@ -40,6 +51,8 @@ const UI = [
   {
     name: "avatar",
     title: "Avatar",
+    description: "An image or fallback that identifies a person or entity.",
+    categories: ["data-display", "identity"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
     files: [
@@ -52,6 +65,8 @@ const UI = [
   {
     name: "badge",
     title: "Badge",
+    description: "A compact label for statuses, categories, and metadata.",
+    categories: ["data-display", "status"],
     type: "registry:ui",
     files: [
       {
@@ -63,6 +78,8 @@ const UI = [
   {
     name: "breadcrumb",
     title: "Breadcrumb",
+    description: "A navigation trail that shows the current page hierarchy.",
+    categories: ["navigation"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
     files: [
@@ -73,19 +90,10 @@ const UI = [
     ],
   },
   {
-    name: "nbutton",
-    type: "registry:ui",
-    dependencies: ["@base-ui/react"],
-    files: [
-      {
-        path: "src/components/ui/button.tsx",
-        type: "registry:ui",
-      },
-    ],
-  },
-  {
     name: "button",
     title: "Button",
+    description: "An interactive control that triggers an action or navigation.",
+    categories: ["action", "form"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
     files: [
@@ -98,9 +106,11 @@ const UI = [
   {
     name: "calendar",
     title: "Calendar",
+    description: "A date picker calendar with single and range selection support.",
+    categories: ["form", "date-time"],
     type: "registry:ui",
     dependencies: ["react-day-picker"],
-    registryDependencies: ["nbutton"],
+    registryDependencies: ["button"],
     files: [
       {
         path: "src/components/ui/calendar.tsx",
@@ -109,19 +119,10 @@ const UI = [
     ],
   },
   {
-    name: "ncard",
-    title: "Card",
-    type: "registry:ui",
-    files: [
-      {
-        path: "src/components/ui/card.tsx",
-        type: "registry:ui",
-      },
-    ],
-  },
-  {
     name: "card",
     title: "Card",
+    description: "A bordered container for grouping related content and actions.",
+    categories: ["layout", "data-display"],
     type: "registry:ui",
     files: [
       {
@@ -133,9 +134,11 @@ const UI = [
   {
     name: "carousel",
     title: "Carousel",
+    description: "A scrollable collection of content with previous and next controls.",
+    categories: ["data-display", "media"],
     type: "registry:ui",
     dependencies: ["embla-carousel-react"],
-    registryDependencies: ["nbutton"],
+    registryDependencies: ["button"],
     files: [
       {
         path: "src/components/ui/carousel.tsx",
@@ -146,9 +149,10 @@ const UI = [
   {
     name: "chart",
     title: "Chart",
+    description: "Composable Recharts helpers with neobrutalist styling and legends.",
+    categories: ["data-display", "data-visualization"],
     type: "registry:ui",
     dependencies: ["recharts"],
-    registryDependencies: ["ncard"],
     files: [
       {
         path: "src/components/ui/chart.tsx",
@@ -159,6 +163,8 @@ const UI = [
   {
     name: "checkbox",
     title: "Checkbox",
+    description: "A control for toggling one or more independent selections.",
+    categories: ["form", "selection"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
     files: [
@@ -171,6 +177,8 @@ const UI = [
   {
     name: "collapsible",
     title: "Collapsible",
+    description: "An expandable region that reveals or hides related content.",
+    categories: ["layout", "disclosure"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
     files: [
@@ -183,9 +191,11 @@ const UI = [
   {
     name: "command",
     title: "Command",
+    description: "A searchable command palette for actions and navigation.",
+    categories: ["navigation", "search"],
     type: "registry:ui",
     dependencies: ["cmdk"],
-    registryDependencies: ["ndialog"],
+    registryDependencies: ["dialog"],
     files: [
       {
         path: "src/components/ui/command.tsx",
@@ -196,6 +206,8 @@ const UI = [
   {
     name: "context-menu",
     title: "Context menu",
+    description: "A contextual action menu opened with a secondary pointer action.",
+    categories: ["overlay", "menu"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
     files: [
@@ -206,21 +218,13 @@ const UI = [
     ],
   },
   {
-    name: "ndialog",
-    type: "registry:ui",
-    dependencies: ["@base-ui/react"],
-    files: [
-      {
-        path: "src/components/ui/dialog.tsx",
-        type: "registry:ui",
-      },
-    ],
-  },
-  {
     name: "dialog",
     title: "Dialog",
+    description: "A modal overlay for focused content, forms, and actions.",
+    categories: ["overlay", "dialog"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
+    registryDependencies: ["button"],
     files: [
       {
         path: "src/components/ui/dialog.tsx",
@@ -231,6 +235,8 @@ const UI = [
   {
     name: "drawer",
     title: "Drawer",
+    description: "A panel that slides in from the edge of the viewport.",
+    categories: ["overlay", "dialog"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
     files: [
@@ -243,6 +249,8 @@ const UI = [
   {
     name: "dropdown-menu",
     title: "Dropdown menu",
+    description: "A button-triggered menu for actions, choices, and nested options.",
+    categories: ["overlay", "menu"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
     files: [
@@ -255,9 +263,11 @@ const UI = [
   {
     name: "form",
     title: "Form",
+    description: "Accessible form helpers with React Hook Form and Zod validation.",
+    categories: ["form", "validation"],
     type: "registry:ui",
     dependencies: ["@base-ui/react", "@hookform/resolvers", "react-hook-form", "zod"],
-    registryDependencies: ["nbutton", "ninput", "nlabel"],
+    registryDependencies: ["label"],
     files: [
       {
         path: "src/components/ui/form.tsx",
@@ -268,6 +278,8 @@ const UI = [
   {
     name: "hover-card",
     title: "Hover card",
+    description: "A preview card that appears when a linked element is hovered.",
+    categories: ["overlay", "data-display"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
     files: [
@@ -280,6 +292,8 @@ const UI = [
   {
     name: "image-card",
     title: "Image card",
+    description: "A neobrutalist card for presenting an image with supporting content.",
+    categories: ["data-display", "media"],
     type: "registry:ui",
     files: [
       {
@@ -291,6 +305,8 @@ const UI = [
   {
     name: "input",
     title: "Input",
+    description: "A styled text field for collecting short-form user input.",
+    categories: ["form", "input"],
     type: "registry:ui",
     files: [
       {
@@ -302,8 +318,10 @@ const UI = [
   {
     name: "input-group",
     title: "Input Group",
+    description: "A text input composed with buttons, icons, or inline controls.",
+    categories: ["form", "input"],
     type: "registry:ui",
-    registryDependencies: ["nbutton", "ninput", "textarea"],
+    registryDependencies: ["button", "input", "textarea"],
     files: [
       {
         path: "src/components/ui/input-group.tsx",
@@ -312,19 +330,10 @@ const UI = [
     ],
   },
   {
-    name: "ninput",
-    title: "Input",
-    type: "registry:ui",
-    files: [
-      {
-        path: "src/components/ui/input.tsx",
-        type: "registry:ui",
-      },
-    ],
-  },
-  {
     name: "input-otp",
     title: "Input OTP",
+    description: "A segmented input for one-time passwords and verification codes.",
+    categories: ["form", "input", "authentication"],
     type: "registry:ui",
     dependencies: ["input-otp"],
     files: [
@@ -335,18 +344,10 @@ const UI = [
     ],
   },
   {
-    name: "nlabel",
-    type: "registry:ui",
-    files: [
-      {
-        path: "src/components/ui/label.tsx",
-        type: "registry:ui",
-      },
-    ],
-  },
-  {
     name: "label",
     title: "Label",
+    description: "An accessible text label for a form control.",
+    categories: ["form", "input"],
     type: "registry:ui",
     files: [
       {
@@ -358,8 +359,34 @@ const UI = [
   {
     name: "marquee",
     title: "Marquee",
-    docs: "Make sure there is enough content in `items` so it loops perfectly. Visit https://jackwhiting.co.uk/posts/creating-a-marquee-with-tailwind to learn more.",
+    description: "A continuously scrolling row for logos, quotes, or featured content.",
+    categories: ["animation", "data-display"],
+    docs: "Make sure there is enough content in `items` so it loops perfectly. Visit https://jackwhiting.co.uk/posts/creating-a-marquee-with-tailwind-css to learn more.",
     type: "registry:ui",
+    cssVars: {
+      theme: {
+        "animate-marquee": "marquee 5s linear infinite",
+        "animate-marquee2": "marquee2 5s linear infinite",
+      },
+    },
+    css: {
+      "@keyframes marquee": {
+        "0%": {
+          transform: "translateX(0%)",
+        },
+        "100%": {
+          transform: "translateX(-100%)",
+        },
+      },
+      "@keyframes marquee2": {
+        "0%": {
+          transform: "translateX(100%)",
+        },
+        "100%": {
+          transform: "translateX(0%)",
+        },
+      },
+    },
     files: [
       {
         path: "src/components/ui/marquee.tsx",
@@ -370,8 +397,11 @@ const UI = [
   {
     name: "menubar",
     title: "Menubar",
+    description: "A horizontal application menu with nested commands and shortcuts.",
+    categories: ["navigation", "menu"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
+    registryDependencies: ["dropdown-menu"],
     files: [
       {
         path: "src/components/ui/menubar.tsx",
@@ -382,6 +412,8 @@ const UI = [
   {
     name: "navigation-menu",
     title: "Navigation menu",
+    description: "A responsive site navigation menu with expandable link panels.",
+    categories: ["navigation", "menu"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
     files: [
@@ -394,8 +426,9 @@ const UI = [
   {
     name: "pagination",
     title: "Pagination",
+    description: "Navigation controls for moving between pages of content.",
+    categories: ["navigation"],
     type: "registry:ui",
-    registryDependencies: ["nbutton"],
     files: [
       {
         path: "src/components/ui/pagination.tsx",
@@ -406,6 +439,8 @@ const UI = [
   {
     name: "popover",
     title: "Popover",
+    description: "A floating panel for contextual content and lightweight controls.",
+    categories: ["overlay"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
     files: [
@@ -418,6 +453,8 @@ const UI = [
   {
     name: "progress",
     title: "Progress",
+    description: "A visual indicator of task or process completion.",
+    categories: ["feedback", "status"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
     files: [
@@ -430,6 +467,8 @@ const UI = [
   {
     name: "radio-group",
     title: "Radio group",
+    description: "A set of mutually exclusive options for selecting one value.",
+    categories: ["form", "selection"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
     files: [
@@ -442,6 +481,8 @@ const UI = [
   {
     name: "resizable",
     title: "Resizable",
+    description: "Adjustable panel groups with draggable resize handles.",
+    categories: ["layout"],
     type: "registry:ui",
     dependencies: ["react-resizable-panels"],
     files: [
@@ -454,6 +495,8 @@ const UI = [
   {
     name: "scroll-area",
     title: "Scroll area",
+    description: "A custom scrollable viewport with styled scrollbars.",
+    categories: ["layout"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
     files: [
@@ -466,6 +509,8 @@ const UI = [
   {
     name: "select",
     title: "Select",
+    description: "A dropdown control for choosing one value from a list.",
+    categories: ["form", "selection"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
     files: [
@@ -478,6 +523,8 @@ const UI = [
   {
     name: "separator",
     title: "Separator",
+    description: "A visual divider for separating related content groups.",
+    categories: ["layout"],
     type: "registry:ui",
     files: [
       {
@@ -489,20 +536,11 @@ const UI = [
   {
     name: "sheet",
     title: "Sheet",
+    description: "A modal panel that enters from a configurable screen edge.",
+    categories: ["overlay", "dialog"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
-    files: [
-      {
-        path: "src/components/ui/sheet.tsx",
-        type: "registry:ui",
-      },
-    ],
-  },
-  {
-    name: "nsheet",
-    title: "Sheet",
-    type: "registry:ui",
-    dependencies: ["@base-ui/react"],
+    registryDependencies: ["button"],
     files: [
       {
         path: "src/components/ui/sheet.tsx",
@@ -513,16 +551,18 @@ const UI = [
   {
     name: "sidebar",
     title: "Sidebar",
+    description: "A responsive, collapsible application sidebar with navigation primitives.",
+    categories: ["layout", "navigation"],
     type: "registry:ui",
     registryDependencies: [
       "avatar",
       "collapsible",
       "dropdown-menu",
-      "nbutton",
-      "ninput",
-      "nsheet",
-      "nskeleton",
-      "ntooltip",
+      "button",
+      "input",
+      "sheet",
+      "skeleton",
+      "tooltip",
       "separator",
     ],
     files: [
@@ -539,17 +579,8 @@ const UI = [
   {
     name: "skeleton",
     title: "Skeleton",
-    type: "registry:ui",
-    files: [
-      {
-        path: "src/components/ui/skeleton.tsx",
-        type: "registry:ui",
-      },
-    ],
-  },
-  {
-    name: "nskeleton",
-    title: "Skeleton",
+    description: "A placeholder that communicates content is loading.",
+    categories: ["feedback", "loading"],
     type: "registry:ui",
     files: [
       {
@@ -561,6 +592,8 @@ const UI = [
   {
     name: "slider",
     title: "Slider",
+    description: "A draggable control for selecting a value or range.",
+    categories: ["form", "input"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
     files: [
@@ -573,6 +606,8 @@ const UI = [
   {
     name: "sonner",
     title: "Sonner",
+    description: "A toast notification provider styled for neobrutalist interfaces.",
+    categories: ["feedback", "notification"],
     type: "registry:ui",
     dependencies: ["sonner", "next-themes"],
     files: [
@@ -585,6 +620,8 @@ const UI = [
   {
     name: "switch",
     title: "Switch",
+    description: "A binary control for turning a setting on or off.",
+    categories: ["form", "selection"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
     files: [
@@ -597,6 +634,8 @@ const UI = [
   {
     name: "table",
     title: "Table",
+    description: "Semantic table primitives for structured rows and columns.",
+    categories: ["data-display", "table"],
     type: "registry:ui",
     files: [
       {
@@ -608,6 +647,8 @@ const UI = [
   {
     name: "tabs",
     title: "Tabs",
+    description: "A tabbed interface for switching between related content panels.",
+    categories: ["navigation", "layout"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
     files: [
@@ -620,6 +661,8 @@ const UI = [
   {
     name: "textarea",
     title: "Textarea",
+    description: "A multiline text field for collecting longer user input.",
+    categories: ["form", "input"],
     type: "registry:ui",
     files: [
       {
@@ -631,6 +674,8 @@ const UI = [
   {
     name: "tooltip",
     title: "Tooltip",
+    description: "A concise text hint shown when an element is hovered or focused.",
+    categories: ["overlay", "feedback"],
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
     files: [
@@ -640,35 +685,17 @@ const UI = [
       },
     ],
   },
-  {
-    name: "ntooltip",
-    title: "Tooltip",
-    type: "registry:ui",
-    dependencies: ["@base-ui/react"],
-    files: [
-      {
-        path: "src/components/ui/tooltip.tsx",
-        type: "registry:ui",
-      },
-    ],
-  },
-] satisfies RegistryItem[];
+] satisfies DiscoverableRegistryItem[];
 
 const RECIPES = [
   {
     name: "data-table",
     title: "Data table",
     description: "A sortable, filterable data table recipe built with TanStack Table.",
+    categories: ["data-display", "table", "recipe"],
     type: "registry:block",
     dependencies: ["@tanstack/react-table", "lucide-react"],
-    registryDependencies: [
-      "neobrutal-ui",
-      "nbutton",
-      "checkbox",
-      "dropdown-menu",
-      "ninput",
-      "table",
-    ],
+    registryDependencies: ["neobrutal-ui", "button", "checkbox", "dropdown-menu", "input", "table"],
     files: [
       {
         path: "src/components/ui/data-table.tsx",
@@ -677,7 +704,7 @@ const RECIPES = [
       },
     ],
   },
-] satisfies RegistryItem[];
+] satisfies DiscoverableRegistryItem[];
 
 const TEMPLATES = [
   {
@@ -787,7 +814,7 @@ const TEMPLATES = [
       },
     ],
   },
-] satisfies RegistryItem[];
+] satisfies DiscoverableRegistryItem[];
 
 function createStarRegistryItem(number: number) {
   const name = `s${number}`;
@@ -795,6 +822,8 @@ function createStarRegistryItem(number: number) {
   return {
     name,
     title: `Star ${number}`,
+    description: `A neobrutalist star graphic variant ${number} for decorative accents.`,
+    categories: ["graphic", "icon", "decoration"],
     type: "registry:component",
     files: [
       {
@@ -803,7 +832,7 @@ function createStarRegistryItem(number: number) {
         target: `components/stars/${name}.tsx`,
       },
     ],
-  } satisfies RegistryItem;
+  } satisfies DiscoverableRegistryItem;
 }
 
 const STAR_COUNT = 40;

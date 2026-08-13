@@ -3,6 +3,7 @@
   "name": "marquee",
   "title": "Marquee",
   "author": "andongmin94",
+  "description": "A continuously scrolling row for logos, quotes, or featured content.",
   "files": [
     {
       "path": "src/components/ui/marquee.tsx",
@@ -10,6 +11,34 @@
       "type": "registry:ui"
     }
   ],
-  "docs": "Make sure there is enough content in `items` so it loops perfectly. Visit https://jackwhiting.co.uk/posts/creating-a-marquee-with-tailwind to learn more.",
+  "cssVars": {
+    "theme": {
+      "animate-marquee": "marquee 5s linear infinite",
+      "animate-marquee2": "marquee2 5s linear infinite"
+    }
+  },
+  "css": {
+    "@keyframes marquee": {
+      "0%": {
+        "transform": "translateX(0%)"
+      },
+      "100%": {
+        "transform": "translateX(-100%)"
+      }
+    },
+    "@keyframes marquee2": {
+      "0%": {
+        "transform": "translateX(100%)"
+      },
+      "100%": {
+        "transform": "translateX(0%)"
+      }
+    }
+  },
+  "docs": "Make sure there is enough content in `items` so it loops perfectly. Visit https://jackwhiting.co.uk/posts/creating-a-marquee-with-tailwind-css to learn more.",
+  "categories": [
+    "animation",
+    "data-display"
+  ],
   "type": "registry:ui"
 }

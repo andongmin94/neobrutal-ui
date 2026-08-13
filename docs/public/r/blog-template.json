@@ -5,7 +5,7 @@
   "author": "andongmin94",
   "description": "A focused blog archive with search and readable post rows.",
   "dependencies": [
-    "lucide-react"
+    "lucide-react@^1.24.0"
   ],
   "registryDependencies": [
     "https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json",
