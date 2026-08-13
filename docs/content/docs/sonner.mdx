@@ -28,7 +28,16 @@ shadcnDocsLink: https://ui.shadcn.com/docs/components/sonner
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Toaster } from "@/components/ui/sonner";
 ```
+
+Mount the `<Toaster />` once near the root of your app.
+
+```tsx
+<Toaster />
+```
+
+You can then trigger toasts from any client component.
 
 ```tsx
 <Button

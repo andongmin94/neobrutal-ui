@@ -1,0 +1,47 @@
+name: Verify
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            registry/package-lock.json
+            docs/package-lock.json
+
+      - name: Install registry dependencies
+        working-directory: registry
+        run: npm ci
+
+      - name: Verify registry sources and Next template consumers
+        working-directory: registry
+        run: |
+          npm run lint
+          npm run typecheck
+          npm run build
+
+      - name: Install docs dependencies
+        working-directory: docs
+        run: npm ci
+
+      - name: Verify docs
+        working-directory: docs
+        run: |
+          npm run lint
+          npm run typecheck
+          npm run build
+
+      - name: Verify generated files are current
+        run: git diff --exit-code

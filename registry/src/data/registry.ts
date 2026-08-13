@@ -256,8 +256,8 @@ const UI = [
     name: "form",
     title: "Form",
     type: "registry:ui",
-    dependencies: ["@base-ui/react", "react-hook-form"],
-    registryDependencies: ["nbutton", "nlabel"],
+    dependencies: ["@base-ui/react", "@hookform/resolvers", "react-hook-form", "zod"],
+    registryDependencies: ["nbutton", "ninput", "nlabel"],
     files: [
       {
         path: "src/components/ui/form.tsx",
@@ -514,7 +514,17 @@ const UI = [
     name: "sidebar",
     title: "Sidebar",
     type: "registry:ui",
-    registryDependencies: ["nbutton", "nsheet", "ntooltip", "ninput", "separator", "nskeleton"],
+    registryDependencies: [
+      "avatar",
+      "collapsible",
+      "dropdown-menu",
+      "nbutton",
+      "ninput",
+      "nsheet",
+      "nskeleton",
+      "ntooltip",
+      "separator",
+    ],
     files: [
       {
         path: "src/components/ui/sidebar.tsx",

@@ -209,7 +209,7 @@ const BASE_ITEM = {
       "spacing-reverseBoxShadowY": "var(--reverse-box-shadow-y)",
       "spacing-pressX": "calc(var(--box-shadow-x) - clamp(-1px, var(--box-shadow-x), 1px))",
       "spacing-pressY": "calc(var(--box-shadow-y) - clamp(-1px, var(--box-shadow-y), 1px))",
-      "radius-base": "5px",
+      "radius-base": "var(--radius)",
       "radius-sm": "calc(var(--radius) * 0.6)",
       "radius-md": "calc(var(--radius) * 0.8)",
       "radius-lg": "var(--radius)",

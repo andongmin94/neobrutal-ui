@@ -1,5 +1,4 @@
-import { useDocsSearch } from "fumadocs-core/search/client";
-import { staticClient } from "fumadocs-core/search/client/orama-static";
+import { useDocsSearch, type SearchClient } from "fumadocs-core/search/client";
 import { ArrowRight, Command, Search, X } from "lucide-react";
 import {
   useEffect,
@@ -25,7 +24,16 @@ type SearchEntry = {
 };
 
 const resultListId = "docs-search-results";
-const searchClient = staticClient();
+let fullTextClient: Promise<SearchClient> | undefined;
+const searchClient: SearchClient = {
+  async search(value) {
+    fullTextClient ??= import("fumadocs-core/search/client/orama-static").then(({ staticClient }) =>
+      staticClient(),
+    );
+
+    return (await fullTextClient).search(value);
+  },
+};
 
 const staticEntries: SearchEntry[] = [
   {

@@ -12,7 +12,6 @@
 
   --border-width: 2px;
   --radius-small: 3px;
-  --radius: var(--border-radius);
   --shadow-x: var(--box-shadow-x);
   --shadow-y: var(--box-shadow-y);
   --shadow-small: clamp(-2px, var(--box-shadow-x), 2px) clamp(-2px, var(--box-shadow-y), 2px) 0

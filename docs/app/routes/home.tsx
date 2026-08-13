@@ -2,12 +2,16 @@ import type { Route } from "./+types/home";
 import { SiteLayout } from "~/components/site-layout";
 
 export function meta(_: Route.MetaArgs) {
+  const title = "neobrutal-ui - Component directory";
+  const description = "Browse source-owned neobrutalist React components for Base UI and shadcn.";
+
   return [
-    { title: "neobrutal-ui - Component directory" },
-    {
-      name: "description",
-      content: "Browse source-owned neobrutalist React components for Base UI and shadcn.",
-    },
+    { title },
+    { name: "description", content: description },
+    { property: "og:title", content: title },
+    { property: "og:description", content: description },
+    { name: "twitter:title", content: title },
+    { name: "twitter:description", content: description },
   ];
 }
 

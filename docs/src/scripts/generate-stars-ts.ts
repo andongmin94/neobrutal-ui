@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { format } from "oxfmt";
 
 const outputPath = path.resolve("src/data/stars.ts");
 const starsDirectory = path.resolve("src/components/stars");
@@ -67,5 +68,14 @@ ${exampleEntries.join(",\n")}
 export default STARS;
 `;
 
-fs.writeFileSync(outputPath, output, "utf8");
-console.log(`Generated ${starFiles.length} star examples.`);
+const { code } = await format(outputPath, output);
+const current = fs.existsSync(outputPath)
+  ? fs.readFileSync(outputPath, "utf8").replaceAll("\r\n", "\n")
+  : undefined;
+
+if (current !== code) {
+  fs.writeFileSync(outputPath, code, "utf8");
+  console.log(`Updated ${starFiles.length} star examples.`);
+} else {
+  console.log(`${starFiles.length} star examples are up to date.`);
+}

@@ -4,6 +4,7 @@ import type { Route } from "./+types/page";
 import { getMDXComponents } from "~/components/mdx-components";
 import { SiteLayout } from "~/components/site-layout";
 import { docs, source } from "~/lib/source";
+import { SITE_DESCRIPTION, SITE_NAME } from "~/lib/site";
 
 export async function loader({ params }: Route.LoaderArgs) {
   const slugs = (params["*"] ?? "").split("/").filter(Boolean);
@@ -23,11 +24,16 @@ export async function loader({ params }: Route.LoaderArgs) {
 }
 
 export function meta({ loaderData }: Route.MetaArgs) {
-  if (!loaderData) return [{ title: "neobrutal-ui" }];
+  const title = loaderData ? `${loaderData.title} - ${SITE_NAME}` : SITE_NAME;
+  const description = loaderData?.description ?? SITE_DESCRIPTION;
 
   return [
-    { title: `${loaderData.title} - neobrutal-ui` },
-    { name: "description", content: loaderData.description ?? "" },
+    { title },
+    { name: "description", content: description },
+    { property: "og:title", content: title },
+    { property: "og:description", content: description },
+    { name: "twitter:title", content: title },
+    { name: "twitter:description", content: description },
   ];
 }
 

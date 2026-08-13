@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { format } from "oxfmt";
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const chartExamplesDirectory = path.resolve(scriptDirectory, "../examples/ui/chart");
@@ -55,5 +56,14 @@ ${entries.join(",\n")}
 ];
 `;
 
-fs.writeFileSync(outputPath, output, "utf8");
-console.log(`Generated ${chartFiles.length} chart examples.`);
+const { code } = await format(outputPath, output);
+const current = fs.existsSync(outputPath)
+  ? fs.readFileSync(outputPath, "utf8").replaceAll("\r\n", "\n")
+  : undefined;
+
+if (current !== code) {
+  fs.writeFileSync(outputPath, code, "utf8");
+  console.log(`Updated ${chartFiles.length} chart examples.`);
+} else {
+  console.log(`${chartFiles.length} chart examples are up to date.`);
+}
