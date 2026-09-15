@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: docs-polish
+  cancel-in-progress: true
+
 jobs:
   polish:
     runs-on: ubuntu-latest
@@ -25,11 +29,11 @@ jobs:
         run: |
           python3 .github/polish-docs.py
           python3 .github/polish-docs-content.py
+          python3 .github/polish-theme-css.py
           python3 - <<'PY'
           from pathlib import Path
           p = Path('docs/tests/docs.spec.ts')
-          s = p.read_text().replace('await radius.fill("12");', 'await radius.press("Home");\n  for (let i = 0; i < 12; i++) await radius.press("ArrowRight");')
-          s = s.replace('page.getByRole("status")).toContainText("Nothing was sent")', 'page.locator(".home-showcase").getByRole("status")).toContainText("Nothing was sent")')
+          s = p.read_text().replace('await page.locator(\'[data-react-host][aria-busy="true"]\').first().waitFor({ state: "hidden", timeout: 15000 }).catch(() => {});', 'const primary = page.locator(".component-preview").first();\n    if (await primary.count()) await expect(primary.locator("[data-react-host]")).not.toHaveAttribute("aria-busy", "true");')
           p.write_text(s)
           PY
       - name: Install and lock the browser test dependency
@@ -51,11 +55,14 @@ jobs:
           npm run typecheck
           npm run build
           npm test
-      - name: Browser verification
+      - name: Desktop browser verification
         working-directory: docs
         run: |
           npx playwright install --with-deps chromium
-          npm run test:browser
+          npm run test:browser -- --project=desktop-light
+      - name: Browser verification across themes and viewports
+        working-directory: docs
+        run: npm run test:browser
       - name: Verify installable consumers remain intact
         working-directory: registry
         run: npm run consumer:verify
