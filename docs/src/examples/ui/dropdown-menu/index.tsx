@@ -1,21 +1,12 @@
 import {
-  Cloud,
-  CreditCard,
-  GitBranch,
-  Keyboard,
-  LifeBuoy,
-  LogOut,
-  Mail,
-  MessageSquare,
+  BookOpen,
+  Copy,
+  FileJson,
+  Palette,
   Plus,
-  PlusCircle,
   Settings,
-  User,
-  UserPlus,
-  Users,
+  UploadCloud,
 } from "lucide-react";
-
-import React from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -37,86 +28,53 @@ export default function DropdownMenuDemo() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant={"noShadow"}>Open</Button>
+        <Button variant="noShadow">Registry actions</Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+      <DropdownMenuContent className="w-64">
+        <DropdownMenuLabel>neobrutal-ui</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
-            <User />
-            <span>Profile</span>
-            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+            <BookOpen aria-hidden="true" />
+            Open documentation
+            <DropdownMenuShortcut>Ctrl+D</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <CreditCard />
-            <span>Billing</span>
-            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+            <Copy aria-hidden="true" />
+            Copy install command
+            <DropdownMenuShortcut>Ctrl+C</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Settings />
-            <span>Settings</span>
-            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Keyboard />
-            <span>Keyboard shortcuts</span>
-            <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
+            <FileJson aria-hidden="true" />
+            Inspect registry JSON
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <Users />
-            <span>Team</span>
-          </DropdownMenuItem>
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>
-              <UserPlus />
-              <span>Invite users</span>
-            </DropdownMenuSubTrigger>
-            <DropdownMenuPortal>
-              <DropdownMenuSubContent>
-                <DropdownMenuItem>
-                  <Mail />
-                  <span>Email</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <MessageSquare />
-                  <span>Message</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <PlusCircle />
-                  <span>More...</span>
-                </DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuPortal>
-          </DropdownMenuSub>
-          <DropdownMenuItem>
-            <Plus />
-            <span>New Team</span>
-            <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <Palette aria-hidden="true" />
+            Apply theme
+          </DropdownMenuSubTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem>Yellow</DropdownMenuItem>
+              <DropdownMenuItem>Blue</DropdownMenuItem>
+              <DropdownMenuItem>Rose</DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuPortal>
+        </DropdownMenuSub>
         <DropdownMenuItem>
-          <GitBranch />
-          <span>GitHub</span>
+          <Plus aria-hidden="true" />
+          Add to collection
         </DropdownMenuItem>
+        <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <LifeBuoy />
-          <span>Support</span>
+          <Settings aria-hidden="true" />
+          Registry settings
         </DropdownMenuItem>
         <DropdownMenuItem disabled>
-          <Cloud />
-          <span>API</span>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <LogOut />
-          <span>Log out</span>
-          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+          <UploadCloud aria-hidden="true" />
+          Publish release
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

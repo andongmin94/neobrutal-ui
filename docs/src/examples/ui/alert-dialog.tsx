@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,24 +16,34 @@ import {
 import { Button } from "@/components/ui/button";
 
 export default function AlertDialogDemo() {
+  const [message, setMessage] = useState("");
+
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button>Open</Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your account and remove your
-            data from our servers.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <div className="grid justify-items-center gap-3">
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button variant="outline">Archive release candidate</Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Archive this release candidate?</AlertDialogTitle>
+            <AlertDialogDescription>
+              It will leave the active review queue. You can restore it later from the archive.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep active</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => setMessage("Release candidate archived in this local preview.")}
+            >
+              Archive candidate
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <output className="block min-h-5 text-sm" aria-live="polite">
+        {message}
+      </output>
+    </div>
   );
 }
