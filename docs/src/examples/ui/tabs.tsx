@@ -20,7 +20,7 @@ export default function TabsDemo() {
 
   return (
     <div className="grid gap-3">
-      <Tabs defaultValue="account" className="max-w-[400px]">
+      <Tabs defaultValue="account" className="w-full max-w-[400px]">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="account">Account</TabsTrigger>
           <TabsTrigger value="password">Password</TabsTrigger>
@@ -42,7 +42,7 @@ export default function TabsDemo() {
               <CardContent className="grid gap-6">
                 <div className="grid gap-3">
                   <Label htmlFor="tabs-demo-name">Name</Label>
-                  <Input id="tabs-demo-name" defaultValue="Pedro Duarte" required />
+                  <Input id="tabs-demo-name" defaultValue="Andong Min" required />
                 </div>
                 <div className="grid gap-3">
                   <Label htmlFor="tabs-demo-username">Username</Label>

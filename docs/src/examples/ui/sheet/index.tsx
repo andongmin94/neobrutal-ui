@@ -44,7 +44,7 @@ export default function SheetDemo() {
           >
             <div className="grid gap-3">
               <Label htmlFor="sheet-demo-name">Name</Label>
-              <Input id="sheet-demo-name" defaultValue="Pedro Duarte" required />
+              <Input id="sheet-demo-name" defaultValue="Andong Min" required />
             </div>
             <div className="grid gap-3">
               <Label htmlFor="sheet-demo-username">Username</Label>
