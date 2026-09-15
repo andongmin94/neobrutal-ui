@@ -1,39 +1,46 @@
+import { Check, ExternalLink } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
+const checks = ["Registry schema valid", "Next.js consumer built", "Vite consumer built"];
 
 export default function PopoverDemo() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="noShadow">Open popover</Button>
+        <Button variant="noShadow">View release status</Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 text-main-foreground">
-        <div className="grid gap-4">
-          <div className="space-y-2">
-            <h4 className="font-heading leading-none">Dimensions</h4>
-            <p className="text-sm">Set the dimensions for the layer.</p>
+      <PopoverContent className="w-[min(22rem,calc(100vw-2rem))]">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <PopoverTitle>Release candidate</PopoverTitle>
+            <PopoverDescription className="mt-1">
+              All required consumer checks completed successfully.
+            </PopoverDescription>
           </div>
-          <div className="grid gap-2">
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="width">Width</Label>
-              <Input id="width" defaultValue="100%" className="col-span-2 h-8" />
-            </div>
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="maxWidth">Max. width</Label>
-              <Input id="maxWidth" defaultValue="300px" className="col-span-2 h-8" />
-            </div>
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="height">Height</Label>
-              <Input id="height" defaultValue="25px" className="col-span-2 h-8" />
-            </div>
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="maxHeight">Max. height</Label>
-              <Input id="maxHeight" defaultValue="none" className="col-span-2 h-8" />
-            </div>
-          </div>
+          <span className="rounded-base border-2 border-border bg-main px-2 py-1 text-xs font-heading text-main-foreground">
+            Ready
+          </span>
         </div>
+        <ul className="mt-4 divide-y-2 divide-border border-y-2 border-border">
+          {checks.map((check) => (
+            <li key={check} className="flex items-center gap-3 py-3 text-sm">
+              <Check className="size-4 shrink-0" aria-hidden="true" />
+              {check}
+            </li>
+          ))}
+        </ul>
+        <a href="/docs/registry" className="mt-4 inline-flex items-center gap-2 font-heading underline underline-offset-4">
+          Review registry guidance
+          <ExternalLink className="size-4" aria-hidden="true" />
+        </a>
       </PopoverContent>
     </Popover>
   );

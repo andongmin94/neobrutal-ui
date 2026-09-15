@@ -1,3 +1,5 @@
+import { ShieldCheck } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -6,10 +8,12 @@ export default function TooltipDemo() {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button variant="noShadow">Hover</Button>
+          <Button variant="noShadow" size="icon" aria-label="Registry verification status">
+            <ShieldCheck aria-hidden="true" />
+          </Button>
         </TooltipTrigger>
         <TooltipContent>
-          <p>Add to library</p>
+          <p>Verified in fresh Next.js and Vite projects.</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

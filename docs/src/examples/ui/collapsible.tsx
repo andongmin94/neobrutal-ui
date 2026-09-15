@@ -1,40 +1,51 @@
 "use client";
 
-import { ChevronsUpDown } from "lucide-react";
-
+import { Check, ChevronsUpDown, Circle } from "lucide-react";
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
+const hiddenTasks = ["Production registry responds", "Release notes reviewed"];
+
 export default function CollapsibleDemo() {
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-[350px] space-y-2">
-      <div className="rounded-base flex items-center justify-between space-x-4 border-2 border-border text-main-foreground bg-main px-4 py-2">
-        <h4 className="text-sm font-heading">@andongmin94 starred 3 repositories</h4>
+    <Collapsible
+      open={isOpen}
+      onOpenChange={setIsOpen}
+      className="w-full max-w-md space-y-2"
+    >
+      <div className="flex items-center justify-between gap-4 rounded-base border-2 border-border bg-main px-4 py-3 text-main-foreground shadow-shadow">
+        <div className="min-w-0">
+          <h3 className="font-heading">Release checklist</h3>
+          <p className="mt-1 text-sm">1 complete · 2 {isOpen ? "shown" : "hidden"}</p>
+        </div>
         <CollapsibleTrigger asChild>
           <Button
-            variant="noShadow"
-            size="sm"
-            className="w-9 bg-secondary-background text-foreground p-0"
+            variant="neutral"
+            size="icon-sm"
+            aria-label={isOpen ? "Hide remaining release tasks" : "Show remaining release tasks"}
           >
-            <ChevronsUpDown className="size-4" />
-            <span className="sr-only">Toggle</span>
+            <ChevronsUpDown aria-hidden="true" />
           </Button>
         </CollapsibleTrigger>
       </div>
-      <div className="rounded-base border-2 border-border bg-main px-4 py-3 font-mono font-base text-main-foreground text-sm">
-        @base-ui/react
+      <div className="flex items-center gap-3 rounded-base border-2 border-border bg-secondary-background px-4 py-3 text-sm">
+        <Check className="size-4 shrink-0" aria-hidden="true" />
+        <span>Fresh consumer builds pass</span>
       </div>
-      <CollapsibleContent className="space-y-2 text-main-foreground font-base">
-        <div className="rounded-base border-2 border-border bg-main px-4 py-3 font-mono text-sm">
-          shadcn/tailwind.css
-        </div>
-        <div className="rounded-base border-2 border-border bg-main px-4 py-3 font-mono text-sm">
-          @stitches/react
-        </div>
+      <CollapsibleContent className="space-y-2">
+        {hiddenTasks.map((task) => (
+          <div
+            key={task}
+            className="flex items-center gap-3 rounded-base border-2 border-border bg-secondary-background px-4 py-3 text-sm"
+          >
+            <Circle className="size-4 shrink-0" aria-hidden="true" />
+            <span>{task}</span>
+          </div>
+        ))}
       </CollapsibleContent>
     </Collapsible>
   );
