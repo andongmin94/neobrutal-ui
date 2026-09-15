@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 
 p = Path('registry/src/data/theme-styles.ts')
 s = p.read_text()
@@ -62,16 +63,38 @@ p = Path('docs/scripts/docs-contract.test.ts')
 s = p.read_text().replace('serializeThemeCss, defaultThemeSettings', 'serializeThemeCss, serializeThemeVariables, defaultThemeSettings')
 s += r'''
 test("the docs stylesheet is generated from the same default theme", () => {
-  const normalize = (value: string) => value.replace(/\s+/g, "");
+  // Formatting may change whitespace and hexadecimal color case, but not token identifiers.
+  const normalize = (value: string) => value.replace(/#[0-9a-fA-F]{3,8}\b/g, (hex) => hex.toLowerCase()).replace(/\s+/g, "");
   assert.equal(normalize(fs.readFileSync("src/styling/theme.css", "utf8")), normalize(serializeThemeVariables()));
 });
 '''
 p.write_text(s)
 
+# Use native live-output elements for demo feedback.
+for name in [
+    'docs/app/components/home-showcase.tsx',
+    'docs/src/special-pages/styling/controls.tsx',
+    'docs/src/examples/ui/dialog/index.tsx',
+    'docs/src/examples/ui/select/index.tsx',
+]:
+    p = Path(name)
+    p.write_text(re.sub(r'<p role="status"([^>]*)>([\s\S]*?)</p>', r'<output\1>\2</output>', p.read_text()))
+
+# Ordinary focus, history, and search navigation should scroll immediately.
+p = Path('docs/app/styles/index.css')
+p.write_text(p.read_text().replace('    scroll-behavior: smooth;\n', ''))
+
 p = Path('docs/tests/docs.spec.ts')
 s = p.read_text()
 s = s.replace('await radius.fill("12");', 'await radius.press("Home");\n  for (let i = 0; i < 12; i++) await radius.press("ArrowRight");')
 s = s.replace('page.getByRole("status")).toContainText("Nothing was sent")', 'page.locator(".home-showcase").getByRole("status")).toContainText("Nothing was sent")')
+# Capture only after the complete navigation round-trip, not between interactive steps.
+s = s.replace('  await page.screenshot({ path: info.outputPath("home.png"), fullPage: true });\n', '')
+s = s.replace('  await card.click();', '  await card.scrollIntoViewIfNeeded();\n  await expect(card).toBeInViewport();\n  await card.click();')
+s = s.replace('  await expect(page.getByRole("searchbox", { name: "Search component directory" })).toHaveValue("calendar");', '''  await expect(page.getByRole("searchbox", { name: "Search component directory" })).toHaveValue("calendar");
+  await page.getByRole("button", { name: "Clear search", exact: true }).click();
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({ path: info.outputPath("home.png"), fullPage: true });''')
 s = s.replace('await page.screenshot({ path: info.outputPath("styling.png"), fullPage: true });', '''await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.locator(".theme-workbench__export details").getByRole("button", { name: "Copy", exact: true }).click();
   expect(await page.evaluate(() => navigator.clipboard.readText())).toContain("--radius: 12px;");
@@ -79,4 +102,4 @@ s = s.replace('await page.screenshot({ path: info.outputPath("styling.png"), ful
 s = s.replace('await expect(preview.locator(\'[data-slot="button"]\').first()).toBeVisible();', '''await expect(preview.locator('[data-slot="button"]').first()).toBeVisible();
   expect(await preview.getByRole("button", { name: "destructive", exact: true }).evaluate((node) => getComputedStyle(node).backgroundColor)).not.toBe("rgba(0, 0, 0, 0)");''')
 p.write_text(s)
-print('Docs and registry now share generated default token mappings as well as custom exports.')
+print('Shared CSS and browser contracts are ready for validation.')
