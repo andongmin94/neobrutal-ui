@@ -1,0 +1,176 @@
+name: Full documentation review
+
+on:
+  push:
+    paths:
+      - .github/workflows/full-docs-review.yml
+
+permissions:
+  contents: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 24c7dbc60666cd1bc7acdafa4a1f50eb769c29fc
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            registry/package-lock.json
+            docs/package-lock.json
+      - name: Apply reviewed source fixes
+        run: |
+          git apply --check .github/review-fixes.patch
+          git apply .github/review-fixes.patch
+          rm .github/review-fixes.patch
+          python3 - <<'PY'
+          from pathlib import Path
+          import re, subprocess
+          p = Path('docs/tests/galleries.spec.ts')
+          s = p.read_text().replace('getByRole("textbox", { name: "Search docs and components"', 'getByRole("combobox", { name: "Search docs and components"')
+          s = s.replace('page.locator(".search-dialog").getByRole("link")', 'page.locator(".search-dialog").getByRole("option")')
+          p.write_text(s)
+          p = Path('docs/content/docs/dropdown-menu.mdx')
+          p.write_text(p.read_text().replace('`bottom` / `start`', '`bottom` / `center`'))
+          p = Path('docs/content/docs/marquee.mdx')
+          p.write_text(p.read_text().replace('20s linear infinite', '5s linear infinite'))
+          # Keep every existing live example while replacing the reference text.
+          baseline = 'e07e517af2fe7d37264d3d41402ce5a59a52893d'
+          def previews(text):
+              result = {}
+              for match in re.finditer(r'<ComponentPreview\b[\s\S]*?</ComponentPreview>', text):
+                  block = match.group()
+                  attrs = block.split('>')[0]
+                  key = tuple(re.search(rf'{name}="([^"]*)"', attrs).group(1) if re.search(rf'{name}="([^"]*)"', attrs) else '' for name in ['component', 'example', 'type'])
+                  result[key] = block
+              return result
+          for p in Path('docs/content/docs').glob('*.mdx'):
+              old = subprocess.check_output(['git', 'show', f'{baseline}:{p}'], text=True)
+              current = p.read_text()
+              existing = previews(current)
+              missing = [(key, block) for key, block in previews(old).items() if key not in existing]
+              if missing:
+                  current += '\n## Additional examples\n'
+                  for key, block in missing:
+                      current += '\n### ' + (key[1] or key[0]).replace('-', ' ').capitalize() + '\n\n' + block + '\n'
+                  p.write_text(current)
+          PY
+      - name: Install dependencies
+        run: |
+          npm ci --prefix registry --no-fund
+          npm ci --prefix docs --no-fund
+      - name: Format complete documentation examples
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re, subprocess
+          for p in Path('docs/content/docs').glob('*.mdx'):
+              def format_code(match):
+                  formatted = subprocess.check_output(['docs/node_modules/.bin/oxfmt', '--stdin-filepath=example.tsx'], input=match.group(1), text=True)
+                  return '```tsx\n' + formatted.rstrip() + '\n```'
+              p.write_text(re.sub(r'```tsx\n([\s\S]*?)\n```', format_code, p.read_text()))
+          PY
+      - name: Verify registry and documentation sources
+        run: |
+          npm run lint --prefix registry
+          npm run typecheck --prefix registry
+          npm run build --prefix registry > /tmp/registry-build.log 2>&1 || { tail -80 /tmp/registry-build.log; exit 1; }
+          npm run registry:validate --prefix registry
+          npm run registry:check --prefix registry
+          npm run lint --prefix docs
+          npm run typecheck --prefix docs
+          npm test --prefix docs
+          npm run build --prefix docs > /tmp/docs-build.log 2>&1 || { tail -100 /tmp/docs-build.log; exit 1; }
+      - name: Validate proposed namespace using the upstream validator
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, os, subprocess, urllib.request
+          root = Path.cwd()
+          target = Path('/tmp/shadcn-directory-review')
+          target.mkdir()
+          sha = subprocess.check_output(['gh', 'api', 'repos/shadcn-ui/ui/commits/main', '--jq', '.sha'], text=True).strip()
+          for relative in ['registry/directory.json', 'lib/registry-directory.ts', 'scripts/validate-registries.mts']:
+              path = target / relative
+              path.parent.mkdir(parents=True, exist_ok=True)
+              with urllib.request.urlopen(f'https://raw.githubusercontent.com/shadcn-ui/ui/{sha}/apps/v4/{relative}') as response:
+                  path.write_bytes(response.read())
+          entry = json.loads((root / 'registry/directory-entry.json').read_text())
+          directory = json.loads((target / 'registry/directory.json').read_text())
+          assert not any(item['name'].lower() == entry['name'].lower() for item in directory), 'Namespace already registered; review before opening another PR.'
+          original_count = len(directory)
+          directory.append(entry)
+          directory.sort(key=lambda item: item['name'].lower())
+          (target / 'registry/directory.json').write_text(json.dumps(directory, indent=2) + '\n')
+          (target / 'node_modules').symlink_to(root / 'registry/node_modules', target_is_directory=True)
+          (target / 'package.json').write_text(json.dumps({'private': True, 'type': 'module', 'scripts': {'validate:registries': 'tsx --tsconfig ./tsconfig.scripts.json ./scripts/validate-registries.mts'}}))
+          (target / 'tsconfig.scripts.json').write_text(json.dumps({'compilerOptions': {'target': 'ES2022', 'module': 'NodeNext', 'moduleResolution': 'NodeNext', 'skipLibCheck': True}}))
+          subprocess.run(['npm', 'run', 'validate:registries'], cwd=target, check=True)
+          Path('/tmp/upstream-validation.json').write_text(json.dumps({'upstream_commit': sha, 'existing_entries': original_count, 'namespace': entry['name'], 'result': 'success'}, indent=2))
+          PY
+      - name: Verify fresh consumer installations
+        run: npm run consumer:verify --prefix registry > /tmp/consumers.log 2>&1 || { tail -100 /tmp/consumers.log; exit 1; }
+      - name: Review every page, gallery, palette and source panel
+        working-directory: docs
+        run: |
+          npx playwright install --with-deps chromium > /tmp/playwright-install.log 2>&1 || { tail -80 /tmp/playwright-install.log; exit 1; }
+          npm run test:browser
+      - name: Preserve validated Git objects without changing main
+        run: |
+          git add -A
+          git diff --cached --check
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, os, subprocess
+          repo = os.environ['GITHUB_REPOSITORY']
+          def api(endpoint, payload=None):
+              args = ['gh', 'api', f'repos/{repo}/{endpoint}']
+              if payload is not None:
+                  args += ['--method', 'POST', '--input', '-']
+              result = subprocess.run(args, input=json.dumps(payload) if payload is not None else None, text=True, capture_output=True, check=True)
+              return json.loads(result.stdout)
+          parent = os.environ['GITHUB_SHA']
+          assert api('git/ref/heads/main')['object']['sha'] == parent, 'main advanced; preserve the candidate without overwriting other work.'
+          changed = subprocess.check_output(['git', 'diff', '--cached', '--name-only', '--no-renames', '-z'], text=True).split('\0')
+          entries = []
+          for name in filter(None, changed):
+              path = Path(name)
+              item = {'path': name, 'mode': '100644', 'type': 'blob'}
+              if path.exists():
+                  item['content'] = path.read_text()
+              else:
+                  item['sha'] = None
+              entries.append(item)
+          tree = api('git/trees', {'base_tree': 'bbfa26cb80fe94577bed7adedc11df3e44aa6542', 'tree': entries})['sha']
+          commit = api('git/commits', {'message': 'docs: complete all component references and whole-site quality gates', 'tree': tree, 'parents': [parent], 'author': {'name': 'github-actions[bot]', 'email': '41898282+github-actions[bot]@users.noreply.github.com'}})['sha']
+          result = {'commit': commit, 'tree': tree, 'parent': parent, 'run_id': os.environ['GITHUB_RUN_ID'], 'publication': 'Not published. Awaiting visual review.'}
+          Path('/tmp/review-candidate.json').write_text(json.dumps(result, indent=2))
+          print(json.dumps(result))
+          PY
+      - name: Preserve review source snapshot
+        if: always()
+        run: |
+          git add -A
+          git ls-files -z | tar --null --exclude='*.woff*' --exclude='*.ttf' --exclude='*.otf' -T - -czf /tmp/review-source.tar.gz
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: full-documentation-review
+          retention-days: 7
+          path: |
+            docs/test-results
+            docs/playwright-report
+            /tmp/review-candidate.json
+            /tmp/upstream-validation.json
+            /tmp/review-source.tar.gz
+            /tmp/docs-build.log
+            /tmp/registry-build.log
+            /tmp/consumers.log
