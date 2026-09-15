@@ -1,0 +1,38 @@
+name: Readiness workspace
+
+on:
+  push:
+    branches: [chore/registry-directory-ready]
+    paths: [.github/workflows/readiness-workspace.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  workspace:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            registry/package-lock.json
+            docs/package-lock.json
+      - name: Inspect contribution instructions and installation call sites
+        run: |
+          find . -name AGENTS.md -not -path '*/node_modules/*' -print -exec cat {} \;
+          git grep -n -E 'r/styling|styling/|Button.*asChild|nativeButton=|<svg' -- docs registry ':!**/public/r/**' ':!**/package-lock.json' ':!registry/registry.json' || true
+      - name: Install locked dependencies
+        run: |
+          npm ci --prefix registry
+          npm ci --prefix docs
+      - name: Bundle the isolated workspace for review
+        run: tar --exclude=.git -czf /tmp/readiness-workspace.tar.gz .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: readiness-workspace
+          path: /tmp/readiness-workspace.tar.gz
+          retention-days: 1
