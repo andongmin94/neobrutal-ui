@@ -5,7 +5,7 @@ export default function SeparatorDemo() {
     <div className="w-full max-w-sm">
       <div>
         <h3 className="font-heading">neobrutal-ui</h3>
-        <p className="text-sm">Copy-owned components built with Base UI.</p>
+        <p className="text-sm">Source-owned components built with Base UI.</p>
       </div>
       <Separator className="my-4" />
       <div className="flex h-5 items-center gap-3 text-sm">
