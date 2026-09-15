@@ -52,13 +52,20 @@ jobs:
         working-directory: docs
         run: npm ci
 
-      - name: Verify docs
+      - name: Verify docs and shared theme contracts
         working-directory: docs
         run: |
           npm audit --audit-level=high
           npm run lint
           npm run typecheck
           npm run build
+          npm test
+
+      - name: Verify docs interactions in desktop and mobile themes
+        working-directory: docs
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:browser
 
       - name: Verify generated files are current
         run: |
@@ -69,21 +76,35 @@ jobs:
             exit 1
           fi
 
+      - name: Save browser reports and screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-browser-checks
+          retention-days: 7
+          if-no-files-found: ignore
+          path: |
+            docs/test-results
+            docs/playwright-report
+
   verify-deployment:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: verify
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: registry/package-lock.json
+          cache-dependency-path: |
+            registry/package-lock.json
+            docs/package-lock.json
       - name: Install verification dependencies
-        working-directory: registry
-        run: npm ci
+        run: |
+          npm ci --prefix registry
+          npm ci --prefix docs
       - name: Verify deployed catalog and every item
         working-directory: registry
         run: npm run registry:verify-live
@@ -92,3 +113,20 @@ jobs:
         run: |
           npm run consumer:verify -- vite --item=dialog --registry-url=https://neobrutal-ui.andongmin.com/r
           npm run consumer:verify -- next --item=blog-template --registry-url=https://neobrutal-ui.andongmin.com/r
+      - name: Verify the deployed documentation in real browsers
+        working-directory: docs
+        env:
+          DOCS_TEST_URL: https://neobrutal-ui.andongmin.com
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:browser
+      - name: Save production browser reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-production-browser-checks
+          retention-days: 7
+          if-no-files-found: ignore
+          path: |
+            docs/test-results
+            docs/playwright-report
