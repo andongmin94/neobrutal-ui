@@ -10,6 +10,7 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -28,6 +29,7 @@ jobs:
       - name: Verify registry sources and Next template consumers
         working-directory: registry
         run: |
+          npm audit --audit-level=high
           npm run lint
           npm run typecheck
           npm run build
@@ -38,6 +40,14 @@ jobs:
         working-directory: registry
         run: npm run consumer:verify
 
+      - name: Verify isolated component and template consumers
+        working-directory: registry
+        run: |
+          npm run consumer:verify -- vite --item=button
+          npm run consumer:verify -- vite --item=calendar
+          npm run consumer:verify -- next --item=dialog
+          npm run consumer:verify -- next --item=blog-template
+
       - name: Install docs dependencies
         working-directory: docs
         run: npm ci
@@ -45,6 +55,7 @@ jobs:
       - name: Verify docs
         working-directory: docs
         run: |
+          npm audit --audit-level=high
           npm run lint
           npm run typecheck
           npm run build
@@ -57,3 +68,27 @@ jobs:
             git status --short
             exit 1
           fi
+
+  verify-deployment:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: registry/package-lock.json
+      - name: Install verification dependencies
+        working-directory: registry
+        run: npm ci
+      - name: Verify deployed catalog and every item
+        working-directory: registry
+        run: npm run registry:verify-live
+      - name: Install from production in fresh consumers
+        working-directory: registry
+        run: |
+          npm run consumer:verify -- vite --item=dialog --registry-url=https://neobrutal-ui.andongmin.com/r
+          npm run consumer:verify -- next --item=blog-template --registry-url=https://neobrutal-ui.andongmin.com/r
