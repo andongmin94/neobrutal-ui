@@ -77,6 +77,9 @@ npm ci
 npm run lint
 npm run typecheck
 npm run build
+npm test
+npx playwright install --with-deps chromium
+npm run test:browser
 ```
 
 `registry/src` is the source of truth. The registry build generates `registry/public/r`,
@@ -95,8 +98,10 @@ npm run registry:verify-live
 npm run consumer:verify -- vite --item=dialog --registry-url=https://neobrutal-ui.andongmin.com/r
 ```
 
-Consumer builds use strict TypeScript. These are installation/build checks, not a claim
-of comprehensive browser, accessibility, or visual-regression coverage.
+Consumer builds use strict TypeScript. Separately, documentation CI visits every content
+route in desktop and mobile light/dark Chromium, exercises representative interactions,
+and runs automated axe scans. This is not a claim of cross-browser certification or a
+manual pixel-by-pixel visual review.
 
 ## Repository layout
 
