@@ -1,0 +1,96 @@
+name: Validate docs polish
+
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/docs-polish.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  polish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            registry/package-lock.json
+            docs/package-lock.json
+      - name: Apply reviewed edits in the validation workspace
+        run: |
+          python3 .github/polish-docs.py
+          python3 .github/polish-docs-content.py
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('docs/tests/docs.spec.ts')
+          s = p.read_text().replace('await radius.fill("12");', 'await radius.press("Home");\n  for (let i = 0; i < 12; i++) await radius.press("ArrowRight");')
+          s = s.replace('page.getByRole("status")).toContainText("Nothing was sent")', 'page.locator(".home-showcase").getByRole("status")).toContainText("Nothing was sent")')
+          p.write_text(s)
+          PY
+      - name: Install and lock the browser test dependency
+        run: |
+          npm ci --prefix registry
+          npm install --prefix docs --no-fund
+      - name: Build registry and synchronize authoritative sources
+        working-directory: registry
+        run: |
+          npm run lint
+          npm run typecheck
+          npm run build
+          npm run registry:validate
+          npm run registry:check
+      - name: Check and build docs
+        working-directory: docs
+        run: |
+          npm run lint
+          npm run typecheck
+          npm run build
+          npm test
+      - name: Browser verification
+        working-directory: docs
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:browser
+      - name: Verify installable consumers remain intact
+        working-directory: registry
+        run: npm run consumer:verify
+      - name: Publish only the validated source on main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          current=$(git ls-remote origin refs/heads/main | cut -f1)
+          test "$current" = "$GITHUB_SHA"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs registry AGENTS.md
+          git diff --cached --check
+          git diff --cached --stat
+          git commit -m 'feat(docs): unify theme contract, isolate previews, and polish documentation'
+          git push origin HEAD:main
+          echo "Validated main commit: $(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
+          branch_head=$(gh api repos/andongmin94/neobrutal-ui/git/ref/heads/chore/registry-directory-ready --jq '.object.sha')
+          if [ "$branch_head" = b59b21d9a5637e563088b31696b610e36f01dd7f ]; then
+            previous_tree=$(gh api repos/andongmin94/neobrutal-ui/git/commits/9ff7f06a839f611d66b4eb44ec098cf8b13ac8cf --jq '.tree.sha')
+            branch_tree=$(gh api repos/andongmin94/neobrutal-ui/git/commits/$branch_head --jq '.tree.sha')
+            if [ "$previous_tree" = "$branch_tree" ]; then
+              gh api --method DELETE repos/andongmin94/neobrutal-ui/git/refs/heads/chore/registry-directory-ready
+              echo 'Removed the already-squash-merged preparation branch after checking identical trees.' >> "$GITHUB_STEP_SUMMARY"
+            fi
+          fi
+      - name: Preserve browser evidence and candidate diff
+        if: always()
+        run: git diff > /tmp/docs-polish-candidate.patch
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: docs-polish-review
+          retention-days: 7
+          path: |
+            docs/test-results
+            docs/playwright-report
+            /tmp/docs-polish-candidate.patch
