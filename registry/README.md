@@ -37,7 +37,7 @@ Then install from another shadcn project:
 
 ```bash
 npx shadcn@latest add http://127.0.0.1:5177/r/button.json
-npx shadcn@latest init http://127.0.0.1:5177/r/styling/yellow.json
+npx shadcn@latest add http://127.0.0.1:5177/r/theme-yellow.json
 ```
 
 ## Deployment

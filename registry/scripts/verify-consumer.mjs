@@ -4,11 +4,27 @@ import http from "node:http";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { parseArgs } from "node:util";
 
 const root = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const outputDirectory = path.join(root, "public", "r");
 const catalog = readJson(path.join(outputDirectory, "registry.json"));
-const requestedTargets = process.argv.slice(2);
+const { values: options, positionals: requestedTargets } = parseArgs({
+  allowPositionals: true,
+  options: {
+    item: { type: "string" },
+    "registry-url": { type: "string" },
+  },
+});
+if (
+  options.item &&
+  !catalog.items.some(
+    (item) =>
+      item.name === options.item && item.type !== "registry:base" && item.type !== "registry:style",
+  )
+) {
+  throw new Error(`Unknown installable item: ${options.item}`);
+}
 const targets = requestedTargets.length > 0 ? requestedTargets : ["next", "vite"];
 const supportedTargets = new Set(["next", "vite"]);
 
@@ -19,24 +35,27 @@ for (const target of targets) {
 }
 
 const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), "neobrutal-registry-consumer-"));
-let registryOrigin = "";
+let registryOrigin = options["registry-url"]?.replace(/\/$/, "") ?? "";
 const server = http.createServer(serveRegistryFile);
 
 try {
-  await new Promise((resolve, reject) => {
-    server.once("error", reject);
-    server.listen(0, "127.0.0.1", resolve);
-  });
-
-  const address = server.address();
-  if (!address || typeof address === "string") throw new Error("Could not start registry server");
-  registryOrigin = `http://127.0.0.1:${address.port}`;
+  if (!registryOrigin) {
+    await new Promise((resolve, reject) => {
+      server.once("error", reject);
+      server.listen(0, "127.0.0.1", resolve);
+    });
+    const address = server.address();
+    if (!address || typeof address === "string") throw new Error("Could not start registry server");
+    registryOrigin = `http://127.0.0.1:${address.port}`;
+  } else if (!["https:", "http:"].includes(new URL(registryOrigin).protocol)) {
+    throw new Error("Registry URL must use HTTP or HTTPS");
+  }
 
   for (const target of targets) {
     await verifyTarget(target, path.join(temporaryRoot, target));
   }
 } finally {
-  await new Promise((resolve) => server.close(resolve));
+  if (server.listening) await new Promise((resolve) => server.close(resolve));
   fs.rmSync(temporaryRoot, { force: true, recursive: true });
 }
 
@@ -64,7 +83,8 @@ async function verifyTarget(target, fixtureDirectory) {
   );
 
   const installableItems = catalog.items.filter((item) => {
-    if (item.name === baseItem.name) return false;
+    if (item.name === baseItem.name || item.type === "registry:style") return false;
+    if (options.item && item.name !== options.item) return false;
     if (target === "next") return true;
     return (
       item.type === "registry:ui" ||
@@ -72,6 +92,8 @@ async function verifyTarget(target, fixtureDirectory) {
       item.name === "data-table"
     );
   });
+
+  if (installableItems.length === 0) throw new Error(`No selected items support ${target}`);
 
   await run(
     shadcnExecutable(),
@@ -92,7 +114,7 @@ async function verifyTarget(target, fixtureDirectory) {
   await run(npmExecutable(), ["run", "build"], fixtureDirectory, {
     NEXT_TELEMETRY_DISABLED: "1",
   });
-  console.log(`Fresh ${target} consumer passed.`);
+  console.log(`Fresh ${target} consumer passed: ${options.item ?? "all items"}.`);
 }
 
 function createNextFixture(directory) {
@@ -101,7 +123,7 @@ function createNextFixture(directory) {
     private: true,
     scripts: { build: "next build" },
     dependencies: {
-      next: "^16.3.0",
+      next: "^16.3.3",
       react: "19.2.7",
       "react-dom": "19.2.7",
     },
@@ -114,14 +136,16 @@ function createNextFixture(directory) {
       typescript: "^6.0.3",
     },
   });
-  writeJson(path.join(directory, "components.json"), componentsConfig(true));
+  const config = componentsConfig(true);
+  config.tailwind.css = "src/app/globals.css";
+  writeJson(path.join(directory, "components.json"), config);
   writeJson(path.join(directory, "tsconfig.json"), {
     compilerOptions: {
       target: "ES2017",
       lib: ["dom", "dom.iterable", "esnext"],
       allowJs: true,
       skipLibCheck: true,
-      strict: false,
+      strict: true,
       noEmit: true,
       esModuleInterop: true,
       module: "esnext",
@@ -142,10 +166,10 @@ function createNextFixture(directory) {
     path.join(directory, "postcss.config.mjs"),
     'export default { plugins: { "@tailwindcss/postcss": {} } };\n',
   );
-  writeFile(path.join(directory, "src", "index.css"), '@import "tailwindcss";\n');
+  writeFile(path.join(directory, "src", "app", "globals.css"), '@import "tailwindcss";\n');
   writeFile(
     path.join(directory, "src", "app", "layout.tsx"),
-    'import "../index.css";\n\nexport default function Layout({ children }: { children: React.ReactNode }) {\n  return <html lang="en"><body>{children}</body></html>;\n}\n',
+    'import "./globals.css";\n\nexport default function Layout({ children }: { children: React.ReactNode }) {\n  return <html lang="en"><body>{children}</body></html>;\n}\n',
   );
   writeFile(
     path.join(directory, "src", "app", "page.tsx"),
@@ -290,7 +314,7 @@ function serveRegistryFile(request, response) {
 
   const content = fs
     .readFileSync(filePath, "utf8")
-    .replaceAll("https://neobrutal-ui.andongmin.com/r/", `${registryOrigin}/`);
+    .replaceAll(`${catalog.homepage}/r/`, `${registryOrigin}/`);
   response.writeHead(200, { "content-type": "application/json; charset=utf-8" });
   response.end(content);
 }
@@ -300,7 +324,7 @@ function itemUrl(name) {
 }
 
 function styleUrl(name) {
-  return `${registryOrigin}/styling/${name}.json`;
+  return itemUrl(`theme-${name}`);
 }
 
 function readJson(filePath) {

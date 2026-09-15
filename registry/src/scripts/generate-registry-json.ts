@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 import REGISTRY from "@/data/registry";
+import colors from "@/data/colors";
 import { createThemeCssVars, defaultColor } from "@/data/theme";
 
 const DEFAULT_REGISTRY_BASE_URL = "https://neobrutal-ui.andongmin.com";
@@ -66,7 +67,6 @@ const BASE_ITEM = {
     tsx: true,
     tailwind: {
       baseColor: "neutral",
-      css: "src/index.css",
     },
     aliases: {
       components: "@/components",
@@ -166,7 +166,23 @@ const updatedRegistry = {
   name: "neobrutal-ui",
   homepage: registryBaseUrl,
   author: "andongmin94",
-  items: [BASE_ITEM, ...REGISTRY.map(rewriteRegistryItem)],
+  items: [
+    BASE_ITEM,
+    ...REGISTRY.map(rewriteRegistryItem),
+    ...colors.map((color) => ({
+      name: `theme-${color.name}`,
+      title: `Neobrutal ${color.name.charAt(0).toUpperCase() + color.name.slice(1)}`,
+      type: "registry:style",
+      author: "andongmin94",
+      description: `The ${color.name} light and dark theme for neobrutal-ui.`,
+      categories: ["design-system", "theme"],
+      extends: "none",
+      dependencies: BASE_ITEM.dependencies,
+      registryDependencies: BASE_ITEM.registryDependencies,
+      cssVars: createThemeCssVars(color),
+      css: BASE_ITEM.css,
+    })),
+  ],
 };
 
 // Convert to JSON string with proper formatting

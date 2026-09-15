@@ -4,6 +4,7 @@ import { ArrowUpRight, Clock3, FileText, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { Input } from "@/components/ui/input";
 import { BLOG_POSTS } from "@/lib/blog-posts";
 
@@ -140,21 +141,18 @@ export default function BlogTemplate({ basePath = "/blog" }: BlogTemplateProps) 
                       </p>
                     </div>
 
-                    <Button
-                      asChild
-                      nativeButton={false}
-                      size="icon-sm"
-                      variant="ghost"
-                      className="self-center"
+                    <a
+                      href={getPostHref(basePath, post.slug)}
+                      aria-label={`Read ${post.title}`}
+                      title={`Read ${post.title}`}
+                      className={buttonVariants({
+                        size: "icon-sm",
+                        variant: "ghost",
+                        className: "self-center",
+                      })}
                     >
-                      <a
-                        href={getPostHref(basePath, post.slug)}
-                        aria-label={`Read ${post.title}`}
-                        title={`Read ${post.title}`}
-                      >
-                        <ArrowUpRight aria-hidden="true" />
-                      </a>
-                    </Button>
+                      <ArrowUpRight aria-hidden="true" />
+                    </a>
                   </article>
                 </li>
               ))}

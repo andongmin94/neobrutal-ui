@@ -182,7 +182,6 @@
     "rsc": true,
     "tsx": true,
     "tailwind": {
-      "css": "src/index.css",
       "baseColor": "neutral"
     },
     "iconLibrary": "lucide",

@@ -112,24 +112,30 @@ function readJson(filePath) {
 
 function checkThemeContract() {
   const base = items.get("neobrutal-ui");
-  const yellowStylePath = path.join(outputDirectory, "styling", "yellow.json");
+  const yellow = items.get("theme-yellow");
+  const themes = [...items.values()].filter((item) => item.type === "registry:style");
 
-  if (!base?.cssVars || !fs.existsSync(yellowStylePath)) {
-    errors.push("theme: base or yellow style CSS variables are missing");
+  if (!base?.cssVars || !yellow?.cssVars || themes.length === 0) {
+    errors.push("theme: base and discoverable theme-yellow items are required");
     return;
   }
-
-  const yellowStyle = readJson(yellowStylePath);
-  if (stableJson(base.cssVars) !== stableJson(yellowStyle.cssVars)) {
-    errors.push("theme: the base item and yellow style must publish identical CSS variables");
+  if (stableJson(base.cssVars) !== stableJson(yellow.cssVars)) {
+    errors.push("theme: the base and theme-yellow must publish identical CSS variables");
   }
-
-  for (const entry of fs.readdirSync(path.join(outputDirectory, "styling"))) {
-    if (!entry.endsWith(".json")) continue;
-    const style = readJson(path.join(outputDirectory, "styling", entry));
-    checkItemSchemaAndDependencies(`styling/${entry}`, style);
+  for (const entry of fs.readdirSync(outputDirectory, { withFileTypes: true })) {
+    if (entry.isDirectory()) errors.push(`registry output must be flat: ${entry.name}`);
+    if (
+      entry.isFile() &&
+      entry.name.endsWith(".json") &&
+      entry.name !== "registry.json" &&
+      !itemNames.has(entry.name.slice(0, -5))
+    ) {
+      errors.push(`registry output is absent from the catalog: ${entry.name}`);
+    }
+  }
+  for (const style of themes) {
     const cssVars = style.cssVars;
-
+    if (!style.name.startsWith("theme-")) errors.push(`${style.name}: use the theme- prefix`);
     if (cssVars?.light?.["secondary-background"] !== "oklch(100% 0 0)") {
       errors.push(`${style.name}: light secondary-background must be the light surface`);
     }
@@ -140,7 +146,7 @@ function checkThemeContract() {
       cssVars?.theme?.["font-weight-base"] !== "var(--base-font-weight)" ||
       cssVars?.theme?.["font-weight-heading"] !== "var(--heading-font-weight)"
     ) {
-      errors.push(`${style.name}: font weight tokens must use the configurable CSS variables`);
+      errors.push(`${style.name}: font weight tokens must use configurable CSS variables`);
     }
     if (!cssVars?.light?.["base-font-weight"] || !cssVars?.light?.["heading-font-weight"]) {
       errors.push(`${style.name}: default font weight CSS variables are missing`);

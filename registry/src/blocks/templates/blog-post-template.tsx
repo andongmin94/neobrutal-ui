@@ -1,6 +1,6 @@
 import { ArrowLeft, Clock3, FileText } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import type { BlogPost } from "@/lib/blog-posts";
 
 const TEMPLATE_THEME =
@@ -37,12 +37,10 @@ export default function BlogPostTemplate({ backHref = "/blog", post }: BlogPostT
       </header>
 
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
-        <Button asChild nativeButton={false} size="sm" variant="neutral">
-          <a href={backHref}>
-            <ArrowLeft aria-hidden="true" />
-            All posts
-          </a>
-        </Button>
+        <a href={backHref} className={buttonVariants({ size: "sm", variant: "neutral" })}>
+          <ArrowLeft aria-hidden="true" />
+          All posts
+        </a>
 
         <article className="mt-8">
           <header>

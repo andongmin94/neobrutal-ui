@@ -80,7 +80,6 @@ function buildRegistry() {
 
   fs.rmSync(outputDirectory, { force: true, recursive: true });
   run("shadcn", ["build", "--output", "public/r"]);
-  run("tsx", ["src/scripts/add-registry-styles.ts"]);
   normalizeRegistryOutput(outputDirectory);
 }
 

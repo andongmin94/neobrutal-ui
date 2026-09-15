@@ -2,7 +2,7 @@
 
 import { AtSign, BookOpen, GitFork, LayoutGrid, Mail, UserRound } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 
 const TEMPLATE_THEME =
   "[color-scheme:light] [--background:#dceafe] [--secondary-background:#fff] [--foreground:#000] [--main-foreground:#000] [--main:#5093fe] [--border:#000] [--ring:#000] [--box-shadow-x:4px] [--box-shadow-y:4px] [--reverse-box-shadow-x:-4px] [--reverse-box-shadow-y:-4px] [--shadow:4px_4px_0px_0px_var(--border)] [--radius:5px] [--base-font-weight:400] [--heading-font-weight:600] dark:[color-scheme:dark] dark:[--background:#2c304c] dark:[--secondary-background:#222] dark:[--foreground:#ececec] dark:[--main:#5093fe] dark:[--ring:#fff]";
@@ -84,31 +84,27 @@ export default function LinkHubTemplate() {
 
             return (
               <li key={link.title}>
-                <Button
-                  asChild
-                  nativeButton={false}
-                  variant={link.highlighted ? "default" : "neutral"}
-                  className="h-auto min-h-20 w-full justify-start whitespace-normal p-0 text-left [&_svg]:size-5"
+                <a
+                  href={link.href}
+                  target={link.external ? "_blank" : undefined}
+                  rel={link.external ? "noreferrer" : undefined}
+                  className={buttonVariants({
+                    variant: link.highlighted ? "default" : "neutral",
+                    className:
+                      "h-auto min-h-20 w-full justify-start whitespace-normal p-0 text-left [&_svg]:size-5",
+                  })}
                 >
-                  <a
-                    href={link.href}
-                    target={link.external ? "_blank" : undefined}
-                    rel={link.external ? "noreferrer" : undefined}
-                  >
-                    <span className="flex w-full min-w-0 items-center gap-3 p-4">
-                      <LinkIcon className="shrink-0" aria-hidden="true" />
-                      <span className="min-w-0 flex-1">
-                        <span className="block font-heading text-base leading-tight">
-                          {link.title}
-                        </span>
-                        <span className="mt-1 block truncate text-xs opacity-70">
-                          {link.detail}
-                        </span>
-                        {link.external ? <span className="sr-only">Opens in a new tab</span> : null}
+                  <span className="flex w-full min-w-0 items-center gap-3 p-4">
+                    <LinkIcon className="shrink-0" aria-hidden="true" />
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-heading text-base leading-tight">
+                        {link.title}
                       </span>
+                      <span className="mt-1 block truncate text-xs opacity-70">{link.detail}</span>
+                      {link.external ? <span className="sr-only">Opens in a new tab</span> : null}
                     </span>
-                  </a>
-                </Button>
+                  </span>
+                </a>
               </li>
             );
           })}
