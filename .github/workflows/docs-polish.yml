@@ -6,7 +6,7 @@ on:
     paths: [.github/workflows/docs-polish.yml]
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: docs-polish
@@ -15,7 +15,7 @@ concurrency:
 jobs:
   polish:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -25,69 +25,78 @@ jobs:
           cache-dependency-path: |
             registry/package-lock.json
             docs/package-lock.json
-      - name: Apply reviewed candidate
+      - name: Apply reviewed edits in the validation workspace
         run: |
           python3 .github/polish-docs.py
           python3 .github/polish-docs-content.py
           python3 .github/polish-theme-css.py
-      - name: Build the candidate
+      - name: Install and lock the browser test dependency
         run: |
-          npm ci --prefix registry --no-audit --no-fund > /tmp/install-registry.log 2>&1
-          npm install --prefix docs --no-audit --no-fund > /tmp/install-docs.log 2>&1
-          npm run lint --prefix registry
-          npm run build --prefix registry > /tmp/registry-build.log 2>&1 || { tail -n 60 /tmp/registry-build.log; exit 1; }
-          npm run build --prefix docs > /tmp/docs-build.log 2>&1 || { tail -n 60 /tmp/docs-build.log; exit 1; }
-          cd docs
-          npx playwright install --with-deps chromium > /tmp/browser-install.log 2>&1 || { tail -n 60 /tmp/browser-install.log; exit 1; }
-      - name: Compare pointer and touch geometry on mobile
+          npm ci --prefix registry
+          npm install --prefix docs --no-fund
+      - name: Build registry and synchronize authoritative sources
+        working-directory: registry
+        run: |
+          npm run lint
+          npm run typecheck
+          npm run build > /tmp/registry-build.log 2>&1 || { tail -n 80 /tmp/registry-build.log; exit 1; }
+          npm run registry:validate
+          npm run registry:check
+      - name: Check and build docs
         working-directory: docs
         run: |
-          cat > tests/mobile-diagnostic.spec.ts <<'JS'
-          import { test, expect } from '@playwright/test';
-          for (const mode of ['click', 'tap', 'blur', 'font16']) {
-            test(mode, async ({ page }, info) => {
-              await page.goto('/');
-              if (mode === 'font16') await page.addStyleTag({ content: 'input, select, textarea { font-size: 16px !important; }' });
-              await page.getByLabel('Workspace name', { exact: true }).fill('Docs review');
-              await page.getByRole('button', { name: 'Save workspace' }).click();
-              await page.getByRole('searchbox', { name: 'Search component directory' }).fill('calendar');
-              await expect(page).toHaveURL(/q=calendar/);
-              if (mode === 'blur') await page.getByRole('searchbox', { name: 'Search component directory' }).blur();
-              const card = page.locator('.directory-card').filter({ has: page.getByRole('heading', { name: 'Calendar', exact: true }) });
-              await card.scrollIntoViewIfNeeded();
-              const cdp = await page.context().newCDPSession(page);
-              console.log('METRICS', mode, JSON.stringify(await cdp.send('Page.getLayoutMetrics')));
-              console.log('DOM', mode, JSON.stringify(await card.evaluate(node => {
-                const r = node.getBoundingClientRect();
-                const center = { x: r.x + r.width / 2, y: r.y + r.height / 2 };
-                const rect = (el) => el?.getBoundingClientRect().toJSON();
-                const hit = document.elementFromPoint(center.x, center.y);
-                return {
-                  card: r.toJSON(), center, hit: hit?.outerHTML.slice(0, 300), scrollY, innerWidth, innerHeight,
-                  visual: visualViewport ? { offsetTop: visualViewport.offsetTop, pageTop: visualViewport.pageTop, height: visualViewport.height, scale: visualViewport.scale } : null,
-                  html: rect(document.documentElement), body: rect(document.body), hero: rect(document.querySelector('.directory-hero')),
-                  active: document.activeElement?.outerHTML.slice(0, 200),
-                  ancestors: Array.from((function*(){ let p=node; while(p) {yield p; p=p.parentElement;} })()).map(el => ({ tag:el.tagName, class:el.className, rect:rect(el), pointer:getComputedStyle(el).pointerEvents, transform:getComputedStyle(el).transform, overflow:getComputedStyle(el).overflow }))
-                };
-              })));
-              try {
-                if (mode === 'tap') await card.tap({ timeout: 3000 });
-                else await card.click({ timeout: 3000 });
-                await expect(page).toHaveURL(/\/docs\/calendar/);
-                console.log('RESULT', mode, 'passed');
-              } catch (error) {
-                console.log('RESULT', mode, 'failed', String(error).slice(0, 3500));
-              }
-              await page.screenshot({ path: info.outputPath(`${mode}.png`) });
-            });
-          }
-          JS
-          npm run test:browser -- tests/mobile-diagnostic.spec.ts --project=mobile-light --workers=1
+          npm run lint
+          npm run typecheck
+          npm run build > /tmp/docs-build.log 2>&1 || { tail -n 100 /tmp/docs-build.log; exit 1; }
+          tail -n 4 /tmp/docs-build.log
+          npm test
+      - name: Mobile browser verification
+        working-directory: docs
+        run: |
+          npx playwright install --with-deps chromium > /tmp/browser-install.log 2>&1 || { tail -n 80 /tmp/browser-install.log; exit 1; }
+          npm run test:browser -- --project=mobile-light
+      - name: Browser verification across themes and viewports
+        working-directory: docs
+        run: npm run test:browser
+      - name: Verify installable consumers remain intact
+        working-directory: registry
+        run: |
+          npm run consumer:verify > /tmp/consumer-build.log 2>&1 || { tail -n 100 /tmp/consumer-build.log; exit 1; }
+          grep -E 'consumer passed|Error' /tmp/consumer-build.log
+      - name: Publish only the validated source on main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          current=$(git ls-remote origin refs/heads/main | cut -f1)
+          test "$current" = "$GITHUB_SHA"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs registry AGENTS.md
+          git diff --cached --check
+          git diff --cached --stat
+          git commit -m 'feat(docs): unify theme contract, isolate previews, and polish documentation'
+          git push origin HEAD:main
+          echo "Validated main commit: $(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
+          branch_head=$(gh api repos/andongmin94/neobrutal-ui/git/ref/heads/chore/registry-directory-ready --jq '.object.sha')
+          if [ "$branch_head" = b59b21d9a5637e563088b31696b610e36f01dd7f ]; then
+            previous_tree=$(gh api repos/andongmin94/neobrutal-ui/git/commits/9ff7f06a839f611d66b4eb44ec098cf8b13ac8cf --jq '.tree.sha')
+            branch_tree=$(gh api repos/andongmin94/neobrutal-ui/git/commits/$branch_head --jq '.tree.sha')
+            if [ "$previous_tree" = "$branch_tree" ]; then
+              gh api --method DELETE repos/andongmin94/neobrutal-ui/git/refs/heads/chore/registry-directory-ready
+              echo 'Removed the already-squash-merged preparation branch after checking identical trees.' >> "$GITHUB_STEP_SUMMARY"
+            fi
+          fi
+      - name: Preserve browser evidence and candidate diff
+        if: always()
+        run: |
+          git diff > /tmp/docs-polish-candidate.patch
+          find docs/test-results -name error-context.md -exec sh -c 'echo "$1"; head -n 70 "$1"' sh {} \; || true
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: docs-mobile-diagnostic
-          retention-days: 3
+          name: docs-polish-review
+          retention-days: 7
           path: |
             docs/test-results
             docs/playwright-report
+            /tmp/docs-polish-candidate.patch
