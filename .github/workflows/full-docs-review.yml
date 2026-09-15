@@ -38,11 +38,12 @@ jobs:
           s = p.read_text().replace('getByRole("textbox", { name: "Search docs and components"', 'getByRole("combobox", { name: "Search docs and components"')
           s = s.replace('page.locator(".search-dialog").getByRole("link")', 'page.locator(".search-dialog").getByRole("option")')
           p.write_text(s)
+          p = Path('docs/content/docs/breadcrumb.mdx')
+          p.write_text(p.read_text().replace('<Installation component="breadcrumb">', '<Installation component="breadcrumb">\n\n```bash\nnpm install @base-ui/react@^1.6.0\n```'))
           p = Path('docs/content/docs/dropdown-menu.mdx')
           p.write_text(p.read_text().replace('`bottom` / `start`', '`bottom` / `center`'))
           p = Path('docs/content/docs/marquee.mdx')
           p.write_text(p.read_text().replace('20s linear infinite', '5s linear infinite'))
-          # Keep every existing live example while replacing the reference text.
           baseline = 'e07e517af2fe7d37264d3d41402ce5a59a52893d'
           def previews(text):
               result = {}
