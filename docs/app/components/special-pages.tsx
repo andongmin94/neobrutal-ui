@@ -11,7 +11,6 @@ import TEMPLATES from "@/data/templates";
 import { getBlogPost } from "@/lib/blog-posts";
 import ChartsExamples from "@/special-pages/charts-examples";
 import StylingControls from "@/special-pages/styling/controls";
-import StylingExamples from "@/special-pages/styling/example-components";
 import { copyText } from "~/lib/clipboard";
 
 export type SpecialPageName =
@@ -54,14 +53,7 @@ function normalizeSpecialPageName(page: string): SpecialPageName | undefined {
 }
 
 function StylingPage() {
-  return (
-    <div className="not-prose space-y-12">
-      <div className="flex justify-center">
-        <StylingControls />
-      </div>
-      <StylingExamples />
-    </div>
-  );
+  return <StylingControls />;
 }
 
 function StarsPage() {

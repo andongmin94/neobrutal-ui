@@ -3,6 +3,7 @@ import * as path from "path";
 
 import REGISTRY from "@/data/registry";
 import colors from "@/data/colors";
+import { themeCss } from "@/data/theme-styles";
 import { createThemeCssVars, defaultColor } from "@/data/theme";
 
 const DEFAULT_REGISTRY_BASE_URL = "https://neobrutal-ui.andongmin.com";
@@ -85,18 +86,7 @@ const BASE_ITEM = {
   ].map(pinDependency),
   registryDependencies: ["utils"],
   cssVars: createThemeCssVars(defaultColor),
-  css: {
-    '@import "tw-animate-css"': {},
-    '@import "shadcn/tailwind.css"': {},
-    "@layer base": {
-      "*": {
-        "@apply border-border outline-ring/50": {},
-      },
-      body: {
-        "@apply bg-background text-foreground": {},
-      },
-    },
-  },
+  css: themeCss,
 };
 
 type RegistryItem = {

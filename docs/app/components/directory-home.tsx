@@ -1,105 +1,90 @@
-import { ArrowRight, Box, Search, SlidersHorizontal, X } from "lucide-react";
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import {
+  ArrowRight,
+  Bell,
+  ChevronDown,
+  Layers,
+  Layout,
+  MousePointer,
+  Navigation,
+  Search,
+  SlidersHorizontal,
+  Table,
+  X,
+  type LucideIcon,
+} from "lucide-react";
+import { useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router";
-
+import { buttonVariants } from "@/components/ui/button-variants";
 import {
   COMPONENT_CATEGORIES,
   COMPONENT_DIRECTORY_LINKS,
-  type ComponentCategory,
-  type ComponentGroup,
   getComponentCategory,
   getComponentInstallMode,
+  type ComponentGroup,
 } from "@/data/component-directory";
+import descriptions from "@/data/component-descriptions.json";
+import { HomeShowcase } from "./home-showcase";
 
-const categoryDescriptions: Record<ComponentGroup, string> = {
-  Actions: "Controls that turn intent into an immediate action.",
-  Forms: "Inputs and selection controls for structured user data.",
-  Navigation: "Patterns that keep movement and context predictable.",
-  Overlays: "Layered surfaces for focused tasks and secondary content.",
-  Feedback: "Status, progress, and outcome signals for the interface.",
-  Disclosure: "Compact controls that reveal content on demand.",
-  "Data display": "Readable structures for content, values, and media.",
-  Layout: "Primitives for arranging, scrolling, and resizing content.",
+const categoryIcons: Record<ComponentGroup, LucideIcon> = {
+  Actions: MousePointer,
+  Forms: SlidersHorizontal,
+  Navigation,
+  Overlays: Layers,
+  Feedback: Bell,
+  Disclosure: ChevronDown,
+  "Data display": Table,
+  Layout,
 };
-
 const entries = COMPONENT_DIRECTORY_LINKS.map((link) => {
-  const slug = link.href.split("/").pop() ?? "";
-  const category = getComponentCategory(slug);
-
+  const slug = link.href.split("/").pop()!;
   return {
     ...link,
     slug,
-    category,
+    category: getComponentCategory(slug),
     installMode: getComponentInstallMode(slug),
-    description: categoryDescriptions[category],
+    description: (descriptions as Record<string, string>)[slug],
   };
 });
 
-function isComponentCategory(value: string | null): value is ComponentCategory {
-  return COMPONENT_CATEGORIES.some((category) => category === value);
-}
-
 export function DirectoryHome() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [params, setParams] = useSearchParams();
   const searchInput = useRef<HTMLInputElement>(null);
-  const [query, setQuery] = useState(searchParams.get("q") ?? "");
-  const savedCategory = searchParams.get("category");
-  const [category, setCategory] = useState<ComponentCategory>(
-    isComponentCategory(savedCategory) ? savedCategory : "All",
-  );
-
-  const filteredEntries = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
-
-    return entries.filter((entry) => {
-      const inCategory = category === "All" || entry.category === category;
-      const inQuery = `${entry.text} ${entry.category} ${entry.description}`
+  const query = params.get("q") ?? "";
+  const category = COMPONENT_CATEGORIES.find((value) => value === params.get("category")) ?? "All";
+  const filteredEntries = entries.filter(
+    (entry) =>
+      (category === "All" || entry.category === category) &&
+      `${entry.text} ${entry.category} ${entry.description}`
         .toLowerCase()
-        .includes(normalizedQuery);
-
-      return inCategory && inQuery;
-    });
-  }, [category, query]);
-
-  function countFor(item: ComponentCategory) {
-    return item === "All"
-      ? entries.length
-      : entries.filter((entry) => entry.category === item).length;
+        .includes(query.trim().toLowerCase()),
+  );
+  function setFilter(key: string, value: string) {
+    setParams(
+      (current) => {
+        const next = new URLSearchParams(current);
+        if (value && value !== "All") next.set(key, value);
+        else next.delete(key);
+        return next;
+      },
+      { replace: true, preventScrollReset: true },
+    );
   }
-
-  function resetFilters() {
-    setQuery("");
-    setCategory("All");
-  }
-
   useEffect(() => {
-    const next = new URLSearchParams();
-    const normalizedQuery = query.trim();
-
-    if (normalizedQuery) next.set("q", normalizedQuery);
-    if (category !== "All") next.set("category", category);
-
-    setSearchParams(next, { replace: true });
-  }, [category, query, setSearchParams]);
-
-  useEffect(() => {
-    function handleShortcut(event: KeyboardEvent) {
-      const target = event.target;
+    function shortcut(event: KeyboardEvent) {
+      const target = event.target as HTMLElement | null;
       if (
         event.key !== "/" ||
-        target instanceof HTMLInputElement ||
-        target instanceof HTMLTextAreaElement ||
-        (target instanceof HTMLElement && target.isContentEditable)
-      ) {
+        event.ctrlKey ||
+        event.metaKey ||
+        event.altKey ||
+        target?.closest("input, textarea, select, [contenteditable=true]")
+      )
         return;
-      }
-
       event.preventDefault();
       searchInput.current?.focus();
     }
-
-    document.addEventListener("keydown", handleShortcut);
-    return () => document.removeEventListener("keydown", handleShortcut);
+    document.addEventListener("keydown", shortcut);
+    return () => document.removeEventListener("keydown", shortcut);
   }, []);
 
   return (
@@ -107,63 +92,57 @@ export function DirectoryHome() {
       <section className="directory-hero">
         <div className="directory-hero__inner">
           <div className="directory-hero__copy">
-            <p className="eyebrow">Registry index / {entries.length} components</p>
+            <p className="eyebrow">React / Base UI / Tailwind CSS v4</p>
             <h1>
-              Find the piece.
+              Bold by design.
               <br />
-              Own the source.
+              Yours to build.
             </h1>
             <p className="directory-hero__description">
-              Browse the library by job, inspect the live behavior, then install editable React
-              source into your project.
+              Neobrutalist components with hard shadows, clear interactions, and source you own.
+              Install the pieces. Make them yours.
             </p>
+            <div className="directory-hero__actions">
+              <Link className={buttonVariants({ size: "lg" })} to="/docs/installation">
+                Get started
+                <ArrowRight aria-hidden="true" />
+              </Link>
+              <a className="directory-browse-link" href="#components">
+                Browse {entries.length} components
+              </a>
+            </div>
+            <p className="directory-hero__meta">Open source · MIT · Light and dark themes</p>
           </div>
-
-          <div className="directory-hero__stat" aria-label="Registry summary">
-            <strong>{entries.length}</strong>
-            <span>React components</span>
-            <small>Base UI / Tailwind CSS / shadcn</small>
-          </div>
+          <HomeShowcase />
         </div>
       </section>
-
-      <section className="directory-tools" aria-label="Directory filters">
+      <section className="directory-tools" id="components" aria-label="Component directory">
+        <div>
+          <h2>Find your building blocks.</h2>
+          <p>Search by component, purpose, or category.</p>
+        </div>
         <label className="directory-search">
-          <Search aria-hidden="true" size={20} strokeWidth={2.3} />
+          <Search aria-hidden="true" size={20} />
           <input
             ref={searchInput}
             value={query}
             type="search"
-            placeholder="Search components, categories, or jobs"
+            placeholder="Search components…"
             aria-label="Search component directory"
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) => setFilter("q", event.target.value)}
           />
           {query ? (
-            <button
-              type="button"
-              aria-label="Clear search"
-              title="Clear"
-              onClick={() => setQuery("")}
-            >
-              <X aria-hidden="true" size={17} strokeWidth={2.4} />
+            <button type="button" aria-label="Clear search" onClick={() => setFilter("q", "")}>
+              <X aria-hidden="true" size={17} />
             </button>
           ) : (
             <kbd>/</kbd>
           )}
         </label>
-
-        <div className="directory-result-count" aria-live="polite">
-          <strong>{filteredEntries.length}</strong>
-          <span>{filteredEntries.length === 1 ? "result" : "results"}</span>
-        </div>
       </section>
-
       <div className="directory-browser">
         <aside className="directory-categories">
-          <h2>
-            <SlidersHorizontal aria-hidden="true" size={15} strokeWidth={2.4} />
-            Filter by job
-          </h2>
+          <h2>Categories</h2>
           <div>
             {COMPONENT_CATEGORIES.map((item) => (
               <button
@@ -171,58 +150,60 @@ export function DirectoryHome() {
                 type="button"
                 aria-pressed={category === item}
                 className={category === item ? "is-active" : undefined}
-                onClick={() => setCategory(item)}
+                onClick={() => setFilter("category", item)}
               >
                 <span>{item}</span>
-                <small>{countFor(item)}</small>
+                <small>
+                  {item === "All"
+                    ? entries.length
+                    : entries.filter((entry) => entry.category === item).length}
+                </small>
               </button>
             ))}
           </div>
         </aside>
-
-        <section className="directory-results">
+        <section className="directory-results" aria-label="Components">
           <div className="directory-results__head">
-            <p>
-              <span>{category}</span>
-              <span aria-hidden="true">/</span>
-              {filteredEntries.length} entries
+            <p aria-live="polite">
+              <strong>{filteredEntries.length}</strong>{" "}
+              {filteredEntries.length === 1 ? "component" : "components"}
+              {category !== "All" ? ` in ${category}` : ""}
             </p>
-            <span>Source owned</span>
+            <Link to="/templates">
+              Explore complete templates <ArrowRight aria-hidden="true" size={14} />
+            </Link>
           </div>
-
-          {filteredEntries.length > 0 ? (
+          {filteredEntries.length ? (
             <div className="directory-grid">
-              {filteredEntries.map((entry, index) => (
-                <Link
-                  key={entry.slug}
-                  className="directory-card pressable"
-                  to={entry.href}
-                  style={{ "--entry-index": index } as CSSProperties}
-                >
-                  <div className="directory-card__top">
-                    <Box aria-hidden="true" size={18} strokeWidth={2.4} />
-                    <span>{entry.installMode}</span>
-                  </div>
-                  <div className="directory-card__body">
-                    <p>{entry.category}</p>
-                    <h2>{entry.text}</h2>
-                    <span>{entry.description}</span>
-                  </div>
-                  <ArrowRight
-                    className="directory-card__arrow"
-                    aria-hidden="true"
-                    size={19}
-                    strokeWidth={2.4}
-                  />
-                </Link>
-              ))}
+              {filteredEntries.map((entry) => {
+                const Icon = categoryIcons[entry.category];
+                return (
+                  <Link key={entry.slug} className="directory-card" to={entry.href}>
+                    <div className="directory-card__top">
+                      <Icon aria-hidden="true" size={22} />
+                      <span>{entry.installMode}</span>
+                    </div>
+                    <div className="directory-card__body">
+                      <h2>{entry.text}</h2>
+                      <span>{entry.description}</span>
+                    </div>
+                    <div className="directory-card__bottom">
+                      <span>{entry.category}</span>
+                      <ArrowRight aria-hidden="true" size={17} />
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           ) : (
             <div className="directory-empty">
-              <Search aria-hidden="true" size={25} strokeWidth={2.3} />
+              <Search aria-hidden="true" size={25} />
               <h2>No components found</h2>
-              <p>Try another term or reset the filters.</p>
-              <button className="pressable" type="button" onClick={resetFilters}>
+              <p>Try another term or clear the filters.</p>
+              <button
+                type="button"
+                onClick={() => setParams({}, { replace: true, preventScrollReset: true })}
+              >
                 Reset filters
               </button>
             </div>

@@ -17,11 +17,6 @@ const BadgeNeutralDemo = () => import("@/examples/ui/badge/neutral");
 const BadgeWithIconDemo = () => import("@/examples/ui/badge/with-icon");
 const BreadcrumbDemo = () => import("@/examples/ui/breadcrumb");
 const ButtonDemo = () => import("@/examples/ui/button");
-const ButtonIconDemo = () => import("@/examples/ui/button/icon");
-const ButtonNeutralDemo = () => import("@/examples/ui/button/neutral");
-const ButtonNoShadowDemo = () => import("@/examples/ui/button/no-shadow");
-const ButtonReverseDemo = () => import("@/examples/ui/button/reverse");
-const ButtonWithIconDemo = () => import("@/examples/ui/button/with-icon");
 const CalendarDemo = () => import("@/examples/ui/calendar/index");
 const CalendarRangeDemo = () => import("@/examples/ui/calendar/range");
 const CardDemo = () => import("@/examples/ui/card");
@@ -149,14 +144,6 @@ const COMPONENTS: Component[] = [
   {
     name: "Button",
     exampleComponent: ButtonDemo,
-    examples: {
-      default: ButtonDemo,
-      reverse: ButtonReverseDemo,
-      noShadow: ButtonNoShadowDemo,
-      neutral: ButtonNeutralDemo,
-      "with-icon": ButtonWithIconDemo,
-      icon: ButtonIconDemo,
-    },
   },
   {
     name: "Calendar",

@@ -1,29 +1,36 @@
+"use client";
+import { useState } from "react";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
+const items = [
+  { value: "draft", label: "Draft" },
+  { value: "review", label: "In review" },
+  { value: "published", label: "Published" },
+];
 export default function SelectDemo() {
+  const [value, setValue] = useState("draft");
   return (
-    <Select>
-      <SelectTrigger className="w-[180px]" aria-label="Select a fruit">
-        <SelectValue placeholder="Select a fruit" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          <SelectLabel>Fruits</SelectLabel>
-          <SelectItem value="apple">Apple</SelectItem>
-          <SelectItem value="banana">Banana</SelectItem>
-          <SelectItem value="blueberry">Blueberry</SelectItem>
-          <SelectItem value="grapes">Grapes</SelectItem>
-          <SelectItem value="pineapple">Pineapple</SelectItem>
-        </SelectGroup>
-      </SelectContent>
-    </Select>
+    <div className="grid w-full max-w-xs gap-3">
+      <Label htmlFor="publication-status">Publication status</Label>
+      <Select items={items} value={value} onValueChange={setValue} name="status">
+        <SelectTrigger id="publication-status">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {items.map((item) => (
+            <SelectItem key={item.value} value={item.value}>
+              {item.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <output className="text-sm">Selected value: {value}</output>
+    </div>
   );
 }

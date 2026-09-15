@@ -10,6 +10,23 @@ import {
 
 import { PreviewErrorBoundary } from "./preview-error-boundary";
 
+const compactComponents = new Set([
+  "button",
+  "badge",
+  "avatar",
+  "breadcrumb",
+  "checkbox",
+  "input",
+  "label",
+  "progress",
+  "radio-group",
+  "separator",
+  "slider",
+  "switch",
+  "textarea",
+  "tooltip",
+]);
+
 type PreviewType = "component" | "star";
 
 function toSlug(value: string) {
@@ -165,6 +182,7 @@ export function ComponentPreview({
         isPrimaryPreview ? "component-preview component-preview--primary" : "component-preview"
       }
       data-component={normalizedComponent}
+      data-density={compactComponents.has(normalizedComponent) ? "compact" : "comfortable"}
     >
       <header className="component-preview__header">
         {isPrimaryPreview && (
@@ -210,12 +228,7 @@ export function ComponentPreview({
 
       <div
         id={`${instanceId}-preview-panel`}
-        className={[
-          "component-preview__panel",
-          "component-preview__canvas",
-          "vp-raw",
-          wrapperClassName,
-        ]
+        className={["component-preview__panel", "component-preview__canvas", wrapperClassName]
           .filter(Boolean)
           .join(" ")}
         role="tabpanel"

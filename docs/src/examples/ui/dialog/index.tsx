@@ -1,69 +1,53 @@
 "use client";
-
 import { useState } from "react";
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
+  DialogTrigger,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
 export default function DialogDemo() {
   const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState("");
-
+  const [savedName, setSavedName] = useState("");
   return (
-    <div className="grid justify-items-center gap-3">
+    <div className="grid justify-items-center gap-4">
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <Button>Edit Profile</Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogTrigger render={<Button />}>Edit profile</DialogTrigger>
+        <DialogContent>
           <form
-            className="contents"
+            className="grid gap-5"
             onSubmit={(event) => {
               event.preventDefault();
-              setMessage("Profile saved.");
+              setSavedName(String(new FormData(event.currentTarget).get("name") ?? ""));
               setOpen(false);
             }}
           >
             <DialogHeader>
               <DialogTitle>Edit profile</DialogTitle>
               <DialogDescription>
-                Make changes to your profile here. Click save when you&apos;re done.
+                This demo only updates local state. No data is sent.
               </DialogDescription>
             </DialogHeader>
-            <div className="grid gap-4">
-              <div className="grid gap-3">
-                <Label htmlFor="name-1">Name</Label>
-                <Input id="name-1" name="name" defaultValue="Pedro Duarte" required />
-              </div>
-              <div className="grid gap-3">
-                <Label htmlFor="username-1">Username</Label>
-                <Input id="username-1" name="username" defaultValue="@andongmin94" required />
-              </div>
+            <div className="grid gap-2">
+              <Label htmlFor="dialog-name">Name</Label>
+              <Input id="dialog-name" name="name" defaultValue={savedName || "Alex Doe"} required />
             </div>
             <DialogFooter>
-              <DialogClose asChild>
-                <Button type="button" variant="neutral">
-                  Cancel
-                </Button>
-              </DialogClose>
+              <DialogClose render={<Button variant="neutral" />}>Cancel</DialogClose>
               <Button type="submit">Save changes</Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
-      <output className="block min-h-5 text-sm" aria-live="polite">
-        {message}
+      <output className="min-h-5 text-sm">
+        {savedName ? `Saved: ${savedName}` : "Open the dialog, try Tab, then Escape."}
       </output>
     </div>
   );

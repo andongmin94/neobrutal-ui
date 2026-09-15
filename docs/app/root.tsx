@@ -17,8 +17,7 @@ import "./app.css";
 
 const themeScript = `
 (() => {
-  const current = localStorage.getItem("neobrutal-ui-theme")
-    ?? localStorage.getItem("vitepress-theme-appearance");
+  const current = localStorage.getItem("neobrutal-ui-theme");
   const theme = current === "light" || current === "dark"
     ? current
     : matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";

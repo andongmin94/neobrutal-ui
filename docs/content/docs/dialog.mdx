@@ -1,99 +1,73 @@
 ---
 title: Dialog
-description: A window overlaid on either the primary window or another dialog window.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/dialog
+description: A focused task in a modal surface, with keyboard focus management.
+shadcnDocsLink: https://base-ui.com/react/components/dialog
 ---
 
 <ComponentPreview component="dialog">
-
 <include cwd lang="tsx">
   ./src/examples/ui/dialog/index.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
 <Installation component="dialog">
-
 <include cwd lang="tsx">
   ./src/components/ui/dialog.tsx
 </include>
-
 </Installation>
+
+The example also uses `input` and `label`. Install them when copying the complete form, rather than only the Dialog component.
 
 ## Usage
 
-```ts
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-```
-
 ```tsx
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+
 <Dialog>
-  <DialogTrigger asChild>
-    <Button>Edit Profile</Button>
-  </DialogTrigger>
-  <DialogContent className="sm:max-w-[425px]">
-    <form className="contents">
-      <DialogHeader>
-        <DialogTitle>Edit profile</DialogTitle>
-        <DialogDescription>
-          Make changes to your profile here. Click save when you&apos;re done.
-        </DialogDescription>
-      </DialogHeader>
-      <div className="grid gap-4">
-        <div className="grid gap-3">
-          <Label htmlFor="name-1">Name</Label>
-          <Input id="name-1" name="name" defaultValue="Pedro Duarte" />
-        </div>
-        <div className="grid gap-3">
-          <Label htmlFor="username-1">Username</Label>
-          <Input id="username-1" name="username" defaultValue="@andongmin94" />
-        </div>
-      </div>
-      <DialogFooter>
-        <DialogClose asChild>
-          <Button type="button" variant="neutral">
-            Cancel
-          </Button>
-        </DialogClose>
-        <Button type="submit">Save changes</Button>
-      </DialogFooter>
-    </form>
+  <DialogTrigger render={<Button />}>Open dialog</DialogTrigger>
+  <DialogContent>
+    <DialogTitle>Workspace settings</DialogTitle>
+    <DialogDescription>Update the options for this workspace.</DialogDescription>
   </DialogContent>
 </Dialog>
 ```
 
-## Examples
+## Controlled state
 
-### With Scrollable Content
+The live example controls `open` and closes only after handling form submission. In a real application, close after the operation succeeds; show errors inside the dialog and leave it open on failure.
+
+| Part / prop | Purpose | Default |
+| --- | --- | --- |
+| `Dialog.open` / `onOpenChange` | Controlled visibility | Uncontrolled when omitted |
+| `Dialog.defaultOpen` | Initial uncontrolled visibility | `false` |
+| `DialogContent.showCloseButton` | Built-in close control | `true` |
+| `DialogContent.initialFocus` | Override the initial focus destination | Base UI behavior |
+| `DialogContent.finalFocus` | Override the focus destination after closing | Base UI behavior |
+| `DialogTrigger.render` / `DialogClose.render` | Compose with your button | Primitive element |
+
+## Keyboard and naming
+
+Keep a meaningful `DialogTitle` and describe the task with `DialogDescription`. Tab and Shift+Tab move through the modal; Escape closes a dismissible dialog. Test that focus returns to its trigger after closing. Prefer the built-in focus behavior unless the task needs a specific destination.
+
+Use `render` for new compositions, as shown above. For a destructive confirmation that must require an explicit choice, use [Alert Dialog](/docs/alert-dialog).
+
+## Longer content
+
+### Scrollable content
 
 <ComponentPreview component="dialog" example="scrollable-content">
-
 <include cwd lang="tsx">
   ./src/examples/ui/dialog/scrollable-content.tsx
 </include>
-
 </ComponentPreview>
 
-### With Sticky Footer
+### Sticky footer
 
 <ComponentPreview component="dialog" example="sticky-footer">
-
 <include cwd lang="tsx">
   ./src/examples/ui/dialog/sticky-footer.tsx
 </include>
-
 </ComponentPreview>

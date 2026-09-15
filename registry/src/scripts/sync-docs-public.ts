@@ -1,3 +1,4 @@
+import { serializeThemeVariables } from "@/data/theme-styles";
 import fs from "fs";
 import path from "path";
 
@@ -19,6 +20,10 @@ const templateFiles = [
   "portfolio-template.tsx",
 ];
 const sharedFiles = [
+  ...["theme.ts", "theme-styles.ts"].map((name) => ({
+    source: path.join(process.cwd(), "src", "data", name),
+    target: path.join(docsSourceDir, "data", name),
+  })),
   {
     source: path.resolve(process.cwd(), "src", "lib", "blog-posts.ts"),
     target: path.join(docsSourceDir, "lib", "blog-posts.ts"),
@@ -171,3 +176,18 @@ for (const file of sharedFiles) {
 }
 
 console.log(`Synced shared registry files to: ${docsSourceDir}`);
+
+const catalog = JSON.parse(fs.readFileSync(path.join(sourceDir, "registry.json"), "utf8")) as {
+  items: { name: string; description: string }[];
+};
+const descriptions = Object.fromEntries(catalog.items.map((item) => [item.name, item.description]));
+Object.assign(descriptions, {
+  combobox: "A searchable option picker composed from a popover and command list.",
+  "date-picker": "A calendar in a popover for choosing a single date or date range.",
+});
+fs.writeFileSync(
+  path.join(docsSourceDir, "data", "component-descriptions.json"),
+  `${JSON.stringify(descriptions, null, 2)}\n`,
+);
+
+fs.writeFileSync(path.join(docsSourceDir, "styling", "theme.css"), serializeThemeVariables());

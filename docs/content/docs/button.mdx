@@ -1,104 +1,64 @@
 ---
 title: Button
-description: Displays an action button with neobrutalist styling.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/button
+description: Action buttons with hard shadows, clear states, and explicit composition.
+shadcnDocsLink: https://base-ui.com/react/components/button
 ---
 
 <ComponentPreview component="button">
-
 <include cwd lang="tsx">
   ./src/examples/ui/button/index.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
 <Installation component="button">
-
-Install the design-system base first, then create both files below. The CLI installs both automatically.
+Install the design-system base first, then create both files. The CLI installs both automatically.
 
 **`components/ui/button-variants.ts`**
-
 <include cwd lang="ts">
   ./src/components/ui/button-variants.ts
 </include>
 
 **`components/ui/button.tsx`**
-
 <include cwd lang="tsx">
   ./src/components/ui/button.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-```ts
+```tsx
 import { Button } from "@/components/ui/button";
+
+<Button type="submit">Save changes</Button>
 ```
+
+Use a button for actions, not navigation. Set `type="submit"` explicitly when submitting a form.
+
+## Variants and sizes
+
+| Prop | Values | Default |
+| --- | --- | --- |
+| `variant` | `default`, `outline`, `secondary`, `ghost`, `destructive`, `link`, `noShadow`, `neutral`, `reverse` | `default` |
+| `size` | `xs`, `sm`, `default`, `lg`, `icon`, `icon-xs`, `icon-sm`, `icon-lg` | `default` |
+| `disabled` | Prevents interaction and shows the disabled appearance | `false` |
+| `render` | Composes with another button element or component | Native button |
+
+`default` is the primary filled action; `outline` uses the page surface; `secondary` and `neutral` use the secondary surface. `ghost` removes the raised treatment. `destructive` marks destructive actions. `noShadow` keeps the border without the shadow, while `reverse` raises on hover. The `link` variant only changes appearance: it still represents an action button.
+
+## States and accessible names
 
 ```tsx
-<Button>Default</Button>
+<Button disabled aria-busy="true">Saving…</Button>
+<Button size="icon" aria-label="Add item"><Plus aria-hidden="true" /></Button>
 ```
 
-## Examples
+Import `Plus` from `lucide-react`. Give every icon-only control an accessible name. `aria-busy` communicates pending work; it does not disable a control or implement a loading operation. Keep the operation state in your application.
 
-### Reverse
+## Navigation links
 
-<ComponentPreview component="button" example="reverse">
-
-<include cwd lang="tsx">
-  ./src/examples/ui/button/reverse.tsx
-</include>
-
-</ComponentPreview>
-
-### No Shadow
-
-<ComponentPreview component="button" example="noShadow">
-
-<include cwd lang="tsx">
-  ./src/examples/ui/button/no-shadow.tsx
-</include>
-
-</ComponentPreview>
-
-### Neutral
-
-<ComponentPreview component="button" example="neutral">
-
-<include cwd lang="tsx">
-  ./src/examples/ui/button/neutral.tsx
-</include>
-
-</ComponentPreview>
-
-### With Icon
-
-<ComponentPreview component="button" example="with-icon">
-
-<include cwd lang="tsx">
-  ./src/examples/ui/button/with-icon.tsx
-</include>
-
-</ComponentPreview>
-
-### Icon
-
-<ComponentPreview component="button" example="icon">
-
-<include cwd lang="tsx">
-  ./src/examples/ui/button/icon.tsx
-</include>
-
-</ComponentPreview>
-
-## Links styled as buttons
-
-Use `Button` for actions. For navigation, style a native anchor or your router link with the
-server-safe `buttonVariants` export. Base UI buttons enforce button semantics, even when
-`nativeButton` is false.
+Use a native anchor or router link with the server-safe style function. Do not put links inside `Button` or pass an anchor to its `render` prop.
 
 ```tsx
 import { buttonVariants } from "@/components/ui/button-variants";
@@ -108,5 +68,12 @@ import { buttonVariants } from "@/components/ui/button-variants";
 </a>
 ```
 
-For composition with another button component, use Base UI's `render` prop. `Button` does
-not implement a separate `asChild` compatibility API.
+## Composition
+
+`render` forwards button behavior to the chosen element. A custom component must forward the supplied props and ref to its underlying button.
+
+```tsx
+<Button render={<button data-analytics="save" />}>Save changes</Button>
+```
+
+There is no additional `Button asChild` API. For keyboard interaction, disabled focus behavior, and the full primitive API, use the Base UI reference above.
