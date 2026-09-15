@@ -105,6 +105,9 @@ ol.md-list {
   font-size: 0.88em;
 }
 .docs-code {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
   position: relative;
   margin: 20px 0;
   min-width: 0;
@@ -115,9 +118,11 @@ ol.md-list {
   overflow: hidden;
 }
 .docs-code pre {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
   margin: 0;
-  padding: 20px;
-  padding-top: 52px;
+  padding: 20px 12px 20px 20px;
   max-height: 32rem;
   overflow: auto;
   font-family: var(--font-mono);
@@ -134,28 +139,89 @@ ol.md-list {
   color: var(--shiki-dark);
   background: transparent;
 }
+/* Keep the copy control beside the first line, outside the scrolling code. */
+.docs-code > .code-copy-button {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 12px 12px 12px 0;
+}
+.code-copy-button {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid #465064;
+  border-radius: var(--radius-small);
+  background: #202631;
+  color: #f1f5f9;
+  cursor: pointer;
+}
+.code-copy-button:hover,
+.code-copy-button[data-copy-state="copied"] {
+  border-color: var(--main);
+  background: var(--main);
+  color: var(--main-foreground);
+}
+.code-copy-button:focus-visible {
+  outline: 2px solid #f1f5f9;
+  outline-offset: 3px;
+}
 .installation-tabs {
   margin: 18px 0 26px;
+  min-width: 0;
+}
+.installation-tabs__notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border-left: 3px solid var(--border);
+  background: color-mix(in srgb, var(--secondary-background) 55%, transparent);
+  color: var(--foreground);
+  font-size: 13px;
+  line-height: 1.65;
+}
+.installation-tabs__notice > svg {
+  flex: none;
+  margin-top: 2px;
+}
+.installation-tabs__notice p {
+  margin: 0;
+}
+.installation-tabs__notice p + p {
+  margin-top: 4px;
+  color: color-mix(in srgb, var(--foreground) 75%, transparent);
+}
+.installation-tabs__notice a {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.installation-tabs__frame {
+  min-width: 0;
   border: 2px solid var(--border);
   border-radius: var(--radius-small);
   overflow: hidden;
   background: var(--secondary-background);
 }
 .installation-tabs__list {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: flex;
   border-bottom: 2px solid var(--border);
 }
 .installation-tabs__list button {
   min-height: 44px;
+  padding: 0 20px;
   border: 0;
   border-right: 2px solid var(--border);
   background: var(--secondary-background);
+  color: var(--foreground);
   font-size: 14px;
   font-weight: 700;
-}
-.installation-tabs__list button:last-child {
-  border-right: 0;
+  cursor: pointer;
 }
 .installation-tabs__list button[aria-selected="true"] {
   background: var(--main);
@@ -163,6 +229,10 @@ ol.md-list {
 }
 .installation-tabs__list button:not([aria-selected="true"]):hover {
   background: var(--surface-muted);
+}
+.installation-tabs__list button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -4px;
 }
 .installation-tabs__panel {
   min-width: 0;
@@ -187,11 +257,6 @@ ol.md-list {
   font-family: var(--font-mono);
   font-size: 13px;
   white-space: nowrap;
-}
-.installation-tabs__command .icon-button {
-  border-color: #eef2f8;
-  background: #222936;
-  color: #fff;
 }
 .installation-tabs__manual {
   max-height: min(68vh, 40rem);
@@ -243,6 +308,13 @@ ol.md-list {
     font-size: 19px;
   }
   .docs-code pre {
-    padding-inline: 14px;
+    padding: 16px 10px 16px 14px;
+  }
+  .docs-code > .code-copy-button {
+    margin: 8px 8px 8px 0;
+  }
+  .installation-tabs__command {
+    padding-inline: 12px;
+    gap: 8px;
   }
 }

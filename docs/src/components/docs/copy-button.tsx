@@ -1,46 +1,45 @@
 "use client";
 
-import { Check, Clipboard } from "lucide-react";
+import { Check, Copy } from "lucide-react";
+import { useEffect, useState } from "react";
 
-import { useState } from "react";
+export function CopyButton({ text, label = "Copy" }: { text: string; label?: string }) {
+  const [state, setState] = useState<"idle" | "copied" | "failed">("idle");
 
-import { Button } from "@/components/ui/button";
+  useEffect(() => {
+    if (state === "idle") return;
+    const timer = window.setTimeout(() => setState("idle"), 1600);
+    return () => window.clearTimeout(timer);
+  }, [state]);
 
-export function CopyButton({ text }: { text: string }) {
-  const [isCopied, setIsCopied] = useState(false);
-  const [copyFailed, setCopyFailed] = useState(false);
-
-  const copy = async () => {
+  async function copy() {
     try {
       await navigator.clipboard.writeText(text);
-      setIsCopied(true);
-      setCopyFailed(false);
+      setState("copied");
     } catch {
-      setIsCopied(false);
-      setCopyFailed(true);
+      setState("failed");
     }
+  }
 
-    setTimeout(() => {
-      setIsCopied(false);
-      setCopyFailed(false);
-    }, 1500);
-  };
-
-  const status = isCopied ? "Copied" : copyFailed ? "Copy failed" : "Copy";
+  const status = state === "copied" ? "Copied" : state === "failed" ? "Copy failed" : label;
 
   return (
-    <Button
-      size="icon"
-      className="size-9 absolute right-3.5 top-2"
-      variant="noShadow"
-      onClick={copy}
+    <button
+      type="button"
+      className="code-copy-button"
+      data-copy-state={state}
+      onClick={() => void copy()}
       aria-label={status}
       title={status}
     >
+      {state === "copied" ? (
+        <Check aria-hidden="true" size={17} />
+      ) : (
+        <Copy aria-hidden="true" size={17} />
+      )}
       <span className="sr-only" aria-live="polite">
-        {status}
+        {state === "idle" ? "" : status}
       </span>
-      {isCopied ? <Check /> : <Clipboard />}
-    </Button>
+    </button>
   );
 }
