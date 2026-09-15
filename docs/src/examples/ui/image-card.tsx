@@ -3,8 +3,9 @@ import ImageCard from "@/components/ui/image-card";
 export default function ImageCardDemo() {
   return (
     <ImageCard
-      caption="Cherry blossoms at peak bloom"
-      imageUrl="https://hips.hearstapps.com/hmg-prod/images/flowers-trees-and-bushes-reach-their-peak-of-full-bloom-in-news-photo-1678292967.jpg?resize=300:*"
-    ></ImageCard>
+      caption="neobrutal-ui documentation preview"
+      imageUrl="/preview.png"
+      className="w-full max-w-sm"
+    />
   );
 }

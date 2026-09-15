@@ -42,7 +42,7 @@ for (const route of [...new Set(routes)].sort()) {
       await expect(installation.locator(".installation-tabs__manual pre").first()).toBeVisible();
       await expect(installation.locator(".installation-tabs__manual pre").first()).not.toBeEmpty();
       await installation.screenshot({ path: info.outputPath(`manual-${index}.png`), animations: "disabled" });
-      await installation.getByRole("tab", { name: "Shadcn CLI", exact: true }).click();
+      await installation.getByRole("tab", { name: "shadcn CLI", exact: true }).click();
     }
     await expect(page.locator(".react-host__error")).toHaveCount(0);
     const viewport = page.viewportSize()!;

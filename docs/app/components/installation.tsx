@@ -63,7 +63,7 @@ export function Installation({ children, component }: { children?: ReactNode; co
             tabIndex={activeTab === "cli" ? 0 : -1}
             onClick={() => setActiveTab("cli")}
           >
-            Shadcn CLI
+            shadcn CLI
           </button>
           <button
             id={`${instanceId}-manual-tab`}

@@ -33,7 +33,7 @@ test("installation notice, tabs and command have separate, usable layouts", asyn
   const frameBounds = await frame.boundingBox();
   expect(frameBounds!.y - noticeBounds!.y - noticeBounds!.height).toBeGreaterThanOrEqual(12);
   expect(await notice.evaluate((node) => parseFloat(getComputedStyle(node).paddingLeft))).toBeGreaterThanOrEqual(12);
-  const cli = installation.getByRole("tab", { name: "Shadcn CLI", exact: true });
+  const cli = installation.getByRole("tab", { name: "shadcn CLI", exact: true });
   const manual = installation.getByRole("tab", { name: "Manual", exact: true });
   expect((await cli.boundingBox())!.width).toBeLessThan(180);
   await installation.getByRole("button", { name: "Copy installation command", exact: true }).click();
