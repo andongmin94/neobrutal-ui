@@ -1,6 +1,6 @@
 ---
 title: Button
-description: Displays a button or a component that looks like a button.
+description: Displays an action button with neobrutalist styling.
 shadcnDocsLink: https://ui.shadcn.com/docs/components/button
 ---
 
@@ -15,6 +15,16 @@ shadcnDocsLink: https://ui.shadcn.com/docs/components/button
 ## Installation
 
 <Installation component="button">
+
+Install the design-system base first, then create both files below. The CLI installs both automatically.
+
+**`components/ui/button-variants.ts`**
+
+<include cwd lang="ts">
+  ./src/components/ui/button-variants.ts
+</include>
+
+**`components/ui/button.tsx`**
 
 <include cwd lang="tsx">
   ./src/components/ui/button.tsx
@@ -84,7 +94,6 @@ import { Button } from "@/components/ui/button";
 
 </ComponentPreview>
 
-
 ## Links styled as buttons
 
 Use `Button` for actions. For navigation, style a native anchor or your router link with the
@@ -92,7 +101,7 @@ server-safe `buttonVariants` export. Base UI buttons enforce button semantics, e
 `nativeButton` is false.
 
 ```tsx
-import { buttonVariants } from "@/components/ui/button-variants"
+import { buttonVariants } from "@/components/ui/button-variants";
 
 <a href="/about" className={buttonVariants({ variant: "outline", size: "sm" })}>
   About
