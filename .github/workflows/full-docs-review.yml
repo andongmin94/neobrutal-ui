@@ -1,182 +1,67 @@
 name: Full documentation review
-
 on:
   push:
     paths:
       - .github/workflows/full-docs-review.yml
-
 permissions:
-  contents: write
-
+  contents: read
+  actions: read
 jobs:
-  review:
+  findings:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
-    env:
-      GH_TOKEN: ${{ github.token }}
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: 24c7dbc60666cd1bc7acdafa4a1f50eb769c29fc
-          fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: |
-            registry/package-lock.json
-            docs/package-lock.json
-      - name: Integrate reviewed sources with the current layout fixes
-        run: |
-          git apply --check .github/review-fixes.patch
-          git apply .github/review-fixes.patch
-          rm .github/review-fixes.patch
-          python3 - <<'PY'
-          from pathlib import Path
-          import re, subprocess
-          head = '984a20caaeecf560f437205926d7ab2427ccbb32'
-          for name in ['docs/app/components/installation.tsx', 'docs/app/styles/content.css', 'docs/src/components/docs/copy-button.tsx', 'docs/tests/code-layout.spec.ts']:
-              Path(name).write_bytes(subprocess.check_output(['git', 'show', f'{head}:{name}']))
-          p = Path('docs/tests/galleries.spec.ts')
-          s = p.read_text().replace('getByRole("textbox", { name: "Search docs and components"', 'getByRole("combobox", { name: "Search docs and components"')
-          s = s.replace('page.locator(".search-dialog").getByRole("link")', 'page.locator(".search-dialog").getByRole("option")')
-          s = s.replace('page.locator("main article")', 'page.locator("main article article")')
-          p.write_text(s)
-          p = Path('docs/content/docs/breadcrumb.mdx')
-          p.write_text(p.read_text().replace('<Installation component="breadcrumb">', '<Installation component="breadcrumb">\n\n```bash\nnpm install @base-ui/react@^1.6.0\n```'))
-          p = Path('docs/content/docs/dropdown-menu.mdx')
-          p.write_text(p.read_text().replace('`bottom` / `start`', '`bottom` / `center`'))
-          p = Path('docs/content/docs/marquee.mdx')
-          p.write_text(p.read_text().replace('20s linear infinite', '5s linear infinite'))
-          p = Path('docs/src/data/templates.ts')
-          p.write_text(p.read_text().replace('@neobrutal-ui/blog-template', 'https://neobrutal-ui.andongmin.com/r/blog-template.json').replace('@neobrutal-ui/portfolio-template', 'https://neobrutal-ui.andongmin.com/r/portfolio-template.json').replace('@neobrutal-ui/cms-template', 'https://neobrutal-ui.andongmin.com/r/cms-template.json').replace('@neobrutal-ui/link-hub-template', 'https://neobrutal-ui.andongmin.com/r/link-hub-template.json'))
-          def previews(text):
-              result = {}
-              for match in re.finditer(r'<ComponentPreview\b[\s\S]*?</ComponentPreview>', text):
-                  block = match.group()
-                  attrs = block.split('>')[0]
-                  key = tuple(re.search(rf'{name}="([^"]*)"', attrs).group(1) if re.search(rf'{name}="([^"]*)"', attrs) else '' for name in ['component', 'example', 'type'])
-                  result[key] = block
-              return result
-          for p in Path('docs/content/docs').glob('*.mdx'):
-              old = subprocess.check_output(['git', 'show', f'{head}:{p}'], text=True)
-              current = p.read_text()
-              existing = previews(current)
-              missing = [(key, block) for key, block in previews(old).items() if key not in existing]
-              if missing:
-                  current += '\n## Additional examples\n'
-                  for key, block in missing:
-                      current += '\n### ' + (key[1] or key[0]).replace('-', ' ').capitalize() + '\n\n' + block + '\n'
-                  p.write_text(current)
-          PY
-      - name: Install dependencies
-        run: |
-          npm ci --prefix registry --no-fund
-          npm ci --prefix docs --no-fund
-          npm install --prefix docs --save-dev @axe-core/playwright --no-fund
-      - name: Add whole-site accessibility and screenshot audit
-        run: |
-          cat > docs/tests/accessibility.spec.ts <<'TS'
-          import { readdirSync } from "node:fs";
-          import { getSlugs } from "fumadocs-core/source";
-          import { expect, test } from "@playwright/test";
-          import AxeBuilder from "@axe-core/playwright";
-
-          const routes = [...new Set(["/", ...readdirSync("content", { recursive: true })
-            .filter((name): name is string => typeof name === "string" && name.endsWith(".mdx"))
-            .map((name) => `/${getSlugs(name.replaceAll("\\", "/")).join("/")}`)])].sort();
-
-          for (const route of routes) {
-            test(`accessibility and visible layout: ${route}`, async ({ page }, info) => {
-              await page.emulateMedia({ reducedMotion: "reduce" });
-              await page.goto(route);
-              await expect(page.locator("main").first()).toBeVisible();
-              const hosts = page.locator("[data-react-host]");
-              for (let index = 0; index < await hosts.count(); index++) {
-                await hosts.nth(index).scrollIntoViewIfNeeded();
-                await expect(hosts.nth(index)).not.toHaveAttribute("aria-busy", "true");
-              }
-              await page.evaluate(() => document.fonts.ready);
-              const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
-              const violations = results.violations.map(({ id, impact, help, nodes }) => ({
-                id, impact, help, nodes: nodes.map(({ target, html, failureSummary }) => ({ target, html, failureSummary })),
-              }));
-              await info.attach("accessibility", { body: JSON.stringify({ route, profile: info.project.name, violations }, null, 2), contentType: "application/json" });
-              await page.evaluate(() => scrollTo(0, 0));
-              await page.screenshot({ path: info.outputPath("viewport.png"), animations: "disabled" });
-              await page.locator("main").first().screenshot({ path: info.outputPath("content.png"), animations: "disabled" });
-              expect(violations).toEqual([]);
-            });
-          }
-          TS
-      - name: Format and verify sources
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import re, subprocess
-          for p in Path('docs/content/docs').glob('*.mdx'):
-              def format_code(match):
-                  formatted = subprocess.check_output(['docs/node_modules/.bin/oxfmt', '--stdin-filepath=example.tsx'], input=match.group(1), text=True)
-                  return '```tsx\n' + formatted.rstrip() + '\n```'
-              p.write_text(re.sub(r'```tsx\n([\s\S]*?)\n```', format_code, p.read_text()))
-          PY
-          npm run lint --prefix registry
-          npm run typecheck --prefix registry
-          npm run build --prefix registry > /tmp/registry-build.log 2>&1 || { tail -80 /tmp/registry-build.log; exit 1; }
-          npm run registry:validate --prefix registry
-          npm run registry:check --prefix registry
-          npm run lint --prefix docs
-          npm run typecheck --prefix docs
-          npm test --prefix docs
-          npm run build --prefix docs > /tmp/docs-build.log 2>&1 || { tail -100 /tmp/docs-build.log; exit 1; }
-      - name: Check interactions before the full audit
-        working-directory: docs
-        run: |
-          npx playwright install --with-deps chromium > /tmp/browser-install.log 2>&1
-          npx playwright test tests/galleries.spec.ts tests/code-layout.spec.ts
-      - name: Whole-site browser and accessibility review
-        working-directory: docs
-        run: npx playwright test --reporter=list,json > /tmp/browser-results.log 2>&1
-      - name: Preserve the integration candidate and review summary
-        if: always()
-        run: |
-          git add -A
-          python3 - <<'PY'
-          from pathlib import Path
-          import json, os, subprocess, re
-          repo = os.environ['GITHUB_REPOSITORY']
-          def api(endpoint, data=None):
-              args = ['gh', 'api', f'repos/{repo}/{endpoint}']
-              if data is not None: args += ['--method', 'POST', '--input', '-']
-              return json.loads(subprocess.check_output(args, input=json.dumps(data) if data is not None else None, text=True))
-          parent = os.environ['GITHUB_SHA']
-          entries = []
-          for name in filter(None, subprocess.check_output(['git', 'diff', '--cached', '--name-only', '--no-renames', '-z'], text=True).split('\0')):
-              p = Path(name)
-              item = {'path': name, 'mode': '100644', 'type': 'blob'}
-              item.update({'content': p.read_text()} if p.exists() else {'sha': None})
-              entries.append(item)
-          tree = api('git/trees', {'base_tree': 'bbfa26cb80fe94577bed7adedc11df3e44aa6542', 'tree': entries})['sha']
-          commit = api('git/commits', {'message': 'docs: integrate references, source fixes and full quality review candidate', 'tree': tree, 'parents': [parent]})['sha']
-          result = {'commit': commit, 'tree': tree, 'parent': parent, 'run_id': os.environ['GITHUB_RUN_ID'], 'publication': 'Not published; review required.'}
-          Path('/tmp/review-candidate.json').write_text(json.dumps(result, indent=2))
-          print('REVIEW_CANDIDATE ' + json.dumps(result))
-          PY
-      - name: Save sources and diagnostics
-        if: always()
-        run: |
-          git add -A
-          git ls-files -z | tar --null --exclude='*.woff*' --exclude='*.ttf' --exclude='*.otf' -T - -czf /tmp/review-source.tar.gz
-      - uses: actions/upload-artifact@v4
-        if: always()
+      - uses: actions/download-artifact@v4
         with:
           name: full-documentation-review
+          run-id: 34964540904
+          github-token: ${{ github.token }}
+          path: /tmp/baseline
+      - name: Summarize accessibility findings
+        run: |
+          python3 - <<'PY'
+          import base64, json
+          from pathlib import Path
+          text = Path('/tmp/baseline/tmp/browser-results.log').read_text()
+          data = json.loads(text[text.index('\n{\n  "config"') + 1:])
+          scans, failures = [], []
+          def walk(suites):
+              for suite in suites:
+                  walk(suite.get('suites', []))
+                  for spec in suite.get('specs', []):
+                      for test in spec['tests']:
+                          for result in test.get('results', []):
+                              if result['status'] != 'passed':
+                                  failures.append({'test': spec['title'], 'profile': test['projectName'], 'error': result.get('error', {}).get('message', '')})
+                              for attachment in result.get('attachments', []):
+                                  if attachment['name'] == 'accessibility' and 'body' in attachment:
+                                      scans.append(json.loads(base64.b64decode(attachment['body'])))
+          walk(data['suites'])
+          unique = {}
+          for scan in scans:
+              for violation in scan['violations']:
+                  for node in violation['nodes']:
+                      key = (violation['id'], node['html'], node.get('failureSummary', ''))
+                      row = unique.setdefault(key, {'rule': violation['id'], 'html': node['html'], 'summary': node.get('failureSummary', ''), 'routes': set(), 'profiles': set()})
+                      row['routes'].add(scan['route'])
+                      row['profiles'].add(scan['profile'])
+          rows = [{**v, 'routes': sorted(v['routes']), 'profiles': sorted(v['profiles'])} for v in unique.values()]
+          summary = {'candidate': '53c00f88432d97ea629cda8f0b0ffe622e80ad6f', 'stats': data['stats'], 'scans': len(scans), 'findings': rows, 'failures': failures}
+          Path('/tmp/findings.json').write_text(json.dumps(summary, indent=2))
+          print('STATS', json.dumps(data['stats']), 'SCANS', len(scans), 'FINDINGS', len(rows))
+          for row in rows:
+              print('FINDING', json.dumps(row))
+          for failure in failures:
+              if 'accessibility' not in failure['test']:
+                  print('OTHER FAILURE', json.dumps(failure))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: quality-findings
           retention-days: 7
-          path: |
-            docs/test-results
-            docs/playwright-report
-            /tmp/review-candidate.json
-            /tmp/review-source.tar.gz
-            /tmp/docs-build.log
-            /tmp/registry-build.log
-            /tmp/browser-results.log
+          path: /tmp/findings.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: quality-screenshots
+          retention-days: 7
+          path: /tmp/baseline/home/runner/work/neobrutal-ui/neobrutal-ui/docs/test-results/**/*.png
