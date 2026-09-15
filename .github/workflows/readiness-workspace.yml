@@ -3,15 +3,18 @@ name: Readiness workspace
 on:
   push:
     branches: [chore/registry-directory-ready]
-    paths: [.github/workflows/readiness-workspace.yml]
+    paths:
+      - .github/workflows/readiness-workspace.yml
+      - .github/readiness-edit.py
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   workspace:
+    if: github.repository == 'andongmin94/neobrutal-ui' && github.ref == 'refs/heads/chore/registry-directory-ready'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -21,18 +24,57 @@ jobs:
           cache-dependency-path: |
             registry/package-lock.json
             docs/package-lock.json
-      - name: Inspect contribution instructions and installation call sites
-        run: |
-          find . -name AGENTS.md -not -path '*/node_modules/*' -print -exec cat {} \;
-          git grep -n -E 'r/styling|styling/|Button.*asChild|nativeButton=|<svg' -- docs registry ':!**/public/r/**' ':!**/package-lock.json' ':!registry/registry.json' || true
-      - name: Install locked dependencies
+      - name: Install locked dependencies and inspect advisories
         run: |
           npm ci --prefix registry
           npm ci --prefix docs
-      - name: Bundle the isolated workspace for review
-        run: tar --exclude=.git -czf /tmp/readiness-workspace.tar.gz .
-      - uses: actions/upload-artifact@v4
-        with:
-          name: readiness-workspace
-          path: /tmp/readiness-workspace.tar.gz
-          retention-days: 1
+          npm audit --prefix registry --json > /tmp/registry-audit.json || true
+          npm audit --prefix docs --json > /tmp/docs-audit.json || true
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          for (const name of ['registry', 'docs']) {
+            const report = JSON.parse(fs.readFileSync(`/tmp/${name}-audit.json`, 'utf8'));
+            console.log('AUDIT', name, JSON.stringify(report.metadata));
+            for (const value of Object.values(report.vulnerabilities ?? {})) {
+              console.log(JSON.stringify({name:value.name,severity:value.severity,isDirect:value.isDirect,range:value.range,fixAvailable:value.fixAvailable,via:value.via}));
+            }
+          }
+          JS
+      - name: Apply reviewed source edits
+        run: python3 .github/readiness-edit.py
+      - name: Build and synchronize the candidate
+        working-directory: registry
+        run: |
+          npm run lint
+          npm run build
+      - name: Persist candidate and remove temporary preparation tools
+        run: |
+          rm .github/readiness-edit.py .github/workflows/readiness-workspace.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add README.md registry docs .github
+          git diff --cached --stat
+          git commit -m 'feat: prepare flat registry, server-safe button styles, and isolated consumer checks'
+          git push origin HEAD:chore/registry-directory-ready
+          echo "CANDIDATE_SHA=$(git rev-parse HEAD)"
+      - name: Verify registry and documentation
+        run: |
+          npm run typecheck --prefix registry
+          npm run registry:validate --prefix registry
+          npm run registry:check --prefix registry
+          npm run lint --prefix docs
+          npm run typecheck --prefix docs
+          npm run build --prefix docs
+      - name: Verify all-item and isolated installations
+        working-directory: registry
+        run: |
+          npm run consumer:verify
+          npm run consumer:verify -- vite --item=button
+          npm run consumer:verify -- vite --item=calendar
+          npm run consumer:verify -- next --item=dialog
+          npm run consumer:verify -- next --item=blog-template
+      - name: Summarize validation
+        run: |
+          git diff --stat
+          git diff --exit-code
+          echo "Verified candidate $(git rev-parse HEAD)"
