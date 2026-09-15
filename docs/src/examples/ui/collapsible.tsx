@@ -12,11 +12,7 @@ export default function CollapsibleDemo() {
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
-    <Collapsible
-      open={isOpen}
-      onOpenChange={setIsOpen}
-      className="w-full max-w-md space-y-2"
-    >
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full max-w-md space-y-2">
       <div className="flex items-center justify-between gap-4 rounded-base border-2 border-border bg-main px-4 py-3 text-main-foreground shadow-shadow">
         <div className="min-w-0">
           <h3 className="font-heading">Release checklist</h3>

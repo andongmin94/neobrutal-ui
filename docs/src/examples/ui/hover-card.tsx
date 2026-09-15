@@ -25,12 +25,19 @@ export default function HoverCardDemo() {
           </span>
         </div>
         <p className="mt-3 text-sm leading-6">
-          Install accessible Base UI components, themes, and templates through a shadcn-compatible registry.
+          Install accessible Base UI components, themes, and templates through a shadcn-compatible
+          registry.
         </p>
         <div className="mt-4 grid grid-cols-3 gap-2 border-t-2 border-border pt-3 text-center text-xs">
-          <div><strong className="block text-base font-heading">49</strong>components</div>
-          <div><strong className="block text-base font-heading">17</strong>themes</div>
-          <div><strong className="block text-base font-heading">4</strong>templates</div>
+          <div>
+            <strong className="block text-base font-heading">49</strong>components
+          </div>
+          <div>
+            <strong className="block text-base font-heading">17</strong>themes
+          </div>
+          <div>
+            <strong className="block text-base font-heading">4</strong>templates
+          </div>
         </div>
       </HoverCardContent>
     </HoverCard>

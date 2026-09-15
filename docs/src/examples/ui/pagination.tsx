@@ -61,7 +61,11 @@ export default function PaginationDemo() {
                 href={`?page=${token}`}
                 isActive={page === token}
                 aria-label={`Go to page ${token}`}
-                className={token !== 1 && token !== page && token !== pageCount ? "hidden sm:inline-flex" : undefined}
+                className={
+                  token !== 1 && token !== page && token !== pageCount
+                    ? "hidden sm:inline-flex"
+                    : undefined
+                }
                 onClick={(event) => selectPage(event, token)}
               >
                 {token}

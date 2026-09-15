@@ -9,12 +9,14 @@ const questions = [
   {
     value: "source",
     question: "Do I own the installed source?",
-    answer: "Yes. The CLI copies the component files into your application so you can edit them directly.",
+    answer:
+      "Yes. The CLI copies the component files into your application so you can edit them directly.",
   },
   {
     value: "theme",
     question: "Can I change the visual style?",
-    answer: "Use a preset or adjust the shared color, radius, type, and shadow tokens for your product.",
+    answer:
+      "Use a preset or adjust the shared color, radius, type, and shadow tokens for your product.",
   },
   {
     value: "framework",

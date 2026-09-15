@@ -37,7 +37,10 @@ export default function PopoverDemo() {
             </li>
           ))}
         </ul>
-        <a href="/docs/registry" className="mt-4 inline-flex items-center gap-2 font-heading underline underline-offset-4">
+        <a
+          href="/docs/registry"
+          className="mt-4 inline-flex items-center gap-2 font-heading underline underline-offset-4"
+        >
           Review registry guidance
           <ExternalLink className="size-4" aria-hidden="true" />
         </a>

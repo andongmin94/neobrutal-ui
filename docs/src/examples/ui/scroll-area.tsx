@@ -17,7 +17,9 @@ export default function ScrollAreaDemo() {
     >
       <div className="p-4">
         <div className="mb-3 border-b-2 border-border pb-3">
-          <p className="text-xs font-heading uppercase tracking-wide text-foreground/70">Workspace</p>
+          <p className="text-xs font-heading uppercase tracking-wide text-foreground/70">
+            Workspace
+          </p>
           <h3 className="text-lg font-heading">Recent activity</h3>
         </div>
         <ul className="divide-y-2 divide-border">

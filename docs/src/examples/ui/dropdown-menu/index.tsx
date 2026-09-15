@@ -1,12 +1,4 @@
-import {
-  BookOpen,
-  Copy,
-  FileJson,
-  Palette,
-  Plus,
-  Settings,
-  UploadCloud,
-} from "lucide-react";
+import { BookOpen, Copy, FileJson, Palette, Plus, Settings, UploadCloud } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
