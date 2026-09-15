@@ -107,7 +107,10 @@ export function DirectoryHome() {
                 Get started
                 <ArrowRight aria-hidden="true" />
               </Link>
-              <a className="directory-browse-link" href="#components">
+              <a
+                className={`${buttonVariants({ variant: "outline", size: "lg" })} directory-action-link`}
+                href="#components"
+              >
                 Browse {entries.length} components
               </a>
             </div>
@@ -169,7 +172,10 @@ export function DirectoryHome() {
               {filteredEntries.length === 1 ? "component" : "components"}
               {category !== "All" ? ` in ${category}` : ""}
             </p>
-            <Link to="/templates">
+            <Link
+              className={`${buttonVariants({ variant: "outline", size: "sm" })} directory-action-link`}
+              to="/templates"
+            >
               Explore complete templates <ArrowRight aria-hidden="true" size={14} />
             </Link>
           </div>
@@ -178,7 +184,7 @@ export function DirectoryHome() {
               {filteredEntries.map((entry) => {
                 const Icon = categoryIcons[entry.category];
                 return (
-                  <Link key={entry.slug} className="directory-card" to={entry.href}>
+                  <Link key={entry.slug} className="directory-card pressable" to={entry.href}>
                     <div className="directory-card__top">
                       <Icon aria-hidden="true" size={22} />
                       <span>{entry.installMode}</span>
@@ -201,6 +207,7 @@ export function DirectoryHome() {
               <h2>No components found</h2>
               <p>Try another term or clear the filters.</p>
               <button
+                className="pressable"
                 type="button"
                 onClick={() => setParams({}, { replace: true, preventScrollReset: true })}
               >

@@ -130,6 +130,11 @@ body::-webkit-scrollbar-thumb {
   pointer-events: none;
 }
 
+.directory-action-link,
+.directory-results__head a.directory-action-link {
+  text-decoration: none;
+}
+
 .template-preview-link img {
   scale: 1;
   transition: scale 150ms ease;

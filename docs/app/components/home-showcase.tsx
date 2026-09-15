@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -47,7 +48,10 @@ export function HomeShowcase() {
                 <Check aria-hidden="true" />
                 Save workspace
               </Button>
-              <Link className="home-showcase__link" to="/docs/card">
+              <Link
+                className={`${buttonVariants({ variant: "outline", size: "sm" })} directory-action-link`}
+                to="/docs/card"
+              >
                 View components
                 <ArrowUpRight aria-hidden="true" size={16} />
               </Link>
