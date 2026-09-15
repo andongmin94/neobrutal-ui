@@ -42,10 +42,15 @@ npx playwright install --with-deps chromium
 npm run test:browser
 ```
 
-Contract tests check the palette exports, synchronized sources, default stylesheet, directory
-metadata, preview registrations, and typography boundaries. Playwright tests cover desktop and
-mobile viewports in light and dark themes, including navigation, keyboard interaction, clipboard
-export, and page-level overflow. The browser suite starts the built static site automatically.
+Contract tests check palette exports, synchronized sources, default stylesheet generation,
+directory metadata, preview registrations, typography boundaries, internal links and includes,
+every component's manual files and package dependencies, and every Usage example against the
+installed component types.
+
+Playwright visits every content route in desktop and mobile light/dark Chromium. It checks
+navigation, keyboard interaction, clipboard success and failure, motion controls, popup focus,
+page overflow, every chart source dialog, all star and palette previews, and automated axe scans.
+The browser suite starts the built static site automatically.
 
 To check an existing deployment rather than the local build:
 
@@ -53,9 +58,9 @@ To check an existing deployment rather than the local build:
 DOCS_TEST_URL=https://neobrutal-ui.andongmin.com npm run test:browser
 ```
 
-The suite saves screenshots and an HTML report under `test-results` and `playwright-report`.
-Both directories are ignored by Git and uploaded as CI artifacts. Passing these smoke checks
-is not a claim of comprehensive accessibility, cross-browser, or visual-regression coverage.
+The suite saves failure screenshots, traces, and an HTML report under `test-results` and
+`playwright-report`; CI uploads them as artifacts. Passing this automated Chromium suite is not
+cross-browser certification or a manual pixel-by-pixel visual approval.
 
 ## Deployment
 
