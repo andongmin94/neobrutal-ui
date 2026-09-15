@@ -29,14 +29,14 @@ export default function TabsDemo() {
           <form
             onSubmit={(event) => {
               event.preventDefault();
-              setMessage("Account changes saved.");
+              setMessage("Account preview updated locally.");
             }}
           >
             <Card>
               <CardHeader>
                 <CardTitle>Account</CardTitle>
                 <CardDescription>
-                  Make changes to your account here. Click save when you&apos;re done.
+                  Edit this local preview. No account request is sent.
                 </CardDescription>
               </CardHeader>
               <CardContent className="grid gap-6">
@@ -61,14 +61,14 @@ export default function TabsDemo() {
           <form
             onSubmit={(event) => {
               event.preventDefault();
-              setMessage("Password saved.");
+              setMessage("Password preview updated locally. No credentials were sent.");
             }}
           >
             <Card>
               <CardHeader>
                 <CardTitle>Password</CardTitle>
                 <CardDescription>
-                  Change your password here. After saving, you&apos;ll be logged out.
+                  Try the password form locally. It does not update credentials or sign you out.
                 </CardDescription>
               </CardHeader>
               <CardContent className="grid gap-6">
