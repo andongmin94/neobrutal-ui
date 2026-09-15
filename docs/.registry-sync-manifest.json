@@ -7,6 +7,7 @@
     "avatar.tsx",
     "badge.tsx",
     "breadcrumb.tsx",
+    "button-variants.ts",
     "button.tsx",
     "calendar.tsx",
     "card.tsx",

@@ -57,6 +57,10 @@ export function Installation({ children, component }: { children?: ReactNode; co
 
   return (
     <section className="installation-tabs">
+      <p>
+        First installation? <a href="/docs/installation">Install the neobrutal-ui base first.</a>{" "}
+        The base changes global theme variables; review it before adding to an existing project.
+      </p>
       <div
         className="installation-tabs__list"
         role="tablist"

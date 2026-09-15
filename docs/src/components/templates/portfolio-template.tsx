@@ -2,7 +2,7 @@
 
 import { ArrowUpRight, ChevronDown, Mail } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 
 const TEMPLATE_THEME =
   "[color-scheme:light] [--background:#fff0dc] [--secondary-background:#fff] [--foreground:#000] [--main-foreground:#000] [--main:#ff7b07] [--border:#000] [--ring:#000] [--box-shadow-x:4px] [--box-shadow-y:4px] [--reverse-box-shadow-x:-4px] [--reverse-box-shadow-y:-4px] [--shadow:4px_4px_0px_0px_var(--border)] [--radius:5px] [--base-font-weight:500] [--heading-font-weight:700] dark:[color-scheme:dark] dark:[--background:#2c304c] dark:[--secondary-background:#222] dark:[--foreground:#ececec] dark:[--main:#ff7b07] dark:[--ring:#fff]";
@@ -106,12 +106,10 @@ export default function PortfolioTemplate() {
             aria-label="Contact links"
             className="mt-6 flex scroll-mt-16 flex-wrap items-center gap-x-5 gap-y-3 border-t-2 border-border pt-4"
           >
-            <Button asChild nativeButton={false} size="sm">
-              <a href="mailto:hello@sorahan.design">
-                <Mail aria-hidden="true" />
-                Email
-              </a>
-            </Button>
+            <a href="mailto:hello@sorahan.design" className={buttonVariants({ size: "sm" })}>
+              <Mail aria-hidden="true" />
+              Email
+            </a>
             <a
               href="https://github.com"
               target="_blank"

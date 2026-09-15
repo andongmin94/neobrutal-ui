@@ -101,6 +101,10 @@ const UI = [
         path: "src/components/ui/button.tsx",
         type: "registry:ui",
       },
+      {
+        path: "src/components/ui/button-variants.ts",
+        type: "registry:ui",
+      },
     ],
   },
   {

@@ -83,3 +83,21 @@ import { Button } from "@/components/ui/button";
 </include>
 
 </ComponentPreview>
+
+
+## Links styled as buttons
+
+Use `Button` for actions. For navigation, style a native anchor or your router link with the
+server-safe `buttonVariants` export. Base UI buttons enforce button semantics, even when
+`nativeButton` is false.
+
+```tsx
+import { buttonVariants } from "@/components/ui/button-variants"
+
+<a href="/about" className={buttonVariants({ variant: "outline", size: "sm" })}>
+  About
+</a>
+```
+
+For composition with another button component, use Base UI's `render` prop. `Button` does
+not implement a separate `asChild` compatibility API.
