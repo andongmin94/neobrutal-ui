@@ -7,17 +7,44 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
+const slides = [
+  {
+    eyebrow: "Template",
+    title: "Portfolio",
+    detail: "A project-focused landing page with clear case-study navigation.",
+    className: "bg-main text-main-foreground",
+  },
+  {
+    eyebrow: "Component",
+    title: "Command menu",
+    detail: "Searchable actions with keyboard navigation and honest local feedback.",
+    className: "bg-secondary-background text-foreground",
+  },
+  {
+    eyebrow: "Theme",
+    title: "Yellow preset",
+    detail: "Hard shadows, strong borders, and a complete light and dark token pair.",
+    className: "bg-main text-main-foreground",
+  },
+];
+
 export default function CarouselDemo() {
   return (
-    <div className="w-full flex-col items-center gap-4 flex">
-      <Carousel className="w-full max-w-[200px]">
+    <div className="w-full max-w-md px-12">
+      <Carousel className="w-full" aria-label="Featured registry examples">
         <CarouselContent>
-          {Array.from({ length: 5 }).map((_, index) => (
-            <CarouselItem key={index}>
-              <div className="p-[10px]">
-                <Card className="shadow-none p-0 bg-main text-main-foreground">
-                  <CardContent className="flex aspect-square items-center justify-center p-4">
-                    <span className="text-3xl font-base">{index + 1}</span>
+          {slides.map((slide) => (
+            <CarouselItem key={slide.title}>
+              <div className="p-1">
+                <Card className={`h-full overflow-hidden p-0 shadow-none ${slide.className}`}>
+                  <CardContent className="flex aspect-[4/3] flex-col items-start justify-between gap-6 p-5">
+                    <span className="rounded-base border-2 border-current px-2 py-1 text-xs font-heading uppercase tracking-wide">
+                      {slide.eyebrow}
+                    </span>
+                    <div>
+                      <h3 className="text-2xl font-heading">{slide.title}</h3>
+                      <p className="mt-2 text-sm leading-6">{slide.detail}</p>
+                    </div>
                   </CardContent>
                 </Card>
               </div>

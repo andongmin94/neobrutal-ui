@@ -1,7 +1,14 @@
 import Marquee from "@/components/ui/marquee";
 
-export default function MarqueeDemo() {
-  const items = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5"];
+const features = [
+  "Source you own",
+  "Tailwind CSS v4",
+  "Base UI primitives",
+  "Light and dark themes",
+  "Keyboard tested",
+  "Next.js and Vite",
+];
 
-  return <Marquee items={items} />;
+export default function MarqueeDemo() {
+  return <Marquee items={features} />;
 }

@@ -8,19 +8,22 @@ import {
 
 export default function SelectDemo() {
   return (
-    <Select disabled>
-      <SelectTrigger className="w-[180px]" aria-label="Disabled fruit selection">
-        <SelectValue placeholder="Disabled" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="apple">Apple</SelectItem>
-        <SelectItem value="banana">Banana</SelectItem>
-        <SelectItem value="blueberry">Blueberry</SelectItem>
-        <SelectItem value="grapes" disabled>
-          Grapes
-        </SelectItem>
-        <SelectItem value="pineapple">Pineapple</SelectItem>
-      </SelectContent>
-    </Select>
+    <div className="grid w-full max-w-xs gap-2">
+      <label htmlFor="locked-environment" className="font-heading">
+        Deployment environment
+      </label>
+      <Select defaultValue="staging" disabled>
+        <SelectTrigger id="locked-environment" aria-label="Locked deployment environment">
+          <SelectValue placeholder="Choose an environment" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="development">Development</SelectItem>
+          <SelectItem value="preview">Preview</SelectItem>
+          <SelectItem value="staging">Staging</SelectItem>
+          <SelectItem value="production">Production</SelectItem>
+        </SelectContent>
+      </Select>
+      <p className="text-sm text-foreground/70">Unlock deployments to change this setting.</p>
+    </div>
   );
 }

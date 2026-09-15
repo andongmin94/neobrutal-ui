@@ -1,13 +1,34 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 
+const updates = [
+  ["Button reference", "Variants and navigation guidance reviewed"],
+  ["Sidebar", "Mobile hook and manual install files verified"],
+  ["Theme export", "Customizer output matches registry tokens"],
+  ["Dialog", "Focus return and local submission tested"],
+  ["Calendar", "Range selection consumer build passed"],
+  ["Templates", "Next.js App Router pages generated"],
+] as const;
+
 export default function ScrollAreaDemo() {
   return (
-    <ScrollArea className="rounded-base h-[200px] w-[350px] text-main-foreground border-2 border-border bg-main p-4 shadow-shadow">
-      Jokester began sneaking into the castle in the middle of the night and leaving jokes all over
-      the place: under the king&apos;s pillow, in his soup, even in the royal toilet. The king was
-      furious, but he couldn&apos;t seem to stop Jokester. And then, one day, the people of the
-      kingdom discovered that the jokes left by Jokester were so funny that they couldn&apos;t help
-      but laugh. And once they started laughing, they couldn&apos;t stop.
+    <ScrollArea
+      className="h-64 w-full max-w-sm rounded-base border-2 border-border bg-secondary-background shadow-shadow"
+      aria-label="Recent registry activity"
+    >
+      <div className="p-4">
+        <div className="mb-3 border-b-2 border-border pb-3">
+          <p className="text-xs font-heading uppercase tracking-wide text-foreground/70">Workspace</p>
+          <h3 className="text-lg font-heading">Recent activity</h3>
+        </div>
+        <ul className="divide-y-2 divide-border">
+          {updates.map(([title, detail]) => (
+            <li key={title} className="py-3 first:pt-0 last:pb-0">
+              <p className="font-heading">{title}</p>
+              <p className="mt-1 text-sm leading-5 text-foreground/75">{detail}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
     </ScrollArea>
   );
 }
