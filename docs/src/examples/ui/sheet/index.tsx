@@ -24,13 +24,13 @@ export default function SheetDemo() {
     <div className="grid justify-items-center gap-3">
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
-          <Button>Open</Button>
+          <Button>Open sheet</Button>
         </SheetTrigger>
         <SheetContent>
           <SheetHeader>
             <SheetTitle>Edit profile</SheetTitle>
             <SheetDescription>
-              Make changes to your profile here. Click save when you&apos;re done.
+              Edit this local profile preview. No account request is sent.
             </SheetDescription>
           </SheetHeader>
           <form
@@ -38,7 +38,7 @@ export default function SheetDemo() {
             className="grid flex-1 auto-rows-min gap-6 px-4"
             onSubmit={(event) => {
               event.preventDefault();
-              setMessage("Profile saved.");
+              setMessage("Profile preview updated locally.");
               setOpen(false);
             }}
           >
