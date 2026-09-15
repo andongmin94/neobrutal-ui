@@ -3,73 +3,48 @@ name: Readiness workspace
 on:
   push:
     branches: [chore/registry-directory-ready]
-    paths:
-      - .github/workflows/readiness-workspace.yml
-      - .github/readiness-edit.py
+    paths: [.github/workflows/readiness-workspace.yml]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  workspace:
-    if: github.repository == 'andongmin94/neobrutal-ui' && github.ref == 'refs/heads/chore/registry-directory-ready'
+  upstream-directory:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: |
-            registry/package-lock.json
-            docs/package-lock.json
-      - name: Install dependencies and apply compatible advisory fixes
+          cache-dependency-path: registry/package-lock.json
+      - run: npm ci --prefix registry
+      - name: Fetch the official directory and validator
         run: |
-          npm ci --prefix registry
-          npm ci --prefix docs
-          npm pkg set --prefix registry 'devDependencies.next=^16.3.3'
-          npm audit fix --prefix registry
-          npm audit fix --prefix docs
-          npm audit --prefix registry
-          npm audit --prefix docs
-      - name: Apply reviewed source edits
+          git clone --depth=1 --filter=blob:none --sparse https://github.com/shadcn-ui/ui.git /tmp/shadcn-directory
+          git -C /tmp/shadcn-directory sparse-checkout set apps/v4/registry apps/v4/lib apps/v4/scripts
+          echo "UPSTREAM_SHA=$(git -C /tmp/shadcn-directory rev-parse HEAD)"
+      - name: Add the proposed entry and run the unmodified official validator
         run: |
-          python3 .github/readiness-edit.py
-          sed -i 's/next: "\^16.3.0"/next: "^16.3.3"/' registry/scripts/verify-consumer.mjs
-      - name: Build and synchronize the candidate
-        run: |
-          npm run lint --prefix registry
-          npm run build --prefix registry
-          npm run lint --prefix docs
-      - name: Persist candidate sources
-        run: |
-          rm .github/readiness-edit.py
-          git restore .github/workflows/ci.yml
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add README.md registry docs .github/readiness-edit.py
-          git diff --cached --stat
-          git commit -m 'feat: prepare flat registry and isolated consumers; patch dependency advisories'
-          git push origin HEAD:chore/registry-directory-ready
-          echo "CANDIDATE_SHA=$(git rev-parse HEAD)"
-      - name: Verify registry and documentation
-        run: |
-          npm run typecheck --prefix registry
-          npm run registry:validate --prefix registry
-          npm run registry:check --prefix registry
-          npm run typecheck --prefix docs
-          npm run build --prefix docs
-      - name: Verify all-item and isolated installations
-        working-directory: registry
-        run: |
-          npm run consumer:verify
-          npm run consumer:verify -- vite --item=button
-          npm run consumer:verify -- vite --item=calendar
-          npm run consumer:verify -- next --item=dialog
-          npm run consumer:verify -- next --item=blog-template
-      - name: Summarize validation
-        run: |
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import fs from 'node:fs';
+          const file = '/tmp/shadcn-directory/apps/v4/registry/directory.json';
+          const entries = JSON.parse(fs.readFileSync(file, 'utf8'));
+          const entry = JSON.parse(fs.readFileSync('registry/directory-entry.json', 'utf8'));
+          assert.ok(!entries.some(item => item.name.toLowerCase() === entry.name.toLowerCase()), 'Namespace is already registered');
+          entries.push(entry);
+          entries.sort((a, b) => a.name.localeCompare(b.name, 'en'));
+          fs.writeFileSync(file, `${JSON.stringify(entries, null, 2)}\n`);
+          JS
+          ln -s "$GITHUB_WORKSPACE/registry/node_modules" /tmp/shadcn-directory/apps/v4/node_modules
+          cd /tmp/shadcn-directory/apps/v4
+          "$GITHUB_WORKSPACE/registry/node_modules/.bin/tsx" scripts/validate-registries.mts
+          git diff -- registry/directory.json > /tmp/neobrutal-ui-directory.patch
           git diff --stat
-          git diff --exit-code
-          echo "Verified candidate $(git rev-parse HEAD)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shadcn-directory-submission
+          path: /tmp/neobrutal-ui-directory.patch
+          retention-days: 7
