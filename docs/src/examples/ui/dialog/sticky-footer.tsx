@@ -10,30 +10,33 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+const reviewNotes = [
+  "Review the summary, owner, and due date before sharing this workspace with the team.",
+  "Confirm that keyboard navigation, empty states, and narrow-screen layouts are in the release checklist.",
+  "Record unresolved decisions next to the component they affect so the next review starts with context.",
+];
+
 export default function DialogWithStickyFooter() {
   return (
     <Dialog>
       <DialogTrigger render={<Button />}>Sticky Footer</DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Scrollable Content</DialogTitle>
-          <DialogDescription>This is a dialog with scrollable content.</DialogDescription>
+          <DialogTitle>Review checklist</DialogTitle>
+          <DialogDescription>
+            Scroll through the notes while the close action remains available.
+          </DialogDescription>
         </DialogHeader>
         <div className="-mx-6 max-h-[500px] overflow-y-auto px-6 text-sm">
-          <h4 className="mb-4 text-lg leading-none font-medium">Lorem Ipsum</h4>
-          {Array.from({ length: 10 }).map((_, index) => (
+          <h4 className="mb-4 text-lg leading-none font-medium">Project review notes</h4>
+          {Array.from({ length: 9 }, (_, index) => (
             <p key={index} className="mb-4 leading-normal">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-              incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-              exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-              dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-              Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-              mollit anim id est laborum.
+              {reviewNotes[index % reviewNotes.length]}
             </p>
           ))}
         </div>
         <DialogFooter>
-          <DialogClose render={<Button />}>Close</DialogClose>
+          <DialogClose render={<Button />}>Close review</DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
