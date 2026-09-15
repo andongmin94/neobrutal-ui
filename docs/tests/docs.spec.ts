@@ -13,8 +13,11 @@ test("home has a working showcase, installation path, and URL-backed directory",
   const cardBounds = await card.boundingBox();
   expect(cardBounds!.width).toBeLessThanOrEqual(page.viewportSize()!.width);
   await card.click();
-  await expect(page.getByRole("heading", { name: "Calendar", exact: true })).toBeVisible();
+  // The directory card already has a Calendar heading; it cannot confirm navigation.
+  await expect(page).toHaveURL(/\/docs\/calendar\/?$/);
+  await expect(page.locator(".docs-page-header").getByRole("heading", { name: "Calendar", exact: true })).toBeVisible();
   await page.goBack();
+  await expect(page).toHaveURL(/\/\?q=calendar$/);
   await expect(page.getByRole("searchbox", { name: "Search component directory" })).toHaveValue("calendar");
   await page.getByRole("button", { name: "Clear search", exact: true }).click();
   await page.evaluate(() => window.scrollTo(0, 0));
