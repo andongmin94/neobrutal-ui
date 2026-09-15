@@ -45,7 +45,7 @@ jobs:
         run: |
           npm run lint
           npm run typecheck
-          npm run build
+          npm run build > /tmp/registry-build.log 2>&1 || { tail -n 80 /tmp/registry-build.log; exit 1; }
           npm run registry:validate
           npm run registry:check
       - name: Check and build docs
@@ -53,19 +53,22 @@ jobs:
         run: |
           npm run lint
           npm run typecheck
-          npm run build
+          npm run build > /tmp/docs-build.log 2>&1 || { tail -n 100 /tmp/docs-build.log; exit 1; }
+          tail -n 4 /tmp/docs-build.log
           npm test
       - name: Desktop browser verification
         working-directory: docs
         run: |
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps chromium > /tmp/browser-install.log 2>&1 || { tail -n 80 /tmp/browser-install.log; exit 1; }
           npm run test:browser -- --project=desktop-light
       - name: Browser verification across themes and viewports
         working-directory: docs
         run: npm run test:browser
       - name: Verify installable consumers remain intact
         working-directory: registry
-        run: npm run consumer:verify
+        run: |
+          npm run consumer:verify > /tmp/consumer-build.log 2>&1 || { tail -n 100 /tmp/consumer-build.log; exit 1; }
+          grep -E 'consumer passed|Error' /tmp/consumer-build.log
       - name: Publish only the validated source on main
         env:
           GH_TOKEN: ${{ github.token }}
@@ -91,7 +94,9 @@ jobs:
           fi
       - name: Preserve browser evidence and candidate diff
         if: always()
-        run: git diff > /tmp/docs-polish-candidate.patch
+        run: |
+          git diff > /tmp/docs-polish-candidate.patch
+          find docs/test-results -name error-context.md -exec sh -c 'echo "$1"; head -n 70 "$1"' sh {} \; || true
       - uses: actions/upload-artifact@v4
         if: always()
         with:
