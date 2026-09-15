@@ -22,24 +22,24 @@ export default function DrawerDemo() {
     <div className="grid justify-items-center gap-3">
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger asChild>
-          <Button>Open</Button>
+          <Button>Open drawer</Button>
         </DrawerTrigger>
         <DrawerContent>
           <div className="mx-auto w-[300px]">
             <DrawerHeader>
-              <DrawerTitle>Are you absolutely sure?</DrawerTitle>
-              <DrawerDescription>This action cannot be undone.</DrawerDescription>
+              <DrawerTitle>Submit this preview action?</DrawerTitle>
+              <DrawerDescription>This demo records a local action only.</DrawerDescription>
             </DrawerHeader>
             <DrawerFooter className="grid grid-cols-2">
               <Button
                 type="button"
                 variant="noShadow"
                 onClick={() => {
-                  setMessage("Action submitted.");
+                  setMessage("Demo action submitted locally.");
                   setOpen(false);
                 }}
               >
-                Submit
+                Submit demo
               </Button>
               <DrawerClose asChild>
                 <Button
