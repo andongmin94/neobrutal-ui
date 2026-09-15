@@ -14,6 +14,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Archive the exact sources under review
+        run: git archive --format=tar.gz --output=/tmp/docs-review-source.tar.gz HEAD
+
+      - name: Save review sources
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-review-source
+          retention-days: 7
+          path: /tmp/docs-review-source.tar.gz
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
