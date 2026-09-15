@@ -24,37 +24,33 @@ jobs:
           cache-dependency-path: |
             registry/package-lock.json
             docs/package-lock.json
-      - name: Install locked dependencies and inspect advisories
+      - name: Install dependencies and apply compatible advisory fixes
         run: |
           npm ci --prefix registry
           npm ci --prefix docs
-          npm audit --prefix registry --json > /tmp/registry-audit.json || true
-          npm audit --prefix docs --json > /tmp/docs-audit.json || true
-          node --input-type=module <<'JS'
-          import fs from 'node:fs';
-          for (const name of ['registry', 'docs']) {
-            const report = JSON.parse(fs.readFileSync(`/tmp/${name}-audit.json`, 'utf8'));
-            console.log('AUDIT', name, JSON.stringify(report.metadata));
-            for (const value of Object.values(report.vulnerabilities ?? {})) {
-              console.log(JSON.stringify({name:value.name,severity:value.severity,isDirect:value.isDirect,range:value.range,fixAvailable:value.fixAvailable,via:value.via}));
-            }
-          }
-          JS
+          npm pkg set --prefix registry 'devDependencies.next=^16.3.3'
+          npm audit fix --prefix registry
+          npm audit fix --prefix docs
+          npm audit --prefix registry
+          npm audit --prefix docs
       - name: Apply reviewed source edits
-        run: python3 .github/readiness-edit.py
+        run: |
+          python3 .github/readiness-edit.py
+          sed -i 's/next: "\^16.3.0"/next: "^16.3.3"/' registry/scripts/verify-consumer.mjs
       - name: Build and synchronize the candidate
-        working-directory: registry
         run: |
-          npm run lint
-          npm run build
-      - name: Persist candidate and remove temporary preparation tools
+          npm run lint --prefix registry
+          npm run build --prefix registry
+          npm run lint --prefix docs
+      - name: Persist candidate sources
         run: |
-          rm .github/readiness-edit.py .github/workflows/readiness-workspace.yml
+          rm .github/readiness-edit.py
+          git restore .github/workflows/ci.yml
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add README.md registry docs .github
+          git add README.md registry docs .github/readiness-edit.py
           git diff --cached --stat
-          git commit -m 'feat: prepare flat registry, server-safe button styles, and isolated consumer checks'
+          git commit -m 'feat: prepare flat registry and isolated consumers; patch dependency advisories'
           git push origin HEAD:chore/registry-directory-ready
           echo "CANDIDATE_SHA=$(git rev-parse HEAD)"
       - name: Verify registry and documentation
@@ -62,7 +58,6 @@ jobs:
           npm run typecheck --prefix registry
           npm run registry:validate --prefix registry
           npm run registry:check --prefix registry
-          npm run lint --prefix docs
           npm run typecheck --prefix docs
           npm run build --prefix docs
       - name: Verify all-item and isolated installations
