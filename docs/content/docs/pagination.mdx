@@ -1,64 +1,73 @@
 ---
 title: Pagination
-description: Displays page numbers and controls for navigating paginated data.
+description: Links for moving through a paginated collection.
 shadcnDocsLink: https://ui.shadcn.com/docs/components/pagination
 ---
 
-<ComponentPreview component="pagination">
+Use Pagination when a collection has addressable pages. It styles links but does not fetch data, calculate page counts, or manage the current page. For client-side table state, see [Data Table](/docs/data-table).
 
+<ComponentPreview component="pagination">
 <include cwd lang="tsx">
   ./src/examples/ui/pagination.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="pagination">
+
+Create **`components/ui/pagination.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/pagination.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-```ts
+```tsx
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
-  PaginationPrevious,
 } from "@/components/ui/pagination";
+
+export default function ArticlePages() {
+  return (
+    <Pagination aria-label="Article pages">
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationLink href="?page=1" isActive>
+            1
+          </PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="?page=2">2</PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationNext href="?page=2" />
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
+  );
+}
 ```
 
-```tsx
-<Pagination>
-  <PaginationContent>
-    <PaginationItem>
-      <PaginationPrevious href="#" />
-    </PaginationItem>
-    <PaginationItem>
-      <PaginationLink href="#">1</PaginationLink>
-    </PaginationItem>
-    <PaginationItem>
-      <PaginationLink href="#" isActive>
-        2
-      </PaginationLink>
-    </PaginationItem>
-    <PaginationItem className="hidden md:block">
-      <PaginationLink href="#">3</PaginationLink>
-    </PaginationItem>
-    <PaginationItem className="hidden md:block">
-      <PaginationEllipsis />
-    </PaginationItem>
-    <PaginationItem>
-      <PaginationNext href="#" />
-    </PaginationItem>
-  </PaginationContent>
-</Pagination>
-```
+## API reference
+
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `Pagination` | Named navigation landmark | Labelled pagination |
+| `PaginationLink.href` | Destination URL | Unset |
+| `PaginationLink.isActive` | Current-page state and aria-current | `false` |
+| `PaginationLink.size` | Button-style size | `icon` |
+| `PaginationPrevious.text` / `PaginationNext.text` | Directional label | `Previous` / `Next` |
+| `PaginationEllipsis` | Omitted pages | Non-interactive |
+
+## Accessibility
+
+Provide actual destinations and mark exactly one current page. Anchors have no native disabled state: omit unavailable Previous/Next links or render non-interactive text instead of keeping a clickable link styled as disabled. Use a specific collection label when a page has multiple pagination controls.

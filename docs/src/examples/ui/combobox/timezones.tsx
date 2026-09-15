@@ -75,7 +75,13 @@ export default function TimezoneCombobox() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="noShadow" className="h-12 w-full justify-between px-2.5 md:max-w-[200px]">
+        <Button
+          variant="noShadow"
+          role="combobox"
+          aria-label="Select a timezone"
+          aria-expanded={open}
+          className="h-12 w-full justify-between px-2.5 md:max-w-[200px]"
+        >
           {selectedTimezoneLabel ? (
             <div className="flex flex-col items-start gap-0.5">
               <span className="text-main-foreground text-xs font-normal">

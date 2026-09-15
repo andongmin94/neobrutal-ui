@@ -22,7 +22,7 @@ export default function CardDemo() {
       className="w-full max-w-sm"
       onSubmit={(event) => {
         event.preventDefault();
-        setMessage("Signed in successfully.");
+        setMessage("Demo submitted locally. No sign-in request was sent.");
       }}
     >
       <Card>
@@ -42,7 +42,7 @@ export default function CardDemo() {
                 <button
                   type="button"
                   className="ml-auto inline-block cursor-pointer text-sm underline-offset-4 hover:underline"
-                  onClick={() => setMessage("Password reset instructions sent.")}
+                  onClick={() => setMessage("Reset selected in this demo. No email was sent.")}
                 >
                   Forgot your password?
                 </button>
@@ -59,7 +59,9 @@ export default function CardDemo() {
             type="button"
             variant="neutral"
             className="w-full"
-            onClick={() => setMessage("Google sign-in selected.")}
+            onClick={() =>
+              setMessage("Google sign-in selected in this demo. No authentication was started.")
+            }
           >
             Login with Google
           </Button>
@@ -68,7 +70,7 @@ export default function CardDemo() {
             <button
               type="button"
               className="cursor-pointer underline underline-offset-4"
-              onClick={() => setMessage("Sign-up selected.")}
+              onClick={() => setMessage("Sign-up selected in this demo. No account was created.")}
             >
               Sign up
             </button>

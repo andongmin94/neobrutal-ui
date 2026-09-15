@@ -1,44 +1,62 @@
 ---
 title: Input Group
-description: Combines inputs with icons, text, and actions inside one field boundary.
+description: A field with attached labels, units, icons, or action controls.
 shadcnDocsLink: https://ui.shadcn.com/docs/components/input-group
 ---
 
-<ComponentPreview component="input-group">
+Use Input Group to keep a field and its supporting controls together. The root is a layout container, not an input or form. Use InputGroupInput or InputGroupTextarea for the actual value.
 
+<ComponentPreview component="input-group">
 <include cwd lang="tsx">
   ./src/examples/ui/input-group.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="input-group">
+
+Install [Button](/docs/button), [Input](/docs/input), and [Textarea](/docs/textarea). Create **`components/ui/input-group.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/input-group.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
 ```tsx
 import { Search } from "lucide-react";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group";
+export default function SearchField() {
+  return (
+    <div className="grid max-w-sm gap-2">
+      <label htmlFor="site-search">Search documentation</label>
+      <InputGroup>
+        <InputGroupAddon>
+          <Search aria-hidden="true" />
+        </InputGroupAddon>
+        <InputGroupInput id="site-search" name="q" type="search" placeholder="Component name" />
+      </InputGroup>
+    </div>
+  );
+}
 ```
 
-```tsx
-<InputGroup>
-  <InputGroupAddon>
-    <Search aria-hidden="true" />
-  </InputGroupAddon>
-  <InputGroupInput aria-label="Search components" placeholder="Search components..." />
-</InputGroup>
-```
+## API reference
+
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `InputGroup` | Border and shared state styling | Layout container |
+| `InputGroupAddon.align` | `inline-start`, `inline-end`, `block-start`, `block-end` | `inline-start` |
+| `InputGroupInput` / `InputGroupTextarea` | Native field props | Uncontrolled |
+| `InputGroupButton.variant` / `size` | Appearance; sizes xs, sm, icon-xs, icon-sm | `ghost` / `xs` |
+| `InputGroupButton.type` | Native button type | `button` |
+| `InputGroupText` | Non-interactive prefix, suffix, or unit | Text |
+
+## Accessibility
+
+Label the actual field, not just the group. Hide decorative icons. Name icon-only actions and explicitly set submit type when a button submits the form. Units needed to interpret a value should also appear in the label or description. Do not place a second unrelated field inside one labelled group.

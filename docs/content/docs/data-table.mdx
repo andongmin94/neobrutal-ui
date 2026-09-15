@@ -1,35 +1,57 @@
 ---
 title: Data Table
-description: Powerful table and datagrids built using TanStack Table.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/data-table
+description: "An editable TanStack Table recipe with filtering, sorting, selection, and pagination."
+shadcnDocsLink: https://tanstack.com/table/latest/docs/introduction
 ---
 
-<ComponentPreview component="data-table">
+This is an installable recipe with sample payment data, not a generic table component accepting arbitrary data and columns. Copy it, define your row type and columns, then connect application data. Use [Table](/docs/table) for a simple semantic table without state management.
 
+<ComponentPreview component="data-table">
 <include cwd lang="tsx">
   ./src/examples/ui/data-table.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
-Install the table recipe and its TanStack Table dependency from this registry:
+Complete the [base setup](/docs/installation). The CLI resolves the dependencies. For manual installation:
 
 <Installation component="data-table">
+
+```bash
+npm install @tanstack/react-table@^8.21.3 lucide-react@^1.24.0
+```
+
+Install [Button](/docs/button), [Checkbox](/docs/checkbox), [Dropdown Menu](/docs/dropdown-menu), [Input](/docs/input), and [Table](/docs/table). Create **`components/ui/data-table.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/data-table.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-```ts
-import DataTableDemo from "@/components/ui/data-table";
+```tsx
+import DataTable from "@/components/ui/data-table";
+
+export default function PaymentsExample() {
+  return <DataTable />;
+}
 ```
 
-```tsx
-<DataTableDemo />
-```
+The default export initially renders the bundled example. Replace its `data` and `columns` definitions in the installed file; do not pass unsupported `data` or `columns` props to this export.
+
+## API reference
+
+| Recipe part | Purpose | Initial behavior |
+| --- | --- | --- |
+| `DataTable` | Default exported component without generic props | Sample payments |
+| `data` / `columns` | Row model and column definitions in source | Payment schema |
+| `sorting` / `columnFilters` | Client sorting and filtering | Empty state |
+| `rowSelection` / `columnVisibility` | Selected and hidden rows/columns | Empty state |
+| `useReactTable` | Row models and state callbacks | Configured locally |
+| `getPaginationRowModel` | Client pagination | TanStack default page size |
+
+## Accessibility
+
+Preserve semantic table elements, meaningful column headers, and names on row-selection controls. Make sorting and row actions keyboard accessible. Keep empty, loading, and error states distinct. For large or server-paginated datasets, explicitly configure server state and stable row IDs; this sample is not a database grid or backend integration.

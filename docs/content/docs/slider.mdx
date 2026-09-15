@@ -1,65 +1,97 @@
 ---
 title: Slider
-description: An input where the user selects a value from within a given range.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/slider
+description: A numeric value or range adjusted with one or more thumbs.
+shadcnDocsLink: https://base-ui.com/react/components/slider
 ---
 
-<ComponentPreview component="slider">
+Use Slider for an approximate numeric setting with a meaningful range. This wrapper takes arrays even for one thumb. For exact amounts, provide a synchronized numeric input in your application.
 
+<ComponentPreview component="slider">
 <include cwd lang="tsx">
   ./src/examples/ui/slider/index.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="slider">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Create **`components/ui/slider.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/slider.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-```ts
+```tsx
+"use client";
+import { useState } from "react";
 import { Slider } from "@/components/ui/slider";
+
+export default function VolumeSetting() {
+  const [volume, setVolume] = useState([50]);
+  return (
+    <div className="grid max-w-sm gap-3">
+      <p>Volume: {volume[0]}%</p>
+      <Slider
+        value={volume}
+        onValueChange={setVolume}
+        min={0}
+        max={100}
+        step={5}
+        getAriaLabel={() => "Volume"}
+      />
+    </div>
+  );
+}
 ```
 
-```tsx
-<Slider defaultValue={[33]} max={100} step={1} />
-```
+## API reference
+
+| Prop | Purpose | Default |
+| --- | --- | --- |
+| `value` / `onValueChange` | Controlled numeric array | Uncontrolled |
+| `defaultValue` | Initial thumb values | Wrapper default |
+| `min` / `max` / `step` | Range and step | 0 / 100 / 1 |
+| `orientation` | Horizontal or vertical layout | `horizontal` |
+| `getAriaLabel` | Name for each thumb index | Unset |
+| `disabled` | Prevent adjustment | `false` |
+| `minStepsBetweenThumbs` | Minimum thumb separation | `0` |
+
+## Accessibility
+
+Name each thumb, especially for minimum/maximum ranges. Show values and units in text. Test arrows, Home, and End, and keep pointer targets usable. Run expensive work at the end of interaction rather than on every drag update.
 
 ## Examples
 
-### Two Thumbs
+### Two thumbs
 
 <ComponentPreview component="slider" example="two-thumbs">
-
 <include cwd lang="tsx">
   ./src/examples/ui/slider/two-thumbs.tsx
 </include>
-
 </ComponentPreview>
 
 ### Vertical
 
 <ComponentPreview component="slider" example="vertical">
-
 <include cwd lang="tsx">
   ./src/examples/ui/slider/vertical.tsx
 </include>
-
 </ComponentPreview>
 
 ### Controlled
 
 <ComponentPreview component="slider" example="controlled">
-
 <include cwd lang="tsx">
   ./src/examples/ui/slider/controlled.tsx
 </include>
-
 </ComponentPreview>

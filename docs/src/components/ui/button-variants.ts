@@ -13,8 +13,8 @@ const buttonVariants = cva(
         secondary: `bg-secondary-background text-foreground border-2 border-border ${raisedPress}`,
         ghost:
           "border-2 border-transparent bg-transparent text-foreground hover:border-border hover:bg-main hover:text-main-foreground",
-        destructive: `bg-destructive text-white border-2 border-border ${raisedPress}`,
-        link: "text-primary underline-offset-4 hover:underline",
+        destructive: `bg-destructive text-destructive-foreground border-2 border-border ${raisedPress}`,
+        link: "text-foreground underline-offset-4 hover:underline",
         noShadow: "text-main-foreground bg-main border-2 border-border",
         neutral: `bg-secondary-background text-foreground border-2 border-border ${raisedPress}`,
         reverse:

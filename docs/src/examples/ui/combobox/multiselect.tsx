@@ -51,6 +51,7 @@ export default function ComboboxWithCheckbox() {
         <Button
           variant="noShadow"
           role="combobox"
+          aria-label="Select frameworks"
           aria-expanded={open}
           aria-controls={open ? contentId : undefined}
           className="w-fit min-w-[280px] justify-between"

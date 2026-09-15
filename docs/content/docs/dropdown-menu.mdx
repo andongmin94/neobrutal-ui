@@ -1,172 +1,100 @@
 ---
 title: Dropdown Menu
-description: Displays a menu to the user — such as a set of actions or functions.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/dropdown-menu
+description: A button-triggered menu of actions and selectable settings.
+shadcnDocsLink: https://base-ui.com/react/components/menu
 ---
 
-<ComponentPreview component="dropdown-menu">
+Use Dropdown Menu for commands associated with a button. Use [Select](/docs/select) for a form value. A menu item runs an application action; opening the menu does not fetch or save data.
 
+<ComponentPreview component="dropdown-menu">
 <include cwd lang="tsx">
   ./src/examples/ui/dropdown-menu/index.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). The CLI resolves dependencies. For manual installation:
+
 <Installation component="dropdown-menu">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Create **`components/ui/dropdown-menu.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/dropdown-menu.tsx
 </include>
-
 </Installation>
+
+The trigger example also uses [Button](/docs/button).
 
 ## Usage
 
-```ts
-import {
-  Cloud,
-  CreditCard,
-  Github,
-  Keyboard,
-  LifeBuoy,
-  LogOut,
-  Mail,
-  MessageSquare,
-  Plus,
-  PlusCircle,
-  Settings,
-  User,
-  UserPlus,
-  Users,
-} from "lucide-react";
-
-import React from "react";
-
+```tsx
+"use client";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+
+export default function ProjectActions() {
+  const [message, setMessage] = useState("No action selected.");
+  return (
+    <div className="grid gap-3">
+      <DropdownMenu>
+        <DropdownMenuTrigger render={<Button variant="outline" />}>
+          Project actions
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem onClick={() => setMessage("Rename selected in this preview.")}>
+            Rename
+          </DropdownMenuItem>
+          <DropdownMenuItem disabled>Export</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <p role="status">{message}</p>
+    </div>
+  );
+}
 ```
 
-```tsx
-<DropdownMenu>
-  <DropdownMenuTrigger asChild>
-    <Button variant="noShadow">Open</Button>
-  </DropdownMenuTrigger>
-  <DropdownMenuContent className="w-56">
-    <DropdownMenuLabel>My Account</DropdownMenuLabel>
-    <DropdownMenuSeparator />
-    <DropdownMenuGroup>
-      <DropdownMenuItem>
-        <User />
-        <span>Profile</span>
-        <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-      </DropdownMenuItem>
-      <DropdownMenuItem>
-        <CreditCard />
-        <span>Billing</span>
-        <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-      </DropdownMenuItem>
-      <DropdownMenuItem>
-        <Settings />
-        <span>Settings</span>
-        <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-      </DropdownMenuItem>
-      <DropdownMenuItem>
-        <Keyboard />
-        <span>Keyboard shortcuts</span>
-        <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
-      </DropdownMenuItem>
-    </DropdownMenuGroup>
-    <DropdownMenuSeparator />
-    <DropdownMenuGroup>
-      <DropdownMenuItem>
-        <Users />
-        <span>Team</span>
-      </DropdownMenuItem>
-      <DropdownMenuSub>
-        <DropdownMenuSubTrigger>
-          <UserPlus />
-          <span>Invite users</span>
-        </DropdownMenuSubTrigger>
-        <DropdownMenuPortal>
-          <DropdownMenuSubContent>
-            <DropdownMenuItem>
-              <Mail />
-              <span>Email</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <MessageSquare />
-              <span>Message</span>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <PlusCircle />
-              <span>More...</span>
-            </DropdownMenuItem>
-          </DropdownMenuSubContent>
-        </DropdownMenuPortal>
-      </DropdownMenuSub>
-      <DropdownMenuItem>
-        <Plus />
-        <span>New Team</span>
-        <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-      </DropdownMenuItem>
-    </DropdownMenuGroup>
-    <DropdownMenuSeparator />
-    <DropdownMenuItem>
-      <Github />
-      <span>GitHub</span>
-    </DropdownMenuItem>
-    <DropdownMenuItem>
-      <LifeBuoy />
-      <span>Support</span>
-    </DropdownMenuItem>
-    <DropdownMenuItem disabled>
-      <Cloud />
-      <span>API</span>
-    </DropdownMenuItem>
-    <DropdownMenuSeparator />
-    <DropdownMenuItem>
-      <LogOut />
-      <span>Log out</span>
-      <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-    </DropdownMenuItem>
-  </DropdownMenuContent>
-</DropdownMenu>
-```
+## API reference
+
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `DropdownMenu.open` / `onOpenChange` | Controlled visibility | Uncontrolled |
+| `DropdownMenuTrigger.render` | Compose the trigger button | Primitive button |
+| `DropdownMenuContent.side` / `align` | Popup position | `bottom` / `center` |
+| `DropdownMenuItem.onClick` / `disabled` | Action and availability | — / `false` |
+| `DropdownMenuCheckboxItem.checked` / `onCheckedChange` | Independent checked state | Uncontrolled |
+| `DropdownMenuRadioGroup.value` / `onValueChange` | Mutually exclusive choice | Uncontrolled |
+| `DropdownMenuSub` | Nested menu | — |
+
+## Accessibility
+
+Use an explicit trigger name and clear action labels. Arrow keys navigate items, Enter selects, and Escape dismisses. Displayed shortcut text does not implement a shortcut. For destructive actions, describe the consequence and use confirmation when warranted. Do not turn a menu into a complex form with unrelated focusable controls.
 
 ## Examples
 
 ### Checkboxes
 
 <ComponentPreview component="dropdown-menu" example="checkboxes">
-
 <include cwd lang="tsx">
   ./src/examples/ui/dropdown-menu/checkboxes.tsx
 </include>
-
 </ComponentPreview>
 
-### Radio Group
+### Radio options
 
 <ComponentPreview component="dropdown-menu" example="radio">
-
 <include cwd lang="tsx">
   ./src/examples/ui/dropdown-menu/radio.tsx
 </include>
-
 </ComponentPreview>

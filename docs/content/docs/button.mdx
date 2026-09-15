@@ -1,8 +1,10 @@
 ---
 title: Button
-description: Action buttons with hard shadows, clear states, and explicit composition.
+description: "Action buttons with explicit variants, sizes, and accessible interaction states."
 shadcnDocsLink: https://base-ui.com/react/components/button
 ---
+
+Use Button for actions such as saving, opening a dialog, or changing state. For navigation, use an anchor or router link styled with `buttonVariants`; do not nest a link inside a button.
 
 <ComponentPreview component="button">
 <include cwd lang="tsx">
@@ -12,15 +14,22 @@ shadcnDocsLink: https://base-ui.com/react/components/button
 
 ## Installation
 
-<Installation component="button">
-Install the design-system base first, then create both files. The CLI installs both automatically.
+Complete the [base setup](/docs/installation). The CLI installs both files. For manual installation:
 
-**`components/ui/button-variants.ts`**
+<Installation component="button">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Create **`components/ui/button-variants.ts`**:
+
 <include cwd lang="ts">
   ./src/components/ui/button-variants.ts
 </include>
 
-**`components/ui/button.tsx`**
+Create **`components/ui/button.tsx`**:
+
 <include cwd lang="tsx">
   ./src/components/ui/button.tsx
 </include>
@@ -29,51 +38,50 @@ Install the design-system base first, then create both files. The CLI installs b
 ## Usage
 
 ```tsx
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-<Button type="submit">Save changes</Button>
+export default function Actions() {
+  return (
+    <div className="flex flex-wrap gap-3">
+      <Button type="submit">Save changes</Button>
+      <Button variant="outline" type="button">
+        Cancel
+      </Button>
+      <Button size="icon" type="button" aria-label="Add item">
+        <Plus aria-hidden="true" />
+      </Button>
+      <Button disabled aria-busy="true">
+        Saving…
+      </Button>
+    </div>
+  );
+}
 ```
 
-Use a button for actions, not navigation. Set `type="submit"` explicitly when submitting a form.
+## API reference
 
-## Variants and sizes
-
-| Prop | Values | Default |
+| Prop / part | Purpose | Default |
 | --- | --- | --- |
 | `variant` | `default`, `outline`, `secondary`, `ghost`, `destructive`, `link`, `noShadow`, `neutral`, `reverse` | `default` |
 | `size` | `xs`, `sm`, `default`, `lg`, `icon`, `icon-xs`, `icon-sm`, `icon-lg` | `default` |
-| `disabled` | Prevents interaction and shows the disabled appearance | `false` |
-| `render` | Composes with another button element or component | Native button |
+| `type` | `button`, `submit`, or `reset` | Base UI default |
+| `disabled` | Prevents interaction | `false` |
+| `render` | Compose with another button element | Native button |
+| `aria-busy` | Communicates pending work; does not disable the control | Unset |
 
-`default` is the primary filled action; `outline` uses the page surface; `secondary` and `neutral` use the secondary surface. `ghost` removes the raised treatment. `destructive` marks destructive actions. `noShadow` keeps the border without the shadow, while `reverse` raises on hover. The `link` variant only changes appearance: it still represents an action button.
+## Accessibility
 
-## States and accessible names
+Name every icon-only button. Set `type="submit"` explicitly for form submission. Enter and Space activate the button. Manage pending state in your application and disable repeated submissions when appropriate. Custom components supplied to `render` must forward props and the ref to their underlying button.
 
-```tsx
-<Button disabled aria-busy="true">Saving…</Button>
-<Button size="icon" aria-label="Add item"><Plus aria-hidden="true" /></Button>
-```
+## Navigation and composition
 
-Import `Plus` from `lucide-react`. Give every icon-only control an accessible name. `aria-busy` communicates pending work; it does not disable a control or implement a loading operation. Keep the operation state in your application.
-
-## Navigation links
-
-Use a native anchor or router link with the server-safe style function. Do not put links inside `Button` or pass an anchor to its `render` prop.
+The `link` variant changes appearance only. For a destination, import `buttonVariants` from `@/components/ui/button-variants` and apply it to an anchor or router link. The style function is server-safe. There is no additional `Button asChild` API.
 
 ```tsx
 import { buttonVariants } from "@/components/ui/button-variants";
 
-<a href="/about" className={buttonVariants({ variant: "outline", size: "sm" })}>
-  About
-</a>
+<a href="/docs" className={buttonVariants({ variant: "outline" })}>
+  Read the guide
+</a>;
 ```
-
-## Composition
-
-`render` forwards button behavior to the chosen element. A custom component must forward the supplied props and ref to its underlying button.
-
-```tsx
-<Button render={<button data-analytics="save" />}>Save changes</Button>
-```
-
-There is no additional `Button asChild` API. For keyboard interaction, disabled focus behavior, and the full primitive API, use the Base UI reference above.

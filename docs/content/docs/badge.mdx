@@ -1,50 +1,72 @@
 ---
 title: Badge
-description: Displays a badge or a component that looks like a badge.
+description: "A compact label for status, category, or short metadata."
 shadcnDocsLink: https://ui.shadcn.com/docs/components/badge
 ---
 
-<ComponentPreview component="badge">
+Use Badge for a short status or category, not a primary action. This implementation supports two variants. For a destination, the `render` element must contain the visible content.
 
+<ComponentPreview component="badge">
 <include cwd lang="tsx">
   ./src/examples/ui/badge/index.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation), then use the CLI or copy the source:
+
 <Installation component="badge">
+
+Create **`components/ui/badge.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/badge.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-```ts
+```tsx
 import { Badge } from "@/components/ui/badge";
+
+export default function ProjectBadges() {
+  return (
+    <div className="flex flex-wrap gap-2">
+      <Badge>Published</Badge>
+      <Badge variant="neutral">Documentation</Badge>
+      <Badge render={<a href="/docs">Read the guide</a>} />
+    </div>
+  );
+}
 ```
 
-```tsx
-<Badge>Badge</Badge>
-```
+## API reference
+
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `variant` | `default` or `neutral` | `default` |
+| `children` | Short visible label | — |
+| `render` | Element containing the badge content | `span` |
+| `className` | Sizing and layout | — |
+
+## Accessibility
+
+Use readable status text rather than color alone. A decorative badge need not be focusable. An interactive badge must use a real link or button and retain a meaningful accessible name. For dynamically changing status, announce the relevant update in a suitable live region rather than marking every static badge as an alert.
 
 ## Examples
 
 ### Neutral
 
 <ComponentPreview component="badge" example="neutral">
-
 <include cwd lang="tsx">
   ./src/examples/ui/badge/neutral.tsx
 </include>
-
 </ComponentPreview>
 
-### With Icon
+## Additional examples
+
+### With icon
 
 <ComponentPreview component="badge" example="with-icon">
 

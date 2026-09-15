@@ -1,39 +1,57 @@
 ---
 title: Label
-description: Renders an accessible label associated with controls.
+description: A visible native label associated with one form control.
 shadcnDocsLink: https://ui.shadcn.com/docs/components/label
 ---
 
-<ComponentPreview component="label">
+Use Label to name an input, checkbox, switch, or select trigger. It renders a native label and does not create a field, validation state, or layout by itself.
 
+<ComponentPreview component="label">
 <include cwd lang="tsx">
   ./src/examples/ui/label.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation), then install or copy this source:
+
 <Installation component="label">
+
+Create **`components/ui/label.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/label.tsx
 </include>
-
 </Installation>
+
+The Usage example additionally uses Input.
 
 ## Usage
 
-```ts
-import { Checkbox } from "@/components/ui/checkbox";
+```tsx
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
+export default function DisplayName() {
+  return (
+    <div className="grid max-w-sm gap-2">
+      <Label htmlFor="display-name">Display name</Label>
+      <Input id="display-name" name="displayName" autoComplete="nickname" />
+    </div>
+  );
+}
 ```
 
-```tsx
-<div>
-  <div className="flex items-center space-x-2">
-    <Checkbox id="terms" />
-    <Label htmlFor="terms">Accept terms and conditions</Label>
-  </div>
-</div>
-```
+## API reference
+
+| Prop | Purpose | Default |
+| --- | --- | --- |
+| `htmlFor` | Associated control ID | Unset |
+| `children` | Visible field name | — |
+| `className` | Typography and layout | Theme styling |
+| Native label props | Standard HTML attributes | Forwarded |
+
+## Accessibility
+
+Match htmlFor to a unique control ID. Keep the label visible while the user types. Use a fieldset and legend to name a set of related controls. Do not put unrelated links or buttons inside a label, and do not substitute placeholder text for an actual field name.

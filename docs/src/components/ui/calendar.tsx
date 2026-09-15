@@ -150,7 +150,7 @@ function Calendar({
           defaultClassNames.today,
         ),
         outside: cn(
-          "text-main-foreground opacity-50 aria-selected:text-main-foreground",
+          "text-main-foreground opacity-70 aria-selected:text-main-foreground aria-selected:opacity-100",
           defaultClassNames.outside,
         ),
         disabled: cn("text-main-foreground opacity-50", defaultClassNames.disabled),

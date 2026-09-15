@@ -1,33 +1,65 @@
 ---
 title: Textarea
-description: Displays a form textarea or a component that looks like a textarea.
+description: A native multi-line text field for longer input.
 shadcnDocsLink: https://ui.shadcn.com/docs/components/textarea
 ---
 
-<ComponentPreview component="textarea">
+Use Textarea for descriptions, comments, and messages needing more than one line. It preserves native textarea behavior. Validation, character limits, and submission handling remain application responsibilities.
 
+<ComponentPreview component="textarea">
 <include cwd lang="tsx">
   ./src/examples/ui/textarea.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="textarea">
+
+Create **`components/ui/textarea.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/textarea.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-```ts
+```tsx
 import { Textarea } from "@/components/ui/textarea";
+
+export default function ProjectDescription() {
+  return (
+    <div className="grid max-w-md gap-2">
+      <label htmlFor="description">Project description</label>
+      <Textarea
+        id="description"
+        name="description"
+        rows={4}
+        maxLength={500}
+        aria-describedby="description-help"
+      />
+      <p id="description-help" className="text-sm">
+        Describe the project in 500 characters or fewer.
+      </p>
+    </div>
+  );
+}
 ```
 
-```tsx
-<Textarea />
-```
+## API reference
+
+| Prop | Purpose | Default |
+| --- | --- | --- |
+| `value` / `onChange` | Controlled string and native event | Uncontrolled |
+| `defaultValue` | Initial text | Empty |
+| `rows` | Initial visible rows | Browser default |
+| `maxLength` | Maximum accepted characters | Unset |
+| `disabled` / `readOnly` / `required` | Native constraints | `false` |
+| `id` / `name` / `aria-describedby` | Label, submission key, supporting text | Unset |
+
+## Accessibility
+
+Keep a visible label and useful instructions outside the field. Associate character limits and errors with aria-describedby. Preserve resizing unless an equally usable alternative exists. Placeholder text is not a sufficient explanation.

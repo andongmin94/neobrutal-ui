@@ -88,7 +88,7 @@ export function Installation({ children, component }: { children?: ReactNode; co
           hidden={activeTab !== "cli"}
         >
           <SquareTerminal aria-hidden="true" size={18} strokeWidth={2.3} />
-          <code>{command}</code>
+          <code tabIndex={0}>{command}</code>
           <CopyButton text={command} label="Copy installation command" />
         </div>
 

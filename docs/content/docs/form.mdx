@@ -1,84 +1,99 @@
 ---
 title: Form
-description: Building forms with React Hook Form and Zod.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/form
+description: React Hook Form fields with linked labels, descriptions, and validation messages.
+shadcnDocsLink: https://react-hook-form.com/docs
 ---
 
-<ComponentPreview component="form">
+Use these helpers with React Hook Form to connect fields to validation and accessible descriptions. `Form` is a provider, not a native form element. Render a form and attach its submit handler.
 
+<ComponentPreview component="form">
 <include cwd lang="tsx">
   ./src/examples/ui/form.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="form">
+
+```bash
+npm install @base-ui/react@^1.6.0 @hookform/resolvers@^5.4.0 react-hook-form@^7.81.0 zod@^4.4.3
+```
+
+Also install [Label](/docs/label), then create **`components/ui/form.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/form.tsx
 </include>
-
 </Installation>
+
+The complete example additionally uses Input and Button. This minimal example uses built-in field rules; the preview demonstrates schema validation.
 
 ## Usage
 
-```ts
-import { zodResolver } from "@hookform/resolvers/zod";
+```tsx
+"use client";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Form,
-  FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
+  FormControl,
+  FormDescription,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-```
 
-```ts
-const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-});
+type Values = { username: string };
 
-const form = useForm<z.infer<typeof formSchema>>({
-  resolver: zodResolver(formSchema),
-  defaultValues: {
-    username: "",
-  },
-});
-
-function onSubmit(values: z.infer<typeof formSchema>) {
-  console.log(values);
+export default function ProfileForm() {
+  const form = useForm<Values>({ defaultValues: { username: "" } });
+  const [message, setMessage] = useState("");
+  return (
+    <Form {...form}>
+      <form
+        className="grid max-w-sm gap-4"
+        onSubmit={form.handleSubmit((values) => setMessage(`Local preview: ${values.username}`))}
+      >
+        <FormField
+          control={form.control}
+          name="username"
+          rules={{ required: "Enter a display name." }}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Display name</FormLabel>
+              <FormControl>
+                <Input autoComplete="nickname" {...field} />
+              </FormControl>
+              <FormDescription>Visible to workspace members.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Save preview</Button>
+        <p role="status">{message}</p>
+      </form>
+    </Form>
+  );
 }
 ```
 
-```tsx
-<Form {...form}>
-  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-    <FormField
-      control={form.control}
-      name="username"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Username</FormLabel>
-          <FormControl>
-            <Input placeholder="andongmin94" {...field} />
-          </FormControl>
-          <FormDescription>This is your public display name.</FormDescription>
-          <FormMessage />
-        </FormItem>
-      )}
-    />
-    <Button type="submit">Submit</Button>
-  </form>
-</Form>
-```
+## API reference
+
+| Part | Purpose | Requirement |
+| --- | --- | --- |
+| `Form` | React Hook Form provider | Spread the useForm methods |
+| `FormField.control` / `name` / `render` | Controller field binding | Typed field configuration |
+| `FormItem` | Shared label/control/message IDs | Wrap one field |
+| `FormLabel` | Linked visible label | Inside FormItem |
+| `FormControl` | Passes IDs and invalid state to its child | One control forwarding props and ref |
+| `FormDescription` / `FormMessage` | Help and validation feedback | Associated automatically |
+
+## Accessibility
+
+Keep labels visible and errors associated with the field. FormControl must wrap the actual control, not an unrelated layout container. Use proper input types and autocomplete attributes. Validate on the server as well as the client. During asynchronous submission show pending state, prevent accidental repeats, and keep error feedback available.

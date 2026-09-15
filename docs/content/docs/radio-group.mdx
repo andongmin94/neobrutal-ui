@@ -1,47 +1,72 @@
 ---
 title: Radio Group
-description: A set of checkable buttons where only one can be checked at a time.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/radio-group
+description: A labelled set of mutually exclusive choices.
+shadcnDocsLink: https://base-ui.com/react/components/radio-group
 ---
 
-<ComponentPreview component="radio-group">
+Use Radio Group when one choice must be selected from a short visible set. Each item needs a unique value and its own label. Use [Select](/docs/select) when space is limited or the list is longer.
 
+<ComponentPreview component="radio-group">
 <include cwd lang="tsx">
   ./src/examples/ui/radio-group.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="radio-group">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Create **`components/ui/radio-group.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/radio-group.tsx
 </include>
-
 </Installation>
+
+The example additionally uses Label.
 
 ## Usage
 
-```ts
-import { Label } from "@/components/ui/label";
+```tsx
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+
+export default function DeliveryPreference() {
+  return (
+    <fieldset className="grid gap-3">
+      <legend className="mb-3">Delivery frequency</legend>
+      <RadioGroup defaultValue="weekly" name="frequency">
+        <div className="flex items-center gap-2">
+          <RadioGroupItem value="daily" id="daily" />
+          <Label htmlFor="daily">Daily</Label>
+        </div>
+        <div className="flex items-center gap-2">
+          <RadioGroupItem value="weekly" id="weekly" />
+          <Label htmlFor="weekly">Weekly</Label>
+        </div>
+      </RadioGroup>
+    </fieldset>
+  );
+}
 ```
 
-```tsx
-<RadioGroup defaultValue="comfortable">
-  <div className="flex items-center space-x-2">
-    <RadioGroupItem value="default" id="r1" />
-    <Label htmlFor="r1">Default</Label>
-  </div>
-  <div className="flex items-center space-x-2">
-    <RadioGroupItem value="comfortable" id="r2" />
-    <Label htmlFor="r2">Comfortable</Label>
-  </div>
-  <div className="flex items-center space-x-2">
-    <RadioGroupItem value="compact" id="r3" />
-    <Label htmlFor="r3">Compact</Label>
-  </div>
-</RadioGroup>
-```
+## API reference
+
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `RadioGroup.value` / `onValueChange` | Controlled selection | Uncontrolled |
+| `RadioGroup.defaultValue` | Initial choice | Unset |
+| `RadioGroup.name` | Form submission key | Unset |
+| `RadioGroup.disabled` / `required` | Group constraints | `false` |
+| `RadioGroup.orientation` | Keyboard orientation | Upstream behavior |
+| `RadioGroupItem.value` / `id` | Unique option and label target | Value required |
+
+## Accessibility
+
+Use a fieldset and legend or an accessible group name. Label each item; its value is not a visible description. Arrow keys change the focused selection. Do not simulate a mutually exclusive choice with independent checkboxes.

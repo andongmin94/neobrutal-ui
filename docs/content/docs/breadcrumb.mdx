@@ -1,75 +1,78 @@
 ---
 title: Breadcrumb
-description: Displays the current page location within a hierarchical structure.
+description: "A linked trail showing the current page's place in a hierarchy."
 shadcnDocsLink: https://ui.shadcn.com/docs/components/breadcrumb
 ---
 
-<ComponentPreview component="breadcrumb">
+Use Breadcrumb when the page belongs to a meaningful hierarchy. Parent levels are links; the current page is a non-interactive label. It is not a replacement for primary navigation or browser history.
 
+<ComponentPreview component="breadcrumb">
 <include cwd lang="tsx">
   ./src/examples/ui/breadcrumb.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation), then install or copy this file:
+
 <Installation component="breadcrumb">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Create **`components/ui/breadcrumb.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/breadcrumb.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-```ts
+```tsx
 import {
   Breadcrumb,
-  BreadcrumbEllipsis,
+  BreadcrumbList,
   BreadcrumbItem,
   BreadcrumbLink,
-  BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
+export default function DocumentationTrail() {
+  return (
+    <Breadcrumb>
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/">Home</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/docs">Documentation</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbPage>Components</BreadcrumbPage>
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    </Breadcrumb>
+  );
+}
 ```
 
-```tsx
-<Breadcrumb>
-  <BreadcrumbList>
-    <BreadcrumbItem>
-      <BreadcrumbLink href="/">Home</BreadcrumbLink>
-    </BreadcrumbItem>
-    <BreadcrumbSeparator />
-    <BreadcrumbItem>
-      <DropdownMenu>
-        <DropdownMenuTrigger className="flex items-center gap-1">
-          <BreadcrumbEllipsis className="size-4" />
-          <span className="sr-only">Toggle menu</span>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start">
-          <DropdownMenuItem>Documentation</DropdownMenuItem>
-          <DropdownMenuItem>Themes</DropdownMenuItem>
-          <DropdownMenuItem>GitHub</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </BreadcrumbItem>
-    <BreadcrumbSeparator />
-    <BreadcrumbItem>
-      <BreadcrumbLink href="/docs/">Components</BreadcrumbLink>
-    </BreadcrumbItem>
-    <BreadcrumbSeparator />
-    <BreadcrumbItem>
-      <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
-    </BreadcrumbItem>
-  </BreadcrumbList>
-</Breadcrumb>
-```
+## API reference
+
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `Breadcrumb` | Navigation landmark and native nav props | Labelled breadcrumb |
+| `BreadcrumbList` / `BreadcrumbItem` | Ordered trail and steps | — |
+| `BreadcrumbLink.href` / `render` | Destination or router-link composition | Anchor |
+| `BreadcrumbPage` | Current non-interactive page | `aria-current="page"` |
+| `BreadcrumbSeparator` | Decorative divider | Chevron |
+| `BreadcrumbEllipsis` | Visual omitted-level indicator | Not a menu button |
+
+## Accessibility
+
+Use descriptive link text and mark only the current page. Separators are decorative. An ellipsis alone does not reveal hidden levels: compose a real menu trigger when users need to open the omitted trail. On narrow screens allow wrapping rather than hiding the current page.

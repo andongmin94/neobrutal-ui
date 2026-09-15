@@ -1,99 +1,65 @@
 ---
 title: Tabs
-description: A set of layered sections of content that display one panel at a time.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/tabs
+description: Related panels with one active tab at a time.
+shadcnDocsLink: https://base-ui.com/react/components/tabs
 ---
 
-<ComponentPreview component="tabs">
+Use Tabs to switch between closely related views without navigating to a new page. Match trigger values to TabsContent values. Use links for independently navigable destinations.
 
+<ComponentPreview component="tabs">
 <include cwd lang="tsx">
   ./src/examples/ui/tabs.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="tabs">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Create **`components/ui/tabs.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/tabs.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-```ts
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+```tsx
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+
+export default function ProjectTabs() {
+  return (
+    <Tabs defaultValue="overview" className="w-full max-w-md">
+      <TabsList aria-label="Project views">
+        <TabsTrigger value="overview">Overview</TabsTrigger>
+        <TabsTrigger value="activity">Activity</TabsTrigger>
+      </TabsList>
+      <TabsContent value="overview">Project summary and current goals.</TabsContent>
+      <TabsContent value="activity">No recent activity.</TabsContent>
+    </Tabs>
+  );
+}
 ```
 
-```tsx
-<Tabs defaultValue="account" className="max-w-[400px]">
-  <TabsList className="grid w-full grid-cols-2">
-    <TabsTrigger value="account">Account</TabsTrigger>
-    <TabsTrigger value="password">Password</TabsTrigger>
-  </TabsList>
-  <TabsContent value="account">
-    <Card>
-      <CardHeader>
-        <CardTitle>Account</CardTitle>
-        <CardDescription>
-          Make changes to your account here. Click save when you&apos;re done.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-6">
-        <div className="grid gap-3">
-          <Label htmlFor="tabs-demo-name">Name</Label>
-          <Input id="tabs-demo-name" defaultValue="Pedro Duarte" />
-        </div>
-        <div className="grid gap-3">
-          <Label htmlFor="tabs-demo-username">Username</Label>
-          <Input id="tabs-demo-username" defaultValue="@andongmin94" />
-        </div>
-      </CardContent>
-      <CardFooter>
-        <Button className="w-full" variant="neutral">
-          Save changes
-        </Button>
-      </CardFooter>
-    </Card>
-  </TabsContent>
-  <TabsContent value="password">
-    <Card>
-      <CardHeader>
-        <CardTitle>Password</CardTitle>
-        <CardDescription>
-          Change your password here. After saving, you&apos;ll be logged out.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-6">
-        <div className="grid gap-3">
-          <Label htmlFor="tabs-demo-current">Current password</Label>
-          <Input id="tabs-demo-current" type="password" />
-        </div>
-        <div className="grid gap-3">
-          <Label htmlFor="tabs-demo-new">New password</Label>
-          <Input id="tabs-demo-new" type="password" />
-        </div>
-      </CardContent>
-      <CardFooter>
-        <Button className="w-full" variant="neutral">
-          Save password
-        </Button>
-      </CardFooter>
-    </Card>
-  </TabsContent>
-</Tabs>
-```
+## API reference
+
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `Tabs.value` / `onValueChange` | Controlled active panel | Uncontrolled |
+| `Tabs.defaultValue` | Initial panel | Unset |
+| `Tabs.orientation` | Horizontal or vertical navigation | `horizontal` |
+| `Tabs.activationMode` | automatic or manual | `automatic` |
+| `TabsList.variant` | default or line styling | `default` |
+| `TabsTrigger.value` / `TabsContent.value` | Matching panel identifier | Required |
+| `TabsTrigger.disabled` | Unavailable tab | `false` |
+
+## Accessibility
+
+Name the tab list. Keep labels short and test arrows, Home/End, and Tab into the panel. Use manual activation when opening a panel triggers expensive work. Do not hide critical instructions behind an undiscoverable tab.

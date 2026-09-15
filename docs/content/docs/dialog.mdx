@@ -1,8 +1,10 @@
 ---
 title: Dialog
-description: A focused task in a modal surface, with keyboard focus management.
+description: "A focused modal task with keyboard focus management."
 shadcnDocsLink: https://base-ui.com/react/components/dialog
 ---
+
+Use Dialog for a focused task that interrupts the current page. Use [Alert Dialog](/docs/alert-dialog) for consequential confirmation. DialogContent includes the portal and backdrop; do not add a second modal wrapper.
 
 <ComponentPreview component="dialog">
 <include cwd lang="tsx">
@@ -12,49 +14,67 @@ shadcnDocsLink: https://base-ui.com/react/components/dialog
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="dialog">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Also install [Button](/docs/button), then create **`components/ui/dialog.tsx`**:
+
 <include cwd lang="tsx">
   ./src/components/ui/dialog.tsx
 </include>
 </Installation>
 
-The example also uses `input` and `label`. Install them when copying the complete form, rather than only the Dialog component.
+The live profile form additionally uses Input and Label. Its local save does not send a request. In an application, close only after an asynchronous operation succeeds and keep the dialog open on failure.
 
 ## Usage
 
 ```tsx
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
-<Dialog>
-  <DialogTrigger render={<Button />}>Open dialog</DialogTrigger>
-  <DialogContent>
-    <DialogTitle>Workspace settings</DialogTitle>
-    <DialogDescription>Update the options for this workspace.</DialogDescription>
-  </DialogContent>
-</Dialog>
+export default function WorkspaceDialog() {
+  return (
+    <Dialog>
+      <DialogTrigger render={<Button />}>Workspace settings</DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Workspace settings</DialogTitle>
+          <DialogDescription>Update preferences shared with your team.</DialogDescription>
+        </DialogHeader>
+        <p>Place the task controls here.</p>
+      </DialogContent>
+    </Dialog>
+  );
+}
 ```
 
-## Controlled state
+## API reference
 
-The live example controls `open` and closes only after handling form submission. In a real application, close after the operation succeeds; show errors inside the dialog and leave it open on failure.
-
-| Part / prop | Purpose | Default |
+| Prop / part | Purpose | Default |
 | --- | --- | --- |
-| `Dialog.open` / `onOpenChange` | Controlled visibility | Uncontrolled when omitted |
-| `Dialog.defaultOpen` | Initial uncontrolled visibility | `false` |
+| `Dialog.open` / `onOpenChange` | Controlled visibility | Uncontrolled |
+| `Dialog.defaultOpen` | Initial visibility | `false` |
 | `DialogContent.showCloseButton` | Built-in close control | `true` |
-| `DialogContent.initialFocus` | Override the initial focus destination | Base UI behavior |
-| `DialogContent.finalFocus` | Override the focus destination after closing | Base UI behavior |
-| `DialogTrigger.render` / `DialogClose.render` | Compose with your button | Primitive element |
+| `DialogContent.initialFocus` / `finalFocus` | Focus destinations | Base UI behavior |
+| `DialogTrigger.render` / `DialogClose.render` | Compose with a button | Primitive element |
 
-## Keyboard and naming
+## Accessibility
 
-Keep a meaningful `DialogTitle` and describe the task with `DialogDescription`. Tab and Shift+Tab move through the modal; Escape closes a dismissible dialog. Test that focus returns to its trigger after closing. Prefer the built-in focus behavior unless the task needs a specific destination.
+Keep a meaningful title and description. Tab and Shift+Tab stay in the modal; Escape closes a dismissible dialog. Verify that focus returns to its trigger. Do not remove the close control without providing another clear dismissal action. For longer tasks, keep actions reachable while the content scrolls.
 
-Use `render` for new compositions, as shown above. For a destructive confirmation that must require an explicit choice, use [Alert Dialog](/docs/alert-dialog).
-
-## Longer content
+## Examples
 
 ### Scrollable content
 

@@ -19,7 +19,7 @@ export function Pre({ children, __rawstring__, wrapperClassName, className, ...p
       className={["docs-code", wrapperClassName].filter(Boolean).join(" ")}
     >
       <CopyButton text={__rawstring__ ?? textContent(children)} />
-      <pre className={className} {...props}>
+      <pre tabIndex={0} className={className} {...props}>
         {children}
       </pre>
     </div>

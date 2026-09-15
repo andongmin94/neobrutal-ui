@@ -1,68 +1,76 @@
 ---
 title: Marquee
-description: A scrolling text component that animates horizontally.
+description: A repeating horizontal text strip with a pause control.
 ---
 
-<ComponentPreview component="marquee">
+Use Marquee for non-essential decorative text. It is a default export accepting short strings, not a general-purpose carousel. Keep important information available without movement.
 
+<ComponentPreview component="marquee">
 <include cwd lang="tsx">
   ./src/examples/ui/marquee.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
-The CLI installation includes the animation tokens and keyframes automatically.
+Complete the [base setup](/docs/installation). The CLI includes this item's animation styles. For manual installation:
 
 <Installation component="marquee">
+
+Create **`components/ui/marquee.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/marquee.tsx
 </include>
 
-When installing manually, also add these animation tokens and keyframes inside your
-`@theme inline` block:
+Also add this item's animation definitions to your Tailwind CSS stylesheet:
 
 ```css
---animate-marquee: marquee 5s linear infinite;
---animate-marquee2: marquee2 5s linear infinite;
-
-@keyframes marquee {
-  0% {
-    transform: translateX(0%);
+@theme inline {
+  --animate-marquee: marquee 5s linear infinite;
+  --animate-marquee2: marquee2 5s linear infinite;
+  @keyframes marquee {
+    from { transform: translateX(0%); }
+    to { transform: translateX(-100%); }
   }
-  100% {
-    transform: translateX(-100%);
-  }
-}
-
-@keyframes marquee2 {
-  0% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(0%);
+  @keyframes marquee2 {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0%); }
   }
 }
 ```
-
 </Installation>
-
-Make sure there is enough content in items so it loops perfectly.
-
-Visit <a target="_blank" href="https://jackwhiting.co.uk/posts/creating-a-marquee-with-tailwind-css">this article</a> to learn more.
 
 ## Usage
 
-```ts
-import Marquee from "@/components/ui/marquee";
-```
-
-```ts
-const items = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5"];
-```
-
 ```tsx
-<Marquee items={items} />
+import Marquee from "@/components/ui/marquee";
+
+export default function FeatureStrip() {
+  return (
+    <Marquee
+      items={[
+        "Source you own",
+        "Hard shadows",
+        "Clear interactions",
+        "Light and dark",
+        "Build your way",
+        "React components",
+      ]}
+    />
+  );
+}
 ```
+
+## API reference
+
+| Prop / behavior | Purpose | Default |
+| --- | --- | --- |
+| `items` | Short unique text strings | Required |
+| Pause / Resume | Stops or resumes both animation strips | Running |
+| Reduced motion | Disables decorative movement | User preference respected |
+| Duplicate strip | Repeated visual content | Hidden from assistive technology |
+
+## Accessibility
+
+Keep strings unique because they are used as React keys. The native Pause/Resume button is keyboard accessible and stops both strips together. Reduced-motion preferences disable animation and hide the redundant second strip. Do not put essential instructions or controls inside moving content. Supply enough items to cover the available width without gaps.

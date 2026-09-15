@@ -1,66 +1,75 @@
 ---
 title: Popover
-description: Displays floating content in relation to a target element.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/popover
+description: A floating surface opened from a nearby trigger.
+shadcnDocsLink: https://base-ui.com/react/components/popover
 ---
 
-<ComponentPreview component="popover">
+Use Popover for contextual controls that do not need a full-screen interruption. PopoverContent includes positioning and a portal. Use [Dialog](/docs/dialog) for a longer focused task.
 
+<ComponentPreview component="popover">
 <include cwd lang="tsx">
   ./src/examples/ui/popover.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="popover">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Create **`components/ui/popover.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/popover.tsx
 </include>
-
 </Installation>
+
+The trigger example additionally uses Button.
 
 ## Usage
 
-```ts
+```tsx
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverTitle,
+  PopoverDescription,
+} from "@/components/ui/popover";
+
+export default function HelpPopover() {
+  return (
+    <Popover>
+      <PopoverTrigger render={<Button variant="outline" />}>Sharing help</PopoverTrigger>
+      <PopoverContent>
+        <PopoverTitle>Workspace sharing</PopoverTitle>
+        <PopoverDescription>Only invited members can open this workspace.</PopoverDescription>
+        <a href="/docs" className="underline">
+          Read the guide
+        </a>
+      </PopoverContent>
+    </Popover>
+  );
+}
 ```
 
-```tsx
-<Popover>
-  <PopoverTrigger asChild>
-    <Button variant="noShadow">Open popover</Button>
-  </PopoverTrigger>
-  <PopoverContent className="w-80 text-main-foreground">
-    <div className="grid gap-4">
-      <div className="space-y-2">
-        <h4 className="font-heading leading-none">Dimensions</h4>
-        <p className="text-sm">Set the dimensions for the layer.</p>
-      </div>
-      <div className="grid gap-2">
-        <div className="grid grid-cols-3 items-center gap-4">
-          <Label htmlFor="width">Width</Label>
-          <Input id="width" defaultValue="100%" className="col-span-2 h-8" />
-        </div>
-        <div className="grid grid-cols-3 items-center gap-4">
-          <Label htmlFor="maxWidth">Max. width</Label>
-          <Input id="maxWidth" defaultValue="300px" className="col-span-2 h-8" />
-        </div>
-        <div className="grid grid-cols-3 items-center gap-4">
-          <Label htmlFor="height">Height</Label>
-          <Input id="height" defaultValue="25px" className="col-span-2 h-8" />
-        </div>
-        <div className="grid grid-cols-3 items-center gap-4">
-          <Label htmlFor="maxHeight">Max. height</Label>
-          <Input id="maxHeight" defaultValue="none" className="col-span-2 h-8" />
-        </div>
-      </div>
-    </div>
-  </PopoverContent>
-</Popover>
-```
+## API reference
+
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `Popover.open` / `onOpenChange` | Controlled visibility | Uncontrolled |
+| `Popover.defaultOpen` | Initial visibility | `false` |
+| `PopoverTrigger.render` | Trigger button composition | Primitive button |
+| `PopoverContent.side` / `align` | Preferred placement | `bottom` / `center` |
+| `PopoverContent.sideOffset` | Trigger-to-popup gap | `4` |
+| `PopoverContent.initialFocus` / `finalFocus` | Focus destinations | Base UI behavior |
+
+## Accessibility
+
+Name the popup with PopoverTitle and explain its purpose when needed. Keep controls reachable and verify Escape dismissal and focus return. Do not move essential instructions into a popup users must discover before they can complete a form.

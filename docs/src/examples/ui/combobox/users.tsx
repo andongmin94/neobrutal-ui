@@ -47,6 +47,7 @@ export default function UserCombobox() {
         <Button
           variant="noShadow"
           role="combobox"
+          aria-label="Select a user"
           aria-expanded={open}
           aria-controls={open ? contentId : undefined}
           className="w-full justify-between px-2 md:max-w-[200px]"

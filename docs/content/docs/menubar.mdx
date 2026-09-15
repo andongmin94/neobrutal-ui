@@ -1,131 +1,79 @@
 ---
 title: Menubar
-description: A horizontal navigation bar with clickable menu items.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/menubar
+description: A horizontal set of application menus with keyboard navigation.
+shadcnDocsLink: https://base-ui.com/react/components/menubar
 ---
 
-<ComponentPreview component="menubar">
+Use Menubar for application commands such as File and View, not as the default navigation of a marketing site. Each MenubarMenu owns a trigger and content. Use [Navigation Menu](/docs/navigation-menu) for page navigation.
 
+<ComponentPreview component="menubar">
 <include cwd lang="tsx">
   ./src/examples/ui/menubar.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="menubar">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Also install [Dropdown Menu](/docs/dropdown-menu), then create **`components/ui/menubar.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/menubar.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-```ts
+```tsx
+"use client";
+import { useState } from "react";
 import {
   Menubar,
-  MenubarCheckboxItem,
+  MenubarMenu,
+  MenubarTrigger,
   MenubarContent,
   MenubarItem,
-  MenubarMenu,
-  MenubarRadioGroup,
-  MenubarRadioItem,
-  MenubarSeparator,
-  MenubarShortcut,
-  MenubarSub,
-  MenubarSubContent,
-  MenubarSubTrigger,
-  MenubarTrigger,
 } from "@/components/ui/menubar";
+
+export default function FileMenu() {
+  const [message, setMessage] = useState("No command selected.");
+  return (
+    <div className="grid gap-3">
+      <Menubar>
+        <MenubarMenu value="file">
+          <MenubarTrigger>File</MenubarTrigger>
+          <MenubarContent>
+            <MenubarItem onClick={() => setMessage("Created a local draft.")}>
+              New draft
+            </MenubarItem>
+            <MenubarItem disabled>Export</MenubarItem>
+          </MenubarContent>
+        </MenubarMenu>
+      </Menubar>
+      <p role="status">{message}</p>
+    </div>
+  );
+}
 ```
 
-```tsx
-<Menubar>
-  <MenubarMenu>
-    <MenubarTrigger>File</MenubarTrigger>
-    <MenubarContent>
-      <MenubarItem>
-        New Tab <MenubarShortcut>⌘T</MenubarShortcut>
-      </MenubarItem>
-      <MenubarItem>
-        New Window <MenubarShortcut>⌘N</MenubarShortcut>
-      </MenubarItem>
-      <MenubarItem disabled>New Incognito Window</MenubarItem>
-      <MenubarSeparator />
-      <MenubarSub>
-        <MenubarSubTrigger>Share</MenubarSubTrigger>
-        <MenubarSubContent>
-          <MenubarItem>Email link</MenubarItem>
-          <MenubarItem>Messages</MenubarItem>
-          <MenubarItem>Notes</MenubarItem>
-        </MenubarSubContent>
-      </MenubarSub>
-      <MenubarSeparator />
-      <MenubarItem>
-        Print... <MenubarShortcut>⌘P</MenubarShortcut>
-      </MenubarItem>
-    </MenubarContent>
-  </MenubarMenu>
-  <MenubarMenu>
-    <MenubarTrigger>Edit</MenubarTrigger>
-    <MenubarContent>
-      <MenubarItem>
-        Undo <MenubarShortcut>⌘Z</MenubarShortcut>
-      </MenubarItem>
-      <MenubarItem>
-        Redo <MenubarShortcut>⇧⌘Z</MenubarShortcut>
-      </MenubarItem>
-      <MenubarSeparator />
-      <MenubarSub>
-        <MenubarSubTrigger>Find</MenubarSubTrigger>
-        <MenubarSubContent>
-          <MenubarItem>Search the web</MenubarItem>
-          <MenubarSeparator />
-          <MenubarItem>Find...</MenubarItem>
-          <MenubarItem>Find Next</MenubarItem>
-          <MenubarItem>Find Previous</MenubarItem>
-        </MenubarSubContent>
-      </MenubarSub>
-      <MenubarSeparator />
-      <MenubarItem>Cut</MenubarItem>
-      <MenubarItem>Copy</MenubarItem>
-      <MenubarItem>Paste</MenubarItem>
-    </MenubarContent>
-  </MenubarMenu>
-  <MenubarMenu>
-    <MenubarTrigger>View</MenubarTrigger>
-    <MenubarContent>
-      <MenubarCheckboxItem>Always Show Bookmarks Bar</MenubarCheckboxItem>
-      <MenubarCheckboxItem checked>Always Show Full URLs</MenubarCheckboxItem>
-      <MenubarSeparator />
-      <MenubarItem inset>
-        Reload <MenubarShortcut>⌘R</MenubarShortcut>
-      </MenubarItem>
-      <MenubarItem disabled inset>
-        Force Reload <MenubarShortcut>⇧⌘R</MenubarShortcut>
-      </MenubarItem>
-      <MenubarSeparator />
-      <MenubarItem inset>Toggle Fullscreen</MenubarItem>
-      <MenubarSeparator />
-      <MenubarItem inset>Hide Sidebar</MenubarItem>
-    </MenubarContent>
-  </MenubarMenu>
-  <MenubarMenu>
-    <MenubarTrigger>Profiles</MenubarTrigger>
-    <MenubarContent>
-      <MenubarRadioGroup value="benoit">
-        <MenubarRadioItem value="andy">Andy</MenubarRadioItem>
-        <MenubarRadioItem value="benoit">Benoit</MenubarRadioItem>
-        <MenubarRadioItem value="Luis">Luis</MenubarRadioItem>
-      </MenubarRadioGroup>
-      <MenubarSeparator />
-      <MenubarItem inset>Edit...</MenubarItem>
-      <MenubarSeparator />
-      <MenubarItem inset>Add Profile...</MenubarItem>
-    </MenubarContent>
-  </MenubarMenu>
-</Menubar>
-```
+## API reference
+
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `Menubar.value` / `onValueChange` | Controlled open-menu identifier | Uncontrolled |
+| `Menubar.defaultValue` | Initial open menu | Empty string |
+| `Menubar.loop` | Wrap trigger keyboard navigation | `true` |
+| `MenubarMenu.value` | Stable identifier | Generated if omitted |
+| `MenubarContent.align` / `sideOffset` | Popup placement | `start` / `8` |
+| `MenubarCheckboxItem.checked` / `onCheckedChange` | Checked command state | Uncontrolled |
+
+## Accessibility
+
+Keep labels short and commands meaningful. Arrow keys navigate triggers and menu items; Escape dismisses. MenubarShortcut only displays text: implement and test the corresponding keyboard handler separately. Make disabled commands visually identifiable, and do not use application-menu semantics for an ordinary list of website links.

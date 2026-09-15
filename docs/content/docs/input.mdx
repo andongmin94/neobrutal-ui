@@ -1,75 +1,104 @@
 ---
 title: Input
-description: Displays a form input field or a component that looks like an input field.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/input
+description: A single-line form control with native input behavior and theme-aware styling.
+shadcnDocsLink: https://base-ui.com/react/components/input
 ---
 
-<ComponentPreview component="input">
+Use Input for short text, email, password, or file entry. It wraps Base UI Input and preserves ordinary input props. Use [Textarea](/docs/textarea) for multi-line text and [Input Group](/docs/input-group) for attached units or actions.
 
+<ComponentPreview component="input">
 <include cwd lang="tsx">
   ./src/examples/ui/input/index.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="input">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Create **`components/ui/input.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/input.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-```ts
+```tsx
 import { Input } from "@/components/ui/input";
+
+export default function EmailField() {
+  return (
+    <div className="grid w-full max-w-sm gap-2">
+      <label htmlFor="email">Email address</label>
+      <Input
+        id="email"
+        name="email"
+        type="email"
+        autoComplete="email"
+        required
+        aria-describedby="email-help"
+      />
+      <p id="email-help" className="text-sm">
+        Used only for workspace invitations.
+      </p>
+    </div>
+  );
+}
 ```
 
-```tsx
-<Input className="w-[200px]" type="email" placeholder="Email" />
-```
+## API reference
+
+| Prop | Purpose | Default |
+| --- | --- | --- |
+| `type` | Native type such as text, email, password, file | `text` |
+| `value` / `onChange` | Controlled value and native event | Uncontrolled |
+| `defaultValue` | Initial uncontrolled value | — |
+| `id` / `name` | Label association and form key | — |
+| `disabled` / `required` / `readOnly` | Native constraints | `false` |
+| `aria-invalid` / `aria-describedby` | Invalid state and supporting text | Unset |
+
+## Accessibility
+
+Provide a visible label or justified accessible name. A placeholder is not a label. Match autocomplete and input mode to the task. Do not control the value of a file input. Associate validation feedback with the field and validate submitted data on the server.
 
 ## Examples
 
 ### File
 
 <ComponentPreview component="input" example="file">
-
 <include cwd lang="tsx">
   ./src/examples/ui/input/file.tsx
 </include>
-
 </ComponentPreview>
 
 ### Disabled
 
 <ComponentPreview component="input" example="disabled">
-
 <include cwd lang="tsx">
   ./src/examples/ui/input/disabled.tsx
 </include>
-
 </ComponentPreview>
 
-### With Label
+### With label
 
 <ComponentPreview component="input" example="with-label">
-
 <include cwd lang="tsx">
   ./src/examples/ui/input/with-label.tsx
 </include>
-
 </ComponentPreview>
 
-### With Button
+### With button
 
 <ComponentPreview component="input" example="with-button">
-
 <include cwd lang="tsx">
   ./src/examples/ui/input/with-button.tsx
 </include>
-
 </ComponentPreview>

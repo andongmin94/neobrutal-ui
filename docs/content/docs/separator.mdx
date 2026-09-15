@@ -1,33 +1,60 @@
 ---
 title: Separator
-description: Visually or semantically separates content.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/separator
+description: A visual divider between related groups of content.
+shadcnDocsLink: https://base-ui.com/react/components/separator
 ---
 
-<ComponentPreview component="separator">
+Use Separator sparingly to clarify a boundary. It renders the Base UI separator primitive; it is not a heading and does not name either side of the content.
 
+<ComponentPreview component="separator">
 <include cwd lang="tsx">
   ./src/examples/ui/separator.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="separator">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Create **`components/ui/separator.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/separator.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
 ```tsx
 import { Separator } from "@/components/ui/separator";
+
+export default function SectionDivider() {
+  return (
+    <div className="grid max-w-sm gap-4">
+      <h2 className="font-bold">Workspace</h2>
+      <p>Shared project settings.</p>
+      <Separator aria-hidden="true" />
+      <p>Members can manage their own notifications.</p>
+    </div>
+  );
+}
 ```
 
-```tsx
-<Separator />
-```
+## API reference
+
+| Prop | Purpose | Default |
+| --- | --- | --- |
+| `orientation` | horizontal or vertical | `horizontal` |
+| `className` | Length, spacing, and layout | Theme border color |
+| `aria-hidden` | Hide a decorative divider from assistive technology | Unset |
+| `render` | Primitive element composition | Separator primitive |
+
+## Accessibility
+
+Hide purely decorative dividers from assistive technology. Give vertical separators a parent with a defined height. Use headings and spacing for document structure rather than placing a separator between every sentence.

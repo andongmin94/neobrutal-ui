@@ -1,30 +1,38 @@
 ---
 title: Alert Dialog
-description: A modal dialog that interrupts the user with important content and expects a response.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/alert-dialog
+description: "A modal confirmation for an action that needs an explicit decision."
+shadcnDocsLink: https://base-ui.com/react/components/alert-dialog
 ---
 
-<ComponentPreview component="alert-dialog">
+Use Alert Dialog before a consequential operation. Use [Dialog](/docs/dialog) for ordinary editing. Explain the actual consequence instead of asking only “Are you sure?”.
 
+<ComponentPreview component="alert-dialog">
 <include cwd lang="tsx">
   ./src/examples/ui/alert-dialog.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation) first. The CLI includes dependencies. For manual installation:
+
 <Installation component="alert-dialog">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Also install [Button](/docs/button), then create **`components/ui/alert-dialog.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/alert-dialog.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-```ts
+```tsx
+import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,26 +44,39 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+
+export default function ConfirmArchive({ onArchive }: { onArchive: () => void }) {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger render={<Button variant="outline" />}>Archive project</AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Archive this project?</AlertDialogTitle>
+          <AlertDialogDescription>
+            The project will leave the active list. You can restore it later.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Keep project</AlertDialogCancel>
+          <AlertDialogAction onClick={onArchive}>Archive project</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
 ```
 
-```tsx
-<AlertDialog>
-  <AlertDialogTrigger asChild>
-    <Button>Open</Button>
-  </AlertDialogTrigger>
-  <AlertDialogContent>
-    <AlertDialogHeader>
-      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-      <AlertDialogDescription>
-        This action cannot be undone. This will permanently delete your account and remove your data
-        from our servers.
-      </AlertDialogDescription>
-    </AlertDialogHeader>
-    <AlertDialogFooter>
-      <AlertDialogCancel>Cancel</AlertDialogCancel>
-      <AlertDialogAction>Continue</AlertDialogAction>
-    </AlertDialogFooter>
-  </AlertDialogContent>
-</AlertDialog>
-```
+## API reference
+
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `AlertDialog.open` / `onOpenChange` | Controlled modal state | Uncontrolled |
+| `AlertDialog.defaultOpen` | Initial visibility | `false` |
+| `AlertDialogTrigger.render` | Compose a trigger button | Primitive button |
+| `AlertDialogTitle` / `AlertDialogDescription` | Accessible name and consequence | — |
+| `AlertDialogCancel` | Cancel and restore focus | Styled close button |
+| `AlertDialogAction` | Confirm and close | Styled close button |
+
+## Accessibility
+
+Keep a meaningful title and description. The modal traps keyboard focus and normally returns focus to its trigger. Cancel must be easy to identify. Closing the dialog does not prove that a server operation succeeded: for asynchronous work, control `open`, show failure inside the dialog, and close only after success.

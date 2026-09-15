@@ -58,11 +58,21 @@ function StylingPage() {
 
 function StarsPage() {
   const [copied, setCopied] = useState<number | null>(null);
+  const [failed, setFailed] = useState<number | null>(null);
 
   async function handleCopy(index: number, code: string) {
-    await copyText(code);
-    setCopied(index);
-    globalThis.setTimeout(() => setCopied((current) => (current === index ? null : current)), 1600);
+    setFailed(null);
+    setCopied(null);
+    try {
+      await copyText(code);
+      setCopied(index);
+    } catch {
+      setFailed(index);
+    }
+    globalThis.setTimeout(() => {
+      setCopied((current) => (current === index ? null : current));
+      setFailed((current) => (current === index ? null : current));
+    }, 1600);
   }
 
   return (
@@ -84,7 +94,9 @@ function StarsPage() {
               className="pressable border-2 border-border bg-main px-3 py-2 font-heading text-main-foreground"
               onClick={() => void handleCopy(index, star.code)}
             >
-              {copied === index ? "Copied" : "Copy source"}
+              <span aria-live="polite">
+                {copied === index ? "Copied" : failed === index ? "Copy failed" : "Copy source"}
+              </span>
             </button>
           </article>
         );
@@ -95,11 +107,21 @@ function StarsPage() {
 
 function TemplatesPage() {
   const [copied, setCopied] = useState<string | null>(null);
+  const [failed, setFailed] = useState<string | null>(null);
 
   async function handleCopy(slug: string, command: string) {
-    await copyText(command);
-    setCopied(slug);
-    globalThis.setTimeout(() => setCopied((current) => (current === slug ? null : current)), 1600);
+    setFailed(null);
+    setCopied(null);
+    try {
+      await copyText(command);
+      setCopied(slug);
+    } catch {
+      setFailed(slug);
+    }
+    globalThis.setTimeout(() => {
+      setCopied((current) => (current === slug ? null : current));
+      setFailed((current) => (current === slug ? null : current));
+    }, 1600);
   }
 
   return (
@@ -145,7 +167,13 @@ function TemplatesPage() {
                 className="pressable border-2 border-border bg-secondary-background px-3 py-2 font-heading"
                 onClick={() => void handleCopy(template.slug, template.installCommand)}
               >
-                {copied === template.slug ? "Copied" : "Copy"}
+                <span aria-live="polite">
+                  {copied === template.slug
+                    ? "Copied"
+                    : failed === template.slug
+                      ? "Copy failed"
+                      : "Copy"}
+                </span>
               </button>
             </div>
           </div>

@@ -1,39 +1,63 @@
 ---
 title: Hover Card
-description: For sighted users to preview content available behind a link.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/hover-card
+description: Supplementary preview content associated with a link.
+shadcnDocsLink: https://base-ui.com/react/components/preview-card
 ---
 
-<ComponentPreview component="hover-card">
+Use Hover Card to preview the destination or entity behind a link. Keep the link useful without the card. Use [Popover](/docs/popover) for an explicit interactive popup and [Tooltip](/docs/tooltip) for a very short hint.
 
+<ComponentPreview component="hover-card">
 <include cwd lang="tsx">
   ./src/examples/ui/hover-card.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="hover-card">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Create **`components/ui/hover-card.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/hover-card.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-```ts
-import { Button } from "@/components/ui/button";
+```tsx
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+
+export default function DocumentationPreview() {
+  return (
+    <HoverCard>
+      <HoverCardTrigger href="/docs" className="underline">
+        Read the documentation
+      </HoverCardTrigger>
+      <HoverCardContent>
+        <p>Installation steps, component examples, and theme guidance.</p>
+      </HoverCardContent>
+    </HoverCard>
+  );
+}
 ```
 
-```tsx
-<HoverCard>
-  <HoverCardTrigger asChild>
-    <Button variant="noShadow">Hover</Button>
-  </HoverCardTrigger>
-  <HoverCardContent>The React Framework – created and maintained by @vercel.</HoverCardContent>
-</HoverCard>
-```
+## API reference
+
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `HoverCard.open` / `onOpenChange` | Controlled preview visibility | Uncontrolled |
+| `HoverCardTrigger.href` / `render` | Link destination or composition | Anchor |
+| `HoverCardContent.side` / `align` | Preferred placement | Wrapper positioning |
+| `HoverCardContent.sideOffset` | Trigger-to-card gap | `4` |
+| `HoverCardContent.className` | Width and layout | Styled surface |
+
+## Accessibility
+
+Do not place required instructions or the only copy of an action inside hover-only content. Touch and keyboard interactions differ from hover, so provide an explicit alternative when opening the content matters. Use descriptive link text and avoid duplicate essential announcements for decorative preview text.

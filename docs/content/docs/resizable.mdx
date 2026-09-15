@@ -1,58 +1,68 @@
 ---
 title: Resizable
-description: Accessible resizable panel groups with keyboard support.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/resizable
+description: A split layout whose panels can be resized with a separator.
+shadcnDocsLink: https://react-resizable-panels.vercel.app/
 ---
 
-<ComponentPreview component="resizable">
+Use Resizable for workspaces, inspectors, and editors. Give the group a bounded size and each panel a useful minimum. The wrapper uses react-resizable-panels and interprets numeric panel sizes as percentages.
 
+<ComponentPreview component="resizable">
 <include cwd lang="tsx">
   ./src/examples/ui/resizable.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="resizable">
+
+```bash
+npm install react-resizable-panels@^4.12.2
+```
+
+Create **`components/ui/resizable.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/resizable.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-```ts
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-```
-
 ```tsx
-<ResizablePanelGroup
-  direction="horizontal"
-  className="rounded-base max-w-md border-2 border-border text-main-foreground shadow-shadow"
->
-  <ResizablePanel defaultSize={50}>
-    <div className="flex h-[200px] items-center justify-center bg-main p-6">
-      <span className="font-base">One</span>
-    </div>
-  </ResizablePanel>
-  <ResizableHandle />
-  <ResizablePanel defaultSize={50}>
-    <ResizablePanelGroup direction="vertical">
-      <ResizablePanel defaultSize={25}>
-        <div className="flex h-full items-center justify-center bg-main p-6">
-          <span className="font-base">Two</span>
-        </div>
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+
+export default function SplitWorkspace() {
+  return (
+    <ResizablePanelGroup
+      orientation="horizontal"
+      className="min-h-48 rounded-base border-2 border-border"
+    >
+      <ResizablePanel defaultSize="35%" minSize="20%">
+        <div className="p-4">Files</div>
       </ResizablePanel>
-      <ResizableHandle />
-      <ResizablePanel defaultSize={75}>
-        <div className="flex h-full items-center justify-center bg-main p-6">
-          <span className="font-base">Three</span>
-        </div>
+      <ResizableHandle withHandle aria-label="Resize file panel" />
+      <ResizablePanel defaultSize="65%" minSize="30%">
+        <div className="p-4">Editor</div>
       </ResizablePanel>
     </ResizablePanelGroup>
-  </ResizablePanel>
-</ResizablePanelGroup>
+  );
+}
 ```
+
+## API reference
+
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `ResizablePanelGroup.orientation` | Split direction | `horizontal` |
+| `ResizablePanel.defaultSize` | Initial size; numbers are percentages | Distributed by group |
+| `ResizablePanel.minSize` / `maxSize` | Resize constraints | Upstream defaults |
+| `ResizablePanel.collapsible` | Allow collapse | `false` |
+| `ResizableHandle.withHandle` | Display a grip | `false` |
+| `ResizableHandle.disabled` | Prevent adjustment | `false` |
+
+## Accessibility
+
+Name separators meaningfully. Keep controls usable at the smallest panel size and test keyboard resizing as well as dragging. Set an explicit height for vertical layouts. Use responsive CSS when a split workspace is unsuitable for narrow screens; resizing alone is not a mobile layout.

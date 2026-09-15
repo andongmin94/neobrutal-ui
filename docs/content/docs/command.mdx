@@ -1,107 +1,82 @@
 ---
 title: Command
-description: Fast, composable, unstyled command menu for React.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/command
+description: "A searchable command list, optionally presented inside a dialog."
+shadcnDocsLink: https://cmdk.paco.me/
 ---
 
-<ComponentPreview component="command">
+Use Command for searchable actions or destinations. CommandDialog combines the list with a dialog, while Command can be embedded in a popover or panel. Shortcut annotations do not register keyboard handlers.
 
+<ComponentPreview component="command">
 <include cwd lang="tsx">
   ./src/examples/ui/command.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="command">
+
+```bash
+npm install cmdk@^1.1.1
+```
+
+Also install [Dialog](/docs/dialog), then create **`components/ui/command.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/command.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-```ts
-import { Calculator, Calendar, CreditCard, Settings, Smile, User } from "lucide-react";
-
-import * as React from "react";
-
+```tsx
+"use client";
+import { useState } from "react";
 import {
-  CommandDialog,
+  Command,
+  CommandInput,
+  CommandList,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
 } from "@/components/ui/command";
+
+export default function WorkspaceCommands() {
+  const [message, setMessage] = useState("No command selected.");
+  return (
+    <div className="grid gap-3">
+      <Command className="max-w-sm rounded-base border-2 border-border">
+        <CommandInput placeholder="Find an action…" aria-label="Find an action" />
+        <CommandList>
+          <CommandEmpty>No matching command.</CommandEmpty>
+          <CommandGroup heading="Workspace">
+            <CommandItem value="new-draft" onSelect={() => setMessage("Created a local draft.")}>
+              New draft
+            </CommandItem>
+            <CommandItem disabled>Export workspace</CommandItem>
+          </CommandGroup>
+        </CommandList>
+      </Command>
+      <p role="status">{message}</p>
+    </div>
+  );
+}
 ```
 
-```tsx
-const [open, setOpen] = React.useState(false);
+## API reference
 
-React.useEffect(() => {
-  const down = (e: KeyboardEvent) => {
-    if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
-      e.preventDefault();
-      setOpen((open) => !open);
-    }
-  };
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `Command.shouldFilter` | Built-in client filtering | `true` |
+| `CommandInput.value` / `onValueChange` | Controlled query | Uncontrolled |
+| `CommandItem.value` / `keywords` | Search identity and extra terms | Derived label if omitted |
+| `CommandItem.onSelect` / `disabled` | Action and availability | — / `false` |
+| `CommandGroup.heading` | Related-action label | — |
+| `CommandDialog.open` / `onOpenChange` | Dialog visibility | Uncontrolled |
+| `CommandShortcut` | Visual annotation | No event handler |
 
-  document.addEventListener("keydown", down);
-  return () => document.removeEventListener("keydown", down);
-}, []);
-```
+## Accessibility
 
-```tsx
-<>
-  <p className="text-foreground text-sm">
-    Press{" "}
-    <kbd className="bg-main text-main-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded-base border-2 px-1.5 font-mono text-[10px] font-heading select-none">
-      <span className="text-xs">⌘</span>J
-    </kbd>
-  </p>
-  <CommandDialog open={open} onOpenChange={setOpen}>
-    <CommandInput placeholder="Type a command or search..." />
-    <CommandList>
-      <CommandEmpty>No results found.</CommandEmpty>
-      <CommandGroup heading="Suggestions">
-        <CommandItem>
-          <Calendar />
-          <span>Calendar</span>
-        </CommandItem>
-        <CommandItem>
-          <Smile />
-          <span>Search Emoji</span>
-        </CommandItem>
-        <CommandItem>
-          <Calculator />
-          <span>Calculator</span>
-        </CommandItem>
-      </CommandGroup>
-      <CommandSeparator />
-      <CommandGroup heading="Settings">
-        <CommandItem>
-          <User />
-          <span>Profile</span>
-          <CommandShortcut>⌘P</CommandShortcut>
-        </CommandItem>
-        <CommandItem>
-          <CreditCard />
-          <span>Billing</span>
-          <CommandShortcut>⌘B</CommandShortcut>
-        </CommandItem>
-        <CommandItem>
-          <Settings />
-          <span>Settings</span>
-          <CommandShortcut>⌘S</CommandShortcut>
-        </CommandItem>
-      </CommandGroup>
-    </CommandList>
-  </CommandDialog>
-</>
-```
+Label the search field and provide useful no-results feedback. Arrow keys navigate enabled items; Enter chooses an item. Keep action labels meaningful and register real keyboard shortcuts separately. For a command dialog, verify Escape and focus return. Use loading and failure feedback for remote searches rather than presenting an empty result as success.

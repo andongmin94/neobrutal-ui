@@ -869,3 +869,8 @@
 .docs-toc-inline .back-to-top {
   margin: 0 12px 12px;
 }
+
+.special-page-header .docs-page-kicker,
+.special-page-header .docs-page-kicker span {
+  color: var(--main-foreground);
+}

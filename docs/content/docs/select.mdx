@@ -1,77 +1,104 @@
 ---
 title: Select
-description: Displays a list of options for the user to pick from.
+description: A single-choice dropdown with controlled or uncontrolled state.
 shadcnDocsLink: https://base-ui.com/react/components/select
 ---
 
-<ComponentPreview component="select">
+Use Select for a compact list of predefined options. Give each SelectItem a stable value and display text. For searchable choices use [Combobox](/docs/combobox).
 
+<ComponentPreview component="select">
 <include cwd lang="tsx">
   ./src/examples/ui/select/index.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="select">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Create **`components/ui/select.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/select.tsx
 </include>
-
 </Installation>
 
-## Usage and controlled state
+## Usage
 
-The primary example is a controlled Select. Keep its string value in React state, pass `onValueChange`, and provide `items` so the displayed label is available before the popup mounts. Copy the Code tab for a complete working example, including imports and a label.
+```tsx
+"use client";
+import { useState } from "react";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
-For uncontrolled use, pass `defaultValue` instead of `value`. Do not switch between controlled and uncontrolled values during a component's lifetime.
+export default function PublicationStatus() {
+  const [status, setStatus] = useState("draft");
+  return (
+    <div className="grid max-w-sm gap-2">
+      <label htmlFor="publication-status">Publication status</label>
+      <Select value={status} onValueChange={setStatus}>
+        <SelectTrigger id="publication-status">
+          <SelectValue placeholder="Choose a status" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="draft">Draft</SelectItem>
+          <SelectItem value="published">Published</SelectItem>
+        </SelectContent>
+      </Select>
+      <p role="status">Selected: {status}</p>
+    </div>
+  );
+}
+```
 
-| Part / prop | Purpose | Default |
+## API reference
+
+| Prop / part | Purpose | Default |
 | --- | --- | --- |
-| `Select.value` / `onValueChange` | Controlled string value | Uncontrolled when omitted |
-| `Select.defaultValue` | Initial uncontrolled selection | No selection |
-| `Select.items` | Available values and display labels | Inferred from direct item children |
-| `Select.name` | Name of the field submitted with a form | Not set |
-| `Select.disabled` | Disables the selection control | `false` |
-| `SelectTrigger.size` | `sm` or `default` | `default` |
-| `SelectContent.side` | Preferred popup side | `bottom` |
+| `Select.value` / `onValueChange` | Controlled string selection | Uncontrolled |
+| `Select.defaultValue` | Initial selection | Unset |
+| `Select.name` / `required` / `disabled` | Form key and constraints | Unset / false / false |
+| `SelectTrigger.size` | sm or default | `default` |
+| `SelectValue.placeholder` | Prompt without selection | Unset |
+| `SelectItem.value` / `disabled` | Option value and availability | Value required / false |
 
-This wrapper uses string values. It is not the full generic object-value API of the underlying primitive. Use a [Combobox](/docs/combobox) when users need to search the available options.
+## Accessibility
 
-## Keyboard and form usage
-
-Associate a `Label` with the trigger's `id`. Test arrow keys to navigate, Enter to choose, and Escape to dismiss. A placeholder is not a replacement for a label. The example includes `name="status"`; your form owns submission and validation.
+Associate a visible label with the trigger. Keep option text meaningful without color or an icon. Verify arrow navigation, typeahead, Escape, and focus return. Selection is application state; this component does not save it to a server.
 
 ## Examples
 
-### Large List
+### Large list
 
 <ComponentPreview component="select" example="large-list">
-
 <include cwd lang="tsx">
   ./src/examples/ui/select/large-list.tsx
 </include>
-
 </ComponentPreview>
 
 ### Disabled
 
 <ComponentPreview component="select" example="disabled">
-
 <include cwd lang="tsx">
   ./src/examples/ui/select/disabled.tsx
 </include>
-
 </ComponentPreview>
 
-### With Icon
+### With icon
 
 <ComponentPreview component="select" example="with-icon">
-
 <include cwd lang="tsx">
   ./src/examples/ui/select/with-icon.tsx
 </include>
-
 </ComponentPreview>

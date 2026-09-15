@@ -1,43 +1,70 @@
 ---
 title: Tooltip
-description: Displays contextual information on keyboard focus or mouse hover.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/tooltip
+description: A short supplementary description shown on hover or keyboard focus.
+shadcnDocsLink: https://base-ui.com/react/components/tooltip
 ---
 
-<ComponentPreview component="tooltip">
+Use Tooltip for brief extra context, not essential instructions or interactive content. Keep TooltipProvider around the relevant controls. A tooltip is not a substitute for its trigger's accessible name.
 
+<ComponentPreview component="tooltip">
 <include cwd lang="tsx">
   ./src/examples/ui/tooltip.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="tooltip">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Create **`components/ui/tooltip.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/tooltip.tsx
 </include>
-
 </Installation>
+
+The trigger example additionally uses Button.
 
 ## Usage
 
-```ts
+```tsx
+import { Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+
+export default function InformationHint() {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger
+          render={<Button size="icon" variant="outline" aria-label="Workspace information" />}
+        >
+          <Info aria-hidden="true" />
+        </TooltipTrigger>
+        <TooltipContent>Visible to workspace members only.</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
 ```
 
-```tsx
-<TooltipProvider>
-  <Tooltip>
-    <TooltipTrigger asChild>
-      <Button variant="noShadow">Hover</Button>
-    </TooltipTrigger>
-    <TooltipContent>
-      <p>Add to library</p>
-    </TooltipContent>
-  </Tooltip>
-</TooltipProvider>
-```
+## API reference
+
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `TooltipProvider.delay` | Opening delay in milliseconds | `0` through this wrapper |
+| `Tooltip.open` / `onOpenChange` | Controlled visibility | Uncontrolled |
+| `Tooltip.defaultOpen` | Initial visibility | `false` |
+| `TooltipTrigger.render` | Focusable-control composition | Primitive trigger |
+| `TooltipContent.side` / `align` | Preferred placement | `top` / `center` |
+| `TooltipContent.sideOffset` | Trigger gap | `4` |
+
+## Accessibility
+
+Give icon-only controls their own aria-label and hide decorative icons. Keep tooltip text concise. Do not put buttons, links, or required form help inside a tooltip. Touch users may not encounter it, so controls must remain understandable without hover content.

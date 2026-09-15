@@ -19,7 +19,7 @@ export default function SelectDemo() {
     <div className="grid w-full max-w-xs gap-3">
       <Label htmlFor="publication-status">Publication status</Label>
       <Select items={items} value={value} onValueChange={setValue} name="status">
-        <SelectTrigger id="publication-status">
+        <SelectTrigger id="publication-status" aria-label="Publication status">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

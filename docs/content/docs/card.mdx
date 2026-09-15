@@ -1,81 +1,65 @@
 ---
 title: Card
-description: Displays a card with header, content, and footer.
+description: "A bordered container with composable header, body, actions, and footer."
 shadcnDocsLink: https://ui.shadcn.com/docs/components/card
 ---
 
-<ComponentPreview component="card">
+Use Card to group related information and actions. It supplies visual structure, not navigation, selection, or heading semantics. Put real buttons and links inside it rather than making a generic container clickable.
 
+<ComponentPreview component="card">
 <include cwd lang="tsx">
   ./src/examples/ui/card.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation), then install or copy the source:
+
 <Installation component="card">
+
+Create **`components/ui/card.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/card.tsx
 </include>
-
 </Installation>
+
+The login preview additionally uses Button, Input, and Label. Its feedback is local demo state; it does not authenticate an account or send email.
 
 ## Usage
 
-```ts
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+```tsx
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+
+export default function ProjectCard() {
+  return (
+    <Card className="w-full max-w-sm">
+      <CardHeader>
+        <CardTitle>
+          <h2>Design system</h2>
+        </CardTitle>
+        <CardDescription>Shared components for the product team.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p>12 components are ready for review.</p>
+      </CardContent>
+    </Card>
+  );
+}
 ```
 
-```tsx
-<form className="w-full max-w-sm">
-  <Card>
-    <CardHeader>
-      <CardTitle>Login to your account</CardTitle>
-      <CardDescription>Enter your email below to login to your account</CardDescription>
-    </CardHeader>
-    <CardContent>
-      <div className="flex flex-col gap-6">
-        <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="m@example.com" required />
-        </div>
-        <div className="grid gap-2">
-          <div className="flex items-center">
-            <Label htmlFor="password">Password</Label>
-            <a href="#" className="ml-auto inline-block text-sm underline-offset-4 hover:underline">
-              Forgot your password?
-            </a>
-          </div>
-          <Input id="password" type="password" required />
-        </div>
-      </div>
-    </CardContent>
-    <CardFooter className="flex-col gap-2">
-      <Button type="submit" className="w-full">
-        Login
-      </Button>
-      <Button type="button" variant="neutral" className="w-full">
-        Login with Google
-      </Button>
-      <div className="mt-4 text-center text-sm">
-        Don&apos;t have an account?{" "}
-        <a href="#" className="underline underline-offset-4">
-          Sign up
-        </a>
-      </div>
-    </CardFooter>
-  </Card>
-</form>
-```
+## API reference
+
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `Card` | Root surface and shadow | `div` |
+| `CardHeader` | Title, description, and optional action layout | `div` |
+| `CardTitle` / `CardDescription` | Text styling; not heading elements | `div` |
+| `CardAction` | Action beside header content | `div` |
+| `CardContent` / `CardFooter` | Main content and action region | `div` |
+| `className` | Width and layout on each part | — |
+
+## Accessibility
+
+Put a real heading inside CardTitle when the card starts a section, using the level appropriate to the page. Name icon-only actions. Avoid nested interactive elements when adding a card-wide link. A collection of cards may use a list outside the component.

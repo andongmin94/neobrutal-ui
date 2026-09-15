@@ -178,6 +178,9 @@ export default function Examples() {
 
   return (
     <div className="pb-8">
+      <p className="mb-6 text-sm leading-6 text-foreground/80">
+        Illustrative data only. These examples do not report live registry usage or build telemetry.
+      </p>
       <nav
         aria-label="Chart series"
         className="sticky top-[var(--header-height)] z-20 -mx-4 overflow-x-auto border-y-2 border-border bg-background px-4 py-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0"

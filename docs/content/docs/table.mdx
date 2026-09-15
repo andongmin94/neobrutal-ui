@@ -1,113 +1,78 @@
 ---
 title: Table
-description: A responsive table component with sorting and filtering.
+description: Semantic table elements with consistent borders and spacing.
 shadcnDocsLink: https://ui.shadcn.com/docs/components/table
 ---
 
-<ComponentPreview component="table">
+Use Table for tabular data with headers and related rows. It includes an overflow wrapper, but sorting, filtering, pagination, and selection are not built in. Use [Data Table](/docs/data-table) as a starting point for those behaviors.
 
+<ComponentPreview component="table">
 <include cwd lang="tsx">
   ./src/examples/ui/table.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="table">
+
+Create **`components/ui/table.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/table.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-```ts
+```tsx
 import {
   Table,
-  TableBody,
   TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
   TableHeader,
+  TableBody,
   TableRow,
+  TableHead,
+  TableCell,
 } from "@/components/ui/table";
 
-const invoices = [
-  {
-    invoice: "INV001",
-    paymentStatus: "Paid",
-    totalAmount: "$250.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV002",
-    paymentStatus: "Pending",
-    totalAmount: "$150.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV003",
-    paymentStatus: "Unpaid",
-    totalAmount: "$350.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV004",
-    paymentStatus: "Paid",
-    totalAmount: "$450.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV005",
-    paymentStatus: "Paid",
-    totalAmount: "$550.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV006",
-    paymentStatus: "Pending",
-    totalAmount: "$200.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV007",
-    paymentStatus: "Unpaid",
-    totalAmount: "$300.00",
-    paymentMethod: "Credit Card",
-  },
-];
+export default function InvoiceTable() {
+  return (
+    <Table>
+      <TableCaption>Recent workspace invoices</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableHead scope="col">Invoice</TableHead>
+          <TableHead scope="col">Status</TableHead>
+          <TableHead scope="col" className="text-right">
+            Amount
+          </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell>INV-001</TableCell>
+          <TableCell>Paid</TableCell>
+          <TableCell className="text-right">$120.00</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  );
+}
 ```
 
-```tsx
-<Table>
-  <TableCaption className="text-foreground">A list of your recent invoices.</TableCaption>
-  <TableHeader>
-    <TableRow>
-      <TableHead className="w-[100px]">Invoice</TableHead>
-      <TableHead>Status</TableHead>
-      <TableHead>Method</TableHead>
-      <TableHead className="text-right">Amount</TableHead>
-    </TableRow>
-  </TableHeader>
-  <TableBody>
-    {invoices.map((invoice) => (
-      <TableRow key={invoice.invoice}>
-        <TableCell className="font-base">{invoice.invoice}</TableCell>
-        <TableCell>{invoice.paymentStatus}</TableCell>
-        <TableCell>{invoice.paymentMethod}</TableCell>
-        <TableCell className="text-right">{invoice.totalAmount}</TableCell>
-      </TableRow>
-    ))}
-  </TableBody>
-  <TableFooter>
-    <TableRow>
-      <TableCell colSpan={3}>Total</TableCell>
-      <TableCell className="text-right">$2,500.00</TableCell>
-    </TableRow>
-  </TableFooter>
-</Table>
-```
+## API reference
+
+| Part | Purpose | Default |
+| --- | --- | --- |
+| `Table` | Native table in horizontal overflow wrapper | Full width |
+| `TableHeader` / `TableBody` / `TableFooter` | thead, tbody, tfoot | Semantic elements |
+| `TableRow` | Row of cells | tr |
+| `TableHead` / `TableCell` | Header/data cell; native scope, colSpan, rowSpan | th / td |
+| `TableCaption` | Accessible visible table description | caption |
+
+## Accessibility
+
+Provide a caption or accessible name and appropriate header scopes. Align numbers consistently. Do not replace semantic cells with generic divs or make rows click-only controls. On mobile, keep the scroll region reachable without overflowing the whole page.

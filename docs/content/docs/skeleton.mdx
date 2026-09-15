@@ -1,39 +1,61 @@
 ---
 title: Skeleton
-description: Use to show a placeholder while content is loading.
+description: A placeholder showing the shape of content that is loading.
 shadcnDocsLink: https://ui.shadcn.com/docs/components/skeleton
 ---
 
-<ComponentPreview component="skeleton">
+Use Skeleton while content is pending, not when a request failed or returned no results. Match final-content dimensions to reduce layout movement. Skeleton does not fetch data or decide when to disappear.
 
+<ComponentPreview component="skeleton">
 <include cwd lang="tsx">
   ./src/examples/ui/skeleton.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="skeleton">
+
+Create **`components/ui/skeleton.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/skeleton.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-```ts
+```tsx
 import { Skeleton } from "@/components/ui/skeleton";
+
+export default function LoadingProfile() {
+  return (
+    <section aria-busy="true" aria-label="Profile">
+      <p role="status" className="sr-only">
+        Loading profile.
+      </p>
+      <div aria-hidden="true" className="flex items-center gap-4">
+        <Skeleton className="size-12 rounded-full" />
+        <div className="grid gap-2">
+          <Skeleton className="h-4 w-40" />
+          <Skeleton className="h-4 w-28" />
+        </div>
+      </div>
+    </section>
+  );
+}
 ```
 
-```tsx
-<div className="flex items-center space-x-4">
-  <Skeleton className="h-12 w-12 rounded-full" />
-  <div className="space-y-2">
-    <Skeleton className="h-4 sm:w-[250px] w-[100px]" />
-    <Skeleton className="h-4 sm:w-[200px] w-[100px]" />
-  </div>
-</div>
-```
+## API reference
+
+| Prop | Purpose | Default |
+| --- | --- | --- |
+| `className` | Width, height, and shape | Caller-defined |
+| Native div props | HTML attributes on placeholder | Forwarded |
+| `aria-hidden` | Hide decorative shapes | Set explicitly in example |
+
+## Accessibility
+
+Hide repeated shapes and expose one concise loading status for the section. Keep real context visible. Replace loading with content, an empty state, or an error message when the request finishes; an infinite placeholder is not error handling.

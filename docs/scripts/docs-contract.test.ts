@@ -91,3 +91,62 @@ test("the docs stylesheet is generated from the same default theme", () => {
     normalize(serializeThemeVariables()),
   );
 });
+
+test("every component document has complete usage, API, accessibility and installation guidance", () => {
+  const catalog = JSON.parse(fs.readFileSync("../registry/registry.json", "utf8"));
+  for (const { href } of COMPONENT_DIRECTORY_LINKS) {
+    const slug = href.split("/").pop()!;
+    const source = fs.readFileSync(`content/docs/${slug}.mdx`, "utf8");
+    for (const heading of ["Installation", "Usage", "API reference", "Accessibility"])
+      assert.ok(source.includes(`## ${heading}\n`), `${slug}: missing ${heading}`);
+    const item = catalog.items.find((entry: { name: string }) => entry.name === slug);
+    const installation = source.match(/<Installation\b[^>]*>([\s\S]*?)<\/Installation>/)?.[1];
+    if (!item) {
+      assert.ok(["combobox", "date-picker"].includes(slug));
+      assert.ok(!installation, `${slug}: composition must not advertise a nonexistent endpoint`);
+      continue;
+    }
+    assert.ok(installation, `${slug}: manual installation missing`);
+    for (const file of item.files)
+      assert.ok(
+        installation.includes(`./${file.path}`),
+        `${slug}: missing manual file ${file.path}`,
+      );
+    for (const dependency of item.dependencies ?? [])
+      assert.ok(installation.includes(dependency), `${slug}: missing package ${dependency}`);
+  }
+});
+
+test("documentation includes and internal content links resolve", () => {
+  const files = fs
+    .readdirSync("content", { recursive: true })
+    .filter((entry): entry is string => typeof entry === "string" && entry.endsWith(".mdx"));
+  const routes = new Set([
+    "/",
+    ...files.map(
+      (name) =>
+        `/${name
+          .replaceAll("\\", "/")
+          .replace(/\.mdx$/, "")
+          .replace(/\/index$/, "")}`,
+    ),
+  ]);
+  for (const file of files) {
+    const source = fs.readFileSync(`content/${file}`, "utf8");
+    for (const include of source.matchAll(/<include\b[^>]*>\s*([^<]+?)\s*<\/include>/g))
+      assert.ok(fs.existsSync(include[1].trim()), `${file}: missing include ${include[1]}`);
+    const prose = source.replace(/```[\s\S]*?```/g, "").replace(/`[^`]*`/g, "");
+    for (const match of prose.matchAll(/\]\((\/[^)\s]+)\)|(?:href|to)="(\/[^"\s]+)"/g)) {
+      const destination = (match[1] ?? match[2]).split(/[?#]/)[0].replace(/\/$/, "") || "/";
+      assert.ok(
+        routes.has(destination) || fs.existsSync(`public${destination}`),
+        `${file}: broken internal link ${destination}`,
+      );
+    }
+  }
+});
+
+test("all component Usage examples compile against the installed component types", async () => {
+  const { verifyDocsUsage } = await import("./verify-docs-usage");
+  assert.equal(verifyDocsUsage(), COMPONENT_DIRECTORY_LINKS.length);
+});

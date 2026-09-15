@@ -1,39 +1,65 @@
 ---
 title: Scroll Area
-description: Augments native scroll functionality for custom, cross-browser styling.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/scroll-area
+description: A bounded scrolling region with theme-aware scrollbars.
+shadcnDocsLink: https://base-ui.com/react/components/scroll-area
 ---
 
-<ComponentPreview component="scroll-area">
+Use Scroll Area when a panel needs its own scrollable content. Set a height or maximum height so there is something to scroll. Do not replace ordinary page scrolling without a clear layout need.
 
+<ComponentPreview component="scroll-area">
 <include cwd lang="tsx">
   ./src/examples/ui/scroll-area.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="scroll-area">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Create **`components/ui/scroll-area.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/scroll-area.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-```ts
+```tsx
 import { ScrollArea } from "@/components/ui/scroll-area";
+
+export default function ActivityList() {
+  return (
+    <ScrollArea
+      className="h-48 w-full max-w-sm rounded-base border-2 border-border"
+      aria-label="Recent activity"
+    >
+      <ul className="space-y-3 p-4">
+        {Array.from({ length: 12 }, (_, index) => (
+          <li key={index}>Workspace update {index + 1}</li>
+        ))}
+      </ul>
+    </ScrollArea>
+  );
+}
 ```
 
-```tsx
-<ScrollArea className="rounded-base h-[200px] w-[350px] text-main-foreground border-2 border-border bg-main p-4 shadow-shadow">
-  Jokester began sneaking into the castle in the middle of the night and leaving jokes all over the
-  place: under the king&apos;s pillow, in his soup, even in the royal toilet. The king was furious,
-  but he couldn&apos;t seem to stop Jokester. And then, one day, the people of the kingdom
-  discovered that the jokes left by Jokester were so funny that they couldn&apos;t help but laugh.
-  And once they started laughing, they couldn&apos;t stop.
-</ScrollArea>
-```
+## API reference
+
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `ScrollArea.className` | Root bounds and layout | Unbounded unless styled |
+| `ScrollArea.type` | auto, always, hover, or scroll visibility | `hover` |
+| `ScrollArea.scrollHideDelay` | Transient scrollbar hide delay in milliseconds | `600` |
+| `ScrollBar.orientation` | Vertical or horizontal scrollbar | `vertical` |
+| Children | Content inside the viewport | Required for useful scrolling |
+
+## Accessibility
+
+Ensure keyboard users can reach and scroll the region. Name substantial regions and do not trap wheel or touch scrolling unnecessarily. Horizontal content needs a matching horizontal scrollbar and a clear cue that more content exists.

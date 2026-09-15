@@ -1,56 +1,73 @@
 ---
 title: Date Picker
-description: A date picker component with calendar popup.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/date-picker
+description: "A date-selection recipe combining a trigger, popover, and calendar."
+shadcnDocsLink: https://daypicker.dev/docs/selection-modes
 ---
 
-<ComponentPreview component="date-picker">
+Use Date Picker when a date field should open a calendar on demand. This is a composition recipe, not a standalone registry endpoint. It keeps selected-date and popup state in your application.
 
+<ComponentPreview component="date-picker">
 <include cwd lang="tsx">
   ./src/examples/ui/date-picker.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
-The Date Picker is built using a composition of the `<Popover />` and the `<Calendar />` components.
-
-See installation instructions for the <Link href="/docs/popover">Popover</Link> and the <Link href="/docs/calendar">Calendar</Link> components.
-
-Install `date-fns` to format the selected date.
+Complete the [base setup](/docs/installation), then install [Button](/docs/button), [Popover](/docs/popover), and [Calendar](/docs/calendar). Copy the recipe into your application.
 
 ```bash
-npm install date-fns
+npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json https://neobrutal-ui.andongmin.com/r/popover.json https://neobrutal-ui.andongmin.com/r/calendar.json
 ```
+
+The live preview uses `date-fns`; install it when copying that preview. The standalone Usage example below uses native date formatting instead.
 
 ## Usage
 
-```ts
-import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
-
-import * as React from "react";
-
+```tsx
+"use client";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+
+export default function AppointmentDate() {
+  const [date, setDate] = useState<Date | undefined>();
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="grid max-w-sm gap-2">
+      <label htmlFor="appointment-date">Appointment date</label>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger render={<Button id="appointment-date" variant="outline" />}>
+          {date ? date.toLocaleDateString() : "Choose a date"}
+        </PopoverTrigger>
+        <PopoverContent align="start" className="w-auto p-0">
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={(next) => {
+              setDate(next);
+              setOpen(false);
+            }}
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+}
 ```
 
-```tsx
-const [date, setDate] = React.useState<Date>();
-```
+## API reference
 
-```tsx
-<Popover>
-  <PopoverTrigger asChild>
-    <Button variant="noShadow" className="w-[280px] justify-start text-left font-base">
-      <CalendarIcon />
-      {date ? format(date, "PPP") : <span>Pick a date</span>}
-    </Button>
-  </PopoverTrigger>
-  <PopoverContent className="w-auto border-0! p-0">
-    <Calendar mode="single" selected={date} onSelect={setDate} />
-  </PopoverContent>
-</Popover>
-```
+| Recipe state / part | Purpose | Default |
+| --- | --- | --- |
+| `date` / `setDate` | Selected Date or undefined | No date |
+| `open` / `setOpen` | Popup visibility | `false` |
+| `Calendar.mode` | Selection mode | `single` here |
+| `Calendar.disabled` | Prevent selection of matching dates | None |
+| `PopoverContent.align` | Trigger-relative placement | `start` here |
+| `Calendar.onSelect` | Save date and optionally close | Application callback |
+
+## Accessibility
+
+Label the trigger and keep the chosen date visible. Verify keyboard date navigation, Escape, and focus return after closing. A button does not submit a date value automatically: add application form state or a hidden input when needed. Store date-only values without unintended timezone conversion, and distinguish navigation bounds from disabled dates.

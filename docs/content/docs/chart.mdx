@@ -1,31 +1,79 @@
 ---
 title: Chart
-description: Beautiful charts. Built using Recharts. Copy and paste into your apps.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/chart
+description: "Theme-aware chart containers, tooltips, and legends for Recharts."
+shadcnDocsLink: https://recharts.github.io/en-US/api
 ---
 
-<ComponentPreview component="chart">
+Use ChartContainer around a Recharts chart to supply series colors and labels. The wrapper is not a charting engine or a data source. Browse the [chart gallery](/charts) for additional compositions; gallery data is illustrative.
 
+<ComponentPreview component="chart">
 <include cwd lang="tsx">
   ./src/examples/ui/chart/chart-area-stacked.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="chart">
+
+```bash
+npm install recharts@^3.9.2
+```
+
+Create **`components/ui/chart.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/chart.tsx
 </include>
-
 </Installation>
-
-### Add new variables
-
-Add the chart variables to your styling if you haven't already. Visit the <Link href="/styling">styling page</Link> for more info.
 
 ## Usage
 
-Visit the <Link href="/charts">charts page</Link> to see all the examples.
+```tsx
+"use client";
+import { Bar, BarChart, XAxis } from "recharts";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@/components/ui/chart";
+
+const data = [
+  { month: "Jan", visits: 120 },
+  { month: "Feb", visits: 180 },
+];
+const config = { visits: { label: "Visits", color: "var(--chart-1)" } } satisfies ChartConfig;
+
+export default function VisitsChart() {
+  return (
+    <figure>
+      <figcaption>Visits increased from 120 in January to 180 in February.</figcaption>
+      <ChartContainer config={config} className="h-64 w-full">
+        <BarChart accessibilityLayer data={data}>
+          <XAxis dataKey="month" />
+          <ChartTooltip content={<ChartTooltipContent />} />
+          <Bar dataKey="visits" fill="var(--color-visits)" />
+        </BarChart>
+      </ChartContainer>
+    </figure>
+  );
+}
+```
+
+## API reference
+
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `ChartContainer.config` | Series labels and colors checked with ChartConfig | Required |
+| `ChartContainer.children` | A Recharts chart | Required |
+| `className` | Chart height and responsive width | Default aspect ratio |
+| `ChartTooltip` / `ChartTooltipContent` | Tooltip primitive and styled content | — |
+| `ChartLegend` / `ChartLegendContent` | Legend primitive and styled content | — |
+| `ChartTooltipContent.indicator` | `dot`, `line`, or `dashed` | `dot` |
+
+## Accessibility
+
+Set a definite chart height so responsive measurement can work. Give each series a meaningful label and do not rely on color alone. Enable Recharts accessibility support and provide a textual summary or data table for important values. Tooltips alone are not an accessible substitute for the underlying data.

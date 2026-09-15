@@ -45,7 +45,7 @@ function Heading({
 
 function Table({ className, ...props }: ComponentProps<"table">) {
   return (
-    <div className="md-table-shell">
+    <div className="md-table-shell" tabIndex={0}>
       <table className={["md-table", className].filter(Boolean).join(" ")} {...props} />
     </div>
   );

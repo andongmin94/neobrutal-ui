@@ -9,7 +9,7 @@ import {
 export default function SelectDemo() {
   return (
     <Select disabled>
-      <SelectTrigger className="w-[180px]">
+      <SelectTrigger className="w-[180px]" aria-label="Disabled fruit selection">
         <SelectValue placeholder="Disabled" />
       </SelectTrigger>
       <SelectContent>

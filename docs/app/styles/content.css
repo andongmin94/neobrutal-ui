@@ -318,3 +318,14 @@ ol.md-list {
     gap: 8px;
   }
 }
+
+.docs-code pre:focus-visible,
+.installation-tabs__command code:focus-visible {
+  outline: 2px solid #f1f5f9;
+  outline-offset: -4px;
+}
+
+.md-table-shell:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}

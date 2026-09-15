@@ -1,98 +1,86 @@
 ---
 title: Sheet
-description: Extends the Dialog component to display content that complements the main content of the screen.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/sheet
+description: A modal panel that enters from an edge of the viewport.
+shadcnDocsLink: https://base-ui.com/react/components/dialog
 ---
 
-<ComponentPreview component="sheet">
+Use Sheet for navigation, filters, or an auxiliary task needing more room than a popover. It uses dialog semantics and includes a portal and backdrop. Use [Drawer](/docs/drawer) when drawer interaction fits the task better.
 
+<ComponentPreview component="sheet">
 <include cwd lang="tsx">
   ./src/examples/ui/sheet/index.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="sheet">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Also install [Button](/docs/button), then create **`components/ui/sheet.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/sheet.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-```ts
+```tsx
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Sheet,
-  SheetClose,
+  SheetTrigger,
   SheetContent,
-  SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
+  SheetDescription,
 } from "@/components/ui/sheet";
+
+export default function WorkspacePanel() {
+  return (
+    <Sheet>
+      <SheetTrigger render={<Button variant="outline" />}>Workspace details</SheetTrigger>
+      <SheetContent side="right">
+        <SheetHeader>
+          <SheetTitle>Workspace details</SheetTitle>
+          <SheetDescription>Settings shared with all project members.</SheetDescription>
+        </SheetHeader>
+        <div className="p-4">
+          <p>Connect your application settings here.</p>
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}
 ```
 
-```tsx
-<Sheet>
-  <SheetTrigger asChild>
-    <Button>Open</Button>
-  </SheetTrigger>
-  <SheetContent>
-    <SheetHeader>
-      <SheetTitle>Edit profile</SheetTitle>
-      <SheetDescription>
-        Make changes to your profile here. Click save when you&apos;re done.
-      </SheetDescription>
-    </SheetHeader>
-    <form id="sheet-profile-form" className="grid flex-1 auto-rows-min gap-6 px-4">
-      <div className="grid gap-3">
-        <Label htmlFor="sheet-demo-name">Name</Label>
-        <Input id="sheet-demo-name" name="name" defaultValue="Pedro Duarte" required />
-      </div>
-      <div className="grid gap-3">
-        <Label htmlFor="sheet-demo-username">Username</Label>
-        <Input
-          id="sheet-demo-username"
-          name="username"
-          defaultValue="@andongmin94"
-          required
-        />
-      </div>
-    </form>
-    <SheetFooter>
-      <Button form="sheet-profile-form" type="submit">
-        Save changes
-      </Button>
-      <SheetClose asChild>
-        <Button type="button" variant="neutral">
-          Close
-        </Button>
-      </SheetClose>
-    </SheetFooter>
-  </SheetContent>
-</Sheet>
-```
+## API reference
+
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `Sheet.open` / `onOpenChange` | Controlled visibility | Uncontrolled |
+| `Sheet.defaultOpen` | Initial visibility | `false` |
+| `SheetTrigger.render` / `SheetClose.render` | Button composition | Primitive button |
+| `SheetContent.side` | top, right, bottom, left | `right` |
+| `SheetContent.showCloseButton` | Built-in close control | `true` |
+| `SheetContent.initialFocus` / `finalFocus` | Focus destinations | Base UI behavior |
+
+## Accessibility
+
+Provide SheetTitle and a useful description. Keep the close control reachable when content scrolls. Test Escape and focus return. Avoid essential actions below an unreachable mobile viewport. Removing the default close button requires another clear dismissal action.
 
 ## Examples
 
 ### Side
 
-Use the side property to `<SheetContent />` to indicate the edge of the screen where the component will appear. The values can be `top`, `right`, `bottom` or `left`.
-
-<br />
-
 <ComponentPreview component="sheet" example="side">
-
 <include cwd lang="tsx">
   ./src/examples/ui/sheet/side.tsx
 </include>
-
 </ComponentPreview>

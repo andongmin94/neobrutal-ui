@@ -1,51 +1,116 @@
 ---
 title: Combobox
-description: Autocomplete input and command palette with a list of suggestions.
+description: "A searchable selection recipe composed from Popover and Command."
 shadcnDocsLink: https://ui.shadcn.com/docs/components/combobox
 ---
 
-<ComponentPreview component="combobox">
+Use this recipe when users need to search a list before selecting one option. It combines existing components rather than exposing a standalone Combobox registry endpoint. Adapt the options and selection state to your application.
 
+<ComponentPreview component="combobox">
 <include cwd lang="tsx">
   ./src/examples/ui/combobox/index.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
-The Combobox is built using a composition of the `<Popover />` and the `<Command />` components.
+Complete the [base setup](/docs/installation), then install [Button](/docs/button), [Popover](/docs/popover), and [Command](/docs/command). Copy the Usage recipe into your application.
 
-See installation instructions for the <Link href="/docs/popover">Popover</Link> and the <Link href="/docs/command">Command</Link> components.
+```bash
+npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json https://neobrutal-ui.andongmin.com/r/popover.json https://neobrutal-ui.andongmin.com/r/command.json
+```
+
+## Usage
+
+```tsx
+"use client";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+
+const options = ["React", "Vue", "Svelte"];
+
+export default function FrameworkPicker() {
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("");
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger
+        render={
+          <Button variant="outline" role="combobox" aria-expanded={open} aria-label="Framework" />
+        }
+      >
+        {value || "Choose framework"}
+      </PopoverTrigger>
+      <PopoverContent className="w-64 p-0">
+        <Command>
+          <CommandInput placeholder="Search frameworks…" aria-label="Search frameworks" />
+          <CommandList>
+            <CommandEmpty>No framework found.</CommandEmpty>
+            {options.map((option) => (
+              <CommandItem
+                key={option}
+                value={option}
+                onSelect={() => {
+                  setValue(option);
+                  setOpen(false);
+                }}
+              >
+                {option}
+              </CommandItem>
+            ))}
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+}
+```
+
+## API reference
+
+| Recipe state / part | Purpose | Default |
+| --- | --- | --- |
+| `open` / `setOpen` | Popover visibility | `false` |
+| `value` / `setValue` | Selected option | Empty string |
+| `CommandInput` | Filters the list | Empty query |
+| `CommandItem.value` | Searchable option identity | Explicit in this recipe |
+| `CommandItem.onSelect` | Save selection and close | Application callback |
+| `CommandEmpty` | No-match feedback | — |
+
+## Accessibility
+
+Name the selection control and search field. Keep the current selection visible in the trigger. Verify keyboard opening, list navigation, selection, dismissal, and focus return. Do not use a searchable popup for unrestricted free-text entry; this recipe selects from a predefined list. For server search, add loading and error states and disable client filtering when the server owns results.
 
 ## Examples
 
 ### Users
 
 <ComponentPreview component="combobox" example="users">
-
 <include cwd lang="tsx">
   ./src/examples/ui/combobox/users.tsx
 </include>
-
 </ComponentPreview>
 
 ### Timezones
 
 <ComponentPreview component="combobox" example="timezones">
-
 <include cwd lang="tsx">
   ./src/examples/ui/combobox/timezones.tsx
 </include>
-
 </ComponentPreview>
 
 ### Multiselect
 
 <ComponentPreview component="combobox" example="multiselect">
-
 <include cwd lang="tsx">
   ./src/examples/ui/combobox/multiselect.tsx
 </include>
-
 </ComponentPreview>

@@ -1,26 +1,35 @@
 ---
 title: Accordion
-description: A vertically stacked set of interactive headings that each reveal a section of content.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/accordion
+description: "Expandable sections for related information, with single or multiple open items."
+shadcnDocsLink: https://base-ui.com/react/components/accordion
 ---
 
-<ComponentPreview component="accordion">
+Use an accordion when readers need to scan several related sections and expand only the details they need. Use [Collapsible](/docs/collapsible) for one independent disclosure. Each item needs a stable, unique `value`.
 
+<ComponentPreview component="accordion">
 <include cwd lang="tsx">
   ./src/examples/ui/accordion.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation) first. The CLI installs this item and its dependencies. For manual installation:
+
 <Installation component="accordion">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Create **`components/ui/accordion.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/accordion.tsx
 </include>
-
 </Installation>
+
+This wrapper uses `type="single"` with a string value or `type="multiple"` with an array. Do not copy Base UI Root examples that pass `multiple` directly to this wrapper.
 
 ## Usage
 
@@ -31,13 +40,35 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+
+export default function HelpSections() {
+  return (
+    <Accordion type="single" collapsible className="w-full">
+      <AccordionItem value="source">
+        <AccordionTrigger>Can I edit the source?</AccordionTrigger>
+        <AccordionContent>Yes. Installed files belong to your application.</AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="theme">
+        <AccordionTrigger>Does it support dark mode?</AccordionTrigger>
+        <AccordionContent>Use the matching light and dark theme tokens.</AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  );
+}
 ```
 
-```tsx
-<Accordion type="single" collapsible className="w-full max-w-xl">
-  <AccordionItem value="item-1">
-    <AccordionTrigger>Is it accessible?</AccordionTrigger>
-    <AccordionContent>Yes. It adheres to the WAI-ARIA design pattern.</AccordionContent>
-  </AccordionItem>
-</Accordion>
-```
+## API reference
+
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `Accordion.type` | `single` or `multiple`; determines the value shape | Required |
+| `value` / `defaultValue` | String in single mode; string array in multiple mode | Uncontrolled |
+| `onValueChange` | Receives the new value and event details | — |
+| `collapsible` | Allows the open single item to close | `false` |
+| `orientation` / `dir` | Keyboard and text direction | `vertical` / inherited |
+| `AccordionItem.disabled` | Disables the section | `false` |
+| `AccordionContent.keepMounted` | Retains closed panel DOM | `false` |
+
+## Accessibility
+
+Write the section name in `AccordionTrigger`; it is a button inside a heading. Enter and Space toggle an item. Arrow keys move between triggers; Home and End reach the first and last enabled triggers. Do not nest another button or link inside the trigger. In controlled single mode, handle an empty string when the last item closes.

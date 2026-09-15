@@ -1,35 +1,55 @@
 ---
 title: Image Card
-description: A card component optimized for displaying images with captions.
+description: A figure with an image, caption, border, and hard shadow.
 ---
 
-<ComponentPreview component="image-card">
+Use Image Card when an image and its caption form one piece of content. It is a default export. The caption also supplies the image alternative text, so use a meaningful description rather than a filename.
 
+<ComponentPreview component="image-card">
 <include cwd lang="tsx">
   ./src/examples/ui/image-card.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation), then install or copy the source:
+
 <Installation component="image-card">
+
+Create **`components/ui/image-card.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/image-card.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-```ts
+```tsx
 import ImageCard from "@/components/ui/image-card";
+
+export default function WorkspaceImage() {
+  return (
+    <ImageCard
+      imageUrl="/images/workspace.jpg"
+      caption="The shared studio workspace"
+      className="w-full max-w-sm"
+    />
+  );
+}
 ```
 
-```tsx
-<ImageCard
-  caption="Cherry blossoms at peak bloom"
-  imageUrl="https://hips.hearstapps.com/hmg-prod/images/flowers-trees-and-bushes-reach-their-peak-of-full-bloom-in-news-photo-1678292967.jpg?resize=300:*"
-></ImageCard>
-```
+Add your own `/images/workspace.jpg` asset. The component neither uploads nor optimizes images.
+
+## API reference
+
+| Prop | Purpose | Default |
+| --- | --- | --- |
+| `imageUrl` | Image URL or application asset | Required |
+| `caption` | Visible caption and image alternative text | Required |
+| `className` | Figure width and layout | Width 250px |
+
+## Accessibility
+
+Choose a caption explaining the image. This component does not expose independent alt text or a decorative-image mode; adapt the copied source when those semantics are needed. The image fills a 4:3 area using object-cover, so verify that cropping preserves the important subject. Keep the original source asset accessible and provide a useful fallback in applications that load remote images.

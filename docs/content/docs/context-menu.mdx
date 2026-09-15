@@ -1,95 +1,81 @@
 ---
 title: Context Menu
-description: Displays a menu to the user — such as a set of actions or functions.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/context-menu
+description: "Contextual commands opened from a target region."
+shadcnDocsLink: https://base-ui.com/react/components/context-menu
 ---
 
-<ComponentPreview component="context-menu">
+Use Context Menu for commands associated with an object or region. A context menu must not be the only way to discover an essential action. Offer an ordinary button or menu for touch users and people unfamiliar with right-click behavior.
 
+<ComponentPreview component="context-menu">
 <include cwd lang="tsx">
   ./src/examples/ui/context-menu.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="context-menu">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Create **`components/ui/context-menu.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/context-menu.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-```ts
+```tsx
+"use client";
+import { useState } from "react";
 import {
   ContextMenu,
-  ContextMenuCheckboxItem,
+  ContextMenuTrigger,
   ContextMenuContent,
   ContextMenuItem,
-  ContextMenuLabel,
-  ContextMenuRadioGroup,
-  ContextMenuRadioItem,
-  ContextMenuSeparator,
-  ContextMenuShortcut,
-  ContextMenuSub,
-  ContextMenuSubContent,
-  ContextMenuSubTrigger,
-  ContextMenuTrigger,
 } from "@/components/ui/context-menu";
+
+export default function FileCommands() {
+  const [message, setMessage] = useState("No action selected.");
+  return (
+    <div className="grid gap-3">
+      <ContextMenu>
+        <ContextMenuTrigger
+          className="block rounded-base border-2 border-dashed border-border p-8"
+          tabIndex={0}
+        >
+          Right-click this file or press Shift+F10.
+        </ContextMenuTrigger>
+        <ContextMenuContent>
+          <ContextMenuItem onClick={() => setMessage("Duplicate selected in this preview.")}>
+            Duplicate
+          </ContextMenuItem>
+          <ContextMenuItem disabled>Move to archive</ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+      <p role="status">{message}</p>
+    </div>
+  );
+}
 ```
 
-```tsx
-<ContextMenu>
-  <ContextMenuTrigger
-    render={<button type="button" aria-label="Open context menu" />}
-    aria-haspopup="menu"
-    className="flex h-[150px] w-[300px] items-center justify-center rounded-base border border-dashed border-border text-sm font-base focus-visible:outline-2 focus-visible:outline-offset-4 dark:border-[#fff]"
-  >
-    Right-click or press Shift+F10
-  </ContextMenuTrigger>
-  <ContextMenuContent className="w-64">
-    <ContextMenuItem inset>
-      Back
-      <ContextMenuShortcut>⌘[</ContextMenuShortcut>
-    </ContextMenuItem>
-    <ContextMenuItem inset disabled>
-      Forward
-      <ContextMenuShortcut>⌘]</ContextMenuShortcut>
-    </ContextMenuItem>
-    <ContextMenuItem inset>
-      Reload
-      <ContextMenuShortcut>⌘R</ContextMenuShortcut>
-    </ContextMenuItem>
-    <ContextMenuSub>
-      <ContextMenuSubTrigger inset>More Tools</ContextMenuSubTrigger>
-      <ContextMenuSubContent className="w-48">
-        <ContextMenuItem>
-          Save Page As...
-          <ContextMenuShortcut>⇧⌘S</ContextMenuShortcut>
-        </ContextMenuItem>
-        <ContextMenuItem>Create Shortcut...</ContextMenuItem>
-        <ContextMenuItem>Name Window...</ContextMenuItem>
-        <ContextMenuSeparator />
-        <ContextMenuItem>Developer Tools</ContextMenuItem>
-      </ContextMenuSubContent>
-    </ContextMenuSub>
-    <ContextMenuSeparator />
-    <ContextMenuCheckboxItem checked>
-      Show Bookmarks Bar
-      <ContextMenuShortcut>⌘⇧B</ContextMenuShortcut>
-    </ContextMenuCheckboxItem>
-    <ContextMenuCheckboxItem>Show Full URLs</ContextMenuCheckboxItem>
-    <ContextMenuSeparator />
-    <ContextMenuRadioGroup value="pedro">
-      <ContextMenuLabel inset>People</ContextMenuLabel>
-      <ContextMenuSeparator />
-      <ContextMenuRadioItem value="pedro">Pedro Duarte</ContextMenuRadioItem>
-      <ContextMenuRadioItem value="colm">Colm Tuite</ContextMenuRadioItem>
-    </ContextMenuRadioGroup>
-  </ContextMenuContent>
-</ContextMenu>
-```
+## API reference
+
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `ContextMenu` | Root state and callbacks | Closed |
+| `ContextMenuTrigger` | Target region and render composition | Primitive trigger |
+| `ContextMenuContent` | Positioned menu surface | Primitive-managed |
+| `ContextMenuItem.onClick` / `disabled` | Action and availability | — / `false` |
+| `ContextMenuCheckboxItem` / `ContextMenuRadioGroup` | Stateful choices | Controlled or uncontrolled |
+| `ContextMenuSub` | Nested commands | — |
+
+## Accessibility
+
+Make the relevant target keyboard reachable when it needs keyboard context-menu access. Test Shift+F10, arrow navigation, and Escape. Keep another discoverable route to essential commands. Avoid unexpectedly replacing the browser's context menu across the entire page.

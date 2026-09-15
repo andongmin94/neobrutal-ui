@@ -1,33 +1,70 @@
 ---
 title: Checkbox
-description: A control that allows the user to toggle between checked and not checked.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/checkbox
+description: "A selectable checkbox with checked, unchecked, and mixed states."
+shadcnDocsLink: https://base-ui.com/react/components/checkbox
 ---
 
-<ComponentPreview component="checkbox">
+Use Checkbox for independent choices or explicit agreement. Use [Radio Group](/docs/radio-group) when exactly one option is allowed and [Switch](/docs/switch) for an on/off setting.
 
+<ComponentPreview component="checkbox">
 <include cwd lang="tsx">
   ./src/examples/ui/checkbox.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="checkbox">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Create **`components/ui/checkbox.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/checkbox.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-```ts
+```tsx
+"use client";
+import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
+
+export default function ConsentField() {
+  const [accepted, setAccepted] = useState(false);
+  return (
+    <div className="grid gap-3">
+      <div className="flex items-center gap-2">
+        <Checkbox
+          id="terms"
+          checked={accepted}
+          onCheckedChange={(value) => setAccepted(value === true)}
+        />
+        <label htmlFor="terms">Accept the terms</label>
+      </div>
+      <p role="status">{accepted ? "Accepted in this preview." : "Not accepted."}</p>
+    </div>
+  );
+}
 ```
 
-```tsx
-<Checkbox />
-```
+## API reference
+
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `checked` / `defaultChecked` | Boolean or `indeterminate` state | Unchecked |
+| `onCheckedChange` | New checked state and event details | — |
+| `indeterminate` | Explicit mixed state | Derived from checked value |
+| `disabled` / `required` | Interaction and form constraints | `false` |
+| `name` / `value` / `form` | Form association through a hidden input | — |
+| `id` / `inputRef` | Label association and hidden input reference | — |
+
+## Accessibility
+
+Associate a visible label with the checkbox. Space toggles the focused control. Use mixed state for partial selection, not as a third agreement option. Checked state does not submit or save anything on its own. When mapping checked values to a boolean, compare with `true` rather than coercing the string `indeterminate` to true.

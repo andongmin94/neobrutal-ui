@@ -1,158 +1,76 @@
 ---
-title: "Navigation Menu"
-description: A collection of links for site navigation.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/navigation-menu
+title: Navigation Menu
+description: Website navigation with links and optional expandable content.
+shadcnDocsLink: https://base-ui.com/react/components/navigation-menu
 ---
 
-<ComponentPreview component="navigation-menu">
+Use Navigation Menu for navigation between pages. Put direct destinations in NavigationMenuLink and grouped destinations inside a trigger/content pair. Use [Menubar](/docs/menubar) for application commands.
 
+<ComponentPreview component="navigation-menu">
 <include cwd lang="tsx">
   ./src/examples/ui/navigation-menu.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). The CLI resolves dependencies. For manual installation:
+
 <Installation component="navigation-menu">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Create **`components/ui/navigation-menu.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/navigation-menu.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-Here is the whole navigation-menu component:
-
-<br />
-
 ```tsx
-"use client";
-
-import * as React from "react";
 import {
   NavigationMenu,
-  NavigationMenuContent,
+  NavigationMenuList,
   NavigationMenuItem,
   NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 
-import { cn } from "@/lib/utils";
-
-const components: { title: string; href: string; description: string }[] = [
-  {
-    title: "Alert Dialog",
-    href: "/docs/alert-dialog",
-    description:
-      "A modal dialog that interrupts the user with important content and expects a response.",
-  },
-  {
-    title: "Hover Card",
-    href: "/docs/hover-card",
-    description: "For sighted users to preview content available behind a link.",
-  },
-  {
-    title: "Progress",
-    href: "/docs/progress",
-    description:
-      "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
-  },
-  {
-    title: "Scroll Area",
-    href: "/docs/scroll-area",
-    description: "Provides a consistent scrollable viewport for long content.",
-  },
-  {
-    title: "Tabs",
-    href: "/docs/tabs",
-    description:
-      "A set of layered sections of content, known as tab panels, that are displayed one at a time.",
-  },
-  {
-    title: "Tooltip",
-    href: "/docs/tooltip",
-    description:
-      "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
-  },
-];
-
-export default function NavigationMenuDemo() {
+export default function SiteNavigation() {
   return (
-    <NavigationMenu className="z-5 ">
+    <NavigationMenu aria-label="Main navigation">
       <NavigationMenuList>
-        <NavigationMenuItem className="sm:block hidden">
-          <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid w-[500px] gap-3 p-2 lg:grid-cols-[.75fr_1fr]">
-              <li className="row-span-3">
-                <NavigationMenuLink asChild>
-                  <a
-                    className="flex h-full w-full select-none flex-col justify-end rounded-base p-6 no-underline outline-hidden"
-                    href="/docs/"
-                  >
-                    <div className="mb-2 mt-4 text-lg font-heading">neobrutal-ui</div>
-                    <p className="text-sm font-base leading-tight">
-                      Source-owned React components built with Base UI and Tailwind CSS.
-                    </p>
-                  </a>
-                </NavigationMenuLink>
-              </li>
-              <ListItem href="/docs/" title="Introduction">
-                Learn the project model and how the registry fits into your app.
-              </ListItem>
-              <ListItem href="/docs/installation" title="Installation">
-                Install components with the shadcn CLI or copy them manually.
-              </ListItem>
-              <ListItem href="/docs/design-tokens" title="Design tokens">
-                Customize color, type, borders, radius, and hard shadows.
-              </ListItem>
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Components</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid w-[400px] gap-3 p-2 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-              {components.map((component) => (
-                <ListItem key={component.title} title={component.title} href={component.href}>
-                  {component.description}
-                </ListItem>
-              ))}
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/docs/">
+          <NavigationMenuLink href="/docs" className={navigationMenuTriggerStyle()}>
             Documentation
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/templates" className={navigationMenuTriggerStyle()}>
+            Templates
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
   );
 }
-
-function ListItem({ className, title, children, ...props }: React.ComponentProps<"a">) {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <a
-          className={cn(
-            "hover:bg-accent block text-main-foreground select-none space-y-1 rounded-base border-2 border-transparent p-3 leading-none no-underline outline-hidden transition-colors hover:border-border",
-            className,
-          )}
-          {...props}
-        >
-          <div className="text-base font-heading leading-none">{title}</div>
-          <p className="font-base line-clamp-2 text-sm leading-snug">{children}</p>
-        </a>
-      </NavigationMenuLink>
-    </li>
-  );
-}
-ListItem.displayName = "ListItem";
 ```
+
+## API reference
+
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `NavigationMenu.value` / `onValueChange` | Controlled expanded item | Uncontrolled |
+| `NavigationMenu.orientation` | Trigger keyboard navigation | `horizontal` |
+| `NavigationMenu.viewport` | Shared popup viewport | `true` |
+| `NavigationMenuItem.value` | Stable grouped-item identifier | Generated if omitted |
+| `NavigationMenuLink.href` / `render` | Native destination or router-link composition | Anchor |
+| `NavigationMenuLink.active` | Current destination styling and semantics | `false` |
+
+## Accessibility
+
+Use real links and meaningful text. A trigger opens content rather than navigating. Preserve link props and refs when composing a router link. Mark the current destination and test keyboard and touch interactions. Provide a compact mobile layout rather than squeezing a wide desktop menu.

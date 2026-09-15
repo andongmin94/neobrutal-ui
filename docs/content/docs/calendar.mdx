@@ -1,51 +1,77 @@
 ---
 title: Calendar
-description: A date field component that allows users to enter and edit date.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/calendar
+description: "A day-picker surface for selecting a single date, multiple dates, or a range."
+shadcnDocsLink: https://daypicker.dev/docs/selection-modes
 ---
 
-<ComponentPreview component="calendar" >
+Use Calendar for visible date selection. Use [Date Picker](/docs/date-picker) to put it in a popover. It wraps React DayPicker; the selection mode determines the types of `selected` and `onSelect`.
 
+<ComponentPreview component="calendar">
 <include cwd lang="tsx">
   ./src/examples/ui/calendar/index.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="calendar">
+
+```bash
+npm install react-day-picker@^10.0.1
+```
+
+Also install [Button](/docs/button), then create **`components/ui/calendar.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/calendar.tsx
 </include>
-
 </Installation>
+
+For range selection, use `DateRange | undefined` from `react-day-picker`. Install `date-fns` separately when copying a recipe that imports it.
 
 ## Usage
 
-```ts
+```tsx
+"use client";
 import { useState } from "react";
-
 import { Calendar } from "@/components/ui/calendar";
+
+export default function ChooseDate() {
+  const [date, setDate] = useState<Date | undefined>();
+  return (
+    <div className="grid gap-3">
+      <Calendar mode="single" selected={date} onSelect={setDate} aria-label="Appointment date" />
+      <p role="status">{date ? date.toDateString() : "No date selected"}</p>
+    </div>
+  );
+}
 ```
 
-```tsx
-const [date, setDate] = useState<Date | undefined>(new Date());
-```
+## API reference
 
-```tsx
-<Calendar mode="single" selected={date} onSelect={setDate} />
-```
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `mode` | `single`, `multiple`, or `range` | No selection mode |
+| `selected` / `onSelect` | Controlled date, dates, or range | — |
+| `month` / `onMonthChange` | Controlled displayed month | Current month if uncontrolled |
+| `defaultMonth` | Initial displayed month | Current month |
+| `disabled` | Dates that cannot be selected | Unrestricted |
+| `startMonth` / `endMonth` | Navigation bounds | Unrestricted |
+| `showOutsideDays` | Show adjacent-month days | `true` |
+| `captionLayout` / `numberOfMonths` | Month controls and visible month count | `label` / `1` |
+
+## Accessibility
+
+Label the surrounding field or region. Arrow keys navigate dates. Include a textual selected-date summary when the selection matters. Disabled dates differ from navigation bounds. Treat date-only values separately from timestamps when storing or sending them; converting local midnight to UTC can change the calendar date.
 
 ## Examples
 
 ### Range
 
 <ComponentPreview component="calendar" example="range">
-
 <include cwd lang="tsx">
   ./src/examples/ui/calendar/range.tsx
 </include>
-
 </ComponentPreview>

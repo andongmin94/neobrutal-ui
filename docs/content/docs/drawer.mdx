@@ -1,75 +1,91 @@
 ---
 title: Drawer
-description: A drawer component that slides out from the edge of the screen.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/drawer
+description: "A modal edge panel using Base UI drawer behavior."
+shadcnDocsLink: https://base-ui.com/react/components/drawer
 ---
 
-<ComponentPreview component="drawer">
+Use Drawer for a compact task presented from a viewport edge. It is built on Base UI, not Vaul. Use [Sheet](/docs/sheet) for an edge dialog when drawer-specific interaction is unnecessary.
 
+<ComponentPreview component="drawer">
 <include cwd lang="tsx">
   ./src/examples/ui/drawer/index.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="drawer">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Create **`components/ui/drawer.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/drawer.tsx
 </include>
-
 </Installation>
+
+The Usage example additionally uses Button.
 
 ## Usage
 
-```ts
+```tsx
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
-  DrawerClose,
+  DrawerTrigger,
   DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerClose,
 } from "@/components/ui/drawer";
+
+export default function TaskDrawer() {
+  return (
+    <Drawer direction="bottom">
+      <DrawerTrigger render={<Button variant="outline" />}>Task details</DrawerTrigger>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>Task details</DrawerTitle>
+          <DrawerDescription>Review this task before returning to the workspace.</DrawerDescription>
+        </DrawerHeader>
+        <div className="p-4">The draft is ready for review.</div>
+        <DrawerFooter>
+          <DrawerClose render={<Button variant="outline" />}>Close</DrawerClose>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
+  );
+}
 ```
 
-```tsx
-<Drawer>
-  <DrawerTrigger asChild>
-    <Button>Open</Button>
-  </DrawerTrigger>
-  <DrawerContent>
-    <div className="mx-auto w-[300px]">
-      <DrawerHeader>
-        <DrawerTitle>Are you absolutely sure?</DrawerTitle>
-        <DrawerDescription>This action cannot be undone.</DrawerDescription>
-      </DrawerHeader>
-      <DrawerFooter className="grid grid-cols-2">
-        <Button variant="noShadow">Submit</Button>
-        <DrawerClose asChild>
-          <Button className="bg-secondary-background text-foreground" variant="noShadow">
-            Cancel
-          </Button>
-        </DrawerClose>
-      </DrawerFooter>
-    </div>
-  </DrawerContent>
-</Drawer>
-```
+## API reference
+
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `Drawer.open` / `onOpenChange` | Controlled visibility | Uncontrolled |
+| `Drawer.direction` | `top`, `right`, `bottom`, or `left` | `bottom` |
+| `Drawer.dismissible` | Ordinary dismissal gestures | `true` |
+| `DrawerTrigger.render` / `DrawerClose.render` | Button composition | Primitive elements |
+| `DrawerTitle` / `DrawerDescription` | Modal name and explanation | — |
+| `DrawerContent` | Panel and viewport | — |
+
+## Accessibility
+
+Provide a title, useful description, and an explicit close action rather than relying only on a drag gesture. Test keyboard focus, Escape, and focus restoration. Long content must scroll within reachable bounds, and the on-screen keyboard must not hide the only action. Do not show successful persistence merely because the drawer closed.
 
 ## Examples
 
-### With Scrollable Content
+### Scrollable content
 
 <ComponentPreview component="drawer" example="scrollable-content">
-
 <include cwd lang="tsx">
   ./src/examples/ui/drawer/scrollable-content.tsx
 </include>
-
 </ComponentPreview>

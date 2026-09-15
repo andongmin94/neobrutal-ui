@@ -1,48 +1,75 @@
 ---
 title: Avatar
-description: An image element with a fallback for representing the user.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/avatar
+description: "A user or entity image with a fallback, sizes, and optional group styling."
+shadcnDocsLink: https://base-ui.com/react/components/avatar
 ---
 
-<ComponentPreview component="avatar">
+Use Avatar to represent a person or entity in a compact space. Keep a fallback for slow or failed image requests. It does not identify a user, load account data, or implement an account menu.
 
+<ComponentPreview component="avatar">
 <include cwd lang="tsx">
   ./src/examples/ui/avatar/index.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="avatar">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Create **`components/ui/avatar.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/avatar.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-```ts
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+```tsx
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+
+export default function MemberAvatar() {
+  return (
+    <div className="flex items-center gap-3">
+      <Avatar>
+        <AvatarImage src="/images/member.jpg" alt="" />
+        <AvatarFallback aria-hidden="true">JD</AvatarFallback>
+      </Avatar>
+      <span>Jordan Davis</span>
+    </div>
+  );
+}
 ```
 
-```tsx
-<Avatar>
-  <AvatarImage src="https://github.com/andongmin94.png?size=80" alt="@andongmin94" />
-  <AvatarFallback>AM</AvatarFallback>
-</Avatar>
-```
+Add your own image asset. This example keeps the name visible, so the image is decorative. An avatar used alone needs an accessible name for the person or action it represents.
+
+## API reference
+
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `Avatar.size` | `sm`, `default`, or `lg` | `default` |
+| `AvatarImage.src` / `alt` | Image address and alternative text | — |
+| `AvatarFallback` | Initials or non-image content | — |
+| `AvatarFallback.delay` | Fallback delay in milliseconds | Primitive default |
+| `AvatarBadge` | Status marker | — |
+| `AvatarGroup` / `AvatarGroupCount` | Group and remaining count | — |
+
+## Accessibility
+
+Avoid announcing the same name twice when it is already adjacent to the image. A status badge needs text or an accessible label; color alone is insufficient. Put an interactive avatar inside a real button or link with an explicit name, rather than adding click handling to a generic container.
 
 ## Examples
 
 ### Fallback
 
 <ComponentPreview component="avatar" example="fallback">
-
 <include cwd lang="tsx">
   ./src/examples/ui/avatar/fallback.tsx
 </include>
-
 </ComponentPreview>

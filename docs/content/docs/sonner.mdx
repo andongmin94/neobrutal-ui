@@ -1,128 +1,124 @@
 ---
 title: Sonner
-description: An opinionated toast component for React.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/sonner
+description: Transient toast notifications for application feedback.
+shadcnDocsLink: https://sonner.emilkowal.ski/
 ---
 
-<ComponentPreview component="sonner">
+Install one Toaster near the application root and call toast from sonner when something happens. This wrapper styles notifications; it does not send requests, persist messages, or confirm that an operation succeeded.
 
+<ComponentPreview component="sonner">
 <include cwd lang="tsx">
   ./src/examples/ui/sonner/index.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="sonner">
+
+```bash
+npm install sonner@^2.0.7 next-themes@^0.4.6
+```
+
+Create **`components/ui/sonner.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/sonner.tsx
 </include>
-
 </Installation>
+
+The example also uses Button. In a real application move Toaster to your root layout. Docs previews already have a site-level host.
 
 ## Usage
 
-```ts
+```tsx
+"use client";
 import { toast } from "sonner";
-
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
+
+export default function NotificationExample() {
+  return (
+    <>
+      <Button onClick={() => toast("This is a local preview notification.")}>
+        Show notification
+      </Button>
+      <Toaster closeButton />
+    </>
+  );
+}
 ```
 
-Mount the `<Toaster />` once near the root of your app.
+## API reference
 
-```tsx
-<Toaster />
-```
+| Prop / part | Purpose | Default |
+| --- | --- | --- |
+| `Toaster.theme` | light, dark, or system | Theme provider value or system |
+| `Toaster.position` | Stack placement | Sonner default |
+| `Toaster.closeButton` | Visible dismissal control | Sonner default |
+| `Toaster.toastOptions` | Shared duration and appearance | Theme styles provided |
+| `toast` / `toast.success` / `toast.error` | Enqueue a message | Imported from sonner |
 
-You can then trigger toasts from any client component.
+## Accessibility
 
-```tsx
-<Button
-  onClick={() =>
-    toast("Event has been created", {
-      description: "Sunday, December 03, 2023 at 9:00 AM",
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
-    })
-  }
->
-  Show Toast
-</Button>
-```
+Keep messages concise and avoid repeated announcements. Important errors also belong beside the failed task so they remain available after a toast disappears. Show success only after the operation succeeds. Mount only one Toaster in the application.
 
 ## Examples
 
 ### Success
 
 <ComponentPreview component="sonner" example="success">
-
 <include cwd lang="tsx">
   ./src/examples/ui/sonner/success.tsx
 </include>
-
 </ComponentPreview>
 
 ### Info
 
 <ComponentPreview component="sonner" example="info">
-
 <include cwd lang="tsx">
   ./src/examples/ui/sonner/info.tsx
 </include>
-
 </ComponentPreview>
 
 ### Warning
 
 <ComponentPreview component="sonner" example="warning">
-
 <include cwd lang="tsx">
   ./src/examples/ui/sonner/warning.tsx
 </include>
-
 </ComponentPreview>
 
 ### Error
 
 <ComponentPreview component="sonner" example="error">
-
 <include cwd lang="tsx">
   ./src/examples/ui/sonner/error.tsx
 </include>
-
 </ComponentPreview>
 
 ### Action
 
 <ComponentPreview component="sonner" example="action">
-
 <include cwd lang="tsx">
   ./src/examples/ui/sonner/action.tsx
 </include>
-
 </ComponentPreview>
 
 ### Cancel
 
 <ComponentPreview component="sonner" example="cancel">
-
 <include cwd lang="tsx">
   ./src/examples/ui/sonner/cancel.tsx
 </include>
-
 </ComponentPreview>
 
 ### Promise
 
 <ComponentPreview component="sonner" example="promise">
-
 <include cwd lang="tsx">
   ./src/examples/ui/sonner/promise.tsx
 </include>
-
 </ComponentPreview>

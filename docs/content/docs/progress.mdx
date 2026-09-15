@@ -1,44 +1,59 @@
 ---
 title: Progress
-description: Displays an indicator showing the completion progress of a task.
-shadcnDocsLink: https://ui.shadcn.com/docs/components/progress
+description: Determinate or indeterminate progress for a running operation.
+shadcnDocsLink: https://base-ui.com/react/components/progress
 ---
 
-<ComponentPreview component="progress">
+Use Progress when work is ongoing. It renders its track and indicator for you. Pass a number when completed work can be measured; pass null when it cannot.
 
+<ComponentPreview component="progress">
 <include cwd lang="tsx">
   ./src/examples/ui/progress.tsx
 </include>
-
 </ComponentPreview>
 
 ## Installation
 
+Complete the [base setup](/docs/installation). For manual installation:
+
 <Installation component="progress">
+
+```bash
+npm install @base-ui/react@^1.6.0
+```
+
+Create **`components/ui/progress.tsx`**:
 
 <include cwd lang="tsx">
   ./src/components/ui/progress.tsx
 </include>
-
 </Installation>
 
 ## Usage
 
-```ts
-import * as React from "react";
-
+```tsx
 import { Progress } from "@/components/ui/progress";
+
+export default function UploadProgress() {
+  return (
+    <div className="grid max-w-sm gap-2">
+      <p id="upload-label">Uploading files: 42%</p>
+      <Progress value={42} aria-labelledby="upload-label" />
+    </div>
+  );
+}
 ```
 
-```tsx
-const [progress, setProgress] = React.useState(13);
+## API reference
 
-React.useEffect(() => {
-  const timer = setTimeout(() => setProgress(66), 500);
-  return () => clearTimeout(timer);
-}, []);
-```
+| Prop | Purpose | Default |
+| --- | --- | --- |
+| `value` | Completed amount; null means indeterminate | `null` |
+| `max` | Maximum amount | `100` |
+| `aria-label` / `aria-labelledby` | Accessible operation name | Unset |
+| `getAriaValueText` | Meaningful value announcement | Base UI behavior |
+| `className` | Width and root layout | Full available width |
 
-```tsx
-<Progress value={progress} className="w-[60%]" />
-```
+## Accessibility
+
+Name the operation, not just the control. Do not invent percentages for unknown work. Keep values in range and announce completion or failure separately; reaching 100 does not prove that an application operation succeeded.
