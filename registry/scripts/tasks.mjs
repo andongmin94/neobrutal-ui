@@ -175,6 +175,7 @@ switch (command) {
     run("shadcn", ["registry", "validate", "./registry.json", ...passthroughArgs]);
     break;
   case "registry:check":
+    run("node", ["scripts/check-source-ownership.mjs"]);
     run("node", ["scripts/check-registry.mjs", ...passthroughArgs]);
     break;
   case "consumer:verify":
