@@ -21,37 +21,6 @@ const dependencyVersions = {
   ...packageJson.devDependencies,
 };
 
-const BASE_UI_COMPONENTS = new Set([
-  "accordion",
-  "alert-dialog",
-  "avatar",
-  "breadcrumb",
-  "button",
-  "checkbox",
-  "collapsible",
-  "context-menu",
-  "dialog",
-  "drawer",
-  "dropdown-menu",
-  "form",
-  "hover-card",
-  "input",
-  "menubar",
-  "navigation-menu",
-  "popover",
-  "progress",
-  "radio-group",
-  "scroll-area",
-  "select",
-  "separator",
-  "sheet",
-  "sidebar",
-  "slider",
-  "switch",
-  "tabs",
-  "tooltip",
-]);
-
 const BASE_ITEM = {
   name: "neobrutal-ui",
   title: "neobrutal-ui",
@@ -93,6 +62,7 @@ type RegistryItem = {
   author?: string;
   dependencies?: string[];
   registryDependencies?: string[];
+  files?: { path: string }[];
 };
 
 function rewriteRegistryDependency(dependency: string) {
@@ -103,11 +73,19 @@ function rewriteRegistryDependency(dependency: string) {
 function rewriteDependencies(item: RegistryItem): string[] | undefined {
   const dependencies = new Set((item.dependencies ?? []).map(pinDependency));
 
-  if (BASE_UI_COMPONENTS.has(item.name)) {
+  if (itemImportsPackage(item, "@base-ui/react")) {
     dependencies.add(pinDependency("@base-ui/react"));
   }
 
   return dependencies.size ? [...dependencies] : undefined;
+}
+
+function itemImportsPackage(item: RegistryItem, packageName: string) {
+  return (item.files ?? []).some((file) => {
+    const sourcePath = path.resolve(process.cwd(), file.path);
+    const source = fs.readFileSync(sourcePath, "utf8");
+    return source.includes(`"${packageName}`) || source.includes(`'${packageName}`);
+  });
 }
 
 function pinDependency(dependency: string) {
