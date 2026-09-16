@@ -31,17 +31,24 @@ for (const route of [...new Set(routes)].sort()) {
       await expect(preview.locator(".component-preview__canvas")).toBeHidden();
       await expect(preview.locator(".component-preview__code pre").first()).toBeVisible();
       await expect(preview.locator(".component-preview__code pre").first()).not.toBeEmpty();
-      if (index === 0) await preview.screenshot({ path: info.outputPath("source-panel.png"), animations: "disabled" });
+      if (index === 0)
+        await preview.screenshot({
+          path: info.outputPath("source-panel.png"),
+          animations: "disabled",
+        });
       await preview.getByRole("tab", { name: "Preview", exact: true }).click();
       await expect(preview.locator(".component-preview__code")).toBeHidden();
     }
     const installations = page.locator(".installation-tabs");
-    for (let index = 0; index < await installations.count(); index++) {
+    for (let index = 0; index < (await installations.count()); index++) {
       const installation = installations.nth(index);
       await installation.getByRole("tab", { name: "Manual", exact: true }).click();
       await expect(installation.locator(".installation-tabs__manual pre").first()).toBeVisible();
       await expect(installation.locator(".installation-tabs__manual pre").first()).not.toBeEmpty();
-      await installation.screenshot({ path: info.outputPath(`manual-${index}.png`), animations: "disabled" });
+      await installation.screenshot({
+        path: info.outputPath(`manual-${index}.png`),
+        animations: "disabled",
+      });
       await installation.getByRole("tab", { name: "shadcn CLI", exact: true }).click();
     }
     await expect(page.locator(".react-host__error")).toHaveCount(0);
@@ -51,13 +58,28 @@ for (const route of [...new Set(routes)].sort()) {
       document: document.documentElement.clientWidth,
       layout: innerWidth,
       brokenLocalImages: [...document.images]
-        .filter((image) => image.complete && image.naturalWidth === 0 && new URL(image.src).origin === location.origin)
+        .filter(
+          (image) =>
+            image.complete &&
+            image.naturalWidth === 0 &&
+            new URL(image.src).origin === location.origin,
+        )
         .map((image) => image.getAttribute("src")),
     }));
     await page.evaluate(() => window.scrollTo(0, 0));
-    await page.screenshot({ path: info.outputPath("page.png"), fullPage: true, animations: "disabled" });
+    await page.screenshot({
+      path: info.outputPath("page.png"),
+      fullPage: true,
+      animations: "disabled",
+    });
     await info.attach("coverage", {
-      body: JSON.stringify({ route, profile: info.project.name, previews: previewCount, layout, errors }),
+      body: JSON.stringify({
+        route,
+        profile: info.project.name,
+        previews: previewCount,
+        layout,
+        errors,
+      }),
       contentType: "application/json",
     });
     expect(layout.scroll, `${route}: horizontal overflow`).toBeLessThanOrEqual(viewport.width + 1);

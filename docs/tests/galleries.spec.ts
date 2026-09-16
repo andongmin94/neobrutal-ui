@@ -15,7 +15,10 @@ for (const group of series) {
     const errors: string[] = [];
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto("/charts");
-    await page.getByRole("navigation", { name: "Chart series" }).getByRole("button", { name: new RegExp(group.title) }).click();
+    await page
+      .getByRole("navigation", { name: "Chart series" })
+      .getByRole("button", { name: new RegExp(group.title) })
+      .click();
     const section = page.locator(`section#${group.id}`);
     await expect(section.getByRole("heading", { name: group.title, exact: true })).toBeVisible();
     const sources = section.getByRole("button", { name: "View source", exact: true });
@@ -31,14 +34,23 @@ for (const group of series) {
       const bounds = await dialog.boundingBox();
       expect(bounds!.width).toBeLessThanOrEqual(page.viewportSize()!.width);
       expect(bounds!.height).toBeLessThanOrEqual(page.viewportSize()!.height);
-      await dialog.screenshot({ path: info.outputPath(`source-${index}.png`), animations: "disabled" });
+      await dialog.screenshot({
+        path: info.outputPath(`source-${index}.png`),
+        animations: "disabled",
+      });
       await page.keyboard.press("Escape");
       await expect(dialog).toBeHidden();
       await expect(button).toBeFocused();
     }
-    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize()!.width + 1);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+      page.viewportSize()!.width + 1,
+    );
     await page.evaluate(() => scrollTo(0, 0));
-    await page.screenshot({ path: info.outputPath("gallery.png"), fullPage: true, animations: "disabled" });
+    await page.screenshot({
+      path: info.outputPath("gallery.png"),
+      fullPage: true,
+      animations: "disabled",
+    });
     expect(errors).toEqual([]);
   });
 }
@@ -56,20 +68,33 @@ test("every star renders and copies its source", async ({ page }, info) => {
     expect((await page.evaluate(() => navigator.clipboard.readText())).length).toBeGreaterThan(100);
   }
   await page.evaluate(() => scrollTo(0, 0));
-  await page.screenshot({ path: info.outputPath("stars.png"), fullPage: true, animations: "disabled" });
+  await page.screenshot({
+    path: info.outputPath("stars.png"),
+    fullPage: true,
+    animations: "disabled",
+  });
 });
 
 test("every palette has an isolated live preview", async ({ page }, info) => {
   await page.goto("/styling");
   const select = page.getByLabel("Palette", { exact: true });
   const preview = page.locator("[data-theme-preview]");
-  const shell = await page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--main"));
+  const shell = await page
+    .locator("html")
+    .evaluate((node) => getComputedStyle(node).getPropertyValue("--main"));
   for (const color of colors) {
     await select.selectOption(color.name);
     await expect(select).toHaveValue(color.name);
     await expect(preview.locator(".theme-workbench__stage-label")).toContainText(color.name);
-    expect(await page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--main"))).toBe(shell);
-    await preview.screenshot({ path: info.outputPath(`palette-${color.name}.png`), animations: "disabled" });
+    expect(
+      await page
+        .locator("html")
+        .evaluate((node) => getComputedStyle(node).getPropertyValue("--main")),
+    ).toBe(shell);
+    await preview.screenshot({
+      path: info.outputPath(`palette-${color.name}.png`),
+      animations: "disabled",
+    });
   }
 });
 
@@ -77,7 +102,14 @@ test("clipboard denial shows honest feedback without runtime errors", async ({ p
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.addInitScript(() => {
-    Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText: async () => { throw new Error("Denied for regression test"); } } });
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: {
+        writeText: async () => {
+          throw new Error("Denied for regression test");
+        },
+      },
+    });
   });
   for (const route of ["/stars", "/templates"]) {
     await page.goto(route);

@@ -115,14 +115,7 @@ function lintSources() {
 }
 
 function formatSources() {
-  run("oxlint", [
-    "--fix",
-    "--no-error-on-unmatched-pattern",
-    "app",
-    "src",
-    "scripts",
-    "tests",
-  ]);
+  run("oxlint", ["--fix", "--no-error-on-unmatched-pattern", "app", "src", "scripts", "tests"]);
   run("oxfmt", ["--write", ...formatTargets]);
   formatPackageJson();
 }

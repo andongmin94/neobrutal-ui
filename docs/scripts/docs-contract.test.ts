@@ -129,9 +129,7 @@ test("the deployed registry landing page is generated from one source", () => {
 test("component directory covers the registry UI and recipes exactly once", () => {
   const catalog = readCatalog();
   const registrySlugs = catalog.items
-    .filter(
-      (item) => item.type === "registry:ui" || item.categories?.includes("recipe") === true,
-    )
+    .filter((item) => item.type === "registry:ui" || item.categories?.includes("recipe") === true)
     .map((item) => item.name);
   const documentedSlugs = getDocumentedSlugs();
   const expectedSlugs = [...registrySlugs, ...compositionRecipes].sort();
@@ -165,7 +163,10 @@ test("all documented preview names resolve to an example source", () => {
       if (attributes.includes('type="star"')) continue;
       const slug = attributes.match(/component="([^"]+)"/)?.[1];
       const example = attributes.match(/example="([^"]+)"/)?.[1];
-      assert.ok(slug && previewSourceExists(slug, example), `${file}: ${slug}/${example ?? "default"}`);
+      assert.ok(
+        slug && previewSourceExists(slug, example),
+        `${file}: ${slug}/${example ?? "default"}`,
+      );
     }
   }
 });
