@@ -66,17 +66,17 @@ const data = {
   },
   teams: [
     {
-      name: "Northstar Studio",
+      name: "Acme Inc",
       logo: GalleryVerticalEnd,
       plan: "Enterprise",
     },
     {
-      name: "Draft Lab",
+      name: "Acme Corp.",
       logo: AudioWaveform,
       plan: "Startup",
     },
     {
-      name: "Common Ground",
+      name: "Evil Corp.",
       logo: Command,
       plan: "Free",
     },
@@ -84,86 +84,86 @@ const data = {
   navMain: [
     {
       title: "Playground",
-      url: "/docs/sidebar",
+      url: "#",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
           title: "History",
-          url: "/docs/sidebar",
+          url: "#",
         },
         {
           title: "Starred",
-          url: "/docs/sidebar",
+          url: "#",
         },
         {
           title: "Settings",
-          url: "/docs/sidebar",
+          url: "#",
         },
       ],
     },
     {
       title: "Models",
-      url: "/docs/sidebar",
+      url: "#",
       icon: Bot,
       items: [
         {
           title: "Genesis",
-          url: "/docs/sidebar",
+          url: "#",
         },
         {
           title: "Explorer",
-          url: "/docs/sidebar",
+          url: "#",
         },
         {
           title: "Quantum",
-          url: "/docs/sidebar",
+          url: "#",
         },
       ],
     },
     {
       title: "Documentation",
-      url: "/docs/sidebar",
+      url: "#",
       icon: BookOpen,
       items: [
         {
           title: "Introduction",
-          url: "/docs/",
+          url: "#",
         },
         {
           title: "Get Started",
-          url: "/docs/installation",
+          url: "#",
         },
         {
           title: "Tutorials",
-          url: "/docs/resources",
+          url: "#",
         },
         {
           title: "Changelog",
-          url: "/docs/credits",
+          url: "#",
         },
       ],
     },
     {
       title: "Settings",
-      url: "/docs/sidebar",
+      url: "#",
       icon: Settings2,
       items: [
         {
           title: "General",
-          url: "/docs/sidebar",
+          url: "#",
         },
         {
           title: "Team",
-          url: "/docs/sidebar",
+          url: "#",
         },
         {
           title: "Billing",
-          url: "/docs/sidebar",
+          url: "#",
         },
         {
           title: "Limits",
-          url: "/docs/sidebar",
+          url: "#",
         },
       ],
     },
@@ -171,17 +171,17 @@ const data = {
   projects: [
     {
       name: "Design Engineering",
-      url: "/docs/sidebar",
+      url: "#",
       icon: Frame,
     },
     {
       name: "Sales & Marketing",
-      url: "/docs/sidebar",
+      url: "#",
       icon: PieChart,
     },
     {
       name: "Travel",
-      url: "/docs/sidebar",
+      url: "#",
       icon: Map,
     },
   ],
@@ -243,7 +243,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                     <Plus className="size-4" />
                   </div>
-                  <div className="font-heading text-muted-foreground">Add team</div>
+                  <div className="font-medium text-muted-foreground">Add team</div>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -296,26 +296,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <SidebarMenuAction>
-                      <MoreHorizontal className="group-hover/menu-item:text-main-foreground" />
+                      <MoreHorizontal />
                       <span className="sr-only">More</span>
                     </SidebarMenuAction>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
-                    className="w-48"
+                    className="w-48 rounded-lg"
                     side={isMobile ? "bottom" : "right"}
                     align={isMobile ? "end" : "start"}
                   >
                     <DropdownMenuItem>
-                      <Folder />
+                      <Folder className="text-muted-foreground" />
                       <span>View Project</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                      <Forward />
+                      <Forward className="text-muted-foreground" />
                       <span>Share Project</span>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem>
-                      <Trash2 />
+                      <Trash2 className="text-muted-foreground" />
                       <span>Delete Project</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -352,12 +352,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className="w-(--anchor-width) min-w-56"
+                className="w-(--anchor-width) min-w-56 rounded-lg"
                 side={isMobile ? "bottom" : "right"}
                 align="end"
                 sideOffset={4}
               >
-                <DropdownMenuLabel className="p-0 font-base">
+                <DropdownMenuLabel className="p-0 font-normal">
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={data.user.avatar} alt="@andongmin94" />
