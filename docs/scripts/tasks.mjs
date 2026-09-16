@@ -109,7 +109,16 @@ function formatJsonValue(value, indent, sectionName) {
 }
 
 function lintSources() {
-  run("oxlint", ["--no-error-on-unmatched-pattern", "app", "src", "scripts", "tests"]);
+  run("oxlint", [
+    "--deny-warnings",
+    "--format",
+    "unix",
+    "--no-error-on-unmatched-pattern",
+    "app",
+    "src",
+    "scripts",
+    "tests",
+  ]);
   run("oxfmt", ["--check", ...formatTargets]);
   checkPackageJson();
 }
