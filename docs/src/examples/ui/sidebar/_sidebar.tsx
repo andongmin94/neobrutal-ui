@@ -66,17 +66,17 @@ const data = {
   },
   teams: [
     {
-      name: "Acme Inc",
+      name: "Northstar Studio",
       logo: GalleryVerticalEnd,
       plan: "Enterprise",
     },
     {
-      name: "Acme Corp.",
+      name: "Draft Lab",
       logo: AudioWaveform,
       plan: "Startup",
     },
     {
-      name: "Evil Corp.",
+      name: "Common Ground",
       logo: Command,
       plan: "Free",
     },
@@ -84,86 +84,86 @@ const data = {
   navMain: [
     {
       title: "Playground",
-      url: "#",
+      url: "/docs/sidebar",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
           title: "History",
-          url: "#",
+          url: "/docs/sidebar",
         },
         {
           title: "Starred",
-          url: "#",
+          url: "/docs/sidebar",
         },
         {
           title: "Settings",
-          url: "#",
+          url: "/docs/sidebar",
         },
       ],
     },
     {
       title: "Models",
-      url: "#",
+      url: "/docs/sidebar",
       icon: Bot,
       items: [
         {
           title: "Genesis",
-          url: "#",
+          url: "/docs/sidebar",
         },
         {
           title: "Explorer",
-          url: "#",
+          url: "/docs/sidebar",
         },
         {
           title: "Quantum",
-          url: "#",
+          url: "/docs/sidebar",
         },
       ],
     },
     {
       title: "Documentation",
-      url: "#",
+      url: "/docs/sidebar",
       icon: BookOpen,
       items: [
         {
           title: "Introduction",
-          url: "#",
+          url: "/docs/",
         },
         {
           title: "Get Started",
-          url: "#",
+          url: "/docs/installation",
         },
         {
           title: "Tutorials",
-          url: "#",
+          url: "/docs/resources",
         },
         {
           title: "Changelog",
-          url: "#",
+          url: "/docs/credits",
         },
       ],
     },
     {
       title: "Settings",
-      url: "#",
+      url: "/docs/sidebar",
       icon: Settings2,
       items: [
         {
           title: "General",
-          url: "#",
+          url: "/docs/sidebar",
         },
         {
           title: "Team",
-          url: "#",
+          url: "/docs/sidebar",
         },
         {
           title: "Billing",
-          url: "#",
+          url: "/docs/sidebar",
         },
         {
           title: "Limits",
-          url: "#",
+          url: "/docs/sidebar",
         },
       ],
     },
@@ -171,17 +171,17 @@ const data = {
   projects: [
     {
       name: "Design Engineering",
-      url: "#",
+      url: "/docs/sidebar",
       icon: Frame,
     },
     {
       name: "Sales & Marketing",
-      url: "#",
+      url: "/docs/sidebar",
       icon: PieChart,
     },
     {
       name: "Travel",
-      url: "#",
+      url: "/docs/sidebar",
       icon: Map,
     },
   ],
@@ -201,37 +201,35 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+              <DropdownMenuTrigger className="focus-visible:ring-0" asChild>
                 <SidebarMenuButton
                   size="lg"
-                  className="group-data-[state=open]:bg-sidebar-accent group-data-[state=open]:text-sidebar-accent-foreground"
+                  className="data-open:bg-main data-open:text-main-foreground data-open:outline-2 data-open:outline-border data-popup-open:bg-main data-popup-open:text-main-foreground data-popup-open:outline-2 data-popup-open:outline-border"
                 >
-                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                  <div className="flex aspect-square size-8 items-center justify-center rounded-base">
                     <activeTeam.logo className="size-4" />
                   </div>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-heading">{activeTeam.name}</span>
-                    <span className="truncate text-xs">{activeTeam.plan}</span>
+                    <span className="truncate font-base text-xs">{activeTeam.plan}</span>
                   </div>
                   <ChevronsUpDown className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className="w-(--anchor-width) min-w-56 rounded-lg"
+                className="w-(--anchor-width) min-w-56 rounded-base"
                 align="start"
                 side={isMobile ? "bottom" : "right"}
                 sideOffset={4}
               >
-                <DropdownMenuLabel className="text-xs text-muted-foreground">
-                  Teams
-                </DropdownMenuLabel>
+                <DropdownMenuLabel className="text-sm font-heading">Teams</DropdownMenuLabel>
                 {data.teams.map((team, index) => (
                   <DropdownMenuItem
                     key={team.name}
                     onClick={() => setActiveTeam(team)}
-                    className="gap-2 p-2"
+                    className="gap-2 p-1.5"
                   >
-                    <div className="flex size-6 items-center justify-center rounded-sm border">
+                    <div className="flex size-6 items-center justify-center">
                       <team.logo className="size-4 shrink-0" />
                     </div>
                     {team.name}
@@ -239,11 +237,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   </DropdownMenuItem>
                 ))}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="gap-2 p-2">
-                  <div className="flex size-6 items-center justify-center rounded-md border bg-background">
+                <DropdownMenuItem className="gap-2 p-1.5">
+                  <div className="flex size-6 items-center justify-center">
                     <Plus className="size-4" />
                   </div>
-                  <div className="font-medium text-muted-foreground">Add team</div>
+                  <div className="font-base">Add team</div>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -255,13 +253,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarGroupLabel>Platform</SidebarGroupLabel>
           <SidebarMenu>
             {data.navMain.map((item) => (
-              <Collapsible key={item.title} asChild defaultOpen={item.isActive} className="group/collapsible">
+              <Collapsible
+                key={item.title}
+                asChild
+                defaultOpen={item.isActive}
+                className="group/collapsible"
+              >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
-                    <SidebarMenuButton tooltip={item.title}>
+                    <SidebarMenuButton
+                      className="group-data-open/collapsible:bg-main group-data-open/collapsible:text-main-foreground group-data-open/collapsible:outline-border"
+                      tooltip={item.title}
+                    >
                       {item.icon && <item.icon />}
                       <span>{item.title}</span>
-                      <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                      <ChevronRight className="ml-auto transition-transform duration-200 group-data-open/collapsible:rotate-90" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                   <CollapsibleContent>
@@ -296,26 +302,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <SidebarMenuAction>
-                      <MoreHorizontal />
+                      <MoreHorizontal className="group-hover/menu-item:text-main-foreground" />
                       <span className="sr-only">More</span>
                     </SidebarMenuAction>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
-                    className="w-48 rounded-lg"
+                    className="w-48"
                     side={isMobile ? "bottom" : "right"}
                     align={isMobile ? "end" : "start"}
                   >
                     <DropdownMenuItem>
-                      <Folder className="text-muted-foreground" />
+                      <Folder />
                       <span>View Project</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                      <Forward className="text-muted-foreground" />
+                      <Forward />
                       <span>Share Project</span>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem>
-                      <Trash2 className="text-muted-foreground" />
+                      <Trash2 />
                       <span>Delete Project</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -352,12 +358,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className="w-(--anchor-width) min-w-56 rounded-lg"
+                className="w-(--anchor-width) min-w-56"
                 side={isMobile ? "bottom" : "right"}
                 align="end"
                 sideOffset={4}
               >
-                <DropdownMenuLabel className="p-0 font-normal">
+                <DropdownMenuLabel className="p-0 font-base">
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={data.user.avatar} alt="@andongmin94" />
