@@ -7,11 +7,7 @@ const deploymentUrl = (process.env.DOCS_TEST_URL ?? "https://neobrutal-ui.andong
 );
 const deadline = Date.now() + 5 * 60_000;
 
-assert.match(
-  expectedCommit ?? "",
-  /^[\da-f]{40}$/,
-  "EXPECTED_COMMIT must be a full Git SHA",
-);
+assert.match(expectedCommit ?? "", /^[\da-f]{40}$/, "EXPECTED_COMMIT must be a full Git SHA");
 
 let lastFailure = "the deployment marker has not been checked";
 let matched = false;
