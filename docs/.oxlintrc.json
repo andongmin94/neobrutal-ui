@@ -2,8 +2,6 @@
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["react", "unicorn", "typescript", "oxc", "jsx-a11y"],
   "ignorePatterns": [
-    ".vitepress/cache/**",
-    ".vitepress/dist/**",
     "node_modules/**",
     "src/components/ui/**",
     "src/components/templates/**"
@@ -18,10 +16,5 @@
         "jsx-a11y/prefer-tag-over-role": "off"
       }
     }
-  ],
-  "settings": {
-    "react": {
-      "version": "19.2.7"
-    }
-  }
+  ]
 }
