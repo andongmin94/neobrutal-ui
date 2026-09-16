@@ -30,11 +30,11 @@
   --radius: 5px;
   --base-font-weight: 500;
   --heading-font-weight: 700;
-  --chart-1: #facc00;
-  --chart-2: #7a83ff;
-  --chart-3: #ff4d50;
-  --chart-4: #00d696;
-  --chart-5: #0099ff;
+  --chart-1: #FACC00;
+  --chart-2: #7A83FF;
+  --chart-3: #FF4D50;
+  --chart-4: #00D696;
+  --chart-5: #0099FF;
   --sidebar: oklch(96.79% 0.0654 102.26);
   --sidebar-foreground: oklch(0% 0 0);
   --sidebar-primary: oklch(86.03% 0.176 92.36);
@@ -75,11 +75,11 @@
   --reverse-box-shadow-x: calc(0px - var(--box-shadow-x));
   --reverse-box-shadow-y: calc(0px - var(--box-shadow-y));
   --radius: 5px;
-  --chart-1: #e0b700;
-  --chart-2: #7a83ff;
-  --chart-3: #ff6669;
-  --chart-4: #00bd84;
-  --chart-5: #008ae5;
+  --chart-1: #E0B700;
+  --chart-2: #7A83FF;
+  --chart-3: #FF6669;
+  --chart-4: #00BD84;
+  --chart-5: #008AE5;
   --sidebar: oklch(29.28% 0.0373 94.38);
   --sidebar-foreground: oklch(92.49% 0 0);
   --sidebar-primary: oklch(79.36% 0.1624 92.49);
@@ -128,8 +128,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --shadow-shadow: var(--shadow);
-  --shadow-press: clamp(-1px, var(--box-shadow-x), 1px) clamp(-1px, var(--box-shadow-y), 1px) 0px
-    0px var(--border);
+  --shadow-press: clamp(-1px, var(--box-shadow-x), 1px) clamp(-1px, var(--box-shadow-y), 1px) 0px 0px var(--border);
   --spacing-boxShadowX: var(--box-shadow-x);
   --spacing-boxShadowY: var(--box-shadow-y);
   --spacing-reverseBoxShadowX: var(--reverse-box-shadow-x);
