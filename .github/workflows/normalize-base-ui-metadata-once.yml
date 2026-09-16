@@ -1,0 +1,88 @@
+name: Normalize Base UI metadata once
+
+on:
+  push:
+    paths:
+      - .github/workflows/normalize-base-ui-metadata-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: registry/package-lock.json
+      - run: npm ci --prefix registry
+      - name: Remove redundant Base UI metadata
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          catalog = Path("registry/src/data/registry.ts")
+          source = catalog.read_text()
+          source, removed = re.subn(
+              r'^    dependencies: \["@base-ui/react"\],\n',
+              '',
+              source,
+              flags=re.MULTILINE,
+          )
+          source, combined = re.subn(
+              r'dependencies: \["@base-ui/react", "@hookform/resolvers", "react-hook-form", "zod"\],',
+              'dependencies: ["@hookform/resolvers", "react-hook-form", "zod"],',
+              source,
+          )
+          if removed < 10 or combined != 1:
+              raise SystemExit(f"Unexpected Base UI metadata shape: removed={removed}, combined={combined}")
+          if 'dependencies: ["@base-ui/react"' in source:
+              raise SystemExit("Explicit Base UI dependency metadata remains")
+          catalog.write_text(source)
+
+          generator = Path("registry/src/scripts/generate-registry-json.ts")
+          source = generator.read_text()
+          old = '''function rewriteDependencies(item: RegistryItem): string[] | undefined {
+            const dependencies = new Set((item.dependencies ?? []).map(pinDependency));
+
+            if (itemImportsPackage(item, "@base-ui/react")) {'''.replace('            ', '')
+          new = '''function rewriteDependencies(item: RegistryItem): string[] | undefined {
+            if ((item.dependencies ?? []).some((dependency) => getPackageName(dependency) === "@base-ui/react")) {
+              throw new Error(`${item.name}: Base UI dependencies are derived from source imports.`);
+            }
+
+            const dependencies = new Set((item.dependencies ?? []).map(pinDependency));
+
+            if (itemImportsPackage(item, "@base-ui/react")) {'''.replace('            ', '')
+          if source.count(old) != 1:
+              raise SystemExit("Could not locate rewriteDependencies")
+          generator.write_text(source.replace(old, new))
+          PY
+      - name: Verify normalized metadata
+        run: |
+          npm run format --prefix registry
+          npm run lint --prefix registry
+          npm run typecheck --prefix registry
+          npm run build --prefix registry
+          npm run registry:validate --prefix registry
+          npm run registry:check --prefix registry
+          git diff --check
+      - name: Publish normalized metadata
+        run: |
+          remote_head="$(git ls-remote origin refs/heads/main | cut -f1)"
+          if [ "$remote_head" != "$GITHUB_SHA" ]; then
+            echo "main advanced from $GITHUB_SHA to $remote_head; refusing to overwrite unrelated work."
+            exit 1
+          fi
+          git add registry docs
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "refactor: derive Base UI dependencies from source"
+          git push origin HEAD:main
