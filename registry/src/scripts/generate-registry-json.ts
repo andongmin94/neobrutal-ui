@@ -1,16 +1,15 @@
-import * as fs from "fs";
-import * as path from "path";
+import fs from "node:fs";
+import path from "node:path";
 
-import REGISTRY from "@/data/registry";
 import colors from "@/data/colors";
+import REGISTRY from "@/data/registry";
 import { themeCss } from "@/data/theme-styles";
 import { createThemeCssVars, defaultColor } from "@/data/theme";
 
 const DEFAULT_REGISTRY_BASE_URL = "https://neobrutal-ui.andongmin.com";
-const registryBaseUrl = (process.env.REGISTRY_BASE_URL || DEFAULT_REGISTRY_BASE_URL).replace(
-  /\/$/,
-  "",
-);
+const registryBaseUrl = new URL(
+  process.env.REGISTRY_BASE_URL || DEFAULT_REGISTRY_BASE_URL,
+).toString().replace(/\/$/, "");
 const packageJson = JSON.parse(
   fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8"),
 ) as {
@@ -97,10 +96,7 @@ type RegistryItem = {
 };
 
 function rewriteRegistryDependency(dependency: string) {
-  if (/^https?:\/\//.test(dependency)) {
-    return dependency;
-  }
-
+  if (/^https?:\/\//.test(dependency)) return dependency;
   return `${registryBaseUrl}/r/${dependency.replace(/\.json$/, "")}.json`;
 }
 
@@ -146,13 +142,8 @@ function rewriteRegistryItem<T extends RegistryItem>(item: T) {
   };
 }
 
-// Read the existing registry.json to preserve metadata
-const registryPath = path.join(process.cwd(), "registry.json");
-const existingRegistry = JSON.parse(fs.readFileSync(registryPath, "utf-8"));
-
-// Update only the items array while preserving other fields
-const updatedRegistry = {
-  ...existingRegistry,
+const registry = {
+  $schema: "https://ui.shadcn.com/schema/registry.json",
   name: "neobrutal-ui",
   homepage: registryBaseUrl,
   author: "andongmin94",
@@ -174,11 +165,7 @@ const updatedRegistry = {
     })),
   ],
 };
+const registryPath = path.join(process.cwd(), "registry.json");
 
-// Convert to JSON string with proper formatting
-const registryJson = JSON.stringify(updatedRegistry, null, 2);
-
-// Write the updated JSON file
-fs.writeFileSync(registryPath, registryJson);
-
+fs.writeFileSync(registryPath, `${JSON.stringify(registry, null, 2)}\n`, "utf8");
 console.log(`Registry JSON file updated at: ${registryPath}`);
