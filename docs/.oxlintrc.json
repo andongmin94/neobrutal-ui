@@ -8,6 +8,17 @@
     "src/components/ui/**",
     "src/components/templates/**"
   ],
+  "overrides": [
+    {
+      "files": [
+        "app/components/search-launcher.tsx",
+        "src/examples/ui/combobox/**/*.tsx"
+      ],
+      "rules": {
+        "jsx-a11y/prefer-tag-over-role": "off"
+      }
+    }
+  ],
   "settings": {
     "react": {
       "version": "19.2.7"
