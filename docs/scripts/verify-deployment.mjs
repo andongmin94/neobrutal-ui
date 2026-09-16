@@ -7,11 +7,16 @@ const deploymentUrl = (process.env.DOCS_TEST_URL ?? "https://neobrutal-ui.andong
 );
 const deadline = Date.now() + 5 * 60_000;
 
-assert.match(expectedCommit ?? "", /^[\da-f]{40}$/, "EXPECTED_COMMIT must be a full Git SHA");
+assert.match(
+  expectedCommit ?? "",
+  /^[\da-f]{40}$/,
+  "EXPECTED_COMMIT must be a full Git SHA",
+);
 
 let lastFailure = "the deployment marker has not been checked";
+let matched = false;
 
-while (Date.now() < deadline) {
+while (Date.now() < deadline && !matched) {
   try {
     const response = await fetch(
       `${deploymentUrl}/build-info.json?expected=${encodeURIComponent(expectedCommit)}`,
@@ -24,18 +29,20 @@ while (Date.now() < deadline) {
     assert.match(response.headers.get("content-type") ?? "", /application\/json/i);
 
     const buildInfo = await response.json();
-    if (buildInfo.commit === expectedCommit) {
-      console.log(`Production documentation matches commit ${expectedCommit}.`);
-      process.exit(0);
-    }
-
-    lastFailure = `production reports ${buildInfo.commit ?? "no commit"}`;
+    matched = buildInfo.commit === expectedCommit;
+    if (!matched) lastFailure = `production reports ${buildInfo.commit ?? "no commit"}`;
   } catch (error) {
     lastFailure = error instanceof Error ? error.message : String(error);
   }
 
-  console.log(`Waiting for the current production documentation: ${lastFailure}`);
-  await new Promise((resolve) => setTimeout(resolve, 5_000));
+  if (!matched) {
+    console.log(`Waiting for the current production documentation: ${lastFailure}`);
+    await new Promise((resolve) => setTimeout(resolve, 5_000));
+  }
 }
 
-throw new Error(`Timed out waiting for ${expectedCommit}: ${lastFailure}`);
+if (!matched) {
+  throw new Error(`Timed out waiting for ${expectedCommit}: ${lastFailure}`);
+}
+
+console.log(`Production documentation matches commit ${expectedCommit}.`);
