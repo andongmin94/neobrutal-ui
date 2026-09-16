@@ -14,7 +14,10 @@ const defaultExampleByComponent: Record<string, string> = {
   sidebar: "page",
 };
 
-const previewModules = import.meta.glob<PreviewModule>("../examples/ui/**/*.tsx");
+const previewModules = import.meta.glob<PreviewModule>([
+  "../examples/ui/**/*.tsx",
+  "!../examples/ui/**/_*.tsx",
+]);
 const components = new Map<
   string,
   {
