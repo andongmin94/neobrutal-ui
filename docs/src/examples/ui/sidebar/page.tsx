@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
-import { AppSidebar } from "./sidebar";
+import { AppSidebar } from "./_sidebar";
 
 const metrics = [
   { label: "Components", value: "49", detail: "Documented and installable" },
