@@ -119,6 +119,12 @@ jobs:
         run: |
           npm ci --prefix registry
           npm ci --prefix docs
+      - name: Wait for the current production documentation
+        working-directory: docs
+        env:
+          DOCS_TEST_URL: https://neobrutal-ui.andongmin.com
+          EXPECTED_COMMIT: ${{ github.sha }}
+        run: node scripts/verify-deployment.mjs
       - name: Verify deployed catalog and every item
         working-directory: registry
         run: npm run registry:verify-live
