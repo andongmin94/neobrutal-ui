@@ -5,11 +5,7 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const catalogPath = path.join(root, "registry.json");
 const catalog = JSON.parse(fs.readFileSync(catalogPath, "utf8"));
-const managedDirectories = [
-  "src/components/ui",
-  "src/components/stars",
-  "src/blocks/templates",
-];
+const managedDirectories = ["src/components/ui", "src/components/stars", "src/blocks/templates"];
 const managedFiles = new Set(["src/hooks/use-mobile.ts", "src/lib/blog-posts.ts"]);
 const ownersBySourcePath = new Map();
 const errors = [];
@@ -54,7 +50,9 @@ for (const sourcePath of installableSources) {
 
 for (const [sourcePath, owners] of ownersBySourcePath) {
   if (!installableSources.has(sourcePath)) {
-    errors.push(`${sourcePath}: registry item ${owners.join(", ")} references a missing managed source`);
+    errors.push(
+      `${sourcePath}: registry item ${owners.join(", ")} references a missing managed source`,
+    );
   }
 }
 
