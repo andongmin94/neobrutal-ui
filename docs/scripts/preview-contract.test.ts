@@ -23,9 +23,17 @@ test("preview modules and helper modules use explicit filename conventions", () 
     const isHelper = path.basename(filePath).startsWith("_");
 
     if (isHelper) {
-      assert.doesNotMatch(source, /\bexport\s+default\b/, `${relativePath}: helper exports a preview`);
+      assert.doesNotMatch(
+        source,
+        /\bexport\s+default\b/,
+        `${relativePath}: helper exports a preview`,
+      );
     } else {
-      assert.match(source, /\bexport\s+default\b/, `${relativePath}: preview has no default export`);
+      assert.match(
+        source,
+        /\bexport\s+default\b/,
+        `${relativePath}: preview has no default export`,
+      );
     }
   }
 });
