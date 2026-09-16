@@ -1,31 +1,26 @@
-# neobrutal-ui
+# neobrutal-ui registry
 
-Modern neobrutalist components and registry items for shadcn/ui.
+Installable neobrutalist components, themes, recipes, and Next.js templates for the shadcn CLI.
+`src` is authoritative; `registry.json`, `public/r`, and synchronized docs copies are generated.
 
-This project is the registry-only split of the original
-`ekmas/neobrutalism-components` project. The docs site lives in `../docs`, and
-the registry build is copied into `../docs/public/r` for deployment.
-
-## Build
+## Develop
 
 ```bash
-npm install
+npm ci
+npm run format
+npm run lint
+npm run typecheck
 npm run build
+npm run registry:validate
+npm run registry:check
+npm run consumer:verify
 ```
 
-The build writes registry item files to:
+`format` applies Oxlint/Oxfmt fixes. `lint` is a non-mutating check. The build also copies the
+single registry landing-page source from `index.html` to `public/index.html` and synchronizes the
+registry output and managed preview sources into `../docs`.
 
-```txt
-public/r
-```
-
-It also syncs those files into:
-
-```txt
-../docs/public/r
-```
-
-## Local Registry Through Docs
+## Local registry through docs
 
 ```bash
 npm run build
@@ -33,7 +28,7 @@ cd ../docs
 npm run dev -- --hostname 127.0.0.1 --port 5177
 ```
 
-Then install from another shadcn project:
+Then install from another initialized shadcn project:
 
 ```bash
 npx shadcn@latest add http://127.0.0.1:5177/r/button.json
@@ -42,26 +37,16 @@ npx shadcn@latest add http://127.0.0.1:5177/r/theme-yellow.json
 
 ## Deployment
 
-The default registry base URL is:
-
-```txt
-https://neobrutal-ui.andongmin.com
-```
-
-Set `REGISTRY_BASE_URL` before building only if registry dependencies should
-point somewhere else:
+The default registry base URL is `https://neobrutal-ui.andongmin.com`. Set
+`REGISTRY_BASE_URL` before building only when registry dependencies must point elsewhere.
 
 ```powershell
 $env:REGISTRY_BASE_URL="https://neobrutal-ui.andongmin.com"; npm run build
 ```
 
-The registry catalog will be available at:
-
-```txt
-https://neobrutal-ui.andongmin.com/r/registry.json
-```
+The catalog is published at `https://neobrutal-ui.andongmin.com/r/registry.json`.
 
 ## Attribution
 
-This project is derived from `ekmas/neobrutalism-components` under the MIT
-License. Keep the original license notice when redistributing.
+This project is derived from `ekmas/neobrutalism-components` under the MIT License. Keep the
+original license notice when redistributing.

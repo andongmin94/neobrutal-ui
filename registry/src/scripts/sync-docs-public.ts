@@ -1,43 +1,36 @@
+import REGISTRY from "@/data/registry";
 import { serializeThemeVariables } from "@/data/theme-styles";
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 
 const sourceDir = path.resolve(process.cwd(), "public", "r");
 const sourceUiDir = path.resolve(process.cwd(), "src", "components", "ui");
-const sourceTemplatesDir = path.resolve(process.cwd(), "src", "blocks", "templates");
 const docsRootDir = path.resolve(process.cwd(), "..", "docs");
-const docsPublicDir = path.resolve(process.cwd(), "..", "docs", "public");
-const docsSourceDir = path.resolve(process.cwd(), "..", "docs", "src");
+const docsPublicDir = path.join(docsRootDir, "public");
+const docsSourceDir = path.join(docsRootDir, "src");
 const docsTemplatesDir = path.join(docsSourceDir, "components", "templates");
 const docsUiDir = path.join(docsSourceDir, "components", "ui");
 const syncManifestPath = path.join(docsRootDir, ".registry-sync-manifest.json");
 const targetDir = path.join(docsPublicDir, "r");
-const templateFiles = [
-  "blog-post-template.tsx",
-  "blog-template.tsx",
-  "cms-template.tsx",
-  "link-hub-template.tsx",
-  "portfolio-template.tsx",
-];
 const sharedFiles = [
   ...["theme.ts", "theme-styles.ts"].map((name) => ({
     source: path.join(process.cwd(), "src", "data", name),
     target: path.join(docsSourceDir, "data", name),
   })),
   {
-    source: path.resolve(process.cwd(), "src", "lib", "blog-posts.ts"),
+    source: path.join(process.cwd(), "src", "lib", "blog-posts.ts"),
     target: path.join(docsSourceDir, "lib", "blog-posts.ts"),
   },
   {
-    source: path.resolve(process.cwd(), "src", "lib", "utils.ts"),
+    source: path.join(process.cwd(), "src", "lib", "utils.ts"),
     target: path.join(docsSourceDir, "lib", "utils.ts"),
   },
   {
-    source: path.resolve(process.cwd(), "src", "hooks", "use-mobile.ts"),
+    source: path.join(process.cwd(), "src", "hooks", "use-mobile.ts"),
     target: path.join(docsSourceDir, "hooks", "use-mobile.ts"),
   },
   {
-    source: path.resolve(process.cwd(), "src", "data", "colors.ts"),
+    source: path.join(process.cwd(), "src", "data", "colors.ts"),
     target: path.join(docsSourceDir, "data", "colors.ts"),
   },
 ];
@@ -45,6 +38,11 @@ const sharedFiles = [
 type SyncManifest = {
   version: 1;
   ui: string[];
+};
+
+type RegistryFile = {
+  path: string;
+  target?: string;
 };
 
 function getRegistryUiFiles() {
@@ -65,6 +63,30 @@ function getRegistryUiFiles() {
   visit(sourceUiDir);
 
   return files.sort();
+}
+
+function getTemplateFiles() {
+  const targets = new Map<string, string>();
+
+  for (const item of REGISTRY.filter((entry) => entry.categories.includes("template"))) {
+    for (const file of item.files as RegistryFile[]) {
+      if (!file.target?.startsWith("components/templates/")) continue;
+
+      const source = path.resolve(process.cwd(), file.path);
+      const target = path.join(docsSourceDir, file.target);
+      const existing = targets.get(target);
+
+      if (existing && existing !== source) {
+        throw new Error(`Multiple registry files target the same docs path: ${file.target}`);
+      }
+
+      targets.set(target, source);
+    }
+  }
+
+  return [...targets.entries()]
+    .map(([target, source]) => ({ source, target }))
+    .sort((a, b) => a.target.localeCompare(b.target));
 }
 
 function readSyncManifest(): SyncManifest {
@@ -136,45 +158,34 @@ if (!fs.existsSync(sourceDir)) {
   throw new Error(`Registry output does not exist: ${sourceDir}`);
 }
 
-if (!fs.existsSync(docsPublicDir)) {
-  throw new Error(`Docs public directory does not exist: ${docsPublicDir}`);
-}
-
-fs.rmSync(targetDir, { force: true, recursive: true });
 fs.mkdirSync(docsPublicDir, { recursive: true });
+fs.rmSync(targetDir, { force: true, recursive: true });
 fs.cpSync(sourceDir, targetDir, { recursive: true });
 
 console.log(`Synced registry output to: ${targetDir}`);
 
 const syncedUiFileCount = syncRegistryUiFiles();
-
 console.log(`Synced ${syncedUiFileCount} registry UI components to: ${docsUiDir}`);
 
+const templateFiles = getTemplateFiles();
+const expectedTemplateTargets = new Set(templateFiles.map(({ target }) => path.resolve(target)));
 fs.mkdirSync(docsTemplatesDir, { recursive: true });
 
-const expectedTemplateFiles = new Set(templateFiles);
-
 for (const entry of fs.readdirSync(docsTemplatesDir, { withFileTypes: true })) {
+  const target = path.resolve(docsTemplatesDir, entry.name);
   if (
     entry.isFile() &&
     entry.name.endsWith("-template.tsx") &&
-    !expectedTemplateFiles.has(entry.name)
+    !expectedTemplateTargets.has(target)
   ) {
-    fs.rmSync(path.join(docsTemplatesDir, entry.name));
+    fs.rmSync(target);
   }
 }
 
-for (const fileName of templateFiles) {
-  const sourceFile = path.join(sourceTemplatesDir, fileName);
-  syncFile(sourceFile, path.join(docsTemplatesDir, fileName));
-}
+for (const file of templateFiles) syncFile(file.source, file.target);
+console.log(`Synced ${templateFiles.length} template components to: ${docsTemplatesDir}`);
 
-console.log(`Synced template components to: ${docsTemplatesDir}`);
-
-for (const file of sharedFiles) {
-  syncFile(file.source, file.target);
-}
-
+for (const file of sharedFiles) syncFile(file.source, file.target);
 console.log(`Synced shared registry files to: ${docsSourceDir}`);
 
 const catalog = JSON.parse(fs.readFileSync(path.join(sourceDir, "registry.json"), "utf8")) as {

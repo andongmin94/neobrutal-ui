@@ -60,11 +60,13 @@ through the interactive `Button`.
 
 ## Development
 
-Use Node.js 22.12 or newer within the Node 22 release line and npm.
+Use Node.js 22.12 or newer within the Node 22 release line and npm. `format` writes fixes;
+`lint` is a non-mutating CI check.
 
 ```bash
 cd registry
 npm ci
+npm run format
 npm run lint
 npm run typecheck
 npm run build
@@ -74,6 +76,7 @@ npm run consumer:verify
 
 cd ../docs
 npm ci
+npm run format
 npm run lint
 npm run typecheck
 npm run build

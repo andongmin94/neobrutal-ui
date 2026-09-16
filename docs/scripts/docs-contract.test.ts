@@ -11,7 +11,44 @@ import {
 } from "../src/data/theme-styles";
 import { COMPONENT_DIRECTORY_LINKS } from "../src/data/component-directory";
 import descriptions from "../src/data/component-descriptions.json";
-import components from "../src/data/components";
+
+const compositionRecipes = new Set(["combobox", "date-picker"]);
+const defaultPreviewFileBySlug: Record<string, string> = {
+  chart: "chart-area-stacked",
+  sidebar: "page",
+};
+
+type CatalogItem = {
+  name: string;
+  title: string;
+  type: string;
+  description: string;
+  categories?: string[];
+  dependencies?: string[];
+  files: { path: string }[];
+};
+
+function readCatalog() {
+  return JSON.parse(fs.readFileSync("../registry/registry.json", "utf8")) as {
+    items: CatalogItem[];
+  };
+}
+
+function getDocumentedSlugs() {
+  return COMPONENT_DIRECTORY_LINKS.map(({ href }) => href.split("/").pop()!);
+}
+
+function previewSourceExists(slug: string, example?: string) {
+  if (example) return fs.existsSync(`src/examples/ui/${slug}/${example}.tsx`);
+
+  return [
+    `src/examples/ui/${slug}.tsx`,
+    `src/examples/ui/${slug}/index.tsx`,
+    defaultPreviewFileBySlug[slug]
+      ? `src/examples/ui/${slug}/${defaultPreviewFileBySlug[slug]}.tsx`
+      : undefined,
+  ].some((filePath) => filePath && fs.existsSync(filePath));
+}
 
 test("all palette exports match the installable registry contract", () => {
   for (const color of colors) {
@@ -27,6 +64,7 @@ test("all palette exports match the installable registry contract", () => {
     }
   }
 });
+
 test("customization changes the same light/dark variables without dropping tokens", () => {
   const settings = {
     ...defaultThemeSettings,
@@ -45,24 +83,81 @@ test("customization changes the same light/dark variables without dropping token
     vars.theme["color-primary"] && vars.theme["color-sidebar"] && vars.theme["color-destructive"],
   );
 });
-test("shared theme sources are byte-identical after registry synchronization", () => {
-  for (const name of ["theme.ts", "theme-styles.ts"])
+
+test("managed registry sources are byte-identical after synchronization", () => {
+  const sharedFiles = [
+    ["src/data/theme.ts", "../registry/src/data/theme.ts"],
+    ["src/data/theme-styles.ts", "../registry/src/data/theme-styles.ts"],
+    ["src/data/colors.ts", "../registry/src/data/colors.ts"],
+    ["src/lib/blog-posts.ts", "../registry/src/lib/blog-posts.ts"],
+    ["src/lib/utils.ts", "../registry/src/lib/utils.ts"],
+    ["src/hooks/use-mobile.ts", "../registry/src/hooks/use-mobile.ts"],
+  ] as const;
+
+  for (const [docsPath, registryPath] of sharedFiles)
+    assert.equal(fs.readFileSync(docsPath, "utf8"), fs.readFileSync(registryPath, "utf8"));
+
+  const manifest = JSON.parse(fs.readFileSync(".registry-sync-manifest.json", "utf8")) as {
+    version: number;
+    ui: string[];
+  };
+  assert.equal(manifest.version, 1);
+  for (const relativePath of manifest.ui)
     assert.equal(
-      fs.readFileSync(`src/data/${name}`, "utf8"),
-      fs.readFileSync(`../registry/src/data/${name}`, "utf8"),
+      fs.readFileSync(`src/components/ui/${relativePath}`, "utf8"),
+      fs.readFileSync(`../registry/src/components/ui/${relativePath}`, "utf8"),
+      relativePath,
+    );
+
+  for (const fileName of fs
+    .readdirSync("src/components/templates")
+    .filter((name) => name.endsWith("-template.tsx")))
+    assert.equal(
+      fs.readFileSync(`src/components/templates/${fileName}`, "utf8"),
+      fs.readFileSync(`../registry/src/blocks/templates/${fileName}`, "utf8"),
+      fileName,
     );
 });
-test("every directory card has a purpose-specific description", () => {
-  for (const link of COMPONENT_DIRECTORY_LINKS) {
-    const slug = link.href.split("/").pop()!;
-    assert.ok((descriptions as Record<string, string>)[slug]?.length > 15, slug);
-  }
+
+test("the deployed registry landing page is generated from one source", () => {
+  assert.equal(
+    fs.readFileSync("../registry/public/index.html", "utf8"),
+    fs.readFileSync("../registry/index.html", "utf8"),
+  );
 });
+
+test("component directory covers the registry UI and recipes exactly once", () => {
+  const catalog = readCatalog();
+  const registrySlugs = catalog.items
+    .filter(
+      (item) => item.type === "registry:ui" || item.categories?.includes("recipe") === true,
+    )
+    .map((item) => item.name);
+  const documentedSlugs = getDocumentedSlugs();
+  const expectedSlugs = [...registrySlugs, ...compositionRecipes].sort();
+
+  assert.equal(new Set(documentedSlugs).size, documentedSlugs.length, "duplicate directory slug");
+  assert.deepEqual([...documentedSlugs].sort(), expectedSlugs);
+
+  for (const item of catalog.items.filter((candidate) => registrySlugs.includes(candidate.name)))
+    assert.equal(
+      (descriptions as Record<string, string>)[item.name],
+      item.description,
+      `${item.name}: description drift`,
+    );
+});
+
+test("every directory card has a purpose-specific description", () => {
+  for (const slug of getDocumentedSlugs())
+    assert.ok((descriptions as Record<string, string>)[slug]?.length > 15, slug);
+});
+
 test("markdown typography never uses bare descendant element selectors", () => {
   const css = fs.readFileSync("app/styles/content.css", "utf8");
   assert.doesNotMatch(css, /\.docs-content\s+(?:h[1-6]|p|a|ol|ul|li|strong)\b/);
 });
-test("all documented preview names resolve to a registered loader", () => {
+
+test("all documented preview names resolve to an example source", () => {
   for (const file of fs.readdirSync("content/docs").filter((name) => name.endsWith(".mdx"))) {
     const source = fs.readFileSync(`content/docs/${file}`, "utf8");
     for (const match of source.matchAll(/<ComponentPreview\s+([^>]+)>/g)) {
@@ -70,15 +165,7 @@ test("all documented preview names resolve to a registered loader", () => {
       if (attributes.includes('type="star"')) continue;
       const slug = attributes.match(/component="([^"]+)"/)?.[1];
       const example = attributes.match(/example="([^"]+)"/)?.[1];
-      const component = components.find(
-        (entry) =>
-          entry.name.toLowerCase().replaceAll(" ", "-") ===
-          slug?.toLowerCase().replaceAll(" ", "-"),
-      );
-      assert.ok(
-        component && (example ? component.examples?.[example] : component.exampleComponent),
-        `${file}: ${slug}/${example ?? "default"}`,
-      );
+      assert.ok(slug && previewSourceExists(slug, example), `${file}: ${slug}/${example ?? "default"}`);
     }
   }
 });
@@ -93,16 +180,15 @@ test("the docs stylesheet is generated from the same default theme", () => {
 });
 
 test("every component document has complete usage, API, accessibility and installation guidance", () => {
-  const catalog = JSON.parse(fs.readFileSync("../registry/registry.json", "utf8"));
-  for (const { href } of COMPONENT_DIRECTORY_LINKS) {
-    const slug = href.split("/").pop()!;
+  const catalog = readCatalog();
+  for (const slug of getDocumentedSlugs()) {
     const source = fs.readFileSync(`content/docs/${slug}.mdx`, "utf8");
     for (const heading of ["Installation", "Usage", "API reference", "Accessibility"])
       assert.ok(source.includes(`## ${heading}\n`), `${slug}: missing ${heading}`);
-    const item = catalog.items.find((entry: { name: string }) => entry.name === slug);
+    const item = catalog.items.find((entry) => entry.name === slug);
     const installation = source.match(/<Installation\b[^>]*>([\s\S]*?)<\/Installation>/)?.[1];
     if (!item) {
-      assert.ok(["combobox", "date-picker"].includes(slug));
+      assert.ok(compositionRecipes.has(slug));
       assert.ok(!installation, `${slug}: composition must not advertise a nonexistent endpoint`);
       continue;
     }

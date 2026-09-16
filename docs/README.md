@@ -34,6 +34,7 @@ After regenerating registry artifacts, run:
 
 ```bash
 cd docs
+npm run format
 npm run lint
 npm run typecheck
 npm run build
@@ -42,10 +43,12 @@ npx playwright install --with-deps chromium
 npm run test:browser
 ```
 
+`format` applies Oxlint/Oxfmt fixes. `lint` only checks and never rewrites source files.
+
 Contract tests check palette exports, synchronized sources, default stylesheet generation,
-directory metadata, preview registrations, typography boundaries, internal links and includes,
-every component's manual files and package dependencies, and every Usage example against the
-installed component types.
+directory and registry parity, preview source discovery, typography boundaries, internal links
+and includes, every component's manual files and package dependencies, and every Usage example
+against the installed component types.
 
 Playwright visits every content route in desktop and mobile light/dark Chromium. It checks
 navigation, keyboard interaction, clipboard success and failure, motion controls, popup focus,

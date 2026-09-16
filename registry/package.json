@@ -12,6 +12,7 @@
     "registry:sync-docs"  : "node scripts/tasks.mjs registry:sync-docs",
     "build"               : "node scripts/tasks.mjs build",
     "dev"                 : "node scripts/tasks.mjs dev",
+    "format"              : "node scripts/tasks.mjs format",
     "lint"                : "node scripts/tasks.mjs lint",
     "list"                : "node scripts/tasks.mjs list",
     "list:local"          : "node scripts/tasks.mjs list:local",
