@@ -7,9 +7,9 @@ import { themeCss } from "@/data/theme-styles";
 import { createThemeCssVars, defaultColor } from "@/data/theme";
 
 const DEFAULT_REGISTRY_BASE_URL = "https://neobrutal-ui.andongmin.com";
-const registryBaseUrl = new URL(
-  process.env.REGISTRY_BASE_URL || DEFAULT_REGISTRY_BASE_URL,
-).toString().replace(/\/$/, "");
+const registryBaseUrl = new URL(process.env.REGISTRY_BASE_URL || DEFAULT_REGISTRY_BASE_URL)
+  .toString()
+  .replace(/\/$/, "");
 const packageJson = JSON.parse(
   fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8"),
 ) as {
