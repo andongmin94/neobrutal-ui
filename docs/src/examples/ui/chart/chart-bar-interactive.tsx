@@ -103,11 +103,8 @@ export default function ChartBarInteractive() {
           <CardDescription>
             Publish and install activity over the selected catalog range
           </CardDescription>
-          <div
-            className="mt-2 flex w-fit border-2 border-border"
-            role="group"
-            aria-label="Catalog activity range"
-          >
+          <fieldset className="mt-2 flex w-fit border-2 border-border p-0">
+            <legend className="sr-only">Catalog activity range</legend>
             {timeRanges.map((range) => (
               <button
                 type="button"
@@ -120,7 +117,7 @@ export default function ChartBarInteractive() {
                 {range}
               </button>
             ))}
-          </div>
+          </fieldset>
         </div>
         <div className="flex">
           {metrics.map((chart) => (

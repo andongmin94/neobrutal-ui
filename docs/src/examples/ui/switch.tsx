@@ -21,9 +21,9 @@ export default function SwitchDemo() {
         </div>
         <Switch id="auto-publish" checked={enabled} onCheckedChange={setEnabled} />
       </div>
-      <p className="mt-4 border-t-2 border-border pt-3 text-sm" role="status">
+      <output className="mt-4 block border-t-2 border-border pt-3 text-sm">
         Preview setting: <strong>{enabled ? "enabled" : "disabled"}</strong>
-      </p>
+      </output>
     </div>
   );
 }

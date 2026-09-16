@@ -88,6 +88,7 @@ export function Installation({ children, component }: { children?: ReactNode; co
           hidden={activeTab !== "cli"}
         >
           <SquareTerminal aria-hidden="true" size={18} strokeWidth={2.3} />
+          {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- Keyboard users need focus to scroll long commands. */}
           <code tabIndex={0}>{command}</code>
           <CopyButton text={command} label="Copy installation command" />
         </div>

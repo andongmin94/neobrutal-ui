@@ -48,9 +48,11 @@ export default function ComboboxWithCheckbox() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
+        {/* oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- A button-backed multi-select combobox follows the ARIA combobox pattern. */}
         <Button
           variant="noShadow"
           role="combobox"
+          aria-haspopup="listbox"
           aria-label="Select frameworks"
           aria-expanded={open}
           aria-controls={open ? contentId : undefined}

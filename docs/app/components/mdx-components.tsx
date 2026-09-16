@@ -45,6 +45,7 @@ function Heading({
 
 function Table({ className, ...props }: ComponentProps<"table">) {
   return (
+    // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- Wide tables need a keyboard-focusable scroll container.
     <div className="md-table-shell" tabIndex={0}>
       <table className={["md-table", className].filter(Boolean).join(" ")} {...props} />
     </div>

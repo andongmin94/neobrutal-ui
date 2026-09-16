@@ -257,6 +257,7 @@ export function SearchLauncher() {
             >
               <div className="search-dialog__input">
                 <Search aria-hidden="true" size={20} strokeWidth={2.3} />
+                {/* oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- The search input owns a custom listbox popup. */}
                 <input
                   ref={input}
                   value={search}
@@ -281,6 +282,7 @@ export function SearchLauncher() {
                 </button>
               </div>
 
+              {/* oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- Rich search results require a custom listbox. */}
               <div
                 ref={resultList}
                 id={resultListId}
@@ -289,6 +291,7 @@ export function SearchLauncher() {
                 aria-busy={query.isLoading || undefined}
               >
                 {results.map((entry, index) => (
+                  // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- Input focus stays on the owning combobox while this option is active.
                   <button
                     id={`docs-search-result-${index}`}
                     key={`${entry.group}:${entry.href}`}

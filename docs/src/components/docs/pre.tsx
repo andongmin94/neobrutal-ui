@@ -19,6 +19,7 @@ export function Pre({ children, __rawstring__, wrapperClassName, className, ...p
       className={["docs-code", wrapperClassName].filter(Boolean).join(" ")}
     >
       <CopyButton text={__rawstring__ ?? textContent(children)} />
+      {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- Keyboard users need focus to scroll overflowing code. */}
       <pre tabIndex={0} className={className} {...props}>
         {children}
       </pre>

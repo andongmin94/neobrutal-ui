@@ -56,6 +56,7 @@ type Timezone = (typeof timezones)[number];
 export default function TimezoneCombobox() {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("America/New_York");
+  const contentId = React.useId();
 
   const selectedGroup = React.useMemo(
     () => timezones.find((group) => group.timezones.some((tz) => tz.value === value)),
@@ -75,11 +76,14 @@ export default function TimezoneCombobox() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
+        {/* oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- A button-backed select-only combobox follows the ARIA combobox pattern. */}
         <Button
           variant="noShadow"
           role="combobox"
+          aria-haspopup="listbox"
           aria-label="Select a timezone"
           aria-expanded={open}
+          aria-controls={open ? contentId : undefined}
           className="h-12 w-full justify-between px-2.5 md:max-w-[200px]"
         >
           {selectedTimezoneLabel ? (
@@ -95,7 +99,7 @@ export default function TimezoneCombobox() {
           <ChevronDownIcon />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-0 border-0" align="start">
+      <PopoverContent id={contentId} className="p-0 border-0" align="start">
         <Command className="**:data-[slot=command-input-wrapper]:h-11">
           <CommandInput placeholder="Search timezone..." />
           <CommandList className="scroll-pb-12">
