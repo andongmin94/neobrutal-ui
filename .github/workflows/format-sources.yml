@@ -1,0 +1,50 @@
+name: Format sources once
+
+on:
+  push:
+    paths:
+      - .github/workflows/format-sources.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            registry/package-lock.json
+            docs/package-lock.json
+      - name: Install dependencies
+        run: |
+          npm ci --prefix registry
+          npm ci --prefix docs
+      - name: Apply repository formatters
+        run: |
+          npm run format --prefix registry
+          npm run format --prefix docs
+          git diff --check
+      - name: Publish formatted sources
+        run: |
+          remote_head="$(git ls-remote origin refs/heads/main | cut -f1)"
+          if [ "$remote_head" != "$GITHUB_SHA" ]; then
+            echo "main advanced from $GITHUB_SHA to $remote_head; refusing to overwrite unrelated work."
+            exit 1
+          fi
+          git add registry docs
+          if git diff --cached --quiet; then
+            echo "No formatting changes were needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "style: apply repository formatting"
+          git push origin HEAD:main
