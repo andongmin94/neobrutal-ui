@@ -12,7 +12,6 @@ const UI = [
     description: "A vertically stacked set of collapsible content sections.",
     categories: ["layout", "disclosure"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     files: [
       {
         path: "src/components/ui/accordion.tsx",
@@ -39,7 +38,6 @@ const UI = [
     description: "A modal confirmation dialog for important or destructive actions.",
     categories: ["overlay", "dialog", "feedback"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     registryDependencies: ["button"],
     files: [
       {
@@ -54,7 +52,6 @@ const UI = [
     description: "An image or fallback that identifies a person or entity.",
     categories: ["data-display", "identity"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     files: [
       {
         path: "src/components/ui/avatar.tsx",
@@ -81,7 +78,6 @@ const UI = [
     description: "A navigation trail that shows the current page hierarchy.",
     categories: ["navigation"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     files: [
       {
         path: "src/components/ui/breadcrumb.tsx",
@@ -95,7 +91,6 @@ const UI = [
     description: "An interactive control that triggers an action or navigation.",
     categories: ["action", "form"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     files: [
       {
         path: "src/components/ui/button.tsx",
@@ -170,7 +165,6 @@ const UI = [
     description: "A control for toggling one or more independent selections.",
     categories: ["form", "selection"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     files: [
       {
         path: "src/components/ui/checkbox.tsx",
@@ -184,7 +178,6 @@ const UI = [
     description: "An expandable region that reveals or hides related content.",
     categories: ["layout", "disclosure"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     files: [
       {
         path: "src/components/ui/collapsible.tsx",
@@ -213,7 +206,6 @@ const UI = [
     description: "A contextual action menu opened with a secondary pointer action.",
     categories: ["overlay", "menu"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     files: [
       {
         path: "src/components/ui/context-menu.tsx",
@@ -227,7 +219,6 @@ const UI = [
     description: "A modal overlay for focused content, forms, and actions.",
     categories: ["overlay", "dialog"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     registryDependencies: ["button"],
     files: [
       {
@@ -242,7 +233,6 @@ const UI = [
     description: "A panel that slides in from the edge of the viewport.",
     categories: ["overlay", "dialog"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     files: [
       {
         path: "src/components/ui/drawer.tsx",
@@ -256,7 +246,6 @@ const UI = [
     description: "A button-triggered menu for actions, choices, and nested options.",
     categories: ["overlay", "menu"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     files: [
       {
         path: "src/components/ui/dropdown-menu.tsx",
@@ -270,7 +259,7 @@ const UI = [
     description: "Accessible form helpers with React Hook Form and Zod validation.",
     categories: ["form", "validation"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react", "@hookform/resolvers", "react-hook-form", "zod"],
+    dependencies: ["@hookform/resolvers", "react-hook-form", "zod"],
     registryDependencies: ["label"],
     files: [
       {
@@ -285,7 +274,6 @@ const UI = [
     description: "A preview card that appears when a linked element is hovered.",
     categories: ["overlay", "data-display"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     files: [
       {
         path: "src/components/ui/hover-card.tsx",
@@ -404,7 +392,6 @@ const UI = [
     description: "A horizontal application menu with nested commands and shortcuts.",
     categories: ["navigation", "menu"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     registryDependencies: ["dropdown-menu"],
     files: [
       {
@@ -419,7 +406,6 @@ const UI = [
     description: "A responsive site navigation menu with expandable link panels.",
     categories: ["navigation", "menu"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     files: [
       {
         path: "src/components/ui/navigation-menu.tsx",
@@ -446,7 +432,6 @@ const UI = [
     description: "A floating panel for contextual content and lightweight controls.",
     categories: ["overlay"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     files: [
       {
         path: "src/components/ui/popover.tsx",
@@ -460,7 +445,6 @@ const UI = [
     description: "A visual indicator of task or process completion.",
     categories: ["feedback", "status"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     files: [
       {
         path: "src/components/ui/progress.tsx",
@@ -474,7 +458,6 @@ const UI = [
     description: "A set of mutually exclusive options for selecting one value.",
     categories: ["form", "selection"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     files: [
       {
         path: "src/components/ui/radio-group.tsx",
@@ -502,7 +485,6 @@ const UI = [
     description: "A custom scrollable viewport with styled scrollbars.",
     categories: ["layout"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     files: [
       {
         path: "src/components/ui/scroll-area.tsx",
@@ -516,7 +498,6 @@ const UI = [
     description: "A dropdown control for choosing one value from a list.",
     categories: ["form", "selection"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     files: [
       {
         path: "src/components/ui/select.tsx",
@@ -543,7 +524,6 @@ const UI = [
     description: "A modal panel that enters from a configurable screen edge.",
     categories: ["overlay", "dialog"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     registryDependencies: ["button"],
     files: [
       {
@@ -599,7 +579,6 @@ const UI = [
     description: "A draggable control for selecting a value or range.",
     categories: ["form", "input"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     files: [
       {
         path: "src/components/ui/slider.tsx",
@@ -627,7 +606,6 @@ const UI = [
     description: "A binary control for turning a setting on or off.",
     categories: ["form", "selection"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     files: [
       {
         path: "src/components/ui/switch.tsx",
@@ -654,7 +632,6 @@ const UI = [
     description: "A tabbed interface for switching between related content panels.",
     categories: ["navigation", "layout"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     files: [
       {
         path: "src/components/ui/tabs.tsx",
@@ -681,7 +658,6 @@ const UI = [
     description: "A concise text hint shown when an element is hovered or focused.",
     categories: ["overlay", "feedback"],
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
     files: [
       {
         path: "src/components/ui/tooltip.tsx",

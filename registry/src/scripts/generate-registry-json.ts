@@ -71,6 +71,12 @@ function rewriteRegistryDependency(dependency: string) {
 }
 
 function rewriteDependencies(item: RegistryItem): string[] | undefined {
+  if (
+    (item.dependencies ?? []).some((dependency) => getPackageName(dependency) === "@base-ui/react")
+  ) {
+    throw new Error(`${item.name}: Base UI dependencies are derived from source imports.`);
+  }
+
   const dependencies = new Set((item.dependencies ?? []).map(pinDependency));
 
   if (itemImportsPackage(item, "@base-ui/react")) {

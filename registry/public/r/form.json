@@ -5,10 +5,10 @@
   "author": "andongmin94",
   "description": "Accessible form helpers with React Hook Form and Zod validation.",
   "dependencies": [
-    "@base-ui/react@^1.6.0",
     "@hookform/resolvers@^5.4.0",
     "react-hook-form@^7.81.0",
-    "zod@^4.4.3"
+    "zod@^4.4.3",
+    "@base-ui/react@^1.6.0"
   ],
   "registryDependencies": [
     "https://neobrutal-ui.andongmin.com/r/label.json"

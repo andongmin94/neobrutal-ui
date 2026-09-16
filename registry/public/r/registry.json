@@ -211,16 +211,16 @@
         "disclosure"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "files": [
         {
           "path": "src/components/ui/accordion.tsx",
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "alert",
@@ -249,9 +249,6 @@
         "feedback"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "registryDependencies": [
         "https://neobrutal-ui.andongmin.com/r/button.json"
       ],
@@ -261,7 +258,10 @@
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "avatar",
@@ -272,16 +272,16 @@
         "identity"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "files": [
         {
           "path": "src/components/ui/avatar.tsx",
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "badge",
@@ -308,16 +308,16 @@
         "navigation"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "files": [
         {
           "path": "src/components/ui/breadcrumb.tsx",
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "button",
@@ -328,9 +328,6 @@
         "form"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "files": [
         {
           "path": "src/components/ui/button.tsx",
@@ -341,7 +338,10 @@
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "calendar",
@@ -435,16 +435,16 @@
         "selection"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "files": [
         {
           "path": "src/components/ui/checkbox.tsx",
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "collapsible",
@@ -455,16 +455,16 @@
         "disclosure"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "files": [
         {
           "path": "src/components/ui/collapsible.tsx",
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "command",
@@ -498,16 +498,16 @@
         "menu"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "files": [
         {
           "path": "src/components/ui/context-menu.tsx",
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "dialog",
@@ -518,9 +518,6 @@
         "dialog"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "registryDependencies": [
         "https://neobrutal-ui.andongmin.com/r/button.json"
       ],
@@ -530,7 +527,10 @@
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "drawer",
@@ -541,16 +541,16 @@
         "dialog"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "files": [
         {
           "path": "src/components/ui/drawer.tsx",
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "dropdown-menu",
@@ -561,16 +561,16 @@
         "menu"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "files": [
         {
           "path": "src/components/ui/dropdown-menu.tsx",
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "form",
@@ -582,10 +582,10 @@
       ],
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react@^1.6.0",
         "@hookform/resolvers@^5.4.0",
         "react-hook-form@^7.81.0",
-        "zod@^4.4.3"
+        "zod@^4.4.3",
+        "@base-ui/react@^1.6.0"
       ],
       "registryDependencies": [
         "https://neobrutal-ui.andongmin.com/r/label.json"
@@ -607,16 +607,16 @@
         "data-display"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "files": [
         {
           "path": "src/components/ui/hover-card.tsx",
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "image-card",
@@ -766,9 +766,6 @@
         "menu"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "registryDependencies": [
         "https://neobrutal-ui.andongmin.com/r/dropdown-menu.json"
       ],
@@ -778,7 +775,10 @@
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "navigation-menu",
@@ -789,16 +789,16 @@
         "menu"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "files": [
         {
           "path": "src/components/ui/navigation-menu.tsx",
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "pagination",
@@ -824,16 +824,16 @@
         "overlay"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "files": [
         {
           "path": "src/components/ui/popover.tsx",
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "progress",
@@ -844,16 +844,16 @@
         "status"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "files": [
         {
           "path": "src/components/ui/progress.tsx",
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "radio-group",
@@ -864,16 +864,16 @@
         "selection"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "files": [
         {
           "path": "src/components/ui/radio-group.tsx",
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "resizable",
@@ -902,16 +902,16 @@
         "layout"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "files": [
         {
           "path": "src/components/ui/scroll-area.tsx",
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "select",
@@ -922,16 +922,16 @@
         "selection"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "files": [
         {
           "path": "src/components/ui/select.tsx",
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "separator",
@@ -961,9 +961,6 @@
         "dialog"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "registryDependencies": [
         "https://neobrutal-ui.andongmin.com/r/button.json"
       ],
@@ -973,7 +970,10 @@
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "sidebar",
@@ -1036,16 +1036,16 @@
         "input"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "files": [
         {
           "path": "src/components/ui/slider.tsx",
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "sonner",
@@ -1077,16 +1077,16 @@
         "selection"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "files": [
         {
           "path": "src/components/ui/switch.tsx",
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "table",
@@ -1114,16 +1114,16 @@
         "layout"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "files": [
         {
           "path": "src/components/ui/tabs.tsx",
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "textarea",
@@ -1151,16 +1151,16 @@
         "feedback"
       ],
       "type": "registry:ui",
-      "dependencies": [
-        "@base-ui/react@^1.6.0"
-      ],
       "files": [
         {
           "path": "src/components/ui/tooltip.tsx",
           "type": "registry:ui"
         }
       ],
-      "author": "andongmin94"
+      "author": "andongmin94",
+      "dependencies": [
+        "@base-ui/react@^1.6.0"
+      ]
     },
     {
       "name": "data-table",
