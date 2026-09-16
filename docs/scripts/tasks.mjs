@@ -58,6 +58,29 @@ function generateDocsData() {
   run("tsx", ["src/scripts/generate-charts-ts.ts"]);
 }
 
+function getBuildCommit() {
+  for (const candidate of [process.env.VERCEL_GIT_COMMIT_SHA, process.env.GITHUB_SHA]) {
+    if (candidate && /^[\da-f]{40}$/i.test(candidate)) return candidate.toLowerCase();
+  }
+
+  const result = spawnSync("git", ["rev-parse", "HEAD"], {
+    cwd: path.resolve(root, ".."),
+    encoding: "utf8",
+  });
+  const candidate = result.status === 0 ? result.stdout.trim() : "";
+  return /^[\da-f]{40}$/i.test(candidate) ? candidate.toLowerCase() : "local";
+}
+
+function writeBuildInfo() {
+  const outputPath = path.join(root, "build", "client", "build-info.json");
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+  fs.writeFileSync(
+    outputPath,
+    `${JSON.stringify({ commit: getBuildCommit() }, null, 2)}\n`,
+    "utf8",
+  );
+}
+
 function getFormattedPackageJson() {
   const packagePath = path.join(root, "package.json");
   const pkg = JSON.parse(fs.readFileSync(packagePath, "utf8"));
@@ -137,6 +160,7 @@ switch (command) {
   case "build":
     generateDocsData();
     run("react-router", ["build", ...passthroughArgs]);
+    writeBuildInfo();
     break;
   case "start":
     run("vite", ["preview", "--outDir", "build/client", ...passthroughArgs]);
