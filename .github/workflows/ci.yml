@@ -57,12 +57,17 @@ jobs:
           npm run check:budget
           npm test
 
-      - name: Verify docs in Chromium, Firefox, and WebKit
+      - name: Install browser engines
         working-directory: docs
-        run: |
-          npx playwright install --with-deps chromium firefox webkit
-          npm run test:browser
-          npm run test:browser:cross
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Verify docs in Chromium
+        working-directory: docs
+        run: npm run test:browser
+
+      - name: Verify representative Firefox, WebKit, and reflow behavior
+        working-directory: docs
+        run: npm run test:browser:cross
 
       - name: Verify generated files are current
         run: |
@@ -83,6 +88,7 @@ jobs:
           path: |
             docs/test-results
             docs/playwright-report
+            docs/playwright-report-cross
 
   verify-deployment:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -117,13 +123,14 @@ jobs:
         run: |
           npm run consumer:verify -- vite --item=dialog --registry-url=https://neobrutal-ui.andongmin.com/r
           npm run consumer:verify -- next --item=blog-template --registry-url=https://neobrutal-ui.andongmin.com/r
+      - name: Install browser engines
+        working-directory: docs
+        run: npx playwright install --with-deps chromium firefox webkit
       - name: Smoke-test the deployed docs across browser engines
         working-directory: docs
         env:
           DOCS_TEST_URL: https://neobrutal-ui.andongmin.com
-        run: |
-          npx playwright install --with-deps chromium firefox webkit
-          npm run test:browser:cross
+        run: npm run test:browser:cross
       - name: Save failed production browser reports
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -133,4 +140,4 @@ jobs:
           if-no-files-found: ignore
           path: |
             docs/test-results
-            docs/playwright-report
+            docs/playwright-report-cross

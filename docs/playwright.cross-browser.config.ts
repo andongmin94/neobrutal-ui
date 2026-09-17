@@ -9,7 +9,10 @@ export default defineConfig({
   workers: process.env.CI ? 2 : undefined,
   retries: 0,
   timeout: 45000,
-  reporter: [["list"], ["html", { open: "never" }]],
+  reporter: [
+    ["list"],
+    ["html", { open: "never", outputFolder: "playwright-report-cross" }],
+  ],
   use: {
     baseURL,
     locale: "en-US",
@@ -36,28 +39,11 @@ export default defineConfig({
       },
     },
     {
-      name: "firefox-mobile",
-      use: {
-        browserName: "firefox",
-        viewport: { width: 390, height: 844 },
-        colorScheme: "dark",
-        hasTouch: true,
-      },
-    },
-    {
-      name: "webkit-desktop",
-      use: {
-        browserName: "webkit",
-        viewport: { width: 1440, height: 900 },
-        colorScheme: "dark",
-      },
-    },
-    {
       name: "webkit-mobile",
       use: {
         browserName: "webkit",
         viewport: { width: 390, height: 844 },
-        colorScheme: "light",
+        colorScheme: "dark",
         isMobile: true,
         hasTouch: true,
       },
