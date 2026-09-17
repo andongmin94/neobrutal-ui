@@ -72,11 +72,17 @@ test("documentation and discoverable preview sources stay bidirectionally comple
     const key = previewKey(identity);
     const relativePath = path.relative(examplesRoot, filePath).replaceAll("\\", "/");
 
-    assert.ok(!discoveredKeys.has(key), `${relativePath}: duplicate preview identity ${key}`);
+    assert.ok(
+      !discoveredKeys.has(key),
+      `${relativePath}: duplicate preview identity ${key}`,
+    );
     discoveredKeys.add(key);
 
     if (identity.example && specialPageComponents.has(identity.component)) continue;
-    assert.ok(documentedKeys.has(key), `${relativePath}: preview is not referenced by documentation`);
+    assert.ok(
+      documentedKeys.has(key),
+      `${relativePath}: preview is not referenced by documentation`,
+    );
   }
 
   for (const key of documentedKeys) {

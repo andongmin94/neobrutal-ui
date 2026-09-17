@@ -4,7 +4,9 @@ const configuredRegistryBaseUrl = import.meta.env?.VITE_REGISTRY_BASE_URL;
 
 export const REGISTRY_BASE_URL = new URL(
   configuredRegistryBaseUrl || DEFAULT_REGISTRY_BASE_URL,
-).toString().replace(/\/$/, "");
+)
+  .toString()
+  .replace(/\/$/, "");
 
 export function registryItemUrl(name: string) {
   const itemName = name.replace(/\.json$/, "");
