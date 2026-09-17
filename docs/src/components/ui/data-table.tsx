@@ -91,7 +91,7 @@ export const columns: ColumnDef<Payment>[] = [
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
-        className="size-6"
+        className="size-8"
       />
     ),
     cell: ({ row }) => (
@@ -99,7 +99,7 @@ export const columns: ColumnDef<Payment>[] = [
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
-        className="size-6"
+        className="size-8"
       />
     ),
     enableSorting: false,

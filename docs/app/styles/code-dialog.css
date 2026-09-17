@@ -1,0 +1,9 @@
+[data-slot="dialog-content"] > .docs-code {
+  min-height: 0;
+  margin: 0;
+}
+
+[data-slot="dialog-content"] > .docs-code pre {
+  max-height: calc(100dvh - 12rem);
+  overflow: auto;
+}
