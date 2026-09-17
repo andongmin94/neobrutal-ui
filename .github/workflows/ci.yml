@@ -57,18 +57,6 @@ jobs:
           npm run check:budget
           npm test
 
-      - name: Install browser engines
-        working-directory: docs
-        run: npx playwright install --with-deps chromium firefox webkit
-
-      - name: Verify docs in Chromium
-        working-directory: docs
-        run: npm run test:browser
-
-      - name: Verify representative Firefox, WebKit, and reflow behavior
-        working-directory: docs
-        run: npm run test:browser:cross
-
       - name: Verify generated files are current
         run: |
           git diff --exit-code
@@ -78,12 +66,28 @@ jobs:
             exit 1
           fi
 
+      - name: Install Chromium
+        working-directory: docs
+        run: npx playwright install --with-deps chromium
+
+      - name: Verify docs in Chromium
+        working-directory: docs
+        run: npm run test:browser
+
+      - name: Install Firefox and WebKit
+        working-directory: docs
+        run: npx playwright install --with-deps firefox webkit
+
+      - name: Verify representative Firefox, WebKit, and reflow behavior
+        working-directory: docs
+        run: npm run test:browser:cross
+
       - name: Save failed browser reports
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: docs-browser-checks
-          retention-days: 7
+          retention-days: 3
           if-no-files-found: ignore
           path: |
             docs/test-results
@@ -136,7 +140,7 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: docs-production-browser-checks
-          retention-days: 7
+          retention-days: 3
           if-no-files-found: ignore
           path: |
             docs/test-results
