@@ -3,15 +3,18 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev"              : "node scripts/tasks.mjs dev",
-    "build"            : "node scripts/tasks.mjs build",
-    "start"            : "node scripts/tasks.mjs start",
-    "format"           : "node scripts/tasks.mjs format",
-    "lint"             : "node scripts/tasks.mjs lint",
-    "typecheck"        : "node scripts/tasks.mjs typecheck",
-    "test"             : "tsx --test scripts/build-info.test.ts scripts/docs-contract.test.ts scripts/preview-contract.test.ts scripts/template-contract.test.ts",
-    "test:browser"     : "playwright test",
-    "verify:deployment": "node scripts/verify-deployment.mjs"
+    "dev"               : "node scripts/tasks.mjs dev",
+    "build"             : "node scripts/tasks.mjs build",
+    "start"             : "node scripts/tasks.mjs start",
+    "format"            : "node scripts/tasks.mjs format",
+    "lint"              : "node scripts/tasks.mjs lint",
+    "typecheck"         : "node scripts/tasks.mjs typecheck",
+    "test"              : "tsx --test scripts/docs-contract.test.ts",
+    "test:browser"      : "playwright test",
+    "test:browser:cross": "playwright test --config=playwright.cross-browser.config.ts",
+    "check:budget"      : "node scripts/check-build-budget.mjs",
+    "verify:deployment" : "node scripts/verify-deployment.mjs",
+    "verify:headers"    : "node scripts/verify-security-headers.mjs"
   },
   "dependencies": {
     "@base-ui/react"          : "^1.6.0",

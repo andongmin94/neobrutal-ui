@@ -14,21 +14,21 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Archive the exact sources under review
         run: git archive --format=tar.gz --output=/tmp/docs-review-source.tar.gz HEAD
 
       - name: Save review sources
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: docs-review-source
           retention-days: 7
           path: /tmp/docs-review-source.tar.gz
 
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 22
           cache: npm
@@ -66,20 +66,22 @@ jobs:
         working-directory: docs
         run: npm ci
 
-      - name: Verify docs and shared theme contracts
+      - name: Verify docs, budgets, and shared theme contracts
         working-directory: docs
         run: |
           npm audit --audit-level=high
           npm run lint
           npm run typecheck
           npm run build
+          npm run check:budget
           npm test
 
-      - name: Verify docs interactions in desktop and mobile themes
+      - name: Verify docs in Chromium, Firefox, and WebKit
         working-directory: docs
         run: |
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps chromium firefox webkit
           npm run test:browser
+          npm run test:browser:cross
 
       - name: Verify generated files are current
         run: |
@@ -92,7 +94,7 @@ jobs:
 
       - name: Save browser reports and screenshots
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: docs-browser-checks
           retention-days: 7
@@ -100,15 +102,16 @@ jobs:
           path: |
             docs/test-results
             docs/playwright-report
+            docs/playwright-report-cross
 
   verify-deployment:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: verify
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 22
           cache: npm
@@ -125,6 +128,11 @@ jobs:
           DOCS_TEST_URL: https://neobrutal-ui.andongmin.com
           EXPECTED_COMMIT: ${{ github.sha }}
         run: node scripts/verify-deployment.mjs
+      - name: Verify deployed security headers
+        working-directory: docs
+        env:
+          DOCS_TEST_URL: https://neobrutal-ui.andongmin.com
+        run: npm run verify:headers
       - name: Verify deployed catalog and every item
         working-directory: registry
         run: npm run registry:verify-live
@@ -133,16 +141,17 @@ jobs:
         run: |
           npm run consumer:verify -- vite --item=dialog --registry-url=https://neobrutal-ui.andongmin.com/r
           npm run consumer:verify -- next --item=blog-template --registry-url=https://neobrutal-ui.andongmin.com/r
-      - name: Verify the deployed documentation in real browsers
+      - name: Verify deployed docs in Chromium, Firefox, and WebKit
         working-directory: docs
         env:
           DOCS_TEST_URL: https://neobrutal-ui.andongmin.com
         run: |
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps chromium firefox webkit
           npm run test:browser
+          npm run test:browser:cross
       - name: Save production browser reports
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: docs-production-browser-checks
           retention-days: 7
@@ -150,3 +159,4 @@ jobs:
           path: |
             docs/test-results
             docs/playwright-report
+            docs/playwright-report-cross
