@@ -3,14 +3,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev"         : "node scripts/tasks.mjs dev",
-    "build"       : "node scripts/tasks.mjs build",
-    "start"       : "node scripts/tasks.mjs start",
-    "format"      : "node scripts/tasks.mjs format",
-    "lint"        : "node scripts/tasks.mjs lint",
-    "typecheck"   : "node scripts/tasks.mjs typecheck",
-    "test"        : "tsx --test scripts/docs-contract.test.ts scripts/preview-contract.test.ts",
-    "test:browser": "playwright test"
+    "dev"              : "node scripts/tasks.mjs dev",
+    "build"            : "node scripts/tasks.mjs build",
+    "start"            : "node scripts/tasks.mjs start",
+    "format"           : "node scripts/tasks.mjs format",
+    "lint"             : "node scripts/tasks.mjs lint",
+    "typecheck"        : "node scripts/tasks.mjs typecheck",
+    "test"             : "tsx --test scripts/build-info.test.ts scripts/docs-contract.test.ts scripts/preview-contract.test.ts",
+    "test:browser"     : "playwright test",
+    "verify:deployment": "node scripts/verify-deployment.mjs"
   },
   "dependencies": {
     "@base-ui/react"          : "^1.6.0",

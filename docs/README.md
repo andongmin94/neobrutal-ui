@@ -28,6 +28,10 @@ Markdown typography is applied through the explicit `md-*` classes in the MDX re
 Do not add selectors such as `.docs-content p` or `.docs-content li`: they also match live
 component markup and change the demonstration of the installed source.
 
+Component previews are discovered from `src/examples/ui`. Files beginning with `_` are helpers;
+all other TSX files are previews with a default export. The shared preview registry and contract
+tests reject duplicate, undocumented, or ambiguously named previews.
+
 ## Verify
 
 After regenerating registry artifacts, run:
@@ -46,9 +50,9 @@ npm run test:browser
 `format` applies Oxlint/Oxfmt fixes. `lint` only checks and never rewrites source files.
 
 Contract tests check palette exports, synchronized sources, default stylesheet generation,
-directory and registry parity, preview source discovery, typography boundaries, internal links
-and includes, every component's manual files and package dependencies, and every Usage example
-against the installed component types.
+directory and registry parity, preview source ownership, typography boundaries, internal links
+and includes, every component's manual files and package dependencies, every Usage example
+against the installed component types, and the source revision embedded in the built site.
 
 Playwright visits every content route in desktop and mobile light/dark Chromium. It checks
 navigation, keyboard interaction, clipboard success and failure, motion controls, popup focus,
@@ -71,3 +75,7 @@ Vercel uses `docs` as its root, the Vite framework preset, `npm run build`, and 
 as its output. These settings are also in `vercel.json`. React Router prerenders the content
 routes; Fumadocs builds the static Orama search index. `public/r` serves the registry from the
 same deployment.
+
+Each build writes `build/client/build-info.json` with its source commit. Deployment verification
+waits for that exact commit before checking the live registry, fresh production consumers, and
+the production browser suite, so docs-only changes cannot accidentally validate an older deploy.
