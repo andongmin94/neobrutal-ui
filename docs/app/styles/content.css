@@ -105,9 +105,6 @@ ol.md-list {
   font-size: 0.88em;
 }
 .docs-code {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: start;
   position: relative;
   margin: 20px 0;
   min-width: 0;
@@ -118,17 +115,33 @@ ol.md-list {
   overflow: hidden;
 }
 .docs-code pre {
-  grid-column: 1;
-  grid-row: 1;
   min-width: 0;
   margin: 0;
-  padding: 20px 12px 20px 20px;
-  max-height: 32rem;
-  overflow: auto;
+  padding: 20px 72px 20px 20px;
+  max-height: none;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #596273 #12151b;
   font-family: var(--font-mono);
   font-size: 13px;
   line-height: 1.7;
   tab-size: 2;
+}
+.docs-code pre::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.docs-code pre::-webkit-scrollbar-track {
+  background: #12151b;
+}
+.docs-code pre::-webkit-scrollbar-thumb {
+  border: 2px solid #12151b;
+  border-radius: 999px;
+  background: #596273;
+}
+.docs-code pre::-webkit-scrollbar-thumb:hover {
+  background: #7e8899;
 }
 .docs-code pre > code {
   display: block;
@@ -139,11 +152,11 @@ ol.md-list {
   color: var(--shiki-dark);
   background: transparent;
 }
-/* Keep the copy control beside the first line, outside the scrolling code. */
 .docs-code > .code-copy-button {
-  grid-column: 2;
-  grid-row: 1;
-  margin: 12px 12px 12px 0;
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  right: 12px;
 }
 .code-copy-button {
   display: inline-flex;
@@ -153,13 +166,32 @@ ol.md-list {
   width: 40px;
   height: 40px;
   padding: 0;
-  border: 1px solid #465064;
+  border: 2px solid #465064;
   border-radius: var(--radius-small);
   background: #202631;
+  box-shadow: 3px 3px 0 #080a0e;
   color: #f1f5f9;
   cursor: pointer;
+  translate: 0 0;
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    color 140ms ease,
+    translate 140ms ease;
 }
-.code-copy-button:hover,
+@media (hover: hover) {
+  .code-copy-button:hover {
+    border-color: #7e8899;
+    background: #2b3340;
+    box-shadow: 1px 1px 0 #080a0e;
+    translate: 2px 2px;
+  }
+}
+.code-copy-button:active {
+  box-shadow: none;
+  translate: 3px 3px;
+}
 .code-copy-button[data-copy-state="copied"] {
   border-color: var(--main);
   background: var(--main);
@@ -168,6 +200,10 @@ ol.md-list {
 .code-copy-button:focus-visible {
   outline: 2px solid #f1f5f9;
   outline-offset: 3px;
+}
+.component-preview__code .docs-code pre {
+  max-height: 32.5rem;
+  overflow: auto;
 }
 .installation-tabs {
   margin: 18px 0 26px;
@@ -308,10 +344,11 @@ ol.md-list {
     font-size: 19px;
   }
   .docs-code pre {
-    padding: 16px 10px 16px 14px;
+    padding: 16px 62px 16px 14px;
   }
   .docs-code > .code-copy-button {
-    margin: 8px 8px 8px 0;
+    top: 8px;
+    right: 8px;
   }
   .installation-tabs__command {
     padding-inline: 12px;
