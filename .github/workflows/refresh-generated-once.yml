@@ -1,0 +1,55 @@
+name: Refresh generated docs once
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/refresh-generated-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: docs/package-lock.json
+
+      - name: Install docs dependencies
+        working-directory: docs
+        run: npm ci
+
+      - name: Regenerate docs catalogs
+        working-directory: docs
+        run: npm run typecheck
+
+      - name: Verify and commit the generated catalog
+        shell: bash
+        run: |
+          unexpected="$(git diff --name-only | grep -v '^docs/src/data/charts.ts$' || true)"
+          if [ -n "$unexpected" ]; then
+            echo "Unexpected generated files changed:"
+            echo "$unexpected"
+            exit 1
+          fi
+
+          if git diff --quiet -- docs/src/data/charts.ts; then
+            echo "Generated chart catalog is already current."
+            exit 0
+          fi
+
+          git diff --check
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/src/data/charts.ts
+          git commit -m "chore(docs): refresh generated chart catalog"
+          git push
