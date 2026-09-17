@@ -25,6 +25,8 @@ async function expectHealthyLayout(page: Page, route: string) {
   const response = await page.goto(route);
   expect(response?.ok(), `${route}: HTTP response`).toBe(true);
   await expect(page.locator("main").first()).toBeVisible();
+  await expect(page.locator(".special-page-loading")).toHaveCount(0);
+  await expect(page.locator(".react-host__error")).toHaveCount(0);
   await page.evaluate(() => document.fonts.ready);
 
   const viewport = page.viewportSize()!;
@@ -97,6 +99,21 @@ test("installation tabs support roving keyboard focus", async ({ page }) => {
   await page.keyboard.press("ArrowLeft");
   await expect(cli).toBeFocused();
   await expect(cli).toHaveAttribute("aria-selected", "true");
+});
+
+test("WCAG text spacing does not create page overflow", async ({ page }) => {
+  await page.goto("/docs/installation");
+  await page.addStyleTag({
+    content: `
+      * { line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important; }
+      p { margin-bottom: 2em !important; }
+    `,
+  });
+  await expect(page.locator("main").first()).toBeVisible();
+  const viewport = page.viewportSize()!;
+  const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+  expect(scrollWidth).toBeLessThanOrEqual(viewport.width + 1);
+  await expect(page.getByRole("tab", { name: "shadcn CLI", exact: true }).first()).toBeVisible();
 });
 
 test("representative accessibility rules pass outside Chromium", async ({ page }) => {

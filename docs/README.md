@@ -42,9 +42,11 @@ npm run format
 npm run lint
 npm run typecheck
 npm run build
+npm run check:budget
 npm test
-npx playwright install --with-deps chromium
+npx playwright install --with-deps chromium firefox webkit
 npm run test:browser
+npm run test:browser:cross
 ```
 
 `format` applies Oxlint/Oxfmt fixes. `lint` only checks and never rewrites source files.
@@ -54,20 +56,23 @@ directory and registry parity, preview source ownership, typography boundaries, 
 and includes, every component's manual files and package dependencies, every Usage example
 against the installed component types, and the source revision embedded in the built site.
 
-Playwright visits every content route in desktop and mobile light/dark Chromium. It checks
-navigation, keyboard interaction, clipboard success and failure, motion controls, popup focus,
-page overflow, every chart source dialog, all star and palette previews, and automated axe scans.
-The browser suite starts the built static site automatically.
+The Chromium suite visits every route in desktop/mobile light/dark modes and exercises the full
+interaction and axe coverage. Firefox and WebKit visit every route for runtime, lazy-loading,
+image, and horizontal-overflow failures and repeat representative keyboard, focus, reflow,
+text-spacing, and accessibility checks. Asset budgets and immutable generated files are enforced
+before deployment.
 
 To check an existing deployment rather than the local build:
 
 ```bash
 DOCS_TEST_URL=https://neobrutal-ui.andongmin.com npm run test:browser
+DOCS_TEST_URL=https://neobrutal-ui.andongmin.com npm run test:browser:cross
+npm run verify:headers
 ```
 
-The suite saves failure screenshots, traces, and an HTML report under `test-results` and
-`playwright-report`; CI uploads them as artifacts. Passing this automated Chromium suite is not
-cross-browser certification or a manual pixel-by-pixel visual approval.
+The suites save failure screenshots, traces, and HTML reports under `test-results`,
+`playwright-report`, and `playwright-report-cross`; CI uploads them as artifacts. Browser coverage
+uses Playwright engines on Linux and does not claim every physical browser/device combination.
 
 ## Deployment
 
@@ -77,5 +82,5 @@ routes; Fumadocs builds the static Orama search index. `public/r` serves the reg
 same deployment.
 
 Each build writes `build/client/build-info.json` with its source commit. Deployment verification
-waits for that exact commit before checking the live registry, fresh production consumers, and
-the production browser suite, so docs-only changes cannot accidentally validate an older deploy.
+waits for that exact commit before checking security headers, the live registry, fresh production
+consumers, and all three browser engines, so docs-only changes cannot validate an older deploy.

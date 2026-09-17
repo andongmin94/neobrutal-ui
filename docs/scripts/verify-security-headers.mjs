@@ -6,12 +6,22 @@ if (!response.ok) {
 }
 
 const expectedHeaders = {
-  "content-security-policy": ["base-uri 'self'", "object-src 'none'", "frame-ancestors 'none'"],
+  "content-security-policy": [
+    "base-uri 'self'",
+    "form-action 'self'",
+    "object-src 'none'",
+    "frame-ancestors 'none'",
+    "upgrade-insecure-requests",
+  ],
+  "cross-origin-opener-policy": ["same-origin"],
+  "cross-origin-resource-policy": ["cross-origin"],
+  "origin-agent-cluster": ["?1"],
   "permissions-policy": ["camera=()", "microphone=()", "geolocation=()"],
   "referrer-policy": ["strict-origin-when-cross-origin"],
-  "strict-transport-security": ["max-age=63072000"],
+  "strict-transport-security": ["max-age=63072000", "includeSubDomains"],
   "x-content-type-options": ["nosniff"],
   "x-frame-options": ["DENY"],
+  "x-permitted-cross-domain-policies": ["none"],
 };
 
 for (const [name, expectedValues] of Object.entries(expectedHeaders)) {

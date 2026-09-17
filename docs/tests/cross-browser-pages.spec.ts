@@ -28,6 +28,8 @@ for (const [groupIndex, group] of routeGroups.entries()) {
       const response = await page.goto(route);
       expect(response?.ok(), `${route}: HTTP response`).toBe(true);
       await expect(page.locator("main").first()).toBeVisible();
+      await expect(page.locator(".special-page-loading")).toHaveCount(0);
+      await expect(page.locator(".react-host__error")).toHaveCount(0);
 
       const hosts = page.locator("[data-react-host]");
       for (let index = 0; index < (await hosts.count()); index++) {

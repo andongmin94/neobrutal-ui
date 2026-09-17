@@ -18,6 +18,16 @@ export default defineConfig({
   },
   projects: [
     {
+      name: "chromium-reflow",
+      use: {
+        browserName: "chromium",
+        viewport: { width: 320, height: 900 },
+        colorScheme: "light",
+        hasTouch: true,
+        reducedMotion: "reduce",
+      },
+    },
+    {
       name: "firefox-desktop",
       use: {
         browserName: "firefox",

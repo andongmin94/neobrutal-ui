@@ -10,7 +10,7 @@ export type SpecialPageName =
 
 type SpecialPageRendererProps = {
   argument?: string;
-  page: string;
+  page: SpecialPageName;
 };
 
 const BlogPostPage = lazy(() =>
@@ -26,31 +26,11 @@ const TemplatesPage = lazy(() =>
   import("./template-pages").then((module) => ({ default: module.TemplatesPage })),
 );
 
-const specialPageAliases: Record<string, SpecialPageName> = {
-  blogpost: "blog-post",
-  template: "template-detail",
-  templatedetail: "template-detail",
-};
-
-function normalizeSpecialPageName(page: string): SpecialPageName | undefined {
-  const normalizedPage = specialPageAliases[page] ?? page;
-  const supportedPages: SpecialPageName[] = [
-    "blog-post",
-    "charts",
-    "stars",
-    "styling",
-    "template-detail",
-    "templates",
-  ];
-
-  return supportedPages.find((candidate) => candidate === normalizedPage);
-}
-
 function DeferredPage({ children }: { children: ReactNode }) {
   return (
     <Suspense
       fallback={
-        <output className="block rounded-base border-2 border-border bg-secondary-background p-6 shadow-shadow">
+        <output className="special-page-loading block rounded-base border-2 border-border bg-secondary-background p-6 shadow-shadow">
           Loading page…
         </output>
       }
@@ -61,7 +41,7 @@ function DeferredPage({ children }: { children: ReactNode }) {
 }
 
 export function SpecialPageRenderer({ argument, page }: SpecialPageRendererProps) {
-  switch (normalizeSpecialPageName(page)) {
+  switch (page) {
     case "styling":
       return (
         <DeferredPage>
@@ -99,6 +79,6 @@ export function SpecialPageRenderer({ argument, page }: SpecialPageRendererProps
         </DeferredPage>
       );
     default:
-      throw new Error(`Unsupported special page: ${page || "(empty)"}`);
+      throw new Error(`Unsupported special page: ${String(page) || "(empty)"}`);
   }
 }

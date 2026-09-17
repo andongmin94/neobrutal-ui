@@ -80,9 +80,11 @@ npm run format
 npm run lint
 npm run typecheck
 npm run build
+npm run check:budget
 npm test
-npx playwright install --with-deps chromium
+npx playwright install --with-deps chromium firefox webkit
 npm run test:browser
+npm run test:browser:cross
 ```
 
 `registry/src` is the source of truth. The registry build generates `registry/public/r`,
@@ -101,10 +103,12 @@ npm run registry:verify-live
 npm run consumer:verify -- vite --item=dialog --registry-url=https://neobrutal-ui.andongmin.com/r
 ```
 
-Consumer builds use strict TypeScript. Separately, documentation CI visits every content
-route in desktop and mobile light/dark Chromium, exercises representative interactions,
-and runs automated axe scans. This is not a claim of cross-browser certification or a
-manual pixel-by-pixel visual review.
+Consumer builds use strict TypeScript. Chromium exercises every documentation route and the
+full interaction suite in desktop/mobile light/dark modes. Firefox and WebKit repeat every
+route's runtime and layout checks plus representative keyboard, focus, reflow, text-spacing,
+and axe tests. CI also enforces generated-file parity, asset budgets, pinned GitHub Actions,
+production security headers, exact-revision deployment, and fresh production installs. These
+checks use Playwright browser engines on Linux; they are not a claim about every physical device.
 
 ## Repository layout
 
