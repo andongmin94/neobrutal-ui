@@ -58,9 +58,9 @@ for (const [label, actual, limit] of [
   if (actual > limit) failures.push(`${label}: ${formatBytes(actual)} > ${formatBytes(limit)}`);
 }
 
-const legacyFonts = fonts.filter((file) => file.extension !== ".woff2");
-if (legacyFonts.length) {
-  failures.push(`non-WOFF2 font assets: ${legacyFonts.map((file) => file.path).join(", ")}`);
+const nonWoff2Fonts = fonts.filter((file) => file.extension !== ".woff2");
+if (nonWoff2Fonts.length) {
+  failures.push(`non-WOFF2 font assets: ${nonWoff2Fonts.map((file) => file.path).join(", ")}`);
 }
 
 console.log(

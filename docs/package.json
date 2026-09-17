@@ -9,7 +9,7 @@
     "format": "node scripts/tasks.mjs format",
     "lint": "node scripts/tasks.mjs lint",
     "typecheck": "node scripts/tasks.mjs typecheck",
-    "test": "tsx --test scripts/docs-contract.test.ts",
+    "test": "tsx --test scripts/build-info.test.ts scripts/docs-contract.test.ts scripts/preview-contract.test.ts scripts/template-contract.test.ts",
     "test:browser": "playwright test",
     "test:browser:cross": "playwright test --config=playwright.cross-browser.config.ts",
     "check:budget": "node scripts/check-build-budget.mjs",

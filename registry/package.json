@@ -4,12 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "registry:generate": "node scripts/tasks.mjs registry:generate",
-    "registry:build": "node scripts/tasks.mjs registry:build",
     "registry:validate": "node scripts/tasks.mjs registry:validate",
     "registry:check": "node scripts/tasks.mjs registry:check",
     "consumer:verify": "node scripts/tasks.mjs consumer:verify",
-    "registry:sync-docs": "node scripts/tasks.mjs registry:sync-docs",
     "build": "node scripts/tasks.mjs build",
     "dev": "node scripts/tasks.mjs dev",
     "format": "node scripts/tasks.mjs format",

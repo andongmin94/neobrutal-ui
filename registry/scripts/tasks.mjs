@@ -113,12 +113,6 @@ switch (command) {
   case "lint":
     lintSources();
     break;
-  case "registry:generate":
-    generateRegistry(passthroughArgs);
-    break;
-  case "registry:build":
-    buildRegistry();
-    break;
   case "registry:validate":
     run("shadcn", ["registry", "validate", "./registry.json", ...passthroughArgs]);
     break;
@@ -128,9 +122,6 @@ switch (command) {
     break;
   case "consumer:verify":
     run("node", ["scripts/verify-consumer.mjs", ...passthroughArgs]);
-    break;
-  case "registry:sync-docs":
-    syncDocsPublic();
     break;
   case "list":
     run("shadcn", [
