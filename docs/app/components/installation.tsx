@@ -2,14 +2,12 @@ import { Info, SquareTerminal } from "lucide-react";
 import { useId, useState, type KeyboardEvent, type ReactNode } from "react";
 
 import { CopyButton } from "@/components/docs/copy-button";
-
-const registryBaseUrl =
-  import.meta.env.VITE_REGISTRY_BASE_URL ?? "https://neobrutal-ui.andongmin.com";
+import { registryInstallCommand } from "@/data/registry-endpoints";
 
 export function Installation({ children, component }: { children?: ReactNode; component: string }) {
   const [activeTab, setActiveTab] = useState<"cli" | "manual">("cli");
   const instanceId = useId();
-  const command = `npx shadcn@latest add ${registryBaseUrl}/r/${component}.json`;
+  const command = registryInstallCommand(component);
 
   function handleTabKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
