@@ -30,10 +30,10 @@ function assetsWithExtensions(extensions) {
 }
 
 function largest(filesInGroup) {
-  return filesInGroup.reduce(
-    (current, file) => (file.bytes > current.bytes ? file : current),
-    { path: "(none)", bytes: 0 },
-  );
+  return filesInGroup.reduce((current, file) => (file.bytes > current.bytes ? file : current), {
+    path: "(none)",
+    bytes: 0,
+  });
 }
 
 function formatBytes(bytes) {

@@ -34,7 +34,9 @@ async function expectHealthyLayout(page: Page, route: string) {
     brokenLocalImages: [...document.images]
       .filter(
         (image) =>
-          image.complete && image.naturalWidth === 0 && new URL(image.src).origin === location.origin,
+          image.complete &&
+          image.naturalWidth === 0 &&
+          new URL(image.src).origin === location.origin,
       )
       .map((image) => image.getAttribute("src")),
   }));
@@ -107,7 +109,5 @@ test("representative accessibility rules pass outside Chromium", async ({ page }
     .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
     .analyze();
 
-  expect(
-    results.violations.map(({ id, impact, help }) => ({ id, impact, help })),
-  ).toEqual([]);
+  expect(results.violations.map(({ id, impact, help }) => ({ id, impact, help }))).toEqual([]);
 });
