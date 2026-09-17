@@ -22,12 +22,11 @@ export function Installation({ children, component }: { children?: ReactNode; co
           ? tabs.length - 1
           : (currentIndex + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
     const nextTab = tabs[nextIndex];
-    const tabList = event.currentTarget;
-    setActiveTab(nextTab);
 
-    requestAnimationFrame(() => {
-      tabList.querySelector<HTMLButtonElement>(`[data-installation-tab="${nextTab}"]`)?.focus();
-    });
+    setActiveTab(nextTab);
+    event.currentTarget
+      .querySelector<HTMLButtonElement>(`[data-installation-tab="${nextTab}"]`)
+      ?.focus();
   }
 
   return (
