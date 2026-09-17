@@ -1,0 +1,53 @@
+name: Format hardening sources once
+
+on:
+  push:
+    paths:
+      - .github/workflows/format-hardening-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: docs/package-lock.json
+      - run: npm ci --prefix docs
+      - name: Apply the repository formatter
+        run: |
+          npm run format --prefix docs
+          git diff --check
+          python3 - <<'PY'
+          import subprocess
+
+          expected = {
+              "docs/scripts/check-build-budget.mjs",
+              "docs/tests/cross-browser.spec.ts",
+          }
+          changed = set(subprocess.check_output(["git", "diff", "--name-only"], text=True).splitlines())
+          unexpected = changed - expected
+          missing = expected - changed
+          if unexpected or missing:
+              raise SystemExit(f"unexpected={sorted(unexpected)} missing={sorted(missing)}")
+          PY
+      - name: Publish formatted files
+        run: |
+          remote_head="$(git ls-remote origin refs/heads/main | cut -f1)"
+          if [ "$remote_head" != "$GITHUB_SHA" ]; then
+            echo "main advanced from $GITHUB_SHA to $remote_head; refusing to overwrite unrelated work."
+            exit 1
+          fi
+          git add docs/scripts/check-build-budget.mjs docs/tests/cross-browser.spec.ts
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "style: format hardening checks"
+          git push origin HEAD:main
