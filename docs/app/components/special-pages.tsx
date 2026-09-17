@@ -50,12 +50,9 @@ function DeferredPage({ children }: { children: ReactNode }) {
   return (
     <Suspense
       fallback={
-        <div
-          className="rounded-base border-2 border-border bg-secondary-background p-6 shadow-shadow"
-          role="status"
-        >
+        <output className="block rounded-base border-2 border-border bg-secondary-background p-6 shadow-shadow">
           Loading page…
-        </div>
+        </output>
       }
     >
       {children}
