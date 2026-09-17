@@ -1,17 +1,4 @@
-import { useState, type ComponentType } from "react";
-import { Link } from "react-router";
-
-import BlogPostTemplate from "@/components/templates/blog-post-template";
-import BlogTemplate from "@/components/templates/blog-template";
-import CmsTemplate from "@/components/templates/cms-template";
-import LinkHubTemplate from "@/components/templates/link-hub-template";
-import PortfolioTemplate from "@/components/templates/portfolio-template";
-import STARS from "@/data/stars";
-import TEMPLATES from "@/data/templates";
-import { getBlogPost } from "@/lib/blog-posts";
-import ChartsExamples from "@/special-pages/charts-examples";
-import StylingControls from "@/special-pages/styling/controls";
-import { copyText } from "~/lib/clipboard";
+import { lazy, Suspense, type ReactNode } from "react";
 
 export type SpecialPageName =
   | "blog-post"
@@ -26,11 +13,18 @@ type SpecialPageRendererProps = {
   page: string;
 };
 
-const templateComponents: Record<string, ComponentType> = {
-  cms: CmsTemplate,
-  links: LinkHubTemplate,
-  portfolio: PortfolioTemplate,
-};
+const BlogPostPage = lazy(() =>
+  import("./template-pages").then((module) => ({ default: module.BlogPostPage })),
+);
+const ChartsPage = lazy(() => import("@/special-pages/charts-examples"));
+const StarsPage = lazy(() => import("./stars-page"));
+const StylingPage = lazy(() => import("@/special-pages/styling/controls"));
+const TemplateDetailPage = lazy(() =>
+  import("./template-pages").then((module) => ({ default: module.TemplateDetailPage })),
+);
+const TemplatesPage = lazy(() =>
+  import("./template-pages").then((module) => ({ default: module.TemplatesPage })),
+);
 
 const specialPageAliases: Record<string, SpecialPageName> = {
   blogpost: "blog-post",
@@ -52,172 +46,58 @@ function normalizeSpecialPageName(page: string): SpecialPageName | undefined {
   return supportedPages.find((candidate) => candidate === normalizedPage);
 }
 
-function StylingPage() {
-  return <StylingControls />;
-}
-
-function StarsPage() {
-  const [copied, setCopied] = useState<number | null>(null);
-  const [failed, setFailed] = useState<number | null>(null);
-
-  async function handleCopy(index: number, code: string) {
-    setFailed(null);
-    setCopied(null);
-    try {
-      await copyText(code);
-      setCopied(index);
-    } catch {
-      setFailed(index);
-    }
-    globalThis.setTimeout(() => {
-      setCopied((current) => (current === index ? null : current));
-      setFailed((current) => (current === index ? null : current));
-    }, 1600);
-  }
-
+function DeferredPage({ children }: { children: ReactNode }) {
   return (
-    <div className="not-prose grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {STARS.map((star, index) => {
-        const Star = star.componentExample;
-
-        return (
-          <article
-            className="flex flex-col items-center justify-center gap-4 rounded-base border-2 border-border bg-secondary-background p-5 shadow-shadow"
-            key={index}
-          >
-            <div className="size-[120px] md:size-[160px]">
-              <Star />
-            </div>
-            <h2 className="m-0 font-heading text-base">Star {index + 1}</h2>
-            <button
-              type="button"
-              className="pressable border-2 border-border bg-main px-3 py-2 font-heading text-main-foreground"
-              onClick={() => void handleCopy(index, star.code)}
-            >
-              <span aria-live="polite">
-                {copied === index ? "Copied" : failed === index ? "Copy failed" : "Copy source"}
-              </span>
-            </button>
-          </article>
-        );
-      })}
-    </div>
+    <Suspense
+      fallback={
+        <div className="rounded-base border-2 border-border bg-secondary-background p-6 shadow-shadow" role="status">
+          Loading page…
+        </div>
+      }
+    >
+      {children}
+    </Suspense>
   );
-}
-
-function TemplatesPage() {
-  const [copied, setCopied] = useState<string | null>(null);
-  const [failed, setFailed] = useState<string | null>(null);
-
-  async function handleCopy(slug: string, command: string) {
-    setFailed(null);
-    setCopied(null);
-    try {
-      await copyText(command);
-      setCopied(slug);
-    } catch {
-      setFailed(slug);
-    }
-    globalThis.setTimeout(() => {
-      setCopied((current) => (current === slug ? null : current));
-      setFailed((current) => (current === slug ? null : current));
-    }, 1600);
-  }
-
-  return (
-    <div className="not-prose grid gap-6 md:grid-cols-2">
-      {TEMPLATES.map((template) => (
-        <article
-          className="overflow-hidden rounded-base border-2 border-border bg-secondary-background shadow-shadow"
-          key={template.slug}
-        >
-          <Link
-            aria-label={`Open ${template.title} template`}
-            className="template-preview-link block overflow-hidden border-b-2 border-border bg-background outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
-            to={`/templates/${template.slug}`}
-          >
-            <img
-              alt=""
-              className="aspect-video w-full object-cover"
-              loading="lazy"
-              src={template.preview}
-            />
-          </Link>
-          <div className="p-5">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h2 className="m-0 font-heading text-xl">{template.title}</h2>
-                <p className="mt-2 text-sm leading-6 opacity-75">{template.description}</p>
-              </div>
-              <span
-                aria-hidden="true"
-                className="size-6 shrink-0 rounded-full border-2 border-border"
-                style={{ backgroundColor: template.color }}
-              />
-            </div>
-            <div className="mt-5 grid grid-cols-2 gap-3">
-              <Link
-                className="pressable border-2 border-border bg-main px-3 py-2 text-center font-heading text-main-foreground"
-                to={`/templates/${template.slug}`}
-              >
-                Open
-              </Link>
-              <button
-                type="button"
-                className="pressable border-2 border-border bg-secondary-background px-3 py-2 font-heading"
-                onClick={() => void handleCopy(template.slug, template.installCommand)}
-              >
-                <span aria-live="polite">
-                  {copied === template.slug
-                    ? "Copied"
-                    : failed === template.slug
-                      ? "Copy failed"
-                      : "Copy"}
-                </span>
-              </button>
-            </div>
-          </div>
-        </article>
-      ))}
-    </div>
-  );
-}
-
-function TemplateDetailPage({ slug }: { slug?: string }) {
-  if (!slug) throw new Error("A template slug is required.");
-
-  if (slug === "blog") return <BlogTemplate basePath="/templates/blog" />;
-
-  const Template = templateComponents[slug];
-  if (!Template) throw new Error(`Unknown template: ${slug}`);
-
-  return <Template />;
-}
-
-function BlogPostPage({ slug }: { slug?: string }) {
-  const post = slug ? getBlogPost(slug) : undefined;
-
-  if (!post) {
-    throw new Error(slug ? `Unknown blog post: ${slug}` : "A blog post slug is required.");
-  }
-
-  return <BlogPostTemplate backHref="/templates/blog" post={post} />;
 }
 
 export function SpecialPageRenderer({ argument, page }: SpecialPageRendererProps) {
   switch (normalizeSpecialPageName(page)) {
     case "styling":
-      return <StylingPage />;
+      return (
+        <DeferredPage>
+          <StylingPage />
+        </DeferredPage>
+      );
     case "charts":
-      return <ChartsExamples />;
+      return (
+        <DeferredPage>
+          <ChartsPage />
+        </DeferredPage>
+      );
     case "stars":
-      return <StarsPage />;
+      return (
+        <DeferredPage>
+          <StarsPage />
+        </DeferredPage>
+      );
     case "templates":
-      return <TemplatesPage />;
+      return (
+        <DeferredPage>
+          <TemplatesPage />
+        </DeferredPage>
+      );
     case "template-detail":
-      return <TemplateDetailPage slug={argument} />;
+      return (
+        <DeferredPage>
+          <TemplateDetailPage slug={argument} />
+        </DeferredPage>
+      );
     case "blog-post":
-      return <BlogPostPage slug={argument} />;
+      return (
+        <DeferredPage>
+          <BlogPostPage slug={argument} />
+        </DeferredPage>
+      );
     default:
       throw new Error(`Unsupported special page: ${page || "(empty)"}`);
   }
