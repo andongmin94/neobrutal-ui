@@ -61,7 +61,7 @@ test("preview modules and helper modules use explicit filename conventions", () 
   }
 });
 
-test("every discoverable preview is documented or owned by a special gallery", () => {
+test("documentation and discoverable preview sources stay bidirectionally complete", () => {
   const documentedKeys = getDocumentedPreviewKeys();
   const discoveredKeys = new Set<string>();
 
@@ -77,5 +77,9 @@ test("every discoverable preview is documented or owned by a special gallery", (
 
     if (identity.example && specialPageComponents.has(identity.component)) continue;
     assert.ok(documentedKeys.has(key), `${relativePath}: preview is not referenced by documentation`);
+  }
+
+  for (const key of documentedKeys) {
+    assert.ok(discoveredKeys.has(key), `${key}: documented preview source is missing`);
   }
 });

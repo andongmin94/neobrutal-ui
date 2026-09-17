@@ -14,6 +14,8 @@ export type ComponentCategory = (typeof COMPONENT_CATEGORIES)[number];
 export type ComponentGroup = Exclude<ComponentCategory, "All">;
 export type ComponentInstallMode = "Recipe" | "Registry";
 
+export const COMPOSITION_RECIPE_SLUGS = ["combobox", "date-picker"] as const;
+
 const componentCategoryBySlug = {
   accordion: "Disclosure",
   "alert-dialog": "Overlays",
@@ -72,7 +74,7 @@ export function getComponentCategory(slug: string): ComponentGroup {
   return category;
 }
 
-const recipeSlugs = new Set(["combobox", "data-table", "date-picker"]);
+const recipeSlugs = new Set<string>([...COMPOSITION_RECIPE_SLUGS, "data-table"]);
 
 export function getComponentInstallMode(slug: string): ComponentInstallMode {
   return recipeSlugs.has(slug) ? "Recipe" : "Registry";

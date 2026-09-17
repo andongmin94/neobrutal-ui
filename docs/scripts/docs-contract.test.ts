@@ -4,6 +4,7 @@ import { test } from "node:test";
 import colors from "../src/data/colors";
 import {
   COMPONENT_DIRECTORY_LINKS,
+  COMPOSITION_RECIPE_SLUGS,
   getComponentInstallMode,
 } from "../src/data/component-directory";
 import descriptions from "../src/data/component-descriptions.json";
@@ -15,11 +16,7 @@ import {
   themeCss,
 } from "../src/data/theme-styles";
 
-const compositionRecipes = new Set(["combobox", "date-picker"]);
-const defaultPreviewFileBySlug: Record<string, string> = {
-  chart: "chart-area-stacked",
-  sidebar: "page",
-};
+const compositionRecipes = new Set<string>(COMPOSITION_RECIPE_SLUGS);
 
 type CatalogItem = {
   name: string;
@@ -39,18 +36,6 @@ function readCatalog() {
 
 function getDocumentedSlugs() {
   return COMPONENT_DIRECTORY_LINKS.map(({ href }) => href.split("/").pop()!);
-}
-
-function previewSourceExists(slug: string, example?: string) {
-  if (example) return fs.existsSync(`src/examples/ui/${slug}/${example}.tsx`);
-
-  return [
-    `src/examples/ui/${slug}.tsx`,
-    `src/examples/ui/${slug}/index.tsx`,
-    defaultPreviewFileBySlug[slug]
-      ? `src/examples/ui/${slug}/${defaultPreviewFileBySlug[slug]}.tsx`
-      : undefined,
-  ].some((filePath) => filePath && fs.existsSync(filePath));
 }
 
 test("all palette exports match the installable registry contract", () => {
@@ -170,22 +155,6 @@ test("every directory card has a purpose-specific description", () => {
 test("markdown typography never uses bare descendant element selectors", () => {
   const css = fs.readFileSync("app/styles/content.css", "utf8");
   assert.doesNotMatch(css, /\.docs-content\s+(?:h[1-6]|p|a|ol|ul|li|strong)\b/);
-});
-
-test("all documented preview names resolve to an example source", () => {
-  for (const file of fs.readdirSync("content/docs").filter((name) => name.endsWith(".mdx"))) {
-    const source = fs.readFileSync(`content/docs/${file}`, "utf8");
-    for (const match of source.matchAll(/<ComponentPreview\s+([^>]+)>/g)) {
-      const attributes = match[1];
-      if (attributes.includes('type="star"')) continue;
-      const slug = attributes.match(/component="([^"]+)"/)?.[1];
-      const example = attributes.match(/example="([^"]+)"/)?.[1];
-      assert.ok(
-        slug && previewSourceExists(slug, example),
-        `${file}: ${slug}/${example ?? "default"}`,
-      );
-    }
-  }
 });
 
 test("the docs stylesheet is generated from the same default theme", () => {
