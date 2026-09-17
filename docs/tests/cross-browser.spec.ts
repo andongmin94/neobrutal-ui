@@ -92,11 +92,15 @@ test("installation tabs support roving keyboard focus", async ({ page }) => {
   const cli = installation.getByRole("tab", { name: "shadcn CLI", exact: true });
   const manual = installation.getByRole("tab", { name: "Manual", exact: true });
 
-  await cli.focus();
-  await page.keyboard.press("ArrowRight");
+  await manual.click();
+  await expect(manual).toHaveAttribute("aria-selected", "true");
+  await cli.click();
+  await expect(cli).toHaveAttribute("aria-selected", "true");
+
+  await cli.press("ArrowRight");
   await expect(manual).toBeFocused();
   await expect(manual).toHaveAttribute("aria-selected", "true");
-  await page.keyboard.press("ArrowLeft");
+  await manual.press("ArrowLeft");
   await expect(cli).toBeFocused();
   await expect(cli).toHaveAttribute("aria-selected", "true");
 });
@@ -109,11 +113,14 @@ test("WCAG text spacing does not create page overflow", async ({ page }) => {
       p { margin-bottom: 2em !important; }
     `,
   });
-  await expect(page.locator("main").first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Requirements" })).toBeVisible();
+  await page.evaluate(() => document.fonts.ready);
   const viewport = page.viewportSize()!;
   const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
   expect(scrollWidth).toBeLessThanOrEqual(viewport.width + 1);
-  await expect(page.getByRole("tab", { name: "shadcn CLI", exact: true }).first()).toBeVisible();
+  await expect(
+    page.locator("pre").filter({ hasText: "npx shadcn@latest init" }).first(),
+  ).toBeVisible();
 });
 
 test("representative accessibility rules pass across browser engines", async ({ page }) => {

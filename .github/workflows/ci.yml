@@ -3,6 +3,8 @@ name: Verify
 on:
   pull_request:
   push:
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -81,7 +83,6 @@ jobs:
           path: |
             docs/test-results
             docs/playwright-report
-            docs/playwright-report-cross
 
   verify-deployment:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -132,4 +133,4 @@ jobs:
           if-no-files-found: ignore
           path: |
             docs/test-results
-            docs/playwright-report-cross
+            docs/playwright-report

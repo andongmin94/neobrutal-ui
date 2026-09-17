@@ -9,7 +9,7 @@ export default defineConfig({
   workers: process.env.CI ? 2 : undefined,
   retries: 0,
   timeout: 45000,
-  reporter: [["list"], ["html", { open: "never", outputFolder: "playwright-report-cross" }]],
+  reporter: [["list"], ["html", { open: "never" }]],
   use: {
     baseURL,
     locale: "en-US",
