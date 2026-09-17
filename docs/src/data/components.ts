@@ -1,5 +1,7 @@
 import type { ComponentType } from "react";
 
+import { getPreviewIdentity } from "@/data/preview-registry";
+
 type PreviewModule = { default: ComponentType };
 type PreviewLoader = () => Promise<PreviewModule>;
 
@@ -7,11 +9,6 @@ type Component = {
   name: string;
   exampleComponent: PreviewLoader;
   examples?: Record<string, PreviewLoader>;
-};
-
-const defaultExampleByComponent: Record<string, string> = {
-  chart: "chart-area-stacked",
-  sidebar: "page",
 };
 
 const previewModules = import.meta.glob<PreviewModule>([
@@ -26,36 +23,13 @@ const components = new Map<
   }
 >();
 
-function getPreviewIdentity(modulePath: string) {
-  const marker = "/examples/ui/";
-  const markerIndex = modulePath.indexOf(marker);
-
-  if (markerIndex < 0) {
-    throw new Error(`Preview module is outside the UI example directory: ${modulePath}`);
-  }
-
-  const relativePath = modulePath.slice(markerIndex + marker.length).replace(/\.tsx$/, "");
-  const [component, ...segments] = relativePath.split("/");
-
-  if (!component) {
-    throw new Error(`Preview module has no component slug: ${modulePath}`);
-  }
-
-  return {
-    component,
-    example: segments.join("/"),
-  };
-}
-
 for (const [modulePath, loader] of Object.entries(previewModules).sort(([a], [b]) =>
   a.localeCompare(b),
 )) {
   const { component, example } = getPreviewIdentity(modulePath);
   const entry = components.get(component) ?? { examples: {} };
-  const isDefault =
-    example === "" || example === "index" || defaultExampleByComponent[component] === example;
 
-  if (isDefault) {
+  if (!example) {
     if (entry.exampleComponent) {
       throw new Error(`Multiple default previews are registered for ${component}.`);
     }

@@ -3,17 +3,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { test } from "node:test";
 
-const examplesRoot = path.resolve("src/examples/ui");
-const defaultExampleByComponent: Record<string, string> = {
-  chart: "chart-area-stacked",
-  sidebar: "page",
-};
-const specialPageComponents = new Set(["chart"]);
+import { getPreviewIdentity, previewKey } from "../src/data/preview-registry";
 
-type PreviewIdentity = {
-  component: string;
-  example?: string;
-};
+const examplesRoot = path.resolve("src/examples/ui");
+const specialPageComponents = new Set(["chart"]);
 
 function getExampleModules(directory: string): string[] {
   return fs
@@ -24,26 +17,6 @@ function getExampleModules(directory: string): string[] {
       return entry.isFile() && entry.name.endsWith(".tsx") ? [absolutePath] : [];
     })
     .sort();
-}
-
-function getPreviewIdentity(filePath: string): PreviewIdentity {
-  const relativePath = path
-    .relative(examplesRoot, filePath)
-    .replaceAll("\\", "/")
-    .replace(/\.tsx$/, "");
-  const [component, ...segments] = relativePath.split("/");
-  const example = segments.join("/");
-  const isDefault =
-    example === "" || example === "index" || defaultExampleByComponent[component] === example;
-
-  return {
-    component,
-    ...(isDefault ? {} : { example }),
-  };
-}
-
-function previewKey({ component, example }: PreviewIdentity) {
-  return `${component}:${example ?? "default"}`;
 }
 
 function getDocumentedPreviewKeys() {
@@ -95,7 +68,7 @@ test("every discoverable preview is documented or owned by a special gallery", (
   for (const filePath of getExampleModules(examplesRoot)) {
     if (path.basename(filePath).startsWith("_")) continue;
 
-    const identity = getPreviewIdentity(filePath);
+    const identity = getPreviewIdentity(path.relative(examplesRoot, filePath));
     const key = previewKey(identity);
     const relativePath = path.relative(examplesRoot, filePath).replaceAll("\\", "/");
 
