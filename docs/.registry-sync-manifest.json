@@ -15,7 +15,6 @@
     "chart.tsx",
     "checkbox.tsx",
     "collapsible.tsx",
-    "combobox.tsx",
     "command.tsx",
     "context-menu.tsx",
     "data-table.tsx",
