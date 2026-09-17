@@ -6,16 +6,14 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const command = process.argv[2];
 const passthroughArgs = process.argv.slice(3);
-const alignSections = new Set(["scripts", "dependencies", "devDependencies"]);
+const sourceTargets = ["app", "src", "scripts", "tests"];
 const formatTargets = [
   "--no-error-on-unmatched-pattern",
-  "app",
-  "src",
-  "scripts",
-  "tests",
+  ...sourceTargets,
   "react-router.config.ts",
   "vite.config.ts",
   "tsconfig.json",
+  "package.json",
   ".oxlintrc.json",
   ".oxfmtrc.json",
 ];
@@ -81,75 +79,20 @@ function writeBuildInfo() {
   );
 }
 
-function getFormattedPackageJson() {
-  const packagePath = path.join(root, "package.json");
-  const pkg = JSON.parse(fs.readFileSync(packagePath, "utf8"));
-  return `${formatJsonValue(pkg, 0)}\n`;
-}
-
-function formatPackageJson() {
-  fs.writeFileSync(path.join(root, "package.json"), getFormattedPackageJson(), "utf8");
-}
-
-function checkPackageJson() {
-  const packagePath = path.join(root, "package.json");
-  if (fs.readFileSync(packagePath, "utf8") === getFormattedPackageJson()) return;
-
-  console.error("package.json is not formatted. Run `npm run format`.");
-  process.exit(1);
-}
-
-function formatJsonValue(value, indent, sectionName) {
-  if (value === null || typeof value !== "object") return JSON.stringify(value);
-
-  const indentation = " ".repeat(indent);
-  const childIndentation = " ".repeat(indent + 2);
-
-  if (Array.isArray(value)) {
-    if (value.length === 0) return "[]";
-    const items = value.map((item) => `${childIndentation}${formatJsonValue(item, indent + 2)}`);
-    return `[\n${items.join(",\n")}\n${indentation}]`;
-  }
-
-  const entries = Object.entries(value);
-  if (entries.length === 0) return "{}";
-
-  const shouldAlign = alignSections.has(sectionName);
-  const maxKeyLength = shouldAlign
-    ? Math.max(...entries.map(([key]) => JSON.stringify(key).length))
-    : 0;
-  const lines = entries.map(([key, childValue]) => {
-    const keyText = JSON.stringify(key);
-    const padding = shouldAlign ? " ".repeat(maxKeyLength - keyText.length) : "";
-    return `${childIndentation}${keyText}${padding}: ${formatJsonValue(
-      childValue,
-      indent + 2,
-      key,
-    )}`;
-  });
-
-  return `{\n${lines.join(",\n")}\n${indentation}}`;
-}
-
 function lintSources() {
   run("oxlint", [
     "--deny-warnings",
     "--format",
     "unix",
     "--no-error-on-unmatched-pattern",
-    "app",
-    "src",
-    "scripts",
-    "tests",
+    ...sourceTargets,
   ]);
   run("oxfmt", ["--check", ...formatTargets]);
-  checkPackageJson();
 }
 
 function formatSources() {
-  run("oxlint", ["--fix", "--no-error-on-unmatched-pattern", "app", "src", "scripts", "tests"]);
+  run("oxlint", ["--fix", "--no-error-on-unmatched-pattern", ...sourceTargets]);
   run("oxfmt", ["--write", ...formatTargets]);
-  formatPackageJson();
 }
 
 switch (command) {
