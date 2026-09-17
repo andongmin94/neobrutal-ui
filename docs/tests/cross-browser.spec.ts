@@ -36,7 +36,9 @@ async function expectHealthyLayout(page: Page, route: string) {
     brokenLocalImages: [...document.images]
       .filter(
         (image) =>
-          image.complete && image.naturalWidth === 0 && new URL(image.src).origin === location.origin,
+          image.complete &&
+          image.naturalWidth === 0 &&
+          new URL(image.src).origin === location.origin,
       )
       .map((image) => image.getAttribute("src")),
   }));
