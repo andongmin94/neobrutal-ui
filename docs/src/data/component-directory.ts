@@ -14,7 +14,7 @@ export type ComponentCategory = (typeof COMPONENT_CATEGORIES)[number];
 export type ComponentGroup = Exclude<ComponentCategory, "All">;
 export type ComponentInstallMode = "Recipe" | "Registry";
 
-const componentCategoryBySlug: Record<string, ComponentGroup> = {
+const componentCategoryBySlug = {
   accordion: "Disclosure",
   "alert-dialog": "Overlays",
   alert: "Feedback",
@@ -64,10 +64,12 @@ const componentCategoryBySlug: Record<string, ComponentGroup> = {
   tabs: "Navigation",
   textarea: "Forms",
   tooltip: "Overlays",
-};
+} as const satisfies Record<string, ComponentGroup>;
 
 export function getComponentCategory(slug: string): ComponentGroup {
-  return componentCategoryBySlug[slug] ?? "Data display";
+  const category = componentCategoryBySlug[slug as keyof typeof componentCategoryBySlug];
+  if (!category) throw new Error(`Unknown component slug: ${slug}`);
+  return category;
 }
 
 const recipeSlugs = new Set(["combobox", "data-table", "date-picker"]);

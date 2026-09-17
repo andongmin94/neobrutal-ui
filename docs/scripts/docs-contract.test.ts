@@ -3,14 +3,17 @@ import fs from "node:fs";
 import { test } from "node:test";
 import colors from "../src/data/colors";
 import {
+  COMPONENT_DIRECTORY_LINKS,
+  getComponentInstallMode,
+} from "../src/data/component-directory";
+import descriptions from "../src/data/component-descriptions.json";
+import {
   createCustomizedTheme,
+  defaultThemeSettings,
   serializeThemeCss,
   serializeThemeVariables,
-  defaultThemeSettings,
   themeCss,
 } from "../src/data/theme-styles";
-import { COMPONENT_DIRECTORY_LINKS } from "../src/data/component-directory";
-import descriptions from "../src/data/component-descriptions.json";
 
 const compositionRecipes = new Set(["combobox", "date-picker"]);
 const defaultPreviewFileBySlug: Record<string, string> = {
@@ -133,9 +136,23 @@ test("component directory covers the registry UI and recipes exactly once", () =
     .map((item) => item.name);
   const documentedSlugs = getDocumentedSlugs();
   const expectedSlugs = [...registrySlugs, ...compositionRecipes].sort();
+  const expectedRecipeSlugs = new Set([
+    ...catalog.items
+      .filter((item) => item.categories?.includes("recipe") === true)
+      .map((item) => item.name),
+    ...compositionRecipes,
+  ]);
 
   assert.equal(new Set(documentedSlugs).size, documentedSlugs.length, "duplicate directory slug");
   assert.deepEqual([...documentedSlugs].sort(), expectedSlugs);
+
+  for (const slug of documentedSlugs) {
+    assert.equal(
+      getComponentInstallMode(slug),
+      expectedRecipeSlugs.has(slug) ? "Recipe" : "Registry",
+      `${slug}: install mode drift`,
+    );
+  }
 
   for (const item of catalog.items.filter((candidate) => registrySlugs.includes(candidate.name)))
     assert.equal(
