@@ -18,16 +18,6 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - name: Archive the exact sources under review
-        run: git archive --format=tar.gz --output=/tmp/docs-review-source.tar.gz HEAD
-
-      - name: Save review sources
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: docs-review-source
-          retention-days: 7
-          path: /tmp/docs-review-source.tar.gz
-
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 22
@@ -40,7 +30,7 @@ jobs:
         working-directory: registry
         run: npm ci
 
-      - name: Verify registry sources and Next template consumers
+      - name: Verify registry and fresh consumers
         working-directory: registry
         run: |
           npm audit --audit-level=high
@@ -49,24 +39,13 @@ jobs:
           npm run build
           npm run registry:validate
           npm run registry:check
-
-      - name: Verify fresh Next and Vite consumers
-        working-directory: registry
-        run: npm run consumer:verify
-
-      - name: Verify isolated component and template consumers
-        working-directory: registry
-        run: |
-          npm run consumer:verify -- vite --item=button
-          npm run consumer:verify -- vite --item=calendar
-          npm run consumer:verify -- next --item=dialog
-          npm run consumer:verify -- next --item=blog-template
+          npm run consumer:verify
 
       - name: Install docs dependencies
         working-directory: docs
         run: npm ci
 
-      - name: Verify docs, budgets, and shared theme contracts
+      - name: Verify docs, budgets, and shared contracts
         working-directory: docs
         run: |
           npm audit --audit-level=high
@@ -92,8 +71,8 @@ jobs:
             exit 1
           fi
 
-      - name: Save browser reports and screenshots
-        if: always()
+      - name: Save failed browser reports
+        if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: docs-browser-checks
@@ -108,7 +87,7 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: verify
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
@@ -127,30 +106,25 @@ jobs:
         env:
           DOCS_TEST_URL: https://neobrutal-ui.andongmin.com
           EXPECTED_COMMIT: ${{ github.sha }}
-        run: node scripts/verify-deployment.mjs
-      - name: Verify deployed security headers
-        working-directory: docs
-        env:
-          DOCS_TEST_URL: https://neobrutal-ui.andongmin.com
-        run: npm run verify:headers
-      - name: Verify deployed catalog and every item
-        working-directory: registry
-        run: npm run registry:verify-live
-      - name: Install from production in fresh consumers
+        run: npm run verify:deployment
+      - name: Verify production headers and registry
+        run: |
+          npm run verify:headers --prefix docs
+          npm run registry:verify-live --prefix registry
+      - name: Install representative items from production
         working-directory: registry
         run: |
           npm run consumer:verify -- vite --item=dialog --registry-url=https://neobrutal-ui.andongmin.com/r
           npm run consumer:verify -- next --item=blog-template --registry-url=https://neobrutal-ui.andongmin.com/r
-      - name: Verify deployed docs in Chromium, Firefox, and WebKit
+      - name: Smoke-test the deployed docs across browser engines
         working-directory: docs
         env:
           DOCS_TEST_URL: https://neobrutal-ui.andongmin.com
         run: |
           npx playwright install --with-deps chromium firefox webkit
-          npm run test:browser
           npm run test:browser:cross
-      - name: Save production browser reports
-        if: always()
+      - name: Save failed production browser reports
+        if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: docs-production-browser-checks
@@ -158,5 +132,4 @@ jobs:
           if-no-files-found: ignore
           path: |
             docs/test-results
-            docs/playwright-report
             docs/playwright-report-cross

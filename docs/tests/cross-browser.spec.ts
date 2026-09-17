@@ -1,5 +1,5 @@
-import { expect, test, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { expect, test, type Page } from "@playwright/test";
 
 const representativeRoutes = [
   "/",
@@ -36,9 +36,7 @@ async function expectHealthyLayout(page: Page, route: string) {
     brokenLocalImages: [...document.images]
       .filter(
         (image) =>
-          image.complete &&
-          image.naturalWidth === 0 &&
-          new URL(image.src).origin === location.origin,
+          image.complete && image.naturalWidth === 0 && new URL(image.src).origin === location.origin,
       )
       .map((image) => image.getAttribute("src")),
   }));
@@ -58,7 +56,7 @@ test("representative routes render without runtime or layout failures", async ({
   expect(errors).toEqual([]);
 });
 
-test("dialog focus management works outside Chromium", async ({ page }) => {
+test("dialog focus management works across browser engines", async ({ page }) => {
   await page.goto("/docs/dialog");
   const preview = page.locator(".component-preview").first();
   const trigger = preview.getByRole("button", { name: "Edit profile" });
@@ -73,7 +71,7 @@ test("dialog focus management works outside Chromium", async ({ page }) => {
   await expect(trigger).toBeFocused();
 });
 
-test("select keyboard behavior works outside Chromium", async ({ page }) => {
+test("select keyboard behavior works across browser engines", async ({ page }) => {
   await page.goto("/docs/select");
   const preview = page.locator(".component-preview").first();
   const trigger = preview.getByRole("combobox");
@@ -116,7 +114,7 @@ test("WCAG text spacing does not create page overflow", async ({ page }) => {
   await expect(page.getByRole("tab", { name: "shadcn CLI", exact: true }).first()).toBeVisible();
 });
 
-test("representative accessibility rules pass outside Chromium", async ({ page }) => {
+test("representative accessibility rules pass across browser engines", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   await expect(page.locator("main").first()).toBeVisible();

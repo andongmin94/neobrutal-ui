@@ -91,24 +91,10 @@ npm run test:browser:cross
 copies JSON to `docs/public/r`, and synchronizes managed component/template sources into
 `docs/src`. Do not hand-edit those generated copies. CI checks generated-file drift.
 
-Isolated installs and deployment checks:
-
-```bash
-cd registry
-npm run consumer:verify -- vite --item=button
-npm run consumer:verify -- vite --item=calendar
-npm run consumer:verify -- next --item=dialog
-npm run consumer:verify -- next --item=blog-template
-npm run registry:verify-live
-npm run consumer:verify -- vite --item=dialog --registry-url=https://neobrutal-ui.andongmin.com/r
-```
-
-Consumer builds use strict TypeScript. Chromium exercises every documentation route and the
-full interaction suite in desktop/mobile light/dark modes. Firefox and WebKit repeat every
-route's runtime and layout checks plus representative keyboard, focus, reflow, text-spacing,
-and axe tests. CI also enforces generated-file parity, asset budgets, pinned GitHub Actions,
-production security headers, exact-revision deployment, and fresh production installs. These
-checks use Playwright browser engines on Linux; they are not a claim about every physical device.
+Production verification checks the deployed commit, security headers, all registry endpoints,
+one Vite component install, one Next.js template install, and representative Chromium,
+Firefox, and WebKit behavior. Local CI keeps exhaustive route and interaction coverage in
+Chromium while the other engines focus on browser-specific behavior and 320px reflow.
 
 ## Repository layout
 

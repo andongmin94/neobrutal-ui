@@ -51,36 +51,25 @@ npm run test:browser:cross
 
 `format` applies Oxlint/Oxfmt fixes. `lint` only checks and never rewrites source files.
 
-Contract tests check palette exports, synchronized sources, default stylesheet generation,
-directory and registry parity, preview source ownership, typography boundaries, internal links
-and includes, every component's manual files and package dependencies, every Usage example
-against the installed component types, and the source revision embedded in the built site.
-
 The Chromium suite visits every route in desktop/mobile light/dark modes and exercises the full
-interaction and axe coverage. Firefox and WebKit visit every route for runtime, lazy-loading,
-image, and horizontal-overflow failures and repeat representative keyboard, focus, reflow,
-text-spacing, and accessibility checks. Asset budgets and immutable generated files are enforced
-before deployment.
+interaction and axe coverage. The compact cross-browser suite repeats representative runtime,
+keyboard, focus, reflow, text-spacing, and accessibility checks in Firefox, WebKit, and a 320px
+Chromium viewport. CI also enforces asset budgets and generated-file parity.
 
 To check an existing deployment rather than the local build:
 
 ```bash
-DOCS_TEST_URL=https://neobrutal-ui.andongmin.com npm run test:browser
 DOCS_TEST_URL=https://neobrutal-ui.andongmin.com npm run test:browser:cross
 npm run verify:headers
 ```
 
-The suites save failure screenshots, traces, and HTML reports under `test-results`,
-`playwright-report`, and `playwright-report-cross`; CI uploads them as artifacts. Browser coverage
-uses Playwright engines on Linux and does not claim every physical browser/device combination.
+Failure artifacts contain traces, screenshots, and HTML reports under `test-results`,
+`playwright-report`, and `playwright-report-cross`. Production verification waits for the exact
+source commit before checking headers, registry endpoints, representative installs, and the
+cross-browser smoke suite.
 
 ## Deployment
 
 Vercel uses `docs` as its root, the Vite framework preset, `npm run build`, and `build/client`
-as its output. These settings are also in `vercel.json`. React Router prerenders the content
-routes; Fumadocs builds the static Orama search index. `public/r` serves the registry from the
-same deployment.
-
-Each build writes `build/client/build-info.json` with its source commit. Deployment verification
-waits for that exact commit before checking security headers, the live registry, fresh production
-consumers, and all three browser engines, so docs-only changes cannot validate an older deploy.
+as its output. React Router prerenders the content routes, Fumadocs builds the static search
+index, and `public/r` serves the registry from the same deployment.

@@ -1,13 +1,45 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, type ReactNode } from "react";
 
 import { ClientOnly } from "./client-only";
 import { PreviewErrorBoundary } from "./preview-error-boundary";
-import type { SpecialPageName } from "./special-pages";
 
-const LazySpecialPage = lazy(async () => {
-  const module = await import("./special-pages");
-  return { default: module.SpecialPageRenderer };
-});
+export type SpecialPageName =
+  | "blog-post"
+  | "charts"
+  | "stars"
+  | "styling"
+  | "template-detail"
+  | "templates";
+
+const BlogPostPage = lazy(() =>
+  import("./template-pages").then((module) => ({ default: module.BlogPostPage })),
+);
+const ChartsPage = lazy(() => import("@/special-pages/charts-examples"));
+const StarsPage = lazy(() => import("./stars-page"));
+const StylingPage = lazy(() => import("@/special-pages/styling/controls"));
+const TemplateDetailPage = lazy(() =>
+  import("./template-pages").then((module) => ({ default: module.TemplateDetailPage })),
+);
+const TemplatesPage = lazy(() =>
+  import("./template-pages").then((module) => ({ default: module.TemplatesPage })),
+);
+
+function renderPage(kind: SpecialPageName, slug?: string): ReactNode {
+  switch (kind) {
+    case "blog-post":
+      return <BlogPostPage slug={slug} />;
+    case "charts":
+      return <ChartsPage />;
+    case "stars":
+      return <StarsPage />;
+    case "styling":
+      return <StylingPage />;
+    case "template-detail":
+      return <TemplateDetailPage slug={slug} />;
+    case "templates":
+      return <TemplatesPage />;
+  }
+}
 
 export function SpecialPage({ kind, slug }: { kind: SpecialPageName; slug?: string }) {
   const fallback = (
@@ -17,9 +49,7 @@ export function SpecialPage({ kind, slug }: { kind: SpecialPageName; slug?: stri
   return (
     <ClientOnly fallback={fallback}>
       <PreviewErrorBoundary>
-        <Suspense fallback={fallback}>
-          <LazySpecialPage argument={slug} page={kind} />
-        </Suspense>
+        <Suspense fallback={fallback}>{renderPage(kind, slug)}</Suspense>
       </PreviewErrorBoundary>
     </ClientOnly>
   );

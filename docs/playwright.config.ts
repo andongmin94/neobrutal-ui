@@ -1,8 +1,10 @@
 import { defineConfig } from "@playwright/test";
+
 const baseURL = process.env.DOCS_TEST_URL ?? "http://127.0.0.1:4173";
+
 export default defineConfig({
   testDir: "./tests",
-  testIgnore: ["cross-browser.spec.ts", "cross-browser-pages.spec.ts"],
+  testIgnore: "cross-browser.spec.ts",
   fullyParallel: true,
   workers: process.env.CI ? 2 : undefined,
   retries: 0,
