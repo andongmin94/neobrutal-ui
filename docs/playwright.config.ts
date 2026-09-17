@@ -22,19 +22,6 @@ export default defineConfig({
       use: { viewport: { width: 1440, height: 900 }, colorScheme: "light" },
     },
     {
-      name: "desktop-dark",
-      use: { viewport: { width: 1440, height: 900 }, colorScheme: "dark" },
-    },
-    {
-      name: "mobile-light",
-      use: {
-        viewport: { width: 390, height: 844 },
-        colorScheme: "light",
-        isMobile: true,
-        hasTouch: true,
-      },
-    },
-    {
       name: "mobile-dark",
       use: {
         viewport: { width: 390, height: 844 },

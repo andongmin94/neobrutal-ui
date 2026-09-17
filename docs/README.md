@@ -51,10 +51,11 @@ npm run test:browser:cross
 
 `format` applies Oxlint/Oxfmt fixes. `lint` only checks and never rewrites source files.
 
-The Chromium suite visits every route in desktop/mobile light/dark modes and exercises the full
-interaction and axe coverage. The compact cross-browser suite repeats representative runtime,
-keyboard, focus, reflow, text-spacing, and accessibility checks in Firefox, WebKit, and a 320px
-Chromium viewport. CI also enforces asset budgets and generated-file parity.
+The exhaustive Chromium suite visits every route and exercises the full interaction and axe
+coverage once on desktop light and once on mobile dark. The compact cross-browser suite repeats
+representative runtime, keyboard, focus, reflow, text-spacing, and accessibility checks in
+Firefox, WebKit, and a 320px Chromium viewport. CI also enforces asset budgets and generated-file
+parity without repeating every functional test for color-scheme-only variants.
 
 To check an existing deployment rather than the local build:
 
