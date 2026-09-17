@@ -1,25 +1,52 @@
 import { expect, test, type Locator } from "@playwright/test";
 
-async function expectCompactCode(block: Locator) {
+type CodeOverflow = "contained" | "natural";
+
+async function expectCompactCode(block: Locator, overflow: CodeOverflow = "natural") {
   await expect(block).toBeVisible();
   const dimensions = await block.evaluate((node) => {
     const pre = node.querySelector("pre")!;
     const code = pre.querySelector("code")!;
     const button = node.querySelector(".code-copy-button")!;
     const frame = node.getBoundingClientRect();
+    const preBox = pre.getBoundingClientRect();
+    const buttonBox = button.getBoundingClientRect();
+    const style = getComputedStyle(pre);
+
     return {
+      clientHeight: pre.clientHeight,
       codeTop: code.getBoundingClientRect().top - frame.top,
-      preRight: pre.getBoundingClientRect().right,
-      copyLeft: button.getBoundingClientRect().left,
-      copyTop: button.getBoundingClientRect().top - frame.top,
-      paddingTop: parseFloat(getComputedStyle(pre).paddingTop),
+      copyLeft: buttonBox.left - frame.left,
+      copyRightInset: frame.right - buttonBox.right,
+      copyTop: buttonBox.top - frame.top,
+      frameWidth: frame.width,
+      maxHeight: style.maxHeight,
+      overflowY: style.overflowY,
+      paddingRight: parseFloat(style.paddingRight),
+      paddingTop: parseFloat(style.paddingTop),
+      preWidth: preBox.width,
+      scrollHeight: pre.scrollHeight,
     };
   });
+
   expect(dimensions.paddingTop).toBeLessThanOrEqual(20);
+  expect(dimensions.paddingRight).toBeGreaterThanOrEqual(60);
   expect(dimensions.codeTop).toBeGreaterThanOrEqual(12);
   expect(dimensions.codeTop).toBeLessThanOrEqual(24);
+  expect(dimensions.copyTop).toBeGreaterThanOrEqual(7);
   expect(dimensions.copyTop).toBeLessThanOrEqual(14);
-  expect(dimensions.preRight).toBeLessThanOrEqual(dimensions.copyLeft + 1);
+  expect(dimensions.copyLeft).toBeGreaterThan(0);
+  expect(dimensions.copyRightInset).toBeGreaterThanOrEqual(7);
+  expect(dimensions.preWidth).toBeGreaterThanOrEqual(dimensions.frameWidth - 4);
+
+  if (overflow === "natural") {
+    expect(dimensions.maxHeight).toBe("none");
+    expect(dimensions.overflowY).toBe("hidden");
+    expect(dimensions.scrollHeight).toBeLessThanOrEqual(dimensions.clientHeight + 1);
+  } else {
+    expect(dimensions.maxHeight).not.toBe("none");
+    expect(dimensions.overflowY).toBe("auto");
+  }
 }
 
 test("installation notice, tabs and command have separate, usable layouts", async ({
@@ -69,11 +96,9 @@ test("installation notice, tabs and command have separate, usable layouts", asyn
   );
 });
 
-test("code starts on the first row and never scrolls beneath its copy control", async ({
-  page,
-}, info) => {
+test("usage code grows naturally while full source remains contained", async ({ page }, info) => {
   await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
-  await page.goto("/docs/sheet");
+  await page.goto("/docs/drawer");
   const usage = page.locator(".docs-code:visible").first();
   await expectCompactCode(usage);
   const content = await usage.locator("pre").innerText();
@@ -85,20 +110,24 @@ test("code starts on the first row and never scrolls beneath its copy control", 
   const preview = page.locator(".component-preview").first();
   await preview.getByRole("tab", { name: "Code", exact: true }).click();
   const previewCode = preview.locator(".docs-code").first();
-  await expectCompactCode(previewCode);
+  await expectCompactCode(previewCode, "contained");
   await previewCode.screenshot({
     path: info.outputPath("preview-source.png"),
     animations: "disabled",
   });
 
   await page.setViewportSize({ width: 320, height: 844 });
-  await expectCompactCode(previewCode);
+  await expectCompactCode(previewCode, "contained");
+  const copyBeforeScroll = await previewCode.locator(".code-copy-button").boundingBox();
   await previewCode.locator("pre").evaluate((node) => {
     node.scrollLeft = node.scrollWidth;
   });
-  const pre = await previewCode.locator("pre").boundingBox();
-  const copy = await previewCode.locator(".code-copy-button").boundingBox();
-  expect(pre!.x + pre!.width).toBeLessThanOrEqual(copy!.x + 1);
+  const copyAfterScroll = await previewCode.locator(".code-copy-button").boundingBox();
+  const frame = await previewCode.boundingBox();
+  expect(Math.abs(copyAfterScroll!.x - copyBeforeScroll!.x)).toBeLessThanOrEqual(1);
+  expect(copyAfterScroll!.x + copyAfterScroll!.width).toBeLessThanOrEqual(
+    frame!.x + frame!.width - 7,
+  );
   await expect(previewCode.locator(".code-copy-button")).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(321);
   await previewCode.screenshot({
