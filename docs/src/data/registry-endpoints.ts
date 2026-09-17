@@ -2,9 +2,7 @@ const DEFAULT_REGISTRY_BASE_URL = "https://neobrutal-ui.andongmin.com";
 
 const configuredRegistryBaseUrl = import.meta.env?.VITE_REGISTRY_BASE_URL;
 
-export const REGISTRY_BASE_URL = new URL(
-  configuredRegistryBaseUrl || DEFAULT_REGISTRY_BASE_URL,
-)
+export const REGISTRY_BASE_URL = new URL(configuredRegistryBaseUrl || DEFAULT_REGISTRY_BASE_URL)
   .toString()
   .replace(/\/$/, "");
 
