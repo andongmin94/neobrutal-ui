@@ -57,7 +57,7 @@ test("installation notice, tabs and command have separate, usable layouts", asyn
   const installation = page.locator(".installation-tabs").first();
   const notice = installation.locator(".installation-tabs__notice");
   const frame = installation.locator(".installation-tabs__frame");
-  await expect(notice.getByRole("link", { name: "Install the base theme" })).toHaveAttribute(
+  await expect(notice.getByRole("link", { name: "Install the shared base once" })).toHaveAttribute(
     "href",
     "/docs/installation",
   );
