@@ -39,12 +39,12 @@ export function TemplatesPage() {
     <div className="not-prose grid gap-6 md:grid-cols-2">
       {TEMPLATES.map((template) => (
         <article
-          className="overflow-hidden rounded-base border-2 border-border bg-secondary-background shadow-shadow"
+          className="flex flex-col overflow-hidden rounded-base border-2 border-border bg-secondary-background shadow-shadow"
           key={template.slug}
         >
           <Link
             aria-label={`Open ${template.title} template`}
-            className="template-preview-link block overflow-hidden border-b-2 border-border bg-background outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+            className="template-preview-link block shrink-0 overflow-hidden border-b-2 border-border bg-background outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
             to={`/templates/${template.slug}`}
           >
             <img
@@ -54,7 +54,7 @@ export function TemplatesPage() {
               src={template.preview}
             />
           </Link>
-          <div className="p-5">
+          <div className="flex flex-1 flex-col p-5">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="m-0 font-heading text-xl">{template.title}</h2>
@@ -66,7 +66,7 @@ export function TemplatesPage() {
                 style={{ backgroundColor: template.color }}
               />
             </div>
-            <div className="mt-5 grid grid-cols-2 gap-3">
+            <div className="mt-auto grid grid-cols-2 gap-3 pt-5">
               <Link
                 className="pressable border-2 border-border bg-main px-3 py-2 text-center font-heading text-main-foreground"
                 to={`/templates/${template.slug}`}

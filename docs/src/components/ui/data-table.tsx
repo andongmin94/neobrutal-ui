@@ -197,7 +197,7 @@ export default function DataTableDemo() {
 
   return (
     <div className="w-full font-base text-main-foreground">
-      <div className="flex items-center py-4">
+      <div className="flex flex-col items-stretch gap-3 py-4 sm:flex-row sm:items-center">
         <Input
           placeholder="Filter emails..."
           aria-label="Filter email records"
@@ -207,7 +207,7 @@ export default function DataTableDemo() {
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="noShadow" className="ml-auto">
+            <Button variant="noShadow" className="self-start sm:ml-auto sm:self-auto">
               Columns <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
@@ -272,12 +272,12 @@ export default function DataTableDemo() {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
+      <div className="flex flex-col items-start gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-foreground flex-1 text-sm">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
-        <div className="space-x-2">
+        <div className="flex shrink-0 items-center gap-2">
           <Button
             variant="noShadow"
             size="sm"

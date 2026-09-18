@@ -115,7 +115,7 @@ function PostListPane({
                   type="button"
                   aria-pressed={isSelected}
                   className={
-                    "grid min-h-[4.5rem] w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-l-4 px-3 py-3 text-left outline-none transition-colors hover:bg-background focus-visible:bg-background sm:px-4 " +
+                    "grid min-h-[4.5rem] w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-l-4 px-3 py-3 text-left outline-none transition-colors hover:bg-background focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:px-4 " +
                     (isSelected ? "border-l-main bg-background" : "border-l-transparent")
                   }
                   onClick={() => onSelect(post.id)}
@@ -205,7 +205,6 @@ function PostEditorPane({
           </label>
           <Switch
             id="post-published"
-            size="sm"
             checked={post.status === "published"}
             onCheckedChange={(checked) =>
               onUpdate({
@@ -383,10 +382,10 @@ export default function CmsTemplate() {
                       type="button"
                       aria-pressed={isActive}
                       className={
-                        "relative h-full min-w-0 border-0 border-r-2 border-border px-2 text-sm font-heading outline-none transition-colors last:border-r-0 hover:bg-main/15 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring " +
+                        "relative h-full min-w-0 border-0 border-r-2 border-border px-2 text-sm font-heading outline-none transition-colors last:border-r-0 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring " +
                         (isActive
-                          ? "bg-main text-main-foreground hover:bg-main"
-                          : "bg-secondary-background text-foreground")
+                          ? "bg-main text-main-foreground"
+                          : "bg-secondary-background text-foreground hover:bg-background")
                       }
                       onClick={() => setStatusFilter(tab.value)}
                     >

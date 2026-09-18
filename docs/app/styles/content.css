@@ -312,7 +312,7 @@ ol.md-list {
 }
 .md-table {
   width: 100%;
-  min-width: 520px;
+  min-width: 0;
   border-collapse: collapse;
   text-align: left;
   background: var(--secondary-background);
@@ -322,6 +322,7 @@ ol.md-list {
   padding: 12px 14px;
   border-bottom: 1px solid var(--border);
   vertical-align: top;
+  overflow-wrap: anywhere;
   font-size: 14px;
 }
 .md-table th {

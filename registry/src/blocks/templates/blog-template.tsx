@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowUpRight, Clock3, FileText, Search, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button-variants";
@@ -21,6 +21,7 @@ function getPostHref(basePath: string, slug: string) {
 
 export default function BlogTemplate({ basePath = "/blog" }: BlogTemplateProps) {
   const [query, setQuery] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const filteredPosts = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -79,9 +80,13 @@ export default function BlogTemplate({ basePath = "/blog" }: BlogTemplateProps) 
                 aria-hidden="true"
                 className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2"
               />
+              {/* Keep one explicit clear action instead of browser-specific search controls. */}
               <Input
+                ref={searchInputRef}
                 id="post-search"
-                type="search"
+                type="text"
+                role="searchbox"
+                enterKeyHint="search"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search posts..."
@@ -93,7 +98,10 @@ export default function BlogTemplate({ basePath = "/blog" }: BlogTemplateProps) 
                   size="icon-xs"
                   variant="ghost"
                   className="absolute top-1/2 right-2 -translate-y-1/2"
-                  onClick={() => setQuery("")}
+                  onClick={() => {
+                    setQuery("");
+                    searchInputRef.current?.focus();
+                  }}
                   aria-label="Clear search"
                   title="Clear search"
                 >
