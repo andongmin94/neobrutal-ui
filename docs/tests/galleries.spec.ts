@@ -100,6 +100,43 @@ test("clipboard denial shows honest feedback without runtime errors", async ({ p
   expect(errors).toEqual([]);
 });
 
+test("CMS status filter is a flush segmented control", async ({ page }) => {
+  await page.goto("/templates/cms");
+  const group = page.getByRole("group", { name: "Filter posts by status" });
+  const all = group.getByRole("button", { name: "All", exact: true });
+  const draft = group.getByRole("button", { name: "Draft", exact: true });
+
+  await expect(group).toBeVisible();
+  await expect(group.getByRole("button")).toHaveCount(3);
+  await expect(all).toHaveAttribute("aria-pressed", "true");
+  await expect(draft).toHaveAttribute("aria-pressed", "false");
+
+  const frame = await group.evaluate((node) => getComputedStyle(node).borderTopWidth);
+  const selected = await all.evaluate((node) => {
+    const style = getComputedStyle(node);
+    return {
+      background: style.backgroundColor,
+      borderBottom: style.borderBottomWidth,
+      borderLeft: style.borderLeftWidth,
+      borderTop: style.borderTopWidth,
+    };
+  });
+  const inactiveBackground = await draft.evaluate((node) => getComputedStyle(node).backgroundColor);
+
+  expect(frame).toBe("2px");
+  expect(selected.borderTop).toBe("0px");
+  expect(selected.borderBottom).toBe("0px");
+  expect(selected.borderLeft).toBe("0px");
+  expect(selected.background).not.toBe(inactiveBackground);
+
+  await draft.click();
+  await expect(draft).toHaveAttribute("aria-pressed", "true");
+  await expect(all).toHaveAttribute("aria-pressed", "false");
+  await expect(page.getByText("July product update", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("Organize your first team space", { exact: true })).toBeVisible();
+  await expect(page.getByText("Public page checklist", { exact: true })).toBeVisible();
+});
+
 test("marquee pause and reduced motion stop both strips", async ({ page }) => {
   await page.goto("/docs/marquee");
   const preview = page.locator(".component-preview").first();

@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 
 const TEMPLATE_THEME =
@@ -90,10 +89,6 @@ function PostStatusBadge({ status }: { status: PostStatus }) {
       {status === "published" ? "Published" : "Draft"}
     </Badge>
   );
-}
-
-function isStatusFilter(value: string): value is StatusFilter {
-  return STATUS_TABS.some((tab) => tab.value === value);
 }
 
 function PostListPane({
@@ -279,12 +274,6 @@ export default function CmsTemplate() {
     if (resolvedSelectedId !== selectedId) setSelectedId(resolvedSelectedId);
   }, [resolvedSelectedId, selectedId]);
 
-  const handleFilterChange = (value: string) => {
-    if (isStatusFilter(value)) {
-      setStatusFilter(value);
-    }
-  };
-
   const clearFilters = () => {
     setQuery("");
     setStatusFilter("all");
@@ -373,25 +362,39 @@ export default function CmsTemplate() {
                 <Input
                   id="post-search"
                   type="search"
-                  className="h-9 pl-9"
+                  className="h-10 pl-9"
                   placeholder="Search posts"
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
                 />
               </div>
 
-              <Tabs value={statusFilter} onValueChange={handleFilterChange}>
-                <TabsList
-                  aria-label="Filter posts by status"
-                  className="grid h-9 w-full grid-cols-3 p-0"
-                >
-                  {STATUS_TABS.map((tab) => (
-                    <TabsTrigger key={tab.value} value={tab.value} className="min-w-0 px-2">
+              <div
+                role="group"
+                aria-label="Filter posts by status"
+                className="grid h-10 w-full grid-cols-3 overflow-hidden rounded-base border-2 border-border bg-secondary-background"
+              >
+                {STATUS_TABS.map((tab) => {
+                  const isActive = statusFilter === tab.value;
+
+                  return (
+                    <button
+                      key={tab.value}
+                      type="button"
+                      aria-pressed={isActive}
+                      className={
+                        "relative h-full min-w-0 border-0 border-r-2 border-border px-2 text-sm font-heading outline-none transition-colors last:border-r-0 hover:bg-main/15 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring " +
+                        (isActive
+                          ? "bg-main text-main-foreground hover:bg-main"
+                          : "bg-secondary-background text-foreground")
+                      }
+                      onClick={() => setStatusFilter(tab.value)}
+                    >
                       {tab.label}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-              </Tabs>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             <PostListPane

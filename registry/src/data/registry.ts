@@ -750,15 +750,7 @@ const TEMPLATES = [
     description: "A compact CMS for finding, editing, and publishing posts.",
     type: "registry:block",
     dependencies: ["lucide-react"],
-    registryDependencies: [
-      "neobrutal-ui",
-      "badge",
-      "button",
-      "input",
-      "switch",
-      "tabs",
-      "textarea",
-    ],
+    registryDependencies: ["neobrutal-ui", "badge", "button", "input", "switch", "textarea"],
     categories: ["template", "cms"],
     files: [
       {
