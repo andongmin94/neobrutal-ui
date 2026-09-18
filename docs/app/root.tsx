@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   isRouteErrorResponse,
   Links,
@@ -27,6 +28,18 @@ const themeScript = `
 })();
 `;
 
+function HydrationMarker() {
+  useEffect(() => {
+    document.documentElement.dataset.hydrated = "true";
+
+    return () => {
+      delete document.documentElement.dataset.hydrated;
+    };
+  }, []);
+
+  return null;
+}
+
 export const links: Route.LinksFunction = () => [{ rel: "icon", href: "/favicon.ico" }];
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -47,6 +60,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <ReactRouterProvider>{children}</ReactRouterProvider>
+        <HydrationMarker />
         <BridgeToaster />
         <ScrollRestoration />
         <Scripts />

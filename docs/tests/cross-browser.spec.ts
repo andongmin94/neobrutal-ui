@@ -21,10 +21,15 @@ function collectRuntimeErrors(page: Page) {
   return errors;
 }
 
+async function expectHydrated(page: Page) {
+  await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true");
+}
+
 async function expectHealthyLayout(page: Page, route: string) {
   const response = await page.goto(route);
   expect(response?.ok(), `${route}: HTTP response`).toBe(true);
   await expect(page.locator("main").first()).toBeVisible();
+  await expectHydrated(page);
   await expect(page.locator(".special-page-loading")).toHaveCount(0);
   await expect(page.locator(".react-host__error")).toHaveCount(0);
   await page.evaluate(() => document.fonts.ready);
@@ -60,6 +65,7 @@ test("representative routes render without runtime or layout failures", async ({
 
 test("dialog focus management works across browser engines", async ({ page }) => {
   await page.goto("/docs/dialog");
+  await expectHydrated(page);
   const preview = page.locator(".component-preview").first();
   const trigger = preview.getByRole("button", { name: "Edit profile" });
 
@@ -75,6 +81,7 @@ test("dialog focus management works across browser engines", async ({ page }) =>
 
 test("select keyboard behavior works across browser engines", async ({ page }) => {
   await page.goto("/docs/select");
+  await expectHydrated(page);
   const preview = page.locator(".component-preview").first();
   const trigger = preview.getByRole("combobox");
 
@@ -88,6 +95,7 @@ test("select keyboard behavior works across browser engines", async ({ page }) =
 
 test("installation tabs support roving keyboard focus", async ({ page }) => {
   await page.goto("/docs/button");
+  await expectHydrated(page);
   const installation = page.locator(".installation-tabs").first();
   const cli = installation.getByRole("tab", { name: "shadcn CLI", exact: true });
   const manual = installation.getByRole("tab", { name: "Manual", exact: true });
@@ -107,6 +115,7 @@ test("installation tabs support roving keyboard focus", async ({ page }) => {
 
 test("WCAG text spacing does not create page overflow", async ({ page }) => {
   await page.goto("/docs/installation");
+  await expectHydrated(page);
   await page.addStyleTag({
     content: `
       * { line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important; }
@@ -127,6 +136,7 @@ test("representative accessibility rules pass across browser engines", async ({ 
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   await expect(page.locator("main").first()).toBeVisible();
+  await expectHydrated(page);
   await page.evaluate(() => document.fonts.ready);
 
   const results = await new AxeBuilder({ page })
