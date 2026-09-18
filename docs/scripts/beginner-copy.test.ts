@@ -39,7 +39,7 @@ test("beginner onboarding reaches a working button before optional configuration
   );
 });
 
-test("beginner-facing copy avoids internal ownership jargon", () => {
+test("beginner-facing copy avoids project-internal ownership jargon", () => {
   const files = [
     "../README.md",
     "src/data/charts.ts",
