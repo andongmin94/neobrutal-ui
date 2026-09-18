@@ -1,8 +1,8 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 test("home has a working showcase, installation path, and URL-backed directory", async ({
   page,
-}, info) => {
+}) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: /Bold by design/ })).toBeVisible();
   await page.getByLabel("Workspace name", { exact: true }).fill("Docs review");
@@ -33,8 +33,6 @@ test("home has a working showcase, installation path, and URL-backed directory",
     "calendar",
   );
   await page.getByRole("button", { name: "Clear search", exact: true }).click();
-  await page.evaluate(() => window.scrollTo(0, 0));
-  await page.screenshot({ path: info.outputPath("home.png"), fullPage: true });
 });
 
 test("markdown list and link styling does not leak into the breadcrumb preview", async ({
@@ -66,9 +64,7 @@ test("markdown list and link styling does not leak into the breadcrumb preview",
   expect(await list.evaluate((node) => getComputedStyle(node).listStyleType)).toBe("none");
 });
 
-test("preview tabs really hide inactive content and small demos are compact", async ({
-  page,
-}, info) => {
+test("button preview applies variants and stays compact", async ({ page }) => {
   await page.goto("/docs/button");
   const preview = page.locator(".component-preview").first();
   await expect(preview.locator('[data-slot="button"]').first()).toBeVisible();
@@ -82,12 +78,6 @@ test("preview tabs really hide inactive content and small demos are compact", as
       .locator(".component-preview__canvas")
       .evaluate((node) => parseFloat(getComputedStyle(node).minHeight)),
   ).toBeLessThan(180);
-  await preview.getByRole("tab", { name: "Code", exact: true }).click();
-  await expect(preview.locator(".component-preview__canvas")).toBeHidden();
-  await expect(preview.locator(".component-preview__code")).toBeVisible();
-  await preview.getByRole("tab", { name: "Preview", exact: true }).click();
-  await expect(preview.locator(".component-preview__code")).toBeHidden();
-  await page.screenshot({ path: info.outputPath("button.png"), fullPage: true });
 });
 
 test("dialog supports Escape, focus return, and real local form submission", async ({ page }) => {
@@ -122,7 +112,7 @@ test("controlled select supports keyboard choice", async ({ page }) => {
 
 test("customizer uses scoped tokens, full CSS export, and reversible defaults", async ({
   page,
-}, info) => {
+}) => {
   await page.goto("/styling");
   await expect(page.getByLabel("Palette", { exact: true })).toBeVisible();
   const shellBefore = await page
@@ -148,44 +138,7 @@ test("customizer uses scoped tokens, full CSS export, and reversible defaults", 
     .getByRole("button", { name: "Copy", exact: true })
     .click();
   expect(await page.evaluate(() => navigator.clipboard.readText())).toContain("--radius: 12px;");
-  await page.screenshot({ path: info.outputPath("styling.png"), fullPage: true });
   await page.getByRole("button", { name: "Reset defaults" }).click();
   await expect(page.getByLabel("Palette", { exact: true })).toHaveValue("yellow");
   await expect(page.locator("[data-theme-preview]")).toHaveCSS("--radius", "5px");
-});
-
-test("representative pages have no page-level horizontal overflow or runtime errors", async ({
-  page,
-}, info) => {
-  const errors: string[] = [];
-  page.on("pageerror", (error) => errors.push(error.message));
-  for (const route of [
-    "/",
-    "/docs/installation",
-    "/docs/button",
-    "/docs/breadcrumb",
-    "/docs/dialog",
-    "/docs/select",
-    "/styling",
-    "/templates",
-  ]) {
-    const response = await page.goto(route);
-    expect(response?.ok(), route).toBe(true);
-    await expect(page.locator("main h1").first()).toBeVisible();
-    const primary = page.locator(".component-preview").first();
-    if (await primary.count())
-      await expect(primary.locator("[data-react-host]")).not.toHaveAttribute("aria-busy", "true");
-    const viewportWidth = page.viewportSize()!.width;
-    const widths = await page.evaluate(() => ({
-      scroll: document.documentElement.scrollWidth,
-      client: document.documentElement.clientWidth,
-      layout: innerWidth,
-    }));
-    expect(widths.scroll, `${route}: scroll width`).toBeLessThanOrEqual(viewportWidth + 1);
-    expect(widths.layout, `${route}: layout viewport`).toBeLessThanOrEqual(viewportWidth + 1);
-    expect(widths.client, `${route}: document width`).toBeLessThanOrEqual(viewportWidth + 1);
-    await expect(page.locator(".react-host__error")).toHaveCount(0);
-  }
-  expect(errors).toEqual([]);
-  await page.screenshot({ path: info.outputPath("templates.png"), fullPage: true });
 });

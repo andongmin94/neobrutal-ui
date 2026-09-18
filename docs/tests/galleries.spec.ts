@@ -11,7 +11,7 @@ const series = [
 ];
 
 for (const group of series) {
-  test(`chart gallery and every source dialog: ${group.id}`, async ({ page }, info) => {
+  test(`chart gallery and every source dialog: ${group.id}`, async ({ page }) => {
     const errors: string[] = [];
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto("/charts");
@@ -34,10 +34,6 @@ for (const group of series) {
       const bounds = await dialog.boundingBox();
       expect(bounds!.width).toBeLessThanOrEqual(page.viewportSize()!.width);
       expect(bounds!.height).toBeLessThanOrEqual(page.viewportSize()!.height);
-      await dialog.screenshot({
-        path: info.outputPath(`source-${index}.png`),
-        animations: "disabled",
-      });
       await page.keyboard.press("Escape");
       await expect(dialog).toBeHidden();
       await expect(button).toBeFocused();
@@ -45,17 +41,11 @@ for (const group of series) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
       page.viewportSize()!.width + 1,
     );
-    await page.evaluate(() => scrollTo(0, 0));
-    await page.screenshot({
-      path: info.outputPath("gallery.png"),
-      fullPage: true,
-      animations: "disabled",
-    });
     expect(errors).toEqual([]);
   });
 }
 
-test("every star renders and copies its source", async ({ page }, info) => {
+test("every star renders and copies its source", async ({ page }) => {
   await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto("/stars");
   const cards = page.locator("main article article");
@@ -67,15 +57,9 @@ test("every star renders and copies its source", async ({ page }, info) => {
     await expect(card.getByRole("button", { name: "Copied", exact: true })).toBeVisible();
     expect((await page.evaluate(() => navigator.clipboard.readText())).length).toBeGreaterThan(100);
   }
-  await page.evaluate(() => scrollTo(0, 0));
-  await page.screenshot({
-    path: info.outputPath("stars.png"),
-    fullPage: true,
-    animations: "disabled",
-  });
 });
 
-test("every palette has an isolated live preview", async ({ page }, info) => {
+test("every palette has an isolated live preview", async ({ page }) => {
   await page.goto("/styling");
   const select = page.getByLabel("Palette", { exact: true });
   const preview = page.locator("[data-theme-preview]");
@@ -91,10 +75,6 @@ test("every palette has an isolated live preview", async ({ page }, info) => {
         .locator("html")
         .evaluate((node) => getComputedStyle(node).getPropertyValue("--main")),
     ).toBe(shell);
-    await preview.screenshot({
-      path: info.outputPath(`palette-${color.name}.png`),
-      animations: "disabled",
-    });
   }
 });
 
@@ -137,13 +117,12 @@ test("marquee pause and reduced motion stop both strips", async ({ page }) => {
   await expect(preview.locator(".animate-marquee2")).toBeHidden();
 });
 
-test("navigation and search can be dismissed with focus restored", async ({ page }, info) => {
+test("navigation and search can be dismissed with focus restored", async ({ page }) => {
   await page.goto("/");
   if (page.viewportSize()!.width < 1024) {
     const menu = page.locator(".mobile-menu-button");
     await menu.click();
     await expect(page.locator(".docs-sidebar.is-open")).toBeVisible();
-    await page.screenshot({ path: info.outputPath("navigation.png"), animations: "disabled" });
     await page.keyboard.press("Escape");
     await expect(page.locator(".docs-sidebar.is-open")).toHaveCount(0);
     await expect(menu).toBeFocused();
@@ -154,7 +133,6 @@ test("navigation and search can be dismissed with focus restored", async ({ page
   await expect(input).toBeVisible();
   await input.fill("button");
   await expect(page.locator(".search-dialog").getByRole("option").first()).toBeVisible();
-  await page.screenshot({ path: info.outputPath("search.png"), animations: "disabled" });
   await page.keyboard.press("Escape");
   await expect(input).toBeHidden();
   await expect(trigger).toBeFocused();
