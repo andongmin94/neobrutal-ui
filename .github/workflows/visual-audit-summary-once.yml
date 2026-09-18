@@ -1,4 +1,4 @@
-name: Verify UI audit fixes once
+name: Recover verified UI audit commit
 
 on:
   push:
@@ -7,325 +7,66 @@ on:
       - .github/workflows/visual-audit-summary-once.yml
 
 permissions:
+  actions: read
   contents: write
 
 jobs:
-  refine:
+  recover:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 3
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: |
-            registry/package-lock.json
-            docs/package-lock.json
-      - name: Install dependencies
-        run: |
-          npm ci --prefix registry
-          npm ci --prefix docs
-      - name: Refine the authoritative UI sources
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-
-          def edit(filename, replacements):
-              path = Path(filename)
-              source = path.read_text()
-              for before, after in replacements:
-                  count = source.count(before)
-                  if count != 1:
-                      raise SystemExit(f"{filename}: expected one replacement, found {count}: {before!r}")
-                  source = source.replace(before, after, 1)
-              path.write_text(source)
-
-          edit('docs/app/styles/content.css', [
-              ('  min-width: 520px;\n', '  min-width: 0;\n'),
-              ('  vertical-align: top;\n  font-size: 14px;\n', '  vertical-align: top;\n  overflow-wrap: anywhere;\n  font-size: 14px;\n'),
-          ])
-          edit('registry/src/components/ui/data-table.tsx', [
-              ('className="flex items-center py-4"', 'className="flex flex-col items-stretch gap-3 py-4 sm:flex-row sm:items-center"'),
-              ('className="ml-auto"', 'className="self-start sm:ml-auto sm:self-auto"'),
-              ('className="flex items-center justify-end space-x-2 py-4"', 'className="flex flex-col items-start gap-3 py-4 sm:flex-row sm:items-center sm:justify-between"'),
-              ('<div className="space-x-2">', '<div className="flex shrink-0 items-center gap-2">'),
-          ])
-          edit('registry/src/blocks/templates/cms-template.tsx', [
-              ('hover:bg-background focus-visible:bg-background sm:px-4', 'hover:bg-background focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:px-4'),
-              ('            id="post-published"\n            size="sm"\n', '            id="post-published"\n'),
-              ('last:border-r-0 hover:bg-main/15 focus-visible:z-10', 'last:border-r-0 focus-visible:z-10'),
-              ('? "bg-main text-main-foreground hover:bg-main"', '? "bg-main text-main-foreground"'),
-              (': "bg-secondary-background text-foreground")', ': "bg-secondary-background text-foreground hover:bg-background")'),
-          ])
-          edit('registry/src/blocks/templates/blog-template.tsx', [
-              ('import { useMemo, useState } from "react";', 'import { useMemo, useRef, useState } from "react";'),
-              ('  const [query, setQuery] = useState("");\n', '  const [query, setQuery] = useState("");\n  const searchInputRef = useRef<HTMLInputElement>(null);\n'),
-              ('              <Input\n                id="post-search"', '              {/* Keep one explicit clear action instead of browser-specific search controls. */}\n              <Input\n                ref={searchInputRef}\n                id="post-search"'),
-              ('                type="search"\n', '                type="text"\n                role="searchbox"\n                enterKeyHint="search"\n'),
-              ('                  onClick={() => setQuery("")}', '                  onClick={() => {\n                    setQuery("");\n                    searchInputRef.current?.focus();\n                  }}'),
-          ])
-          edit('docs/app/components/template-pages.tsx', [
-              ('className="overflow-hidden rounded-base border-2 border-border bg-secondary-background shadow-shadow"', 'className="flex flex-col overflow-hidden rounded-base border-2 border-border bg-secondary-background shadow-shadow"'),
-              ('className="template-preview-link block overflow-hidden', 'className="template-preview-link block shrink-0 overflow-hidden'),
-              ('<div className="p-5">', '<div className="flex flex-1 flex-col p-5">'),
-              ('className="mt-5 grid grid-cols-2 gap-3"', 'className="mt-auto grid grid-cols-2 gap-3 pt-5"'),
-          ])
-          PY
-      - name: Add focused UI regression coverage
-        run: |
-          cat > docs/tests/ui-polish.spec.ts <<'TS'
-          import { expect, test, type Page } from "@playwright/test";
-
-          async function openReady(page: Page, route: string) {
-            const response = await page.goto(route);
-            expect(response?.ok()).toBe(true);
-            await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true");
-            await expect(page.locator(".special-page-loading")).toHaveCount(0);
-          }
-
-          test("reference tables do not force horizontal scrolling on small screens", async ({ page }) => {
-            await page.setViewportSize({ width: 320, height: 844 });
-            for (const route of ["/docs/button", "/docs/design-tokens", "/docs/stars"]) {
-              await openReady(page, route);
-              const shells = page.locator(".md-table-shell");
-              expect(await shells.count()).toBeGreaterThan(0);
-              for (const shell of await shells.all()) {
-                await shell.scrollIntoViewIfNeeded();
-                const dimensions = await shell.evaluate((node) => ({
-                  available: node.clientWidth,
-                  content: node.scrollWidth,
-                }));
-                expect(dimensions.content, route).toBeLessThanOrEqual(dimensions.available + 1);
-              }
-            }
-          });
-
-          test("data table tools and pagination reflow without squeezing the search field", async ({ page }) => {
-            await page.setViewportSize({ width: 320, height: 844 });
-            await openReady(page, "/docs/data-table");
-            const preview = page.locator(".component-preview").first();
-            const input = preview.getByRole("textbox", { name: "Filter email records" });
-            const columns = preview.getByRole("button", { name: "Columns", exact: true });
-            await expect(input).toBeVisible();
-            const inputBox = (await input.boundingBox())!;
-            const columnsBox = (await columns.boundingBox())!;
-            expect(inputBox.width).toBeGreaterThan(200);
-            expect(columnsBox.y - inputBox.y - inputBox.height).toBeGreaterThanOrEqual(11);
-            const count = (await preview.getByText(/row\(s\) selected\./).boundingBox())!;
-            const previous = (await preview.getByRole("button", { name: "Previous", exact: true }).boundingBox())!;
-            const next = (await preview.getByRole("button", { name: "Next", exact: true }).boundingBox())!;
-            expect(previous.y - count.y - count.height).toBeGreaterThanOrEqual(11);
-            expect(Math.abs(previous.y - next.y)).toBeLessThanOrEqual(1);
-            expect(next.x - previous.x - previous.width).toBeGreaterThanOrEqual(7);
-            expect(next.x + next.width).toBeLessThanOrEqual(320);
-          });
-
-          test("CMS keeps a selected fill and a distinct keyboard focus", async ({ page }) => {
-            await openReady(page, "/templates/cms");
-            const group = page.getByRole("group", { name: "Filter posts by status" });
-            const all = group.getByRole("button", { name: "All", exact: true });
-            await expect(all).toHaveAttribute("aria-pressed", "true");
-            const selectedBackground = await all.evaluate((node) => getComputedStyle(node).backgroundColor);
-            await all.hover();
-            await all.evaluate(async (node) => {
-              await Promise.all(node.getAnimations().map((animation) => animation.finished));
-            });
-            await expect(all).toHaveCSS("background-color", selectedBackground);
-            const selectedPost = page.getByRole("region", { name: "Posts", exact: true }).getByRole("button").first();
-            await page.keyboard.press("Tab");
-            await selectedPost.focus();
-            await expect(selectedPost).toBeFocused();
-            await expect.poll(() => selectedPost.evaluate((node) => getComputedStyle(node).boxShadow)).toContain("inset");
-            const publishSwitch = page.locator("#post-published");
-            await expect(publishSwitch).toBeVisible();
-            expect((await publishSwitch.boundingBox())!.height).toBeGreaterThanOrEqual(24);
-          });
-
-          test("blog search has one clear action and returns focus after clearing", async ({ page }) => {
-            await openReady(page, "/templates/blog");
-            const search = page.getByRole("searchbox", { name: "Search posts" });
-            // A text input with search semantics cannot add a second native search-clear button.
-            await expect(search).toHaveAttribute("type", "text");
-            await expect(search).toHaveAttribute("enterkeyhint", "search");
-            await search.fill("no-results-for-ui-regression");
-            await expect(page.getByText("No posts found.", { exact: true })).toBeVisible();
-            const clear = page.getByRole("button", { name: "Clear search", exact: true });
-            await expect(clear).toHaveCount(1);
-            await clear.click();
-            await expect(search).toHaveValue("");
-            await expect(search).toBeFocused();
-            await expect(clear).toHaveCount(0);
-            await expect(page.getByText("No posts found.", { exact: true })).toHaveCount(0);
-          });
-
-          test("template card actions align despite different description lengths", async ({ page }) => {
-            await page.setViewportSize({ width: 1280, height: 1000 });
-            await openReady(page, "/templates");
-            const cards = page.locator("main article article");
-            await expect(cards).toHaveCount(4);
-            const first = cards.nth(0);
-            const second = cards.nth(1);
-            await first.locator("p").evaluate((node) => {
-              node.textContent += " Extra descriptive text verifies that a taller introduction does not shift this card's actions above its neighbor's actions.";
-            });
-            const firstCard = (await first.boundingBox())!;
-            const secondCard = (await second.boundingBox())!;
-            expect(Math.abs(firstCard.y - secondCard.y)).toBeLessThanOrEqual(1);
-            const firstAction = (await first.getByRole("link", { name: "Open", exact: true }).boundingBox())!;
-            const secondAction = (await second.getByRole("link", { name: "Open", exact: true }).boundingBox())!;
-            expect(Math.abs(firstAction.y - secondAction.y)).toBeLessThanOrEqual(1);
-          });
-          TS
-      - name: Generate and verify registry sources
-        run: |
-          npm run format --prefix registry
-          npm run lint --prefix registry
-          npm run typecheck --prefix registry
-          npm run build --prefix registry
-          npm run registry:validate --prefix registry
-          npm run registry:check --prefix registry
-      - name: Verify docs
-        run: |
-          npm run format --prefix docs
-          npm run lint --prefix docs
-          npm run typecheck --prefix docs
-          npm run build --prefix docs
-          npm run check:budget --prefix docs
-          npm test --prefix docs
-      - name: Install Chromium and verify the changed controls
-        working-directory: docs
-        run: |
-          npx playwright install --with-deps chromium
-          npm run test:browser -- tests/ui-polish.spec.ts
-      - name: Verify fresh consumers and the full Chromium suite
-        run: |
-          npm run consumer:verify --prefix registry
-          npm run test:browser --prefix docs
-      - name: Capture all rendered pages including blog articles
-        env:
-          VISUAL_AUDIT_DIR: ${{ runner.temp }}/ui-audit-after
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import os
-          import textwrap
-
-          source = Path('.github/workflows/visual-audit-once.yml').read_text()
-          script = textwrap.dedent(source.split("          node --input-type=module <<'NODE'\n", 1)[1].split('\n          NODE\n', 1)[0])
-          replacements = [
-              ('const baseURL = "https://neobrutal-ui.andongmin.com";', 'const baseURL = "http://127.0.0.1:4173";'),
-              ('const root = path.resolve("visual-audit");', 'const root = path.resolve(process.env.VISUAL_AUDIT_DIR);'),
-              ('chromium.launch({ channel: "chrome", headless: true })', 'chromium.launch({ headless: true })'),
-              ('localStorage.setItem("theme", value)', 'localStorage.setItem("neobrutal-ui-theme", value)'),
-              ('    await ready(page);', '    await ready(page);\n    await expect(page.locator("html")).toHaveAttribute("data-theme", theme);'),
-              ('              expect(metrics.loading).toEqual([]);', '              expect(metrics.loading).toEqual([]);'),
-          ]
-          for before, after in replacements[:-1]:
-              if script.count(before) != 1:
-                  raise SystemExit(f'Audit replacement is not unique: {before!r}')
-              script = script.replace(before, after, 1)
-          marker = 'const jobs = routes.flatMap'
-          discovery = '''const blog = await browser.newPage();
-          await blog.goto(baseURL + "/templates/blog");
-          await ready(blog);
-          const articleRoutes = await blog.locator('a[href^="/templates/blog/"]').evaluateAll((links) =>
-            [...new Set(links.map((link) => new URL(link.href).pathname))]);
-          expect(articleRoutes.length).toBeGreaterThan(0);
-          routes.push(...articleRoutes);
-          await blog.close();
-          console.log("BLOG_ARTICLE_ROUTES", JSON.stringify(articleRoutes));
-          '''
-          if script.count(marker) != 1:
-              raise SystemExit('Audit insertion marker not found')
-          script = script.replace(marker, textwrap.dedent(discovery) + marker, 1)
-          Path(os.environ['RUNNER_TEMP'], 'capture-ui-after.mjs').write_text(script)
-          PY
-          npm run start --prefix docs -- --host 127.0.0.1 --port 4173 > "$RUNNER_TEMP/docs-server.log" 2>&1 &
-          server_pid=$!
-          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
-          for attempt in $(seq 1 30); do
-            if curl --fail --silent http://127.0.0.1:4173/templates/cms >/dev/null; then break; fi
-            sleep 1
-          done
-          curl --fail --silent http://127.0.0.1:4173/templates/cms >/dev/null
-          cd docs
-          node --input-type=module < "$RUNNER_TEMP/capture-ui-after.mjs"
-      - name: Save post-fix captures and test reports
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: ui-audit-after-fixes
-          path: |
-            ${{ runner.temp }}/ui-audit-after
-            docs/playwright-report
-            docs/test-results
-          retention-days: 3
-          if-no-files-found: ignore
-      - name: Prepare verified commit without moving main
+      - name: Recover the verified tree without repeating tests or moving main
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           python3 - <<'PY'
-          from pathlib import Path
           import json
           import os
-
-          report = json.loads(Path(os.environ['RUNNER_TEMP'], 'ui-audit-after/report.json').read_text())
-          if not report or any(not row['ready'] or row.get('failure') or row['pageOverflow'] or row['errors'] for row in report):
-              raise SystemExit('Incomplete or erroneous audit cannot be published')
-          routes = len({row['route'] for row in report})
-          if len(report) != routes * 4:
-              raise SystemExit('Every route must have both themes and both widths')
-          Path('docs/visual-audit.md').write_text(f'''# UI audit status\n\nPrepared by GitHub Actions run {os.environ['GITHUB_RUN_ID']}.\n\n## Automated checks completed\n\n- {routes} routes in light and dark themes at desktop (1440px) and mobile (390px) widths: {len(report)} fully rendered combinations.\n- Included every documentation route, four template families, and all linked blog articles.\n- Captures wait for hydration, lazy previews, images, fonts, and the actual theme.\n- No loading placeholders, page-level horizontal overflow, page errors, or capture failures.\n- Registry format, lint, typecheck, build, schema and consistency checks passed.\n- Fresh Next.js and Vite consumers and the full Chromium suite passed.\n- Focused regressions cover 320px reference tables and data-table controls, CMS focus and selection, blog search clearing, and template card action alignment.\n\n## Changes\n\n- Reference tables wrap instead of imposing a 520px minimum on phones.\n- Data-table search and column controls stack on phones; pagination stays together below the selection count.\n- CMS keeps its selected filter fill, distinguishes keyboard focus on selected post rows, and uses the standard publish switch size.\n- Blog search has one explicit clear control, preserves search semantics, and restores input focus after clearing.\n- Template card actions align at the bottom regardless of description length.\n\n## Visual review still pending\n\nRendered captures and automated checks are not a completed visual sign-off.\nThe assistant runtime could not open the captured images during this pass.\nReview the captures for spacing, borders, shadows, typography and open overlay states before claiming comprehensive visual approval.\nFinal production and cross-browser checks must refer to the published commit, not this preparation run.\n\nBoth temporary audit workflows are removed from the prepared commit. The normal Verify workflow is unchanged.\n''')
-          PY
-          rm .github/workflows/visual-audit-once.yml .github/workflows/visual-audit-summary-once.yml
-          git add registry docs .github/workflows/visual-audit-once.yml .github/workflows/visual-audit-summary-once.yml
-          git diff --cached --check
-          git diff --cached --stat
-          python3 - <<'PY'
-          from pathlib import Path
-          import json
-          import os
-          import subprocess
+          import re
           import urllib.request
 
-          repo = os.environ['GITHUB_REPOSITORY']
-          parent = os.environ['GITHUB_SHA']
-          base = f'https://api.github.com/repos/{repo}'
-          def api(endpoint, payload=None):
+          base = 'https://api.github.com/repos/' + os.environ['GITHUB_REPOSITORY']
+          expected = '04bc78a1f4b0ec81b8972337d6ea3625f9a54521'
+          current = os.environ['GITHUB_SHA']
+          workflow = '.github/workflows/visual-audit-summary-once.yml'
+          headers = {
+              'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+              'Accept': 'application/vnd.github+json',
+              'Content-Type': 'application/json',
+              'X-GitHub-Api-Version': '2022-11-28',
+          }
+
+          def request(endpoint, payload=None, raw=False):
               data = None if payload is None else json.dumps(payload).encode()
-              request = urllib.request.Request(base + endpoint, data=data, headers={
-                  'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
-                  'Accept': 'application/vnd.github+json',
-                  'Content-Type': 'application/json',
-                  'X-GitHub-Api-Version': '2022-11-28',
-              })
-              with urllib.request.urlopen(request, timeout=30) as response:
-                  return json.load(response)
-          if api('/git/ref/heads/main')['object']['sha'] != parent:
-              raise SystemExit('main changed during verification; refusing stale publication')
-          changes = subprocess.check_output(['git', 'diff', '--cached', '--name-status', '--no-renames'], text=True).splitlines()
-          entries = []
-          for change in changes:
-              status, filename = change.split('\t', 1)
-              entry = {'path': filename, 'mode': '100644', 'type': 'blob'}
-              if status == 'D':
-                  entry['sha'] = None
-              else:
-                  entry['content'] = Path(filename).read_text()
-              entries.append(entry)
-          tree = api('/git/trees', {
-              'base_tree': subprocess.check_output(['git', 'rev-parse', 'HEAD^{tree}'], text=True).strip(),
-              'tree': entries,
+              req = urllib.request.Request(base + endpoint, data=data, headers=headers)
+              with urllib.request.urlopen(req, timeout=30) as response:
+                  content = response.read()
+              return content.decode('utf-8-sig') if raw else json.loads(content)
+
+          run = request('/actions/runs/35374112043')
+          if run['conclusion'] != 'success' or run['head_sha'] != expected:
+              raise SystemExit('The required verification did not pass on the expected source.')
+          changes = request('/compare/' + expected + '...' + current)
+          if changes.get('status') != 'ahead' or [f['filename'] for f in changes['files']] != [workflow]:
+              raise SystemExit('Unrelated changes exist; do not republish an older tree.')
+          if request('/git/ref/heads/main')['object']['sha'] != current:
+              raise SystemExit('main advanced; refusing stale publication.')
+          logs = request('/actions/jobs/105694649535/logs', raw=True)
+          matches = set(re.findall(r'PREPARED_COMMIT=([0-9a-f]{40})(?:\r?\n|$)', logs))
+          if len(matches) != 1:
+              raise SystemExit('Expected exactly one verified commit identifier.')
+          prepared_sha = matches.pop()
+          prepared = request('/git/commits/' + prepared_sha)
+          if [p['sha'] for p in prepared['parents']] != [expected]:
+              raise SystemExit('Verified commit parent does not match the tested source.')
+          commit = request('/git/commits', {
+              'message': prepared['message'],
+              'tree': prepared['tree']['sha'],
+              'parents': [current],
           })
-          commit = api('/git/commits', {
-              'message': 'fix: polish responsive docs and template controls',
-              'tree': tree['sha'],
-              'parents': [parent],
-          })
+          print('VERIFIED_ORIGINAL=' + prepared_sha)
           print('PREPARED_COMMIT=' + commit['sha'])
-          print('EXPECTED_MAIN=' + parent)
-          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
-              summary.write(f"\nVerified commit prepared, not published: `{commit['sha']}`.\nExpected main: `{parent}`.\n")
+          print('VERIFIED_TREE=' + prepared['tree']['sha'])
+          print('EXPECTED_MAIN=' + current)
+          print('No branch reference was changed.')
           PY
