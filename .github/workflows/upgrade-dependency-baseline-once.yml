@@ -50,6 +50,7 @@ jobs:
           updateJson("docs/package.json", (pkg) => {
             pkg.dependencies["@base-ui/react"] = "^1.8.0";
             pkg.devDependencies["@playwright/test"] = "1.63.0";
+            pkg.devDependencies["@typescript/typescript6"] = "6.0.2";
             pkg.devDependencies.typescript = "^7.0.2";
             pkg.devDependencies.vite = "^8.2.2";
           });
@@ -57,6 +58,7 @@ jobs:
           const replacements = new Map([
             ["@base-ui/react@^1.6.0", "@base-ui/react@^1.8.0"],
             ["shadcn@^4.13.0", "shadcn@^4.21.0"],
+            ['import ts from "typescript";', 'import ts from "@typescript/typescript6";'],
             ['react: "19.2.7"', 'react: "19.2.8"'],
             ['"react-dom": "19.2.7"', '"react-dom": "19.2.8"'],
             ['"next": "^16.3.3"', '"next": "^16.3.5"'],
@@ -134,6 +136,7 @@ jobs:
             docs: {
               "@base-ui/react": "1.8.0",
               "@playwright/test": "1.63.0",
+              "@typescript/typescript6": "6.0.2",
               react: "19.2.8",
               "react-dom": "19.2.8",
               typescript: "7.0.2",
