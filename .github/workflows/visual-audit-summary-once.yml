@@ -1,103 +1,293 @@
-name: Visual audit summary once
+name: Verify UI audit fixes once
 
 on:
   push:
+    branches: [main]
     paths:
       - .github/workflows/visual-audit-summary-once.yml
 
 permissions:
-  actions: read
-  contents: read
+  contents: write
 
 jobs:
-  summarize:
+  refine:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 35
     steps:
-      - name: Download the full audit artifact
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            registry/package-lock.json
+            docs/package-lock.json
+      - name: Install dependencies
+        run: |
+          npm ci --prefix registry
+          npm ci --prefix docs
+      - name: Refine the authoritative UI sources
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          def edit(filename, replacements):
+              path = Path(filename)
+              source = path.read_text()
+              for before, after in replacements:
+                  count = source.count(before)
+                  if count != 1:
+                      raise SystemExit(f"{filename}: expected one replacement, found {count}: {before!r}")
+                  source = source.replace(before, after, 1)
+              path.write_text(source)
+
+          edit('docs/app/styles/content.css', [
+              ('  min-width: 520px;\n', '  min-width: 0;\n'),
+              ('  vertical-align: top;\n  font-size: 14px;\n', '  vertical-align: top;\n  overflow-wrap: anywhere;\n  font-size: 14px;\n'),
+          ])
+          edit('registry/src/components/ui/data-table.tsx', [
+              ('className="flex items-center py-4"', 'className="flex items-center gap-3 py-4"'),
+              ('className="flex items-center justify-end space-x-2 py-4"', 'className="flex flex-wrap items-center justify-between gap-3 py-4"'),
+              ('<div className="space-x-2">', '<div className="flex shrink-0 items-center gap-2">'),
+          ])
+          edit('registry/src/blocks/templates/cms-template.tsx', [
+              ('hover:bg-background focus-visible:bg-background sm:px-4', 'hover:bg-background focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:px-4'),
+              ('            id="post-published"\n            size="sm"\n', '            id="post-published"\n'),
+              ('last:border-r-0 hover:bg-main/15 focus-visible:z-10', 'last:border-r-0 focus-visible:z-10'),
+              ('? "bg-main text-main-foreground hover:bg-main"', '? "bg-main text-main-foreground"'),
+              (': "bg-secondary-background text-foreground")', ': "bg-secondary-background text-foreground hover:bg-background")'),
+          ])
+          edit('registry/src/blocks/templates/blog-template.tsx', [
+              ('import { useMemo, useState } from "react";', 'import { useMemo, useRef, useState } from "react";'),
+              ('  const [query, setQuery] = useState("");\n', '  const [query, setQuery] = useState("");\n  const searchInputRef = useRef<HTMLInputElement>(null);\n'),
+              ('              <Input\n                id="post-search"', '              <Input\n                ref={searchInputRef}\n                id="post-search"'),
+              ('className="h-11 bg-secondary-background pr-11 pl-10"', 'className="h-11 bg-secondary-background pr-11 pl-10 [&::-webkit-search-cancel-button]:appearance-none"'),
+              ('                  onClick={() => setQuery("")}', '                  onClick={() => {\n                    setQuery("");\n                    searchInputRef.current?.focus();\n                  }}'),
+          ])
+          PY
+      - name: Add focused UI regression coverage
+        run: |
+          cat > docs/tests/ui-polish.spec.ts <<'TS'
+          import { expect, test, type Page } from "@playwright/test";
+
+          async function openReady(page: Page, route: string) {
+            await page.goto(route);
+            await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true");
+            await expect(page.locator(".special-page-loading")).toHaveCount(0);
+          }
+
+          test("reference tables do not force horizontal scrolling on small screens", async ({ page }) => {
+            await page.setViewportSize({ width: 320, height: 844 });
+            for (const route of ["/docs/button", "/docs/design-tokens", "/docs/stars"]) {
+              await openReady(page, route);
+              const shells = page.locator(".md-table-shell");
+              expect(await shells.count()).toBeGreaterThan(0);
+              for (const shell of await shells.all()) {
+                await shell.scrollIntoViewIfNeeded();
+                const dimensions = await shell.evaluate((node) => ({
+                  available: node.clientWidth,
+                  content: node.scrollWidth,
+                }));
+                expect(dimensions.content, route).toBeLessThanOrEqual(dimensions.available + 1);
+              }
+            }
+          });
+
+          test("data table tools and pagination stay separated at 320px", async ({ page }) => {
+            await page.setViewportSize({ width: 320, height: 844 });
+            await openReady(page, "/docs/data-table");
+            const preview = page.locator(".component-preview").first();
+            const input = preview.getByRole("textbox", { name: "Filter email records" });
+            const columns = preview.getByRole("button", { name: "Columns", exact: true });
+            await expect(input).toBeVisible();
+            const inputBox = await input.boundingBox();
+            const columnsBox = await columns.boundingBox();
+            expect(columnsBox!.x - inputBox!.x - inputBox!.width).toBeGreaterThanOrEqual(11);
+            const previous = await preview.getByRole("button", { name: "Previous", exact: true }).boundingBox();
+            const next = await preview.getByRole("button", { name: "Next", exact: true }).boundingBox();
+            expect(Math.abs(previous!.y - next!.y)).toBeLessThanOrEqual(1);
+            expect(next!.x - previous!.x - previous!.width).toBeGreaterThanOrEqual(7);
+            expect(next!.x + next!.width).toBeLessThanOrEqual(320);
+          });
+
+          test("CMS keeps a selected fill and a distinct keyboard focus", async ({ page }) => {
+            await openReady(page, "/templates/cms");
+            const group = page.getByRole("group", { name: "Filter posts by status" });
+            const all = group.getByRole("button", { name: "All", exact: true });
+            await expect(all).toHaveAttribute("aria-pressed", "true");
+            const selectedBackground = await all.evaluate((node) => getComputedStyle(node).backgroundColor);
+            await all.hover();
+            await all.evaluate(async (node) => {
+              await Promise.all(node.getAnimations().map((animation) => animation.finished));
+            });
+            await expect(all).toHaveCSS("background-color", selectedBackground);
+            const selectedPost = page.getByRole("region", { name: "Posts", exact: true }).getByRole("button").first();
+            await page.keyboard.press("Tab");
+            await selectedPost.focus();
+            await expect(selectedPost).toBeFocused();
+            await expect.poll(() => selectedPost.evaluate((node) => getComputedStyle(node).boxShadow)).toContain("inset");
+            const publishSwitch = page.locator("#post-published");
+            await expect(publishSwitch).toBeVisible();
+            expect((await publishSwitch.boundingBox())!.height).toBeGreaterThanOrEqual(24);
+          });
+
+          test("blog search has one clear action and returns focus after clearing", async ({ page }) => {
+            await openReady(page, "/templates/blog");
+            const search = page.getByRole("searchbox", { name: "Search posts" });
+            await search.fill("no-results-for-ui-regression");
+            await expect(page.getByText("No posts found.", { exact: true })).toBeVisible();
+            const nativeClear = await search.evaluate((node) =>
+              getComputedStyle(node, "::-webkit-search-cancel-button").getPropertyValue("-webkit-appearance"),
+            );
+            expect(nativeClear).toBe("none");
+            await page.getByRole("button", { name: "Clear search", exact: true }).click();
+            await expect(search).toHaveValue("");
+            await expect(search).toBeFocused();
+            await expect(page.getByRole("button", { name: "Clear search", exact: true })).toHaveCount(0);
+            await expect(page.getByText("No posts found.", { exact: true })).toHaveCount(0);
+          });
+          TS
+      - name: Generate and verify registry sources
+        run: |
+          npm run format --prefix registry
+          npm run lint --prefix registry
+          npm run typecheck --prefix registry
+          npm run build --prefix registry
+          npm run registry:validate --prefix registry
+          npm run registry:check --prefix registry
+      - name: Verify docs
+        run: |
+          npm run format --prefix docs
+          npm run lint --prefix docs
+          npm run typecheck --prefix docs
+          npm run build --prefix docs
+          npm run check:budget --prefix docs
+          npm test --prefix docs
+      - name: Install Chromium and verify the changed controls
+        working-directory: docs
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:browser -- tests/ui-polish.spec.ts
+      - name: Verify fresh consumers and the full Chromium suite
+        run: |
+          npm run consumer:verify --prefix registry
+          npm run test:browser --prefix docs
+      - name: Capture all rendered pages including blog articles
+        env:
+          VISUAL_AUDIT_DIR: ${{ runner.temp }}/ui-audit-after
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import os
+          import textwrap
+          source = Path('.github/workflows/visual-audit-once.yml').read_text()
+          script = source.split("          node --input-type=module <<'NODE'\n", 1)[1].split('\n          NODE\n', 1)[0]
+          script = textwrap.dedent(script)
+          script = script.replace('const baseURL = "https://neobrutal-ui.andongmin.com";', 'const baseURL = "http://127.0.0.1:4173";')
+          script = script.replace('const root = path.resolve("visual-audit");', 'const root = path.resolve(process.env.VISUAL_AUDIT_DIR);')
+          script = script.replace('localStorage.setItem("theme", value)', 'localStorage.setItem("neobrutal-ui-theme", value)')
+          script = script.replace('              await ready(page);', '              await ready(page);')
+          script = script.replace('    await ready(page);', '    await ready(page);\n    await expect(page.locator("html")).toHaveAttribute("data-theme", theme);')
+          marker = 'const jobs = routes.flatMap'
+          discovery = '''const blog = await browser.newPage();
+          await blog.goto(baseURL + "/templates/blog");
+          await ready(blog);
+          const articleRoutes = await blog.locator('a[href^="/templates/blog/"]').evaluateAll((links) =>
+            [...new Set(links.map((link) => new URL(link.href).pathname))]);
+          routes.push(...articleRoutes);
+          await blog.close();
+          console.log("BLOG_ARTICLE_ROUTES", JSON.stringify(articleRoutes));
+          '''
+          if marker not in script:
+              raise SystemExit('Audit insertion marker not found')
+          script = script.replace(marker, textwrap.dedent(discovery) + marker, 1)
+          Path(os.environ['RUNNER_TEMP'], 'capture-ui-after.mjs').write_text(script)
+          PY
+          npm run start --prefix docs -- --host 127.0.0.1 --port 4173 > "$RUNNER_TEMP/docs-server.log" 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/templates/cms >/dev/null; then break; fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:4173/templates/cms >/dev/null
+          cd docs
+          node --input-type=module < "$RUNNER_TEMP/capture-ui-after.mjs"
+      - name: Save post-fix captures and test reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: ui-audit-after-fixes
+          path: |
+            ${{ runner.temp }}/ui-audit-after
+            docs/playwright-report
+            docs/test-results
+          retention-days: 3
+          if-no-files-found: ignore
+      - name: Prepare verified commit without moving main
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          curl --fail --location \
-            --header "Authorization: Bearer $GH_TOKEN" \
-            --header "Accept: application/vnd.github+json" \
-            --header "X-GitHub-Api-Version: 2022-11-28" \
-            https://api.github.com/repos/andongmin94/neobrutal-ui/actions/artifacts/10540330547/zip \
-            --output audit.zip
-          mkdir audit
-          unzip -q audit.zip -d audit
+          rm .github/workflows/visual-audit-once.yml .github/workflows/visual-audit-summary-once.yml
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          import os
+          import subprocess
+          import urllib.request
 
-      - name: Print route-level findings
-        run: |
-          report_path="$(find audit -name report.json -print -quit)"
-          node --input-type=module "$report_path" <<'NODE'
-          NODE
-        shell: bash
+          report = json.loads(Path(os.environ['RUNNER_TEMP'], 'ui-audit-after/report.json').read_text())
+          if any(not row['ready'] or row.get('failure') or row['pageOverflow'] for row in report):
+              raise SystemExit('Incomplete audit cannot be published')
+          routes = len({row['route'] for row in report})
+          Path('docs/visual-audit.md').write_text(f'''# UI audit status\n\nUpdated by GitHub Actions run {os.environ['GITHUB_RUN_ID']}.\n\n## Verified\n\n- {routes} routes in both light and dark themes at desktop (1440px) and mobile (390px) widths: {len(report)} rendered combinations.\n- Included every documentation route, the four template families, and all linked blog articles.\n- Capture waits for hydration, lazy previews, images, fonts, and the actual theme.\n- No loading placeholders, page-level horizontal overflow, or capture failures.\n- Registry format, lint, typecheck, build, schema and consistency checks passed.\n- Fresh Next.js and Vite consumers and the full Chromium test suite passed.\n- Added focused regressions for 320px reference tables, data-table spacing, CMS focus and selection, and blog search clearing.\n\n## Changes\n\n- Reference tables wrap instead of imposing a 520px minimum on phones.\n- Data-table search controls have a gap; Previous and Next stay together.\n- CMS keeps its selected filter fill, shows an inset keyboard focus on post rows, and uses the standard publish switch size.\n- Blog search uses one clear control and restores focus to its input.\n\n## Still to verify\n\nThese are rendered captures and automated checks, not a completed visual sign-off.\nThe assistant runtime could not open the captured images during this pass.\nInspect the before/after artifacts for spacing, borders, shadows, typography, and every open overlay state before claiming comprehensive visual approval.\nFinal production deployment and cross-browser status must be checked against the published commit, not this preparation run.\n\nThe two temporary audit workflows are removed from the prepared commit; the normal Verify workflow is unchanged.\n''')
+          PY
+          git add registry docs .github/workflows/visual-audit-once.yml .github/workflows/visual-audit-summary-once.yml
+          git diff --cached --check
+          git diff --cached --stat
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          import os
+          import subprocess
+          import urllib.request
 
-      - name: Summarize report
-        run: |
-          report_path="$(find audit -name report.json -print -quit)"
-          REPORT_PATH="$report_path" node --input-type=module <<'NODE'
-          import fs from "node:fs";
-
-          const report = JSON.parse(fs.readFileSync(process.env.REPORT_PATH, "utf8"));
-          const categories = [
-            "clippedText",
-            "horizontalEscape",
-            "nestedVerticalScroll",
-            "tinyControls",
-          ];
-          const findings = report
-            .map((entry) => ({
-              route: entry.route,
-              viewport: entry.viewport.name,
-              colorScheme: entry.colorScheme,
-              status: entry.status,
-              runtimeErrors: entry.runtimeErrors,
-              pageOverflow: entry.scrollWidth > entry.clientWidth + 1,
-              issues: Object.fromEntries(
-                categories.map((category) => [category, entry.issues[category] ?? []]),
-              ),
-            }))
-            .filter(
-              (entry) =>
-                entry.status !== 200 ||
-                entry.runtimeErrors.length > 0 ||
-                entry.pageOverflow ||
-                categories.some((category) => entry.issues[category].length > 0),
-            );
-
-          const totals = {
-            captures: report.length,
-            routes: new Set(report.map((entry) => entry.route)).size,
-            non200: findings.filter((entry) => entry.status !== 200).length,
-            runtimeErrors: findings.reduce((sum, entry) => sum + entry.runtimeErrors.length, 0),
-            pageOverflow: findings.filter((entry) => entry.pageOverflow).length,
-            ...Object.fromEntries(
-              categories.map((category) => [
-                category,
-                findings.reduce((sum, entry) => sum + entry.issues[category].length, 0),
-              ]),
-            ),
-          };
-
-          console.log("VISUAL_AUDIT_TOTALS");
-          console.log(JSON.stringify(totals, null, 2));
-          console.log("VISUAL_AUDIT_FINDINGS");
-          for (const finding of findings) {
-            console.log(`\n${finding.colorScheme}/${finding.viewport} ${finding.route}`);
-            if (finding.status !== 200) console.log(`  status: ${finding.status}`);
-            if (finding.pageOverflow) console.log("  page overflow: true");
-            for (const error of finding.runtimeErrors) console.log(`  runtime: ${error}`);
-            for (const category of categories) {
-              const issues = finding.issues[category];
-              if (issues.length === 0) continue;
-              console.log(`  ${category}: ${issues.length}`);
-              for (const issue of issues.slice(0, 6)) {
-                console.log(
-                  `    - ${issue.selector} ${JSON.stringify(issue.rect)} ${JSON.stringify(issue.text)}`,
-                );
-              }
-            }
-          }
-          NODE
+          repo = os.environ['GITHUB_REPOSITORY']
+          parent = os.environ['GITHUB_SHA']
+          base = f'https://api.github.com/repos/{repo}'
+          def api(endpoint, payload=None):
+              data = None if payload is None else json.dumps(payload).encode()
+              request = urllib.request.Request(base + endpoint, data=data, headers={
+                  'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+                  'Accept': 'application/vnd.github+json',
+                  'Content-Type': 'application/json',
+                  'X-GitHub-Api-Version': '2022-11-28',
+              })
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  return json.load(response)
+          if api('/git/ref/heads/main')['object']['sha'] != parent:
+              raise SystemExit('main changed during verification; refusing stale publication')
+          changes = subprocess.check_output(['git', 'diff', '--cached', '--name-status', '--no-renames'], text=True).splitlines()
+          entries = []
+          for change in changes:
+              status, filename = change.split('\t', 1)
+              entry = {'path': filename, 'mode': '100644', 'type': 'blob'}
+              if status == 'D':
+                  entry['sha'] = None
+              else:
+                  entry['content'] = Path(filename).read_text()
+              entries.append(entry)
+          tree = api('/git/trees', {
+              'base_tree': subprocess.check_output(['git', 'rev-parse', 'HEAD^{tree}'], text=True).strip(),
+              'tree': entries,
+          })
+          commit = api('/git/commits', {
+              'message': 'fix: refine docs and template interaction layouts',
+              'tree': tree['sha'],
+              'parents': [parent],
+          })
+          print('PREPARED_COMMIT=' + commit['sha'])
+          print('EXPECTED_MAIN=' + parent)
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+              summary.write(f"\nVerified commit prepared, not published: `{commit['sha']}`.\nExpected main: `{parent}`.\n")
+          PY
