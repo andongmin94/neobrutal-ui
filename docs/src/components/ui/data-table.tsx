@@ -256,7 +256,7 @@ export default function DataTableDemo() {
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell className="px-4 py-2" key={cell.id}>
+                    <TableCell className="px-4 py-3" key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
