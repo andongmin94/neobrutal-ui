@@ -53,6 +53,8 @@ for (const route of [...new Set(routes)].sort()) {
     }
 
     await expect(page.locator(".react-host__error")).toHaveCount(0);
+    // Keep viewport-sensitive accessibility checks independent of prior interaction scrolling.
+    await page.evaluate(() => scrollTo(0, 0));
     const viewport = page.viewportSize()!;
     const layout = await page.evaluate(() => ({
       scroll: document.documentElement.scrollWidth,
