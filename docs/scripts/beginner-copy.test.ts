@@ -19,8 +19,7 @@ test("beginner onboarding reaches a working button before optional configuration
   const installation = read("content/docs/installation.mdx");
   const baseCommand =
     "npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json";
-  const buttonCommand =
-    "npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json";
+  const buttonCommand = "npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json";
   const firstButton = "return <Button>Click me</Button>;";
 
   for (const source of [readme, installation]) {
