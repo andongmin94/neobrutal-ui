@@ -44,7 +44,7 @@ jobs:
             pkg.devDependencies.react = "19.2.8";
             pkg.devDependencies["react-dom"] = "19.2.8";
             pkg.devDependencies.next = "^16.3.5";
-            pkg.devDependencies.vite = "^8.2.2";
+            pkg.devDependencies.vite = "^8.3.0";
           });
 
           updateJson("docs/package.json", (pkg) => {
@@ -52,7 +52,7 @@ jobs:
             pkg.devDependencies["@playwright/test"] = "1.63.0";
             pkg.devDependencies["@typescript/typescript6"] = "6.0.2";
             pkg.devDependencies.typescript = "^7.0.2";
-            pkg.devDependencies.vite = "^8.2.2";
+            pkg.devDependencies.vite = "^8.3.0";
           });
 
           const replacements = new Map([
@@ -62,7 +62,8 @@ jobs:
             ['react: "19.2.7"', 'react: "19.2.8"'],
             ['"react-dom": "19.2.7"', '"react-dom": "19.2.8"'],
             ['"next": "^16.3.3"', '"next": "^16.3.5"'],
-            ['"vite": "^8.1.4"', '"vite": "^8.2.2"'],
+            ['"vite": "^8.1.4"', '"vite": "^8.3.0"'],
+            ['"vite": "^8.1.5"', '"vite": "^8.3.0"'],
             ['"typescript": "^6.0.3"', '"typescript": "^7.0.2"'],
           ]);
           const textExtensions = new Set([
@@ -131,7 +132,7 @@ jobs:
               "react-dom": "19.2.8",
               shadcn: "4.21.0",
               typescript: "7.0.2",
-              vite: "8.2.2",
+              vite: "8.3.0",
             },
             docs: {
               "@base-ui/react": "1.8.0",
@@ -140,7 +141,7 @@ jobs:
               react: "19.2.8",
               "react-dom": "19.2.8",
               typescript: "7.0.2",
-              vite: "8.2.2",
+              vite: "8.3.0",
             },
           };
 
