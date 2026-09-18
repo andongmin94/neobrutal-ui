@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import ts from "typescript";
+import ts from "@typescript/typescript6";
 import { COMPONENT_DIRECTORY_LINKS } from "../src/data/component-directory";
 
 // Compile in-memory Usage modules against the same component types as the site.

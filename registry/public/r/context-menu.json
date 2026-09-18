@@ -5,7 +5,7 @@
   "author": "andongmin94",
   "description": "A contextual action menu opened with a secondary pointer action.",
   "dependencies": [
-    "@base-ui/react@^1.6.0"
+    "@base-ui/react@^1.8.0"
   ],
   "files": [
     {

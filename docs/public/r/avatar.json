@@ -5,7 +5,7 @@
   "author": "andongmin94",
   "description": "An image or fallback that identifies a person or entity.",
   "dependencies": [
-    "@base-ui/react@^1.6.0"
+    "@base-ui/react@^1.8.0"
   ],
   "files": [
     {

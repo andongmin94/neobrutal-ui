@@ -5,7 +5,7 @@
   "author": "andongmin94",
   "description": "A responsive, collapsible application sidebar with navigation primitives.",
   "dependencies": [
-    "@base-ui/react@^1.6.0"
+    "@base-ui/react@^1.8.0"
   ],
   "registryDependencies": [
     "https://neobrutal-ui.andongmin.com/r/avatar.json",

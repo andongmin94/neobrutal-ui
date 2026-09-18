@@ -5,7 +5,7 @@
   "author": "andongmin94",
   "description": "A set of mutually exclusive options for selecting one value.",
   "dependencies": [
-    "@base-ui/react@^1.6.0"
+    "@base-ui/react@^1.8.0"
   ],
   "files": [
     {

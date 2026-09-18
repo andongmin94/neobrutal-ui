@@ -5,7 +5,7 @@
   "author": "andongmin94",
   "description": "A button-triggered menu for actions, choices, and nested options.",
   "dependencies": [
-    "@base-ui/react@^1.6.0"
+    "@base-ui/react@^1.8.0"
   ],
   "files": [
     {

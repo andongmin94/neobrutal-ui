@@ -124,8 +124,8 @@ function createNextFixture(directory) {
     scripts: { build: "next build" },
     dependencies: {
       next: "^16.3.3",
-      react: "19.2.7",
-      "react-dom": "19.2.7",
+      react: "19.2.8",
+      "react-dom": "19.2.8",
     },
     devDependencies: {
       "@tailwindcss/postcss": "^4.3.3",
@@ -183,7 +183,7 @@ function createViteFixture(directory) {
     private: true,
     type: "module",
     scripts: { build: "tsc --noEmit && vite build" },
-    dependencies: { react: "19.2.7", "react-dom": "19.2.7" },
+    dependencies: { react: "19.2.8", "react-dom": "19.2.8" },
     devDependencies: {
       "@tailwindcss/vite": "^4.3.3",
       "@types/react": "^19.2.17",

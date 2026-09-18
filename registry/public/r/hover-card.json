@@ -5,7 +5,7 @@
   "author": "andongmin94",
   "description": "A preview card that appears when a linked element is hovered.",
   "dependencies": [
-    "@base-ui/react@^1.6.0"
+    "@base-ui/react@^1.8.0"
   ],
   "files": [
     {

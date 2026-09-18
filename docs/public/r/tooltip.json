@@ -5,7 +5,7 @@
   "author": "andongmin94",
   "description": "A concise text hint shown when an element is hovered or focused.",
   "dependencies": [
-    "@base-ui/react@^1.6.0"
+    "@base-ui/react@^1.8.0"
   ],
   "files": [
     {
