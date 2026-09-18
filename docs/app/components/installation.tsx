@@ -34,8 +34,7 @@ export function Installation({ children, component }: { children?: ReactNode; co
       <div className="installation-tabs__notice">
         <Info aria-hidden="true" size={18} />
         <p>
-          First time? <a href="/docs/installation">Install the shared base once</a>. It provides
-          the colors, borders, shadows, and utilities used by every component.
+          First time? <a href="/docs/installation">Install the shared base once</a>.
         </p>
       </div>
       <div className="installation-tabs__frame">
