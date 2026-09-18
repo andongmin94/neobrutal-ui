@@ -1,23 +1,91 @@
 ---
 title: Installation
-description: Install the design-system base, components, and named themes with the shadcn CLI.
+description: Install the shared styles and your first neobrutal-ui component.
 ---
 
 ## Requirements
 
-Use React 19 and Tailwind CSS v4 in an initialized shadcn project. UI components support
-Next.js and Vite. The page templates target the Next.js App Router.
+You need a React 19 project with Tailwind CSS v4 and shadcn initialized.
+UI components work with Next.js and Vite.
+Page templates target the Next.js App Router.
+
+Run this from your project folder if shadcn is not initialized yet:
 
 ```bash
 npx shadcn@latest init
 ```
 
-Choose Base UI if the CLI asks for a component library.
+Choose **Base UI** if the CLI asks which component library to use.
 
-## Configure the namespace
+## Fastest setup
 
-Merge this entry into the `registries` object in your existing `components.json`; do not
-replace the rest of that file.
+Install the shared base once, then add a component.
+Direct URLs work without editing `components.json`.
+
+```bash
+npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json
+npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json
+```
+
+The base provides the colors, borders, shadows, utilities, and global styles used by every
+neobrutal-ui component.
+
+## Check that it works
+
+Render the installed button in one of your pages:
+
+```tsx
+import { Button } from "@/components/ui/button";
+
+export default function Example() {
+  return <Button>Click me</Button>;
+}
+```
+
+A button with a bold border and hard shadow means the setup worked.
+You can now browse the [component directory](/) and install the pieces you need.
+
+## Existing projects
+
+The shared base changes project-wide styles, so commit your current work before adding it to an
+existing application.
+Inspect the files first when you need to review the changes:
+
+```bash
+npx shadcn@latest view https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json
+```
+
+Pay particular attention to global CSS, `components.json`, dependencies, and `lib/utils.ts`.
+Individual components do not reinstall the base; they expect those shared styles to exist.
+
+## Add more components
+
+Each component page includes a copyable install command.
+For example:
+
+```bash
+npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/dialog.json
+npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/card.json
+```
+
+The CLI installs required packages and supporting components automatically.
+
+## Choose a theme
+
+The shared base starts with yellow.
+Install one named theme when you want to replace the project-wide light and dark colors:
+
+```bash
+npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/theme-red.json
+```
+
+Install one theme at a time rather than adding every preset together.
+
+## Optional: shorter commands
+
+Direct URLs are the simplest starting point.
+To use shorter commands such as `@neobrutal-ui/dialog`, merge this entry into the existing
+`registries` object in `components.json`:
 
 ```json
 {
@@ -27,76 +95,30 @@ replace the rest of that file.
 }
 ```
 
-Manual configuration works before inclusion in the official shadcn Registry Directory.
-Directory submission is not approval or a requirement for direct URL installation.
-
-## Install the base once
-
-The base adds shared dependencies, design tokens, Tailwind theme mappings, and global
-`body` and border styles. It is a project-wide design-system installation, not a scoped skin
-for a single widget.
-
-For a new project, inspect and add the base before installing components:
+You can then install the same items with shorter names:
 
 ```bash
-npx shadcn@latest view @neobrutal-ui/neobrutal-ui
-npx shadcn@latest add @neobrutal-ui/neobrutal-ui
-```
-
-For an existing project, commit local changes first and inspect the base before applying it.
-Review the resulting `components.json`, global CSS, dependency, and utility-file changes.
-Shared tokens can change existing screens. Individual components do not silently reinstall
-the entire theme; they assume the base has already been installed or deliberately reproduced.
-
-## Add components
-
-```bash
-npx shadcn@latest add @neobrutal-ui/button
 npx shadcn@latest add @neobrutal-ui/dialog
-```
-
-Dependencies are resolved by the CLI. Component pages show a direct URL command and source
-preview; the base prerequisite still applies to those commands.
-
-## Choose a theme
-
-Theme presets are ordinary catalog items. The base starts with yellow; switch explicitly:
-
-```bash
 npx shadcn@latest add @neobrutal-ui/theme-red
-npx shadcn@latest add @neobrutal-ui/theme-yellow
-```
-
-A preset replaces the corresponding project-wide light and dark design tokens. Install one
-preset at a time, not all themes together. Use `view` to inspect a preset before applying it.
-
-## Direct URLs
-
-The same installation works without namespace registration:
-
-```bash
-npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json
-npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json
-npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/theme-red.json
 ```
 
 ## Templates
 
-Templates install Next.js App Router pages and supporting components. Inspect their file
-targets first, especially in an application that already has those routes.
+Templates install Next.js App Router pages and supporting components.
+Inspect their target files before adding one to a project that already uses the same routes.
 
 ```bash
-npx shadcn@latest view @neobrutal-ui/blog-template
-npx shadcn@latest add @neobrutal-ui/blog-template
+npx shadcn@latest view https://neobrutal-ui.andongmin.com/r/blog-template.json
+npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/blog-template.json
 ```
 
 ## Manual installation and updates
 
-Manual source copies still need the base tokens and declared dependencies. Registry files
-belong to your application after installation; updates are not applied automatically.
+The **Manual** tab on each component page shows the source files and packages required for that
+component.
+The installed files belong to your application and are not updated automatically.
+Review proposed changes before overwriting files that you have customized:
 
 ```bash
-npx shadcn@latest add @neobrutal-ui/button --dry-run
+npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json --dry-run
 ```
-
-Review the proposed changes and preserve your local customizations before using `--overwrite`.

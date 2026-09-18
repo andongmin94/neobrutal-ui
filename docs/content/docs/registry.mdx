@@ -1,14 +1,32 @@
 ---
-title: Registry
-description: How neobrutal-ui publishes editable components, recipes, templates, and theme files.
+title: How installation works
+description: Direct URLs, optional short names, and the files installed by the shadcn CLI.
 ---
 
-neobrutal-ui is published as a shadcn-compatible source registry. The production catalog is available
-at [neobrutal-ui.andongmin.com/r/registry.json](https://neobrutal-ui.andongmin.com/r/registry.json).
+You do not need to understand the registry format to use neobrutal-ui.
+The recommended beginner flow is to copy the direct install command from a component page.
 
-## Namespace
+## What happens when you install
 
-Add the namespace once in `components.json`.
+The shadcn CLI downloads source files, installs required packages, and places the code inside your
+project.
+There is no neobrutal-ui runtime package to keep in sync.
+The installed files become normal application code that you can edit.
+
+## Direct URLs
+
+Direct URLs work immediately and require no `components.json` changes:
+
+```bash
+npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/dialog.json
+```
+
+The full catalog is available at
+[neobrutal-ui.andongmin.com/r/registry.json](https://neobrutal-ui.andongmin.com/r/registry.json).
+
+## Optional short names
+
+Add the namespace once if you prefer shorter commands:
 
 ```json
 {
@@ -18,44 +36,29 @@ Add the namespace once in `components.json`.
 }
 ```
 
-The `{name}` placeholder maps `@neobrutal-ui/button` to
-`https://neobrutal-ui.andongmin.com/r/button.json`.
-
-## Item types
-
-- **Base** installs the shared tokens, Tailwind mappings, aliases, and core dependencies.
-- **Components** install individual UI source files and their declared dependencies.
-- **Recipes** combine multiple components for patterns such as comboboxes and date pickers.
-- **Templates** install focused page and block source for common starting points.
-- **Stars** install standalone decorative SVG components.
-
-## Inspect before installing
-
-Use the shadcn CLI to inspect a registry item without writing files.
-
-```bash
-npx shadcn@latest view @neobrutal-ui/dialog
-```
-
-The output shows the files, npm dependencies, registry dependencies, and configuration that
-the item declares.
-
-## Install from the namespace
+The `{name}` placeholder maps `@neobrutal-ui/button` to the direct URL for `button.json`.
+You can then run:
 
 ```bash
 npx shadcn@latest add @neobrutal-ui/dialog
 ```
 
-The installed files belong to your project. There is no neobrutal-ui runtime package to keep
-in sync, so you can modify the source after installation.
+## What you can install
 
-## Direct item URLs
+- **Shared base** provides the colors, borders, shadows, utilities, and core dependencies.
+- **Components** provide individual UI building blocks such as Button or Dialog.
+- **Recipes** combine multiple components into patterns such as a Combobox or Date Picker.
+- **Templates** add focused pages and supporting components for common starting points.
+- **Themes** replace the shared light and dark color tokens.
+- **Stars** add standalone decorative SVG components.
 
-Every component page also exposes a direct URL command. This works without a namespace entry.
+## Inspect before installing
+
+Use `view` when you want to inspect files and packages without changing your project:
 
 ```bash
-npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/dialog.json
+npx shadcn@latest view https://neobrutal-ui.andongmin.com/r/dialog.json
 ```
 
-Continue with <Link href="/docs/installation">Installation</Link> for the recommended setup
-order.
+Use this especially before adding the shared base or a template to an existing application.
+Continue with <Link href="/docs/installation">Installation</Link> for the recommended setup order.

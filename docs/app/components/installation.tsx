@@ -33,14 +33,10 @@ export function Installation({ children, component }: { children?: ReactNode; co
     <section className="installation-tabs" aria-label={`Install ${component}`}>
       <div className="installation-tabs__notice">
         <Info aria-hidden="true" size={18} />
-        <div>
-          <p>
-            First installation? <a href="/docs/installation">Install the base theme</a> first.
-          </p>
-          <p>
-            The base updates global theme variables. Review these changes in an existing project.
-          </p>
-        </div>
+        <p>
+          First time? <a href="/docs/installation">Install the shared base once</a>. It provides
+          the colors, borders, shadows, and utilities used by every component.
+        </p>
       </div>
       <div className="installation-tabs__frame">
         <div

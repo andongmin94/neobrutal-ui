@@ -70,9 +70,9 @@ export function SiteLayout({
           <main id="main-content" className="docs-main" tabIndex={-1}>
             <header className="docs-page-header">
               <div className="docs-page-kicker">
-                <span>{isComponentPage ? "Component reference" : "Project docs"}</span>
+                <span>{isComponentPage ? "Component guide" : "Project docs"}</span>
                 <span aria-hidden="true">/</span>
-                <span>{isComponentPage ? "Source owned" : "neobrutal-ui"}</span>
+                <span>{isComponentPage ? "Editable source" : "neobrutal-ui"}</span>
               </div>
 
               <div className="docs-page-heading">
@@ -88,7 +88,7 @@ export function SiteLayout({
                     rel="noreferrer"
                     target="_blank"
                   >
-                    Upstream reference
+                    Original component docs
                     <ExternalLink aria-hidden="true" size={14} strokeWidth={2.4} />
                   </a>
                 )}

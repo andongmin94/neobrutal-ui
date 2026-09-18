@@ -4,7 +4,9 @@ description: "Action buttons with explicit variants, sizes, and accessible inter
 shadcnDocsLink: https://base-ui.com/react/components/button
 ---
 
-Use Button for actions such as saving, opening a dialog, or changing state. For navigation, use an anchor or router link styled with `buttonVariants`; do not nest a link inside a button.
+Use Button for actions such as saving, opening a dialog, or changing state.
+For navigation, use an anchor or router link styled with `buttonVariants`; do not put a link inside
+a button.
 
 <ComponentPreview component="button">
 <include cwd lang="tsx">
@@ -14,7 +16,9 @@ Use Button for actions such as saving, opening a dialog, or changing state. For 
 
 ## Installation
 
-Complete the [base setup](/docs/installation). The CLI installs both files. For manual installation:
+Complete the [base setup](/docs/installation).
+The CLI installs both files.
+For manual installation:
 
 <Installation component="button">
 
@@ -37,27 +41,19 @@ Create **`components/ui/button.tsx`**:
 
 ## Usage
 
+Start with a normal button:
+
 ```tsx
-import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function Actions() {
-  return (
-    <div className="flex flex-wrap gap-3">
-      <Button type="submit">Save changes</Button>
-      <Button variant="outline" type="button">
-        Cancel
-      </Button>
-      <Button size="icon" type="button" aria-label="Add item">
-        <Plus aria-hidden="true" />
-      </Button>
-      <Button disabled aria-busy="true">
-        Saving…
-      </Button>
-    </div>
-  );
+export default function Example() {
+  return <Button>Save changes</Button>;
 }
 ```
+
+Use `variant` to change the appearance and `size` to change the dimensions.
+The live preview above shows the available styles, icon buttons, disabled states, and loading
+examples.
 
 ## API reference
 
@@ -67,16 +63,21 @@ export default function Actions() {
 | `size` | `xs`, `sm`, `default`, `lg`, `icon`, `icon-xs`, `icon-sm`, `icon-lg` | `default` |
 | `type` | `button`, `submit`, or `reset` | Base UI default |
 | `disabled` | Prevents interaction | `false` |
-| `render` | Compose with another button element | Native button |
-| `aria-busy` | Communicates pending work; does not disable the control | Unset |
+| `render` | Uses another button element while preserving behavior | Native button |
+| `aria-busy` | Announces pending work; it does not disable the control | Unset |
 
 ## Accessibility
 
-Name every icon-only button. Set `type="submit"` explicitly for form submission. Enter and Space activate the button. Manage pending state in your application and disable repeated submissions when appropriate. Custom components supplied to `render` must forward props and the ref to their underlying button.
+Give every icon-only button an accessible name with `aria-label`.
+Set `type="submit"` explicitly for form submission.
+Enter and Space activate the button.
+Manage pending state in your application and disable repeated submissions when appropriate.
+A custom element supplied to `render` must forward its props and ref to the underlying button.
 
 ## Navigation and composition
 
-The `link` variant changes appearance only. For a destination, import `buttonVariants` from `@/components/ui/button-variants` and apply it to an anchor or router link. The style function is server-safe. There is no additional `Button asChild` API.
+The `link` variant changes appearance only.
+For a destination, import `buttonVariants` and apply it to an anchor or router link:
 
 ```tsx
 import { buttonVariants } from "@/components/ui/button-variants";

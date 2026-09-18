@@ -3,7 +3,8 @@ import { SiteLayout } from "~/components/site-layout";
 
 export function meta(_: Route.MetaArgs) {
   const title = "neobrutal-ui - Component directory";
-  const description = "Browse source-owned neobrutalist React components for Base UI and shadcn.";
+  const description =
+    "Browse editable neobrutalist React components for shadcn, Base UI, and Tailwind CSS.";
 
   return [
     { title },
@@ -18,7 +19,7 @@ export function meta(_: Route.MetaArgs) {
 export default function Home() {
   return (
     <SiteLayout
-      description="Browse 49 neobrutalist components for the shadcn registry and Base UI."
+      description="Browse editable neobrutalist components, recipes, themes, and templates."
       title="Component directory"
     />
   );

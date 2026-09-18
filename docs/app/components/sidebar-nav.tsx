@@ -12,12 +12,15 @@ const documentGroups = [
     links: [
       { href: "/docs", text: "Introduction" },
       { href: "/docs/installation", text: "Installation" },
-      { href: "/docs/registry", text: "Registry" },
     ],
   },
   {
-    label: "Foundation",
+    label: "Customize",
     links: [{ href: "/docs/design-tokens", text: "Design tokens" }],
+  },
+  {
+    label: "Reference",
+    links: [{ href: "/docs/registry", text: "How installation works" }],
   },
 ];
 

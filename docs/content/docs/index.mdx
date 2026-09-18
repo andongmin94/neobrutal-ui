@@ -1,31 +1,42 @@
 ---
 title: Introduction
-description: What neobrutal-ui provides, how it works, and where the project comes from.
+description: What neobrutal-ui provides and how to start using it.
 ---
 
-neobrutal-ui is a source-owned component registry for building neobrutalist React interfaces.
-It combines accessible behavior from [Base UI](https://base-ui.com/react) with Tailwind CSS
-styling and the [shadcn](https://ui.shadcn.com/) distribution model.
+neobrutal-ui is a collection of React UI components with bold borders, hard shadows, and clear
+interaction states.
+You install the source files into your own project with the shadcn CLI, so you can read and edit
+everything you use.
+
+## Start here
+
+1. Follow <Link href="/docs/installation">Installation</Link> to add the shared styles and one button.
+2. Confirm that the button renders in your app.
+3. Browse the component directory and install only the pieces you need.
+
+You do not need to understand the registry format or configure a namespace before getting started.
 
 ## What you get
 
-- React 19 components built on Base UI primitives where accessible behavior is required.
-- Tailwind CSS v4 tokens for color, type, borders, radii, and hard shadows.
-- shadcn registry items that copy editable source code into your application.
-- Charts, decorative stars, and focused starter templates that use the same design system.
+- React 19 components with accessible interaction behavior from Base UI where needed.
+- Tailwind CSS v4 styles for colors, type, borders, radii, and hard shadows.
+- Editable component files copied directly into your application.
+- Charts, decorative stars, themes, and focused starter templates using the same visual system.
 
-## How it works
+## How installation works
 
-This is not a runtime component package. The shadcn CLI downloads the selected source files,
-installs their dependencies, and places the code in your project. You can inspect and edit
-everything you install.
+This is not a runtime package that wraps your application.
+The shadcn CLI downloads the selected files, installs their packages, and places the code in your
+project.
+After that, the files are ordinary application code that you can customize.
 
-Start with <Link href="/docs/installation">Installation</Link>, then browse the component
-directory or inspect how the <Link href="/docs/registry">registry</Link> is organized.
+The <Link href="/docs/registry">How installation works</Link> page explains direct URLs,
+optional short names, and the different item types when you need those details.
 
-## Project lineage
+## Project background
 
-neobrutal-ui is a maintained remake of [ekmas/neobrutalism-components](https://github.com/ekmas/neobrutalism-components).
-The current project separates the registry from the documentation, migrates interactive primitives
-to Base UI, and maintains its own templates, examples, and documentation. See
-[Credits & license](/docs/credits) for attribution details.
+neobrutal-ui is a maintained remake of
+[ekmas/neobrutalism-components](https://github.com/ekmas/neobrutalism-components).
+The current project maintains its own Base UI components, templates, examples, documentation, and
+installation checks.
+See [Credits & license](/docs/credits) for attribution details.

@@ -134,7 +134,7 @@ test("component directory covers the registry UI and recipes exactly once", () =
   for (const slug of documentedSlugs) {
     assert.equal(
       getComponentInstallMode(slug),
-      expectedRecipeSlugs.has(slug) ? "Recipe" : "Registry",
+      expectedRecipeSlugs.has(slug) ? "Recipe" : "Component",
       `${slug}: install mode drift`,
     );
   }

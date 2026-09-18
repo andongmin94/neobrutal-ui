@@ -12,7 +12,7 @@ export const COMPONENT_CATEGORIES = [
 
 export type ComponentCategory = (typeof COMPONENT_CATEGORIES)[number];
 export type ComponentGroup = Exclude<ComponentCategory, "All">;
-export type ComponentInstallMode = "Recipe" | "Registry";
+export type ComponentInstallMode = "Component" | "Recipe";
 
 export const COMPOSITION_RECIPE_SLUGS = ["combobox", "date-picker"] as const;
 
@@ -77,7 +77,7 @@ export function getComponentCategory(slug: string): ComponentGroup {
 const recipeSlugs = new Set<string>([...COMPOSITION_RECIPE_SLUGS, "data-table"]);
 
 export function getComponentInstallMode(slug: string): ComponentInstallMode {
-  return recipeSlugs.has(slug) ? "Recipe" : "Registry";
+  return recipeSlugs.has(slug) ? "Recipe" : "Component";
 }
 
 function titleFromSlug(slug: string) {
