@@ -172,7 +172,7 @@ jobs:
           npm run build --prefix registry
           npm run registry:validate --prefix registry
           npm run registry:check --prefix registry
-          npm run consumer:verify --prefix registry -- vite --item=cms-template
+          npm run consumer:verify --prefix registry -- next --item=cms-template
 
           npm run format --prefix docs
           npm run lint --prefix docs
