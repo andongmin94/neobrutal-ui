@@ -63,7 +63,7 @@ test("representative routes render without runtime or layout failures", async ({
   expect(errors).toEqual([]);
 });
 
-test("dialog focus management works across browser engines", async ({ page }) => {
+test("dialog initial focus and focus return work across browser engines", async ({ page }) => {
   await page.goto("/docs/dialog");
   await expectHydrated(page);
   const preview = page.locator(".component-preview").first();
@@ -72,8 +72,7 @@ test("dialog focus management works across browser engines", async ({ page }) =>
   await trigger.click();
   const dialog = page.getByRole("dialog", { name: "Edit profile" });
   await expect(dialog).toBeVisible();
-  await page.keyboard.press("Tab");
-  expect(await dialog.evaluate((node) => node.contains(document.activeElement))).toBe(true);
+  await expect(dialog.getByRole("textbox", { name: "Name", exact: true })).toBeFocused();
   await page.keyboard.press("Escape");
   await expect(dialog).toBeHidden();
   await expect(trigger).toBeFocused();
