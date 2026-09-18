@@ -3,6 +3,7 @@ import path from "node:path";
 import ts from "@typescript/typescript6";
 import { COMPONENT_DIRECTORY_LINKS } from "../src/data/component-directory";
 
+// TypeScript 7 runs the project CLI; the namespaced TypeScript 6 package provides the compiler API used here.
 // Compile in-memory Usage modules against the same component types as the site.
 export function verifyDocsUsage() {
   const configPath = path.resolve("tsconfig.json");
