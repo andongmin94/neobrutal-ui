@@ -18,7 +18,7 @@ export default function HoverCardDemo() {
             <p className="text-xs font-heading uppercase tracking-wide text-foreground/70">
               neobrutal-ui
             </p>
-            <h3 className="mt-1 text-lg font-heading">Source-owned React components</h3>
+            <h3 className="mt-1 text-lg font-heading">Editable React components</h3>
           </div>
           <span className="rounded-base border-2 border-border bg-main px-2 py-1 text-xs font-heading text-main-foreground">
             Ready

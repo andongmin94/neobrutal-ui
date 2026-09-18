@@ -66,7 +66,7 @@ export default function NavigationMenuDemo() {
                   >
                     <div className="mb-2 mt-4 text-lg font-heading">neobrutal-ui</div>
                     <p className="text-sm font-base leading-tight">
-                      Source-owned React components built with Base UI and Tailwind CSS.
+                      Editable React components built with Base UI and Tailwind CSS.
                     </p>
                   </a>
                 </NavigationMenuLink>

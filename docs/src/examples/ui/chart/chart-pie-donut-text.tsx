@@ -112,7 +112,7 @@ export default function ChartPieDonutText() {
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="leading-none font-medium">Catalog composition by category</div>
-        <div className="leading-none">Source-owned registry components</div>
+        <div className="leading-none">Installable components and recipes</div>
       </CardFooter>
     </Card>
   );

@@ -72,7 +72,7 @@ const chartGroups: ChartGroup[] = [
     id: "bar-chart",
     title: "Catalog coverage",
     description:
-      "Compare source-owned components, recipes, additions, and removals across the registry catalog.",
+      "Compare editable components, recipes, additions, and removals in the installable catalog.",
     canvasClassName: "md:grid-cols-2 2xl:grid-cols-4",
     items: [
       {
@@ -117,7 +117,7 @@ const chartGroups: ChartGroup[] = [
     id: "pie-chart",
     title: "Registry composition",
     description:
-      "Inspect how the 49 source-owned components are distributed across practical UI categories.",
+      "Inspect how the 49 editable components are distributed across practical UI categories.",
     canvasClassName: "md:grid-cols-2 2xl:grid-cols-4",
     items: [
       { name: "ChartPieStacked", className: "md:col-span-2 2xl:col-span-4" },
