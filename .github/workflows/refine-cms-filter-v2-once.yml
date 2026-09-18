@@ -1,0 +1,248 @@
+name: Refine CMS filter v2 once
+
+on:
+  push:
+    paths:
+      - .github/workflows/refine-cms-filter-v2-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  refine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            registry/package-lock.json
+            docs/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          npm ci --prefix registry
+          npm ci --prefix docs
+
+      - name: Refine the CMS filter source and regression coverage
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          template_path = Path("registry/src/blocks/templates/cms-template.tsx")
+          template = template_path.read_text()
+          tabs_import = 'import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";\n'
+          if tabs_import not in template:
+              raise SystemExit("CMS Tabs import was not found")
+          template = template.replace(tabs_import, "", 1)
+
+          template, count = re.subn(
+              r'function isStatusFilter\(value: string\): value is StatusFilter \{\n  return STATUS_TABS\.some\(\(tab\) => tab\.value === value\);\n\}\n\n',
+              '',
+              template,
+              count=1,
+          )
+          if count != 1:
+              raise SystemExit("CMS status guard was not found")
+
+          template, count = re.subn(
+              r'  const handleFilterChange = \(value: string\) => \{\n    if \(isStatusFilter\(value\)\) \{\n      setStatusFilter\(value\);\n    \}\n  \};\n\n',
+              '',
+              template,
+              count=1,
+          )
+          if count != 1:
+              raise SystemExit("CMS filter handler was not found")
+
+          start = template.find('              <Tabs value={statusFilter} onValueChange={handleFilterChange}>')
+          if start < 0:
+              raise SystemExit("CMS status Tabs start was not found")
+          end_marker = '              </Tabs>'
+          end = template.find(end_marker, start)
+          if end < 0:
+              raise SystemExit("CMS status Tabs end was not found")
+          end += len(end_marker)
+
+          new_filter = '''              <div
+                role="group"
+                aria-label="Filter posts by status"
+                className="grid h-10 w-full grid-cols-3 overflow-hidden rounded-base border-2 border-border bg-secondary-background"
+              >
+                {STATUS_TABS.map((tab) => {
+                  const isActive = statusFilter === tab.value;
+
+                  return (
+                    <button
+                      key={tab.value}
+                      type="button"
+                      aria-pressed={isActive}
+                      className={
+                        "relative h-full min-w-0 border-0 border-r-2 border-border px-2 text-sm font-heading outline-none transition-colors last:border-r-0 hover:bg-main/15 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring " +
+                        (isActive
+                          ? "bg-main text-main-foreground hover:bg-main"
+                          : "bg-secondary-background text-foreground")
+                      }
+                      onClick={() => setStatusFilter(tab.value)}
+                    >
+                      {tab.label}
+                    </button>
+                  );
+                })}
+              </div>'''
+          template = template[:start] + new_filter + template[end:]
+          template = template.replace('className="h-9 pl-9"', 'className="h-10 pl-9"', 1)
+          template_path.write_text(template)
+
+          registry_path = Path("registry/src/data/registry.ts")
+          registry = registry_path.read_text()
+          cms_start = registry.find('    name: "cms-template",')
+          cms_end = registry.find('    name: "link-hub-template",', cms_start)
+          if cms_start < 0 or cms_end < 0:
+              raise SystemExit("CMS registry item was not found")
+          cms_block = registry[cms_start:cms_end]
+          if '      "tabs",\n' not in cms_block:
+              raise SystemExit("CMS tabs dependency was not found")
+          cms_block = cms_block.replace('      "tabs",\n', '', 1)
+          registry_path.write_text(registry[:cms_start] + cms_block + registry[cms_end:])
+
+          test_path = Path("docs/tests/galleries.spec.ts")
+          tests = test_path.read_text()
+          marker = 'test("marquee pause and reduced motion stop both strips", async ({ page }) => {'
+          if marker not in tests:
+              raise SystemExit("Gallery test insertion point was not found")
+          if 'CMS status filter is a flush segmented control' in tests:
+              raise SystemExit("CMS filter regression test already exists")
+          regression = '''test("CMS status filter is a flush segmented control", async ({ page }) => {
+            await page.goto("/templates/cms");
+            const group = page.getByRole("group", { name: "Filter posts by status" });
+            const all = group.getByRole("button", { name: "All", exact: true });
+            const draft = group.getByRole("button", { name: "Draft", exact: true });
+
+            await expect(group).toBeVisible();
+            await expect(group.getByRole("button")).toHaveCount(3);
+            await expect(all).toHaveAttribute("aria-pressed", "true");
+            await expect(draft).toHaveAttribute("aria-pressed", "false");
+
+            const frame = await group.evaluate((node) => getComputedStyle(node).borderTopWidth);
+            const selected = await all.evaluate((node) => {
+              const style = getComputedStyle(node);
+              return {
+                background: style.backgroundColor,
+                borderBottom: style.borderBottomWidth,
+                borderLeft: style.borderLeftWidth,
+                borderTop: style.borderTopWidth,
+              };
+            });
+            const inactiveBackground = await draft.evaluate(
+              (node) => getComputedStyle(node).backgroundColor,
+            );
+
+            expect(frame).toBe("2px");
+            expect(selected.borderTop).toBe("0px");
+            expect(selected.borderBottom).toBe("0px");
+            expect(selected.borderLeft).toBe("0px");
+            expect(selected.background).not.toBe(inactiveBackground);
+
+            await draft.click();
+            await expect(draft).toHaveAttribute("aria-pressed", "true");
+            await expect(all).toHaveAttribute("aria-pressed", "false");
+            await expect(page.getByText("July product update", { exact: true })).toHaveCount(0);
+            await expect(
+              page.getByText("Organize your first team space", { exact: true }),
+            ).toBeVisible();
+            await expect(page.getByText("Public page checklist", { exact: true })).toBeVisible();
+          });
+
+          '''
+          test_path.write_text(tests.replace(marker, regression + marker, 1))
+          PY
+
+      - name: Generate and verify synchronized sources
+        run: |
+          npm run format --prefix registry
+          npm run lint --prefix registry
+          npm run typecheck --prefix registry
+          npm run build --prefix registry
+          npm run registry:validate --prefix registry
+          npm run registry:check --prefix registry
+          npm run consumer:verify --prefix registry -- vite --item=cms-template
+
+          npm run format --prefix docs
+          npm run lint --prefix docs
+          npm run typecheck --prefix docs
+          npm run build --prefix docs
+          npm run check:budget --prefix docs
+          npm test --prefix docs
+
+      - name: Refresh the CMS catalog preview
+        run: |
+          google-chrome --version
+          npm run start --prefix docs -- --host 127.0.0.1 --port 4173 >/tmp/neobrutal-docs.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/templates/cms >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:4173/templates/cms >/dev/null
+
+          cd docs
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+          import { createHash } from "node:crypto";
+          import { chromium } from "@playwright/test";
+
+          const browser = await chromium.launch({ channel: "chrome", headless: true });
+          const page = await browser.newPage({ viewport: { width: 1200, height: 675 } });
+          await page.emulateMedia({ reducedMotion: "reduce", colorScheme: "light" });
+          await page.goto("http://127.0.0.1:4173/templates/cms", { waitUntil: "networkidle" });
+          await page.locator('html[data-hydrated="true"]').waitFor();
+          await page.getByRole("group", { name: "Filter posts by status" }).waitFor();
+          await page.evaluate(() => document.fonts.ready);
+
+          const temporary = "public/template-previews/cms-next.png";
+          await page.screenshot({ path: temporary, animations: "disabled" });
+          await browser.close();
+
+          const image = fs.readFileSync(temporary);
+          const hash = createHash("sha256").update(image).digest("hex").slice(0, 10);
+          const nextRelative = `/template-previews/cms-${hash}.png`;
+          const nextFile = `public${nextRelative}`;
+          const dataPath = "src/data/templates.ts";
+          let source = fs.readFileSync(dataPath, "utf8");
+          const match = source.match(/preview: "(\/template-previews\/cms-[^"]+\.png)"/);
+          if (!match) throw new Error("Current CMS preview path was not found.");
+          const previousFile = `public${match[1]}`;
+
+          if (nextFile !== temporary) fs.renameSync(temporary, nextFile);
+          if (previousFile !== nextFile && fs.existsSync(previousFile)) fs.rmSync(previousFile);
+          source = source.replace(match[1], nextRelative);
+          fs.writeFileSync(dataPath, source);
+          NODE
+          cd ..
+          npm run format --prefix docs
+          git diff --check
+
+      - name: Publish the refinement
+        run: |
+          remote_head="$(git ls-remote origin refs/heads/main | cut -f1)"
+          if [ "$remote_head" != "$GITHUB_SHA" ]; then
+            echo "main advanced from $GITHUB_SHA to $remote_head; refusing to overwrite unrelated work."
+            exit 1
+          fi
+          rm .github/workflows/refine-cms-filter-once.yml
+          rm .github/workflows/refine-cms-filter-v2-once.yml
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "refactor: simplify the CMS status filter"
+          git push origin HEAD:main
