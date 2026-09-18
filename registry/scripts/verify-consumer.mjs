@@ -123,7 +123,7 @@ function createNextFixture(directory) {
     private: true,
     scripts: { build: "next build" },
     dependencies: {
-      next: "^16.3.3",
+      next: "^16.3.5",
       react: "19.2.8",
       "react-dom": "19.2.8",
     },
@@ -133,7 +133,7 @@ function createNextFixture(directory) {
       "@types/react": "^19.2.17",
       "@types/react-dom": "^19.2.3",
       tailwindcss: "^4.3.3",
-      typescript: "^6.0.3",
+      typescript: "^7.0.2",
     },
   });
   const config = componentsConfig(true);
@@ -190,8 +190,8 @@ function createViteFixture(directory) {
       "@types/react-dom": "^19.2.3",
       "@vitejs/plugin-react": "^6.0.1",
       tailwindcss: "^4.3.3",
-      typescript: "^6.0.3",
-      vite: "^8.1.4",
+      typescript: "^7.0.2",
+      vite: "^8.3.0",
     },
   });
   writeJson(path.join(directory, "components.json"), componentsConfig(false));
