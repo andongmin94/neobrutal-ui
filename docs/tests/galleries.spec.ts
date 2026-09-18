@@ -118,6 +118,7 @@ test("CMS status filter is a flush segmented control", async ({ page }) => {
       background: style.backgroundColor,
       borderBottom: style.borderBottomWidth,
       borderLeft: style.borderLeftWidth,
+      borderRadius: style.borderRadius,
       borderTop: style.borderTopWidth,
     };
   });
@@ -127,6 +128,7 @@ test("CMS status filter is a flush segmented control", async ({ page }) => {
   expect(selected.borderTop).toBe("0px");
   expect(selected.borderBottom).toBe("0px");
   expect(selected.borderLeft).toBe("0px");
+  expect(selected.borderRadius).toBe("0px");
   expect(selected.background).not.toBe(inactiveBackground);
 
   await draft.click();
