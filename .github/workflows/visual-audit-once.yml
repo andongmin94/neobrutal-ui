@@ -14,241 +14,161 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: docs/package-lock.json
-
       - name: Install docs dependencies
         run: npm ci --prefix docs
-
-      - name: Capture every docs and template route
+      - name: Capture fully rendered pages in both themes and sizes
         working-directory: docs
-        env:
-          AUDIT_BASE_URL: https://neobrutal-ui.andongmin.com
         run: |
-          google-chrome --version
           node --input-type=module <<'NODE'
           import fs from "node:fs";
           import path from "node:path";
-          import { chromium } from "@playwright/test";
+          import { chromium, expect } from "@playwright/test";
 
-          const baseURL = process.env.AUDIT_BASE_URL;
-          const outputRoot = path.resolve("visual-audit");
-          fs.rmSync(outputRoot, { force: true, recursive: true });
-          fs.mkdirSync(outputRoot, { recursive: true });
-
-          const componentRoutes = fs
-            .readdirSync(path.resolve("content/docs"))
-            .filter((name) => name.endsWith(".mdx"))
-            .map((name) => name.replace(/\.mdx$/, ""))
-            .map((slug) => (slug === "index" ? "/docs" : `/docs/${slug}`));
-
-          const routes = [
-            "/",
-            "/styling",
-            "/charts",
-            "/stars",
-            "/templates",
-            "/templates/blog",
-            "/templates/portfolio",
-            "/templates/cms",
-            "/templates/links",
-            ...componentRoutes,
-          ].filter((route, index, all) => all.indexOf(route) === index);
-
-          const viewports = [
+          const baseURL = "https://neobrutal-ui.andongmin.com";
+          const root = path.resolve("visual-audit");
+          fs.mkdirSync(root, { recursive: true });
+          const routes = [...new Set([
+            "/", "/styling", "/charts", "/stars", "/templates",
+            "/templates/blog", "/templates/portfolio", "/templates/cms", "/templates/links",
+            ...fs.readdirSync("content/docs").filter((file) => file.endsWith(".mdx"))
+              .map((file) => file === "index.mdx" ? "/docs" : `/docs/${file.slice(0, -4)}`),
+          ])];
+          const sizes = [
             { name: "desktop", width: 1440, height: 1000 },
             { name: "mobile", width: 390, height: 844 },
           ];
-          const darkRoutes = new Set([
-            "/",
-            "/docs/button",
-            "/docs/data-table",
-            "/docs/dialog",
-            "/docs/sheet",
-            "/styling",
-            "/charts",
-            "/templates",
-            "/templates/blog",
-            "/templates/portfolio",
-            "/templates/cms",
-            "/templates/links",
-          ]);
-
           const browser = await chromium.launch({ channel: "chrome", headless: true });
+          const jobs = routes.flatMap((route) => ["light", "dark"].flatMap((theme) =>
+            sizes.map((viewport) => ({ route, theme, viewport }))));
           const report = [];
 
-          function safeName(route) {
-            return route === "/" ? "home" : route.slice(1).replaceAll("/", "--");
+          async function ready(page) {
+            await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true", { timeout: 30000 });
+            await expect(page.locator(".special-page-loading")).toHaveCount(0, { timeout: 30000 });
+            await expect(page.locator(".react-host__error")).toHaveCount(0);
+            for (const host of await page.locator(".react-host").all()) {
+              if (!(await host.isVisible())) continue;
+              await host.scrollIntoViewIfNeeded();
+              await expect(host).not.toHaveAttribute("aria-busy", "true", { timeout: 30000 });
+              await expect(host.locator(".react-host__status")).toHaveCount(0);
+            }
+            for (const image of await page.locator("img").all()) {
+              if (!(await image.isVisible())) continue;
+              await image.scrollIntoViewIfNeeded();
+              await expect.poll(() => image.evaluate((node) => node.complete && node.naturalWidth > 0),
+                { timeout: 30000, message: "Image must finish loading before capture" }).toBe(true);
+            }
+            await page.evaluate(async () => {
+              await document.fonts.ready;
+              scrollTo(0, 0);
+              await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+            });
           }
 
-          async function auditRoute(route, viewport, colorScheme) {
+          async function capture(job) {
+            const { route, theme, viewport } = job;
             const context = await browser.newContext({
               viewport: { width: viewport.width, height: viewport.height },
-              colorScheme,
-              reducedMotion: "reduce",
-              deviceScaleFactor: 1,
+              colorScheme: theme, reducedMotion: "reduce", deviceScaleFactor: 1,
             });
-            await context.addInitScript((scheme) => {
-              try {
-                localStorage.setItem("theme", scheme);
-              } catch {}
-            }, colorScheme);
+            await context.addInitScript((value) => localStorage.setItem("theme", value), theme);
             const page = await context.newPage();
-            const runtimeErrors = [];
-            page.on("pageerror", (error) => runtimeErrors.push(`pageerror: ${error.message}`));
-            page.on("console", (message) => {
-              if (message.type() === "error") runtimeErrors.push(`console: ${message.text()}`);
-            });
-
-            const response = await page.goto(`${baseURL}${route}`, {
-              waitUntil: "domcontentloaded",
-              timeout: 30000,
-            });
-            await page.locator('html[data-hydrated="true"]').waitFor({ timeout: 30000 });
-            await page.evaluate(() => document.fonts.ready);
-            await page.waitForTimeout(250);
-
-            const metrics = await page.evaluate(() => {
-              const viewportWidth = document.documentElement.clientWidth;
-              const isVisible = (element) => {
-                const style = getComputedStyle(element);
-                const rect = element.getBoundingClientRect();
-                return (
-                  style.display !== "none" &&
-                  style.visibility !== "hidden" &&
-                  Number(style.opacity) !== 0 &&
-                  rect.width > 0 &&
-                  rect.height > 0
-                );
-              };
-              const describe = (element) => {
-                const id = element.id ? `#${element.id}` : "";
-                const classes = [...element.classList].slice(0, 3).map((name) => `.${name}`).join("");
-                return `${element.tagName.toLowerCase()}${id}${classes}`;
-              };
-              const compactText = (element) =>
-                (element.textContent ?? "").replace(/\s+/g, " ").trim().slice(0, 90);
-              const issues = {
-                clippedText: [],
-                horizontalEscape: [],
-                nestedVerticalScroll: [],
-                tinyControls: [],
-              };
-
-              for (const element of document.querySelectorAll("body *")) {
-                if (!(element instanceof HTMLElement) || !isVisible(element)) continue;
-                const style = getComputedStyle(element);
-                const rect = element.getBoundingClientRect();
-                const item = {
-                  selector: describe(element),
-                  text: compactText(element),
-                  rect: {
-                    x: Math.round(rect.x),
-                    y: Math.round(rect.y),
-                    width: Math.round(rect.width),
-                    height: Math.round(rect.height),
-                  },
+            page.setDefaultTimeout(15000);
+            const errors = [];
+            page.on("pageerror", (error) => errors.push(error.message));
+            const entry = { ...job, errors, ready: false };
+            const folder = path.join(root, theme, viewport.name);
+            fs.mkdirSync(folder, { recursive: true });
+            const name = route === "/" ? "home" : route.slice(1).replaceAll("/", "--");
+            try {
+              const response = await page.goto(baseURL + route, { waitUntil: "domcontentloaded", timeout: 30000 });
+              expect(response?.status()).toBe(200);
+              await ready(page);
+              const metrics = await page.evaluate(() => {
+                const visible = (node) => node.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }) &&
+                  !node.closest(".sr-only, [aria-hidden='true']") && node.getBoundingClientRect().width > 2 &&
+                  node.getBoundingClientRect().height > 2;
+                const describe = (node) => ({
+                  tag: node.tagName.toLowerCase(), id: node.id, classes: node.className,
+                  text: (node.innerText || node.getAttribute("aria-label") || "").trim().slice(0, 100),
+                  width: Math.round(node.getBoundingClientRect().width),
+                  height: Math.round(node.getBoundingClientRect().height),
+                });
+                const clipped = [...document.querySelectorAll("button, label, h1, h2, h3, p")]
+                  .filter((node) => visible(node) && !node.closest("pre, code"))
+                  .filter((node) => {
+                    const style = getComputedStyle(node);
+                    return (node.scrollWidth > node.clientWidth + 2 || node.scrollHeight > node.clientHeight + 2) &&
+                      ["hidden", "clip"].includes(style.overflow) && style.textOverflow !== "ellipsis" &&
+                      style.webkitLineClamp === "none";
+                  }).map(describe);
+                const tinyButtons = [...document.querySelectorAll("button:not([disabled])")]
+                  .filter(visible).filter((node) => {
+                    const bounds = node.getBoundingClientRect();
+                    return bounds.width < 24 || bounds.height < 24;
+                  }).map(describe);
+                const verticalCodeScroll = [...document.querySelectorAll(".docs-code pre")]
+                  .filter(visible).filter((node) => !node.closest(".component-preview__code, .installation-tabs__manual, [role='dialog']"))
+                  .filter((node) => node.scrollHeight > node.clientHeight + 2).map(describe);
+                return {
+                  pageOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+                  loading: [...document.querySelectorAll(".special-page-loading, .react-host__status")].filter(visible).map(describe),
+                  clipped, tinyButtons, verticalCodeScroll,
+                  height: document.documentElement.scrollHeight,
+                  headings: [...document.querySelectorAll("h1, h2")].filter(visible).map((node) => node.innerText),
                 };
-
-                if (
-                  rect.left < -2 ||
-                  (rect.right > viewportWidth + 2 && style.position !== "fixed" && style.position !== "sticky")
-                ) {
-                  issues.horizontalEscape.push(item);
-                }
-
-                const hasText = compactText(element).length > 0;
-                const clipsX = element.scrollWidth > element.clientWidth + 2;
-                const clipsY = element.scrollHeight > element.clientHeight + 2;
-                if (
-                  hasText &&
-                  (clipsX || clipsY) &&
-                  ["hidden", "clip"].includes(style.overflow) &&
-                  !element.matches("pre, code, [data-radix-scroll-area-viewport]")
-                ) {
-                  issues.clippedText.push(item);
-                }
-
-                if (
-                  element.clientHeight >= 56 &&
-                  element.scrollHeight > element.clientHeight + 8 &&
-                  ["auto", "scroll"].includes(style.overflowY) &&
-                  !element.matches("pre, code, textarea, [data-slot='scroll-area-viewport']")
-                ) {
-                  issues.nestedVerticalScroll.push(item);
-                }
-
-                const interactive =
-                  element.matches("button, input, select, textarea, a[href], [role='button'], [role='tab'], [role='option']") &&
-                  !element.hasAttribute("disabled");
-                if (interactive && (rect.width < 28 || rect.height < 28)) {
-                  issues.tinyControls.push(item);
+              });
+              Object.assign(entry, metrics);
+              expect(metrics.loading).toEqual([]);
+              entry.ready = true;
+              await page.screenshot({ path: path.join(folder, `${name}.jpg`), fullPage: true,
+                type: "jpeg", quality: 78, animations: "disabled", caret: "hide" });
+              if (route === "/templates/cms") {
+                const filters = page.getByRole("group", { name: "Filter posts by status" });
+                for (const status of ["Draft", "Published"]) {
+                  await filters.getByRole("button", { name: status, exact: true }).click();
+                  await expect(filters.getByRole("button", { name: status, exact: true })).toHaveAttribute("aria-pressed", "true");
+                  await page.screenshot({ path: path.join(folder, `${name}--${status.toLowerCase()}.jpg`), fullPage: true,
+                    type: "jpeg", quality: 78, animations: "disabled", caret: "hide" });
                 }
               }
-
-              for (const list of Object.values(issues)) list.splice(30);
-              return {
-                title: document.title,
-                bodyHeight: document.body.scrollHeight,
-                clientWidth: viewportWidth,
-                scrollWidth: document.documentElement.scrollWidth,
-                issues,
-              };
-            });
-
-            const folder = path.join(outputRoot, colorScheme, viewport.name);
-            fs.mkdirSync(folder, { recursive: true });
-            const filename = `${safeName(route)}.jpg`;
-            await page.screenshot({
-              path: path.join(folder, filename),
-              fullPage: true,
-              type: "jpeg",
-              quality: 58,
-              animations: "disabled",
-              caret: "hide",
-              timeout: 30000,
-            });
-
-            report.push({
-              route,
-              viewport,
-              colorScheme,
-              status: response?.status() ?? null,
-              runtimeErrors,
-              ...metrics,
-            });
-            await context.close();
-          }
-
-          for (const route of routes) {
-            for (const viewport of viewports) {
-              await auditRoute(route, viewport, "light");
+              console.log(JSON.stringify({ route, theme, size: viewport.name, ready: true,
+                pageOverflow: entry.pageOverflow, clipped: entry.clipped, tinyButtons: entry.tinyButtons,
+                verticalCodeScroll: entry.verticalCodeScroll, errors }));
+            } catch (error) {
+              entry.failure = String(error);
+              console.log(JSON.stringify({ route, theme, size: viewport.name, failure: entry.failure }));
+              await page.screenshot({ path: path.join(folder, `${name}--FAILED.jpg`), fullPage: true }).catch(() => {});
+            } finally {
+              report.push(entry);
+              fs.writeFileSync(path.join(root, "report.json"), JSON.stringify(report, null, 2));
+              await context.close();
             }
           }
-
-          for (const route of routes.filter((route) => darkRoutes.has(route))) {
-            for (const viewport of viewports) {
-              await auditRoute(route, viewport, "dark");
-            }
-          }
-
+          let next = 0;
+          await Promise.all(Array.from({ length: 3 }, async () => {
+            while (next < jobs.length) await capture(jobs[next++]);
+          }));
           await browser.close();
-          fs.writeFileSync(path.join(outputRoot, "report.json"), JSON.stringify(report, null, 2));
-          fs.writeFileSync(
-            path.join(outputRoot, "routes.json"),
-            JSON.stringify({ routes, viewports, darkRoutes: [...darkRoutes] }, null, 2),
-          );
-          console.log(`Captured ${report.length} route and viewport combinations.`);
+          const totals = { routes: routes.length, attempted: jobs.length,
+            ready: report.filter((entry) => entry.ready).length,
+            failed: report.filter((entry) => entry.failure).length,
+            pageOverflow: report.filter((entry) => entry.pageOverflow).length };
+          console.log("AUDIT_TOTALS", JSON.stringify(totals));
+          await fs.promises.appendFile(process.env.GITHUB_STEP_SUMMARY,
+            `## Rendered visual audit\n\n\`\`\`json\n${JSON.stringify(totals, null, 2)}\n\`\`\`\n`);
+          if (totals.failed || totals.pageOverflow) process.exitCode = 1;
           NODE
-
-      - name: Upload visual audit
+      - name: Save rendered screenshots and findings
+        if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: full-visual-audit
+          name: rendered-visual-audit
           path: docs/visual-audit
-          retention-days: 2
+          retention-days: 3
           if-no-files-found: error
