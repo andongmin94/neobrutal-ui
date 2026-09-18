@@ -1,0 +1,55 @@
+name: Format beginner copy test once
+
+on:
+  push:
+    paths:
+      - .github/workflows/format-beginner-copy-test-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: docs/package-lock.json
+      - run: npm ci --prefix docs
+      - name: Format and verify the new contract
+        run: |
+          cd docs
+          npx oxfmt --write scripts/beginner-copy.test.ts
+          npm run lint
+          cd ..
+          git diff --check
+      - name: Remove this workflow and publish the formatted file
+        run: |
+          rm .github/workflows/format-beginner-copy-test-once.yml
+          python3 - <<'PY'
+          import subprocess
+
+          expected = {
+              ".github/workflows/format-beginner-copy-test-once.yml",
+              "docs/scripts/beginner-copy.test.ts",
+          }
+          changed = set(subprocess.check_output(["git", "diff", "--name-only"], text=True).splitlines())
+          if changed != expected:
+              raise SystemExit(f"expected={sorted(expected)} actual={sorted(changed)}")
+          PY
+          remote_head="$(git ls-remote origin refs/heads/main | cut -f1)"
+          if [ "$remote_head" != "$GITHUB_SHA" ]; then
+            echo "main advanced from $GITHUB_SHA to $remote_head; refusing to overwrite unrelated work."
+            exit 1
+          fi
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "style: format beginner copy contract"
+          git push origin HEAD:main
