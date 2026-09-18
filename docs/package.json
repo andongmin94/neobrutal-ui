@@ -14,7 +14,7 @@
     "lint": "oxlint --deny-warnings --format unix --no-error-on-unmatched-pattern app src scripts tests && oxfmt --check --no-error-on-unmatched-pattern app src scripts tests react-router.config.ts vite.config.ts tsconfig.json package.json .oxlintrc.json .oxfmtrc.json",
     "pretypecheck": "npm run generate && react-router typegen",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test scripts/build-info.test.ts scripts/docs-contract.test.ts scripts/preview-contract.test.ts scripts/template-contract.test.ts",
+    "test": "tsx --test scripts/beginner-copy.test.ts scripts/build-info.test.ts scripts/docs-contract.test.ts scripts/preview-contract.test.ts scripts/template-contract.test.ts",
     "test:browser": "playwright test",
     "test:browser:cross": "playwright test --config=playwright.cross-browser.config.ts",
     "check:budget": "node scripts/check-build-budget.mjs",
