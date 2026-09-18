@@ -46,8 +46,9 @@ jobs:
               ('  vertical-align: top;\n  font-size: 14px;\n', '  vertical-align: top;\n  overflow-wrap: anywhere;\n  font-size: 14px;\n'),
           ])
           edit('registry/src/components/ui/data-table.tsx', [
-              ('className="flex items-center py-4"', 'className="flex items-center gap-3 py-4"'),
-              ('className="flex items-center justify-end space-x-2 py-4"', 'className="flex flex-wrap items-center justify-between gap-3 py-4"'),
+              ('className="flex items-center py-4"', 'className="flex flex-col items-stretch gap-3 py-4 sm:flex-row sm:items-center"'),
+              ('className="ml-auto"', 'className="self-start sm:ml-auto sm:self-auto"'),
+              ('className="flex items-center justify-end space-x-2 py-4"', 'className="flex flex-col items-start gap-3 py-4 sm:flex-row sm:items-center sm:justify-between"'),
               ('<div className="space-x-2">', '<div className="flex shrink-0 items-center gap-2">'),
           ])
           edit('registry/src/blocks/templates/cms-template.tsx', [
@@ -60,9 +61,15 @@ jobs:
           edit('registry/src/blocks/templates/blog-template.tsx', [
               ('import { useMemo, useState } from "react";', 'import { useMemo, useRef, useState } from "react";'),
               ('  const [query, setQuery] = useState("");\n', '  const [query, setQuery] = useState("");\n  const searchInputRef = useRef<HTMLInputElement>(null);\n'),
-              ('              <Input\n                id="post-search"', '              <Input\n                ref={searchInputRef}\n                id="post-search"'),
-              ('className="h-11 bg-secondary-background pr-11 pl-10"', 'className="h-11 bg-secondary-background pr-11 pl-10 [&::-webkit-search-cancel-button]:appearance-none"'),
+              ('              <Input\n                id="post-search"', '              {/* Keep one explicit clear action instead of browser-specific search controls. */}\n              <Input\n                ref={searchInputRef}\n                id="post-search"'),
+              ('                type="search"\n', '                type="text"\n                role="searchbox"\n                enterKeyHint="search"\n'),
               ('                  onClick={() => setQuery("")}', '                  onClick={() => {\n                    setQuery("");\n                    searchInputRef.current?.focus();\n                  }}'),
+          ])
+          edit('docs/app/components/template-pages.tsx', [
+              ('className="overflow-hidden rounded-base border-2 border-border bg-secondary-background shadow-shadow"', 'className="flex flex-col overflow-hidden rounded-base border-2 border-border bg-secondary-background shadow-shadow"'),
+              ('className="template-preview-link block overflow-hidden', 'className="template-preview-link block shrink-0 overflow-hidden'),
+              ('<div className="p-5">', '<div className="flex flex-1 flex-col p-5">'),
+              ('className="mt-5 grid grid-cols-2 gap-3"', 'className="mt-auto grid grid-cols-2 gap-3 pt-5"'),
           ])
           PY
       - name: Add focused UI regression coverage
@@ -71,7 +78,8 @@ jobs:
           import { expect, test, type Page } from "@playwright/test";
 
           async function openReady(page: Page, route: string) {
-            await page.goto(route);
+            const response = await page.goto(route);
+            expect(response?.ok()).toBe(true);
             await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true");
             await expect(page.locator(".special-page-loading")).toHaveCount(0);
           }
@@ -93,21 +101,24 @@ jobs:
             }
           });
 
-          test("data table tools and pagination stay separated at 320px", async ({ page }) => {
+          test("data table tools and pagination reflow without squeezing the search field", async ({ page }) => {
             await page.setViewportSize({ width: 320, height: 844 });
             await openReady(page, "/docs/data-table");
             const preview = page.locator(".component-preview").first();
             const input = preview.getByRole("textbox", { name: "Filter email records" });
             const columns = preview.getByRole("button", { name: "Columns", exact: true });
             await expect(input).toBeVisible();
-            const inputBox = await input.boundingBox();
-            const columnsBox = await columns.boundingBox();
-            expect(columnsBox!.x - inputBox!.x - inputBox!.width).toBeGreaterThanOrEqual(11);
-            const previous = await preview.getByRole("button", { name: "Previous", exact: true }).boundingBox();
-            const next = await preview.getByRole("button", { name: "Next", exact: true }).boundingBox();
-            expect(Math.abs(previous!.y - next!.y)).toBeLessThanOrEqual(1);
-            expect(next!.x - previous!.x - previous!.width).toBeGreaterThanOrEqual(7);
-            expect(next!.x + next!.width).toBeLessThanOrEqual(320);
+            const inputBox = (await input.boundingBox())!;
+            const columnsBox = (await columns.boundingBox())!;
+            expect(inputBox.width).toBeGreaterThan(200);
+            expect(columnsBox.y - inputBox.y - inputBox.height).toBeGreaterThanOrEqual(11);
+            const count = (await preview.getByText(/row\(s\) selected\./).boundingBox())!;
+            const previous = (await preview.getByRole("button", { name: "Previous", exact: true }).boundingBox())!;
+            const next = (await preview.getByRole("button", { name: "Next", exact: true }).boundingBox())!;
+            expect(previous.y - count.y - count.height).toBeGreaterThanOrEqual(11);
+            expect(Math.abs(previous.y - next.y)).toBeLessThanOrEqual(1);
+            expect(next.x - previous.x - previous.width).toBeGreaterThanOrEqual(7);
+            expect(next.x + next.width).toBeLessThanOrEqual(320);
           });
 
           test("CMS keeps a selected fill and a distinct keyboard focus", async ({ page }) => {
@@ -134,17 +145,36 @@ jobs:
           test("blog search has one clear action and returns focus after clearing", async ({ page }) => {
             await openReady(page, "/templates/blog");
             const search = page.getByRole("searchbox", { name: "Search posts" });
+            // A text input with search semantics cannot add a second native search-clear button.
+            await expect(search).toHaveAttribute("type", "text");
+            await expect(search).toHaveAttribute("enterkeyhint", "search");
             await search.fill("no-results-for-ui-regression");
             await expect(page.getByText("No posts found.", { exact: true })).toBeVisible();
-            const nativeClear = await search.evaluate((node) =>
-              getComputedStyle(node, "::-webkit-search-cancel-button").getPropertyValue("-webkit-appearance"),
-            );
-            expect(nativeClear).toBe("none");
-            await page.getByRole("button", { name: "Clear search", exact: true }).click();
+            const clear = page.getByRole("button", { name: "Clear search", exact: true });
+            await expect(clear).toHaveCount(1);
+            await clear.click();
             await expect(search).toHaveValue("");
             await expect(search).toBeFocused();
-            await expect(page.getByRole("button", { name: "Clear search", exact: true })).toHaveCount(0);
+            await expect(clear).toHaveCount(0);
             await expect(page.getByText("No posts found.", { exact: true })).toHaveCount(0);
+          });
+
+          test("template card actions align despite different description lengths", async ({ page }) => {
+            await page.setViewportSize({ width: 1280, height: 1000 });
+            await openReady(page, "/templates");
+            const cards = page.locator("main article article");
+            await expect(cards).toHaveCount(4);
+            const first = cards.nth(0);
+            const second = cards.nth(1);
+            await first.locator("p").evaluate((node) => {
+              node.textContent += " Extra descriptive text verifies that a taller introduction does not shift this card's actions above its neighbor's actions.";
+            });
+            const firstCard = (await first.boundingBox())!;
+            const secondCard = (await second.boundingBox())!;
+            expect(Math.abs(firstCard.y - secondCard.y)).toBeLessThanOrEqual(1);
+            const firstAction = (await first.getByRole("link", { name: "Open", exact: true }).boundingBox())!;
+            const secondAction = (await second.getByRole("link", { name: "Open", exact: true }).boundingBox())!;
+            expect(Math.abs(firstAction.y - secondAction.y)).toBeLessThanOrEqual(1);
           });
           TS
       - name: Generate and verify registry sources
@@ -180,25 +210,33 @@ jobs:
           from pathlib import Path
           import os
           import textwrap
+
           source = Path('.github/workflows/visual-audit-once.yml').read_text()
-          script = source.split("          node --input-type=module <<'NODE'\n", 1)[1].split('\n          NODE\n', 1)[0]
-          script = textwrap.dedent(script)
-          script = script.replace('const baseURL = "https://neobrutal-ui.andongmin.com";', 'const baseURL = "http://127.0.0.1:4173";')
-          script = script.replace('const root = path.resolve("visual-audit");', 'const root = path.resolve(process.env.VISUAL_AUDIT_DIR);')
-          script = script.replace('localStorage.setItem("theme", value)', 'localStorage.setItem("neobrutal-ui-theme", value)')
-          script = script.replace('              await ready(page);', '              await ready(page);')
-          script = script.replace('    await ready(page);', '    await ready(page);\n    await expect(page.locator("html")).toHaveAttribute("data-theme", theme);')
+          script = textwrap.dedent(source.split("          node --input-type=module <<'NODE'\n", 1)[1].split('\n          NODE\n', 1)[0])
+          replacements = [
+              ('const baseURL = "https://neobrutal-ui.andongmin.com";', 'const baseURL = "http://127.0.0.1:4173";'),
+              ('const root = path.resolve("visual-audit");', 'const root = path.resolve(process.env.VISUAL_AUDIT_DIR);'),
+              ('chromium.launch({ channel: "chrome", headless: true })', 'chromium.launch({ headless: true })'),
+              ('localStorage.setItem("theme", value)', 'localStorage.setItem("neobrutal-ui-theme", value)'),
+              ('    await ready(page);', '    await ready(page);\n    await expect(page.locator("html")).toHaveAttribute("data-theme", theme);'),
+              ('              expect(metrics.loading).toEqual([]);', '              expect(metrics.loading).toEqual([]);'),
+          ]
+          for before, after in replacements[:-1]:
+              if script.count(before) != 1:
+                  raise SystemExit(f'Audit replacement is not unique: {before!r}')
+              script = script.replace(before, after, 1)
           marker = 'const jobs = routes.flatMap'
           discovery = '''const blog = await browser.newPage();
           await blog.goto(baseURL + "/templates/blog");
           await ready(blog);
           const articleRoutes = await blog.locator('a[href^="/templates/blog/"]').evaluateAll((links) =>
             [...new Set(links.map((link) => new URL(link.href).pathname))]);
+          expect(articleRoutes.length).toBeGreaterThan(0);
           routes.push(...articleRoutes);
           await blog.close();
           console.log("BLOG_ARTICLE_ROUTES", JSON.stringify(articleRoutes));
           '''
-          if marker not in script:
+          if script.count(marker) != 1:
               raise SystemExit('Audit insertion marker not found')
           script = script.replace(marker, textwrap.dedent(discovery) + marker, 1)
           Path(os.environ['RUNNER_TEMP'], 'capture-ui-after.mjs').write_text(script)
@@ -228,20 +266,20 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          rm .github/workflows/visual-audit-once.yml .github/workflows/visual-audit-summary-once.yml
           python3 - <<'PY'
           from pathlib import Path
           import json
           import os
-          import subprocess
-          import urllib.request
 
           report = json.loads(Path(os.environ['RUNNER_TEMP'], 'ui-audit-after/report.json').read_text())
-          if any(not row['ready'] or row.get('failure') or row['pageOverflow'] for row in report):
-              raise SystemExit('Incomplete audit cannot be published')
+          if not report or any(not row['ready'] or row.get('failure') or row['pageOverflow'] or row['errors'] for row in report):
+              raise SystemExit('Incomplete or erroneous audit cannot be published')
           routes = len({row['route'] for row in report})
-          Path('docs/visual-audit.md').write_text(f'''# UI audit status\n\nUpdated by GitHub Actions run {os.environ['GITHUB_RUN_ID']}.\n\n## Verified\n\n- {routes} routes in both light and dark themes at desktop (1440px) and mobile (390px) widths: {len(report)} rendered combinations.\n- Included every documentation route, the four template families, and all linked blog articles.\n- Capture waits for hydration, lazy previews, images, fonts, and the actual theme.\n- No loading placeholders, page-level horizontal overflow, or capture failures.\n- Registry format, lint, typecheck, build, schema and consistency checks passed.\n- Fresh Next.js and Vite consumers and the full Chromium test suite passed.\n- Added focused regressions for 320px reference tables, data-table spacing, CMS focus and selection, and blog search clearing.\n\n## Changes\n\n- Reference tables wrap instead of imposing a 520px minimum on phones.\n- Data-table search controls have a gap; Previous and Next stay together.\n- CMS keeps its selected filter fill, shows an inset keyboard focus on post rows, and uses the standard publish switch size.\n- Blog search uses one clear control and restores focus to its input.\n\n## Still to verify\n\nThese are rendered captures and automated checks, not a completed visual sign-off.\nThe assistant runtime could not open the captured images during this pass.\nInspect the before/after artifacts for spacing, borders, shadows, typography, and every open overlay state before claiming comprehensive visual approval.\nFinal production deployment and cross-browser status must be checked against the published commit, not this preparation run.\n\nThe two temporary audit workflows are removed from the prepared commit; the normal Verify workflow is unchanged.\n''')
+          if len(report) != routes * 4:
+              raise SystemExit('Every route must have both themes and both widths')
+          Path('docs/visual-audit.md').write_text(f'''# UI audit status\n\nPrepared by GitHub Actions run {os.environ['GITHUB_RUN_ID']}.\n\n## Automated checks completed\n\n- {routes} routes in light and dark themes at desktop (1440px) and mobile (390px) widths: {len(report)} fully rendered combinations.\n- Included every documentation route, four template families, and all linked blog articles.\n- Captures wait for hydration, lazy previews, images, fonts, and the actual theme.\n- No loading placeholders, page-level horizontal overflow, page errors, or capture failures.\n- Registry format, lint, typecheck, build, schema and consistency checks passed.\n- Fresh Next.js and Vite consumers and the full Chromium suite passed.\n- Focused regressions cover 320px reference tables and data-table controls, CMS focus and selection, blog search clearing, and template card action alignment.\n\n## Changes\n\n- Reference tables wrap instead of imposing a 520px minimum on phones.\n- Data-table search and column controls stack on phones; pagination stays together below the selection count.\n- CMS keeps its selected filter fill, distinguishes keyboard focus on selected post rows, and uses the standard publish switch size.\n- Blog search has one explicit clear control, preserves search semantics, and restores input focus after clearing.\n- Template card actions align at the bottom regardless of description length.\n\n## Visual review still pending\n\nRendered captures and automated checks are not a completed visual sign-off.\nThe assistant runtime could not open the captured images during this pass.\nReview the captures for spacing, borders, shadows, typography and open overlay states before claiming comprehensive visual approval.\nFinal production and cross-browser checks must refer to the published commit, not this preparation run.\n\nBoth temporary audit workflows are removed from the prepared commit. The normal Verify workflow is unchanged.\n''')
           PY
+          rm .github/workflows/visual-audit-once.yml .github/workflows/visual-audit-summary-once.yml
           git add registry docs .github/workflows/visual-audit-once.yml .github/workflows/visual-audit-summary-once.yml
           git diff --cached --check
           git diff --cached --stat
@@ -282,7 +320,7 @@ jobs:
               'tree': entries,
           })
           commit = api('/git/commits', {
-              'message': 'fix: refine docs and template interaction layouts',
+              'message': 'fix: polish responsive docs and template controls',
               'tree': tree['sha'],
               'parents': [parent],
           })
