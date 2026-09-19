@@ -136,6 +136,12 @@ test("chart summaries and tables follow their controls without losing units", as
     .locator(".recharts-line-curve")
     .evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).stroke));
   expect(new Set(strokes).size).toBe(2);
+  for (const recipe of [revenue, conversion, latency]) {
+    const foreground = await recipe.evaluate((node) => getComputedStyle(node).color);
+    const ticks = recipe.locator(".recharts-cartesian-axis-tick-value");
+    expect(await ticks.count()).toBeGreaterThan(0);
+    for (const tick of await ticks.all()) await expect(tick).toHaveCSS("fill", foreground);
+  }
   expect(errors).toEqual([]);
 });
 
