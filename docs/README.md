@@ -64,8 +64,8 @@ DOCS_TEST_URL=https://neobrutal-ui.andongmin.com npm run test:browser:cross
 npm run verify:headers
 ```
 
-Failure artifacts contain traces, screenshots, and HTML reports under `test-results` and
-`playwright-report`. Production verification waits for the exact source commit before checking
+Failure artifacts contain traces, screenshots, and separate HTML reports under `test-results`,
+`playwright-report`, and `playwright-report-cross`. Production verification waits for the exact source commit before checking
 headers, registry endpoints, representative installs, and the cross-browser smoke suite.
 
 ## Deployment

@@ -550,7 +550,7 @@ function DropdownMenuItem({
       label={label ?? textValue}
       render={renderElement}
       className={cn(
-        "group/dropdown-menu-item relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent bg-main px-2 py-1.5 text-sm font-base outline-hidden transition-colors select-none focus:border-border data-inset:pl-8 data-[variant=destructive]:text-destructive data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+        "group/dropdown-menu-item relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent bg-main px-2 py-1.5 text-sm font-base outline-hidden transition-colors select-none focus:border-border data-inset:pl-8 data-[variant=destructive]:bg-destructive data-[variant=destructive]:text-destructive-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
         className,
       )}
       onClick={(event) => handleMenuItemSelect(event, onClick, onSelect)}

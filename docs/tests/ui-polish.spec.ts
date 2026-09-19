@@ -1,3 +1,4 @@
+import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
 async function openReady(page: Page, route: string) {
@@ -111,3 +112,71 @@ test("template card actions align despite different description lengths", async 
     .boundingBox())!;
   expect(Math.abs(firstAction.y - secondAction.y)).toBeLessThanOrEqual(1);
 });
+
+test("reference tables preserve short identifiers and type names", async ({ page }) => {
+  await openReady(page, "/docs/stars");
+  for (const width of [320, 390, 1280]) {
+    await page.setViewportSize({ width, height: 844 });
+    for (const text of ["strokeWidth", "pathClassName", "number"]) {
+      const cell = page.getByRole("cell", { name: text, exact: true }).first();
+      const lines = await cell.evaluate((node) => {
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        return new Set([...range.getClientRects()].map((rect) => Math.round(rect.top))).size;
+      });
+      expect(lines, `${text} at ${width}px`).toBe(1);
+    }
+  }
+});
+
+test("blog article lists show their bullet markers", async ({ page }) => {
+  await openReady(page, "/templates/blog/small-interfaces");
+  const list = page.locator("main article section ul").first();
+  await expect(list).toBeVisible();
+  await expect(list).toHaveCSS("list-style-type", "square");
+});
+
+for (const overlay of [
+  {
+    name: "hover-card",
+    route: "/docs/hover-card",
+    role: "link",
+    trigger: "Explore the component registry",
+    surface: "[data-slot='hover-card-content']",
+    action: "hover",
+  },
+  {
+    name: "popover",
+    route: "/docs/popover",
+    role: "button",
+    trigger: "View release status",
+    surface: "[data-slot='popover-content']",
+    action: "click",
+  },
+  {
+    name: "context-menu",
+    route: "/docs/context-menu",
+    role: "button",
+    trigger: "Open component card context menu",
+    surface: "[data-slot='context-menu-content']",
+    action: "right",
+  },
+] as const) {
+  test(`open ${overlay.name} text keeps sufficient contrast`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await openReady(page, overlay.route);
+    const trigger = page.locator(".component-preview").getByRole(overlay.role, {
+      name: overlay.trigger,
+      exact: true,
+    });
+    if (overlay.action === "hover") await trigger.hover();
+    else await trigger.click({ button: overlay.action === "right" ? "right" : "left" });
+    const surface = page.locator(overlay.surface);
+    await expect(surface).toBeVisible();
+    const results = await new AxeBuilder({ page })
+      .include(overlay.surface)
+      .withRules(["color-contrast"])
+      .analyze();
+    expect(results.violations.map(({ id, nodes }) => ({ id, nodes }))).toEqual([]);
+  });
+}

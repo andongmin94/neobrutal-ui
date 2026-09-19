@@ -265,7 +265,7 @@ function MenubarItem({
       data-inset={inset}
       data-variant={variant}
       className={cn(
-        "group/menubar-item gap-2 rounded-base border-2 border-transparent px-2 py-1.5 text-sm font-base focus:border-border data-inset:pl-8 data-[variant=destructive]:text-destructive data-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4",
+        "group/menubar-item gap-2 rounded-base border-2 border-transparent px-2 py-1.5 text-sm font-base focus:border-border data-inset:pl-8 data-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
