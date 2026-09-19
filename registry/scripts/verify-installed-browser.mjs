@@ -231,8 +231,13 @@ async function assertThemeColor(button, palette, expect) {
       return Array.from(context.getImageData(0, 0, 1, 1).data);
     });
   }, palette);
-  expect(pixels[0], "the selected red theme must remain applied").toEqual(pixels[2]);
-  expect(pixels[1], "the button must render the selected theme").toEqual(pixels[2]);
+  for (const actual of pixels.slice(0, 2)) {
+    expect(actual[3], "theme colors must preserve opacity").toBe(pixels[2][3]);
+    for (let channel = 0; channel < 3; channel++) {
+      // Color-space conversion can round a channel by one 8-bit step.
+      expect(Math.abs(actual[channel] - pixels[2][channel])).toBeLessThanOrEqual(1);
+    }
+  }
   expect(pixels[0], "the base yellow must not replace the selected red").not.toEqual(pixels[3]);
 }
 
