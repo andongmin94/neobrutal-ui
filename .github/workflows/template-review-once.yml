@@ -37,8 +37,9 @@ jobs:
           cat > docs/tests/template-states.spec.ts <<'TS'
           import AxeBuilder from "@axe-core/playwright";
           import { expect, test, type Page } from "@playwright/test";
+          import type { TemplateEntry } from "../src/data/templates";
 
-          async function openTemplate(page: Page, name: string) {
+          async function openTemplate(page: Page, name: TemplateEntry["slug"]) {
             await page.emulateMedia({ reducedMotion: "reduce" });
             const response = await page.goto(`/templates/${name}`);
             expect(response?.ok()).toBe(true);
@@ -144,7 +145,7 @@ jobs:
 
           test("link hub keeps raised links readable and contained at 320px", async ({ page }) => {
             await page.setViewportSize({ width: 320, height: 844 });
-            await openTemplate(page, "link-hub");
+            await openTemplate(page, "links");
             const links = page.locator(".special-content main ul a");
             await expect(links).toHaveCount(6);
             for (const link of await links.all()) {
