@@ -51,9 +51,9 @@ const config = { visits: { label: "Visits", color: "var(--chart-1)" } } satisfie
 
 export default function VisitsChart() {
   return (
-    <figure>
+    <figure className="min-w-0">
       <figcaption>Visits increased from 120 in January to 180 in February.</figcaption>
-      <ChartContainer config={config} className="h-64 w-full">
+      <ChartContainer config={config} className="h-64 w-full min-w-0 aspect-auto">
         <BarChart accessibilityLayer data={data}>
           <XAxis dataKey="month" />
           <ChartTooltip content={<ChartTooltipContent />} />
@@ -64,6 +64,12 @@ export default function VisitsChart() {
   );
 }
 ```
+
+## Responsive layout
+
+Give the surrounding layout an explicit flexible column, such as `grid grid-cols-1`, rather than an implicit `auto` column. A wide table in an automatic column can stretch every neighboring chart beyond a narrow viewport. For multiple columns, use tracks with a zero minimum, such as `minmax(0, 1fr)`, and `min-w-0` on nested grid or flex items.
+
+Keep wide data tables in their own keyboard-accessible scroll area. Do not hide page overflow or shrink all text to fit; the plot and its description should reflow while exact table values remain reachable.
 
 ## API reference
 

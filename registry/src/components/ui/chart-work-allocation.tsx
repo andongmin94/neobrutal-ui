@@ -97,7 +97,8 @@ export default function ChartWorkAllocation() {
                 content={
                   <ChartTooltipContent
                     nameKey="work"
-                    formatter={(value, name) => `${name}: ${value} h`}
+                    hideLabel
+                    formatter={(value, _name, item) => `${item.payload.work}: ${value} h`}
                   />
                 }
               />
