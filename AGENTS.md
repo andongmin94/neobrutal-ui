@@ -1,29 +1,21 @@
 # Repository workflow
 
-Work directly on `main` by default. Do not create a task branch unless the user explicitly requests one. Check the remote head before publishing; never force-push or overwrite unrelated work.
+Work directly on `main` unless the user requests a branch. Check the remote head before publishing. Never force-push or overwrite unrelated changes.
 
-Keep `registry/src` authoritative for installable components and shared theme definitions. Run the registry build to synchronize generated JSON, components, templates, and theme files into docs. Generated paths listed in the root `.gitignore` are disposable build outputs, not versioned sources. Do not hand-edit or force-add these copies. Build the registry before developing, checking, or deploying docs.
+`registry/src` owns installable components, templates, tokens and catalog data. Build the registry before developing or checking docs. Generated paths in `.gitignore` are disposable output: do not hand-edit or force-add them. Registry synchronization and clean-generation checks must remain enabled.
 
-Do not add compatibility aliases, old-path fallbacks, or migrations. Remove obsolete implementations and update current call sites together.
+Use the dependencies already in the project. Prefer their native APIs over duplicated state, keyboard, positioning, storage or event engines. Remove obsolete implementations and update current examples and documentation together; do not add compatibility aliases or migrations.
 
-Keep commands explicit: `npm run format` may rewrite source, while `npm run lint` must be a non-mutating check suitable for CI. Do not hide source changes inside validation commands.
+## Development and verification
 
-Before publishing, run registry format, lint, typecheck, build, registry:validate, and registry:check; docs format, lint, typecheck, build, test, and test:browser. Run `node registry/scripts/verify-generated.mjs` from the repository root to verify a clean rebuild and byte-identical registry mirrors. This command replaces generated outputs only and refuses to delete tracked files. Keep the source-cleanliness and all existing consumer, contract, and browser checks enabled. Browser tests must cover the documentation shell, isolated component previews, and the theme export contract. Preserve a working product if a check fails.
+`format` may write fixes. `lint`, type checks and tests must not rewrite source. Run checks for the changed surfaces during implementation, then batch the completed changes for the full sequence in `.github/workflows/ci.yml`. Keep every existing contract, consumer, browser, budget and production check enabled. Do not repeatedly cancel full verification runs for cosmetic commits.
 
-Distinguish an automated browser smoke test from a comprehensive accessibility or visual audit. Report only checks actually run.
+Do not add temporary workflows, automatic source-writing verification steps or permanent full-page capture jobs. Preserve a working product if a check fails. Report only checks actually executed and distinguish automated browser tests from manual visual, physical-input and assistive-technology review. `QUALITY.md` defines the finite release gates; execution history belongs in CI artifacts, not new status documents.
 
-## Product focus
+## Product scope
 
-Build clear, tactile interfaces, not a decorative asset collection. Use the existing CMS as a representative screen composition; do not add a backend, another showcase application, or an animation framework just to differentiate the product.
+Build clear, tactile interfaces, not a decorative asset collection. Use shared tokens and existing components. Follow the interaction rules in `docs/content/docs/index.mdx`: staged presses for raised actions, persistent selection distinct from hover, visible keyboard focus and simple nested containers.
 
-Follow the interaction rules in `docs/content/docs/index.mdx`: staged presses for raised actions, persistent selection distinct from hover, visible keyboard focus, and simple nested containers. Keep native input and feedback semantics. Use existing components and theme tokens.
+Installed templates inherit the consumer's theme. Keep gallery presets in docs. CMS is a local UI example, not a publishing backend. Do not add another showcase app, backend or animation framework to create differentiation.
 
-Keep the current CI structure. Do not add temporary workflows, automatic source-writing verification steps, or permanent full-page capture jobs for product polish.
-
-## Product readiness
-
-The standalone decorative Stars collection is outside the product scope. Do not restore its items, routes, or compatibility aliases. A removal is complete only after the registry and documentation are rebuilt and verified.
-
-Keep gallery-only presentation presets in docs, never in installable templates. Components and templates must inherit the consuming project's shared tokens.
-
-Use QUALITY.md to distinguish implemented source changes from verified behavior and remaining release gates. Official directory submission is not approved by passing a build alone.
+Stars, its routes and catalog items are removed; do not restore them. A removal is complete only after rebuilding and checking the registry and docs. Official directory submission requires an explicit owner decision beyond passing these checks.

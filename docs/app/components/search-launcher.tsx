@@ -1,337 +1,187 @@
+import { Dialog } from "@base-ui/react/dialog";
 import { useDocsSearch, type SearchClient } from "fumadocs-core/search/client";
 import { ArrowRight, Command, Search, X } from "lucide-react";
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type KeyboardEvent as ReactKeyboardEvent,
-} from "react";
-import { createPortal } from "react-dom";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { useLocation, useNavigate } from "react-router";
 
 import { COMPONENT_DIRECTORY_LINKS } from "@/data/component-directory";
 import TEMPLATES from "@/data/templates";
 import { BLOG_POSTS } from "@/lib/blog-posts";
-import { trapTabFocus } from "~/lib/focus";
 import { PRIMARY_NAVIGATION_LINKS } from "~/lib/navigation";
 
-type SearchEntry = {
-  group: string;
-  href: string;
-  label: string;
-  terms?: string;
-};
-
+type SearchEntry = { group: string; href: string; label: string; terms?: string };
 const resultListId = "docs-search-results";
-let fullTextClient: Promise<SearchClient> | undefined;
-const searchClient: SearchClient = {
-  async search(value) {
-    fullTextClient ??= import("fumadocs-core/search/client/orama-static").then(({ staticClient }) =>
-      staticClient(),
-    );
-
-    return (await fullTextClient).search(value);
-  },
-};
 
 const staticEntries: SearchEntry[] = [
-  {
-    group: "Directory",
-    href: "/",
-    label: "Component directory",
-    terms: "home registry browse",
-  },
+  { group: "Directory", href: "/", label: "Component directory", terms: "home registry browse" },
   { group: "Getting started", href: "/docs", label: "Introduction" },
   { group: "Getting started", href: "/docs/installation", label: "Installation" },
   { group: "Getting started", href: "/docs/registry", label: "Registry" },
   { group: "Foundation", href: "/docs/design-tokens", label: "Design tokens" },
   ...PRIMARY_NAVIGATION_LINKS.filter((link) => link.href !== "/docs").map((link) => ({
-    group: "Explore",
-    href: link.href,
-    label: link.text,
+    group: "Explore", href: link.href, label: link.text,
   })),
   { group: "Project", href: "/docs/resources", label: "Resources" },
   { group: "Project", href: "/docs/credits", label: "Credits & license" },
   ...COMPONENT_DIRECTORY_LINKS.map((entry) => ({
-    group: "Components",
-    href: entry.href,
-    label: entry.text,
-    terms: `component ${entry.text}`,
+    group: "Components", href: entry.href, label: entry.text, terms: `component ${entry.text}`,
   })),
   ...TEMPLATES.map((entry) => ({
-    group: "Templates",
-    href: `/templates/${entry.slug}`,
-    label: `${entry.title} template`,
-    terms: entry.description,
+    group: "Templates", href: `/templates/${entry.slug}`, label: `${entry.title} template`, terms: entry.description,
   })),
   ...BLOG_POSTS.map((entry) => ({
-    group: "Blog",
-    href: `/templates/blog/${entry.slug}`,
-    label: entry.title,
-    terms: `${entry.topic} ${entry.summary}`,
+    group: "Blog", href: `/templates/blog/${entry.slug}`, label: entry.title, terms: `${entry.topic} ${entry.summary}`,
   })),
 ];
 
 function plainText(value: string) {
-  return value
-    .replaceAll(/<[^>]+>/g, "")
-    .replaceAll(/[*_`#[\]]/g, "")
-    .trim();
+  return value.replaceAll(/<[^>]+>/g, "").replaceAll(/[*_`#[\]]/g, "").trim();
 }
 
 export function SearchLauncher() {
   const navigate = useNavigate();
   const location = useLocation();
-  const launcher = useRef<HTMLButtonElement>(null);
   const input = useRef<HTMLInputElement>(null);
-  const resultList = useRef<HTMLDivElement>(null);
-  const returnFocus = useRef<HTMLElement | null>(null);
   const [open, setOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const { query, search, setSearch } = useDocsSearch({
-    client: searchClient,
-    delayMs: 80,
-  });
+  const [retry, setRetry] = useState(0);
+  const client = useMemo<SearchClient>(() => ({
+    deps: [retry],
+    async search(value) {
+      const { staticClient } = await import("fumadocs-core/search/client/orama-static");
+      // The library caches index promises by URL, including a failed request.
+      // Only an explicit retry gets a fresh key; normal queries reuse its index.
+      return staticClient({ from: retry ? `/api/search?attempt=${retry}` : "/api/search" }).search(value);
+    },
+  }), [retry]);
+  const { query, search, setSearch } = useDocsSearch({ client, delayMs: 80 });
 
   const results = useMemo(() => {
     const normalized = search.trim().toLowerCase();
-
     if (!normalized) return staticEntries.slice(0, 12);
-
-    const localMatches = staticEntries.filter((entry) =>
+    const local = staticEntries.filter((entry) =>
       `${entry.label} ${entry.group} ${entry.terms ?? ""}`.toLowerCase().includes(normalized),
     );
-
-    const indexedMatches: SearchEntry[] =
-      query.data && query.data !== "empty"
-        ? query.data.slice(0, 24).map((result) => ({
-            group:
-              result.breadcrumbs?.map(plainText).filter(Boolean).join(" / ") || "Documentation",
-            href: result.url,
-            label: plainText(result.content) || "Untitled section",
-          }))
-        : [];
-
-    const deduplicated = new Map<string, SearchEntry>();
-    for (const entry of [...localMatches, ...indexedMatches]) {
-      if (!deduplicated.has(entry.href)) deduplicated.set(entry.href, entry);
-    }
-
-    return [...deduplicated.values()].slice(0, 12);
-  }, [query.data, search]);
-
-  function show() {
-    const activeElement = document.activeElement;
-    returnFocus.current =
-      activeElement instanceof HTMLElement && activeElement !== document.body
-        ? activeElement
-        : launcher.current;
-    setOpen(true);
-  }
-
-  function hide() {
-    setOpen(false);
-  }
+    const indexed: SearchEntry[] = !query.error && !query.isLoading && query.data && query.data !== "empty"
+      ? query.data.slice(0, 24).map((result) => ({
+          group: result.breadcrumbs?.map(plainText).filter(Boolean).join(" / ") || "Documentation",
+          href: result.url, label: plainText(result.content) || "Untitled section",
+        }))
+      : [];
+    const unique = new Map<string, SearchEntry>();
+    for (const entry of [...local, ...indexed]) if (!unique.has(entry.href)) unique.set(entry.href, entry);
+    return [...unique.values()].slice(0, 12);
+  }, [query.data, query.error, query.isLoading, search]);
+  const activeIndex = Math.min(selectedIndex, Math.max(0, results.length - 1));
 
   function go(entry: SearchEntry) {
-    hide();
+    setOpen(false);
     navigate(entry.href);
   }
 
-  function revealSelectedResult(index: number) {
-    requestAnimationFrame(() => {
-      resultList.current
-        ?.querySelector<HTMLElement>(`#docs-search-result-${index}`)
-        ?.scrollIntoView({ block: "nearest" });
-    });
-  }
-
-  function moveSelection(index: number) {
-    const nextIndex = Math.max(0, Math.min(index, results.length - 1));
-    setSelectedIndex(nextIndex);
-    revealSelectedResult(nextIndex);
-  }
-
-  function onInputKeyDown(event: ReactKeyboardEvent<HTMLInputElement>) {
-    if (event.key === "ArrowDown") {
+  function onInputKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.nativeEvent.isComposing || event.nativeEvent.keyCode === 229) {
+      event.stopPropagation();
+      return;
+    }
+    const movement = { ArrowDown: activeIndex + 1, ArrowUp: activeIndex - 1, Home: 0, End: results.length - 1 };
+    if (event.key in movement) {
       event.preventDefault();
-      moveSelection(selectedIndex + 1);
-    } else if (event.key === "ArrowUp") {
+      const next = Math.max(0, Math.min(movement[event.key as keyof typeof movement], results.length - 1));
+      setSelectedIndex(next);
+      document.getElementById(`docs-search-result-${next}`)?.scrollIntoView({ block: "nearest" });
+    } else if (event.key === "Enter" && results[activeIndex]) {
       event.preventDefault();
-      moveSelection(selectedIndex - 1);
-    } else if (event.key === "Enter" && results[selectedIndex]) {
-      event.preventDefault();
-      go(results[selectedIndex]);
+      go(results[activeIndex]);
     }
   }
 
   useEffect(() => {
-    function onGlobalKeyDown(event: KeyboardEvent) {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+    function shortcut(event: globalThis.KeyboardEvent) {
+      if (!event.isComposing && event.keyCode !== 229 && (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
-        setOpen((current) => {
-          if (!current) {
-            const activeElement = document.activeElement;
-            returnFocus.current =
-              activeElement instanceof HTMLElement && activeElement !== document.body
-                ? activeElement
-                : launcher.current;
-          }
-          return !current;
-        });
+        setOpen((value) => !value);
       }
-
-      if (event.key === "Escape") setOpen(false);
     }
-
-    window.addEventListener("keydown", onGlobalKeyDown);
-    return () => window.removeEventListener("keydown", onGlobalKeyDown);
+    window.addEventListener("keydown", shortcut);
+    return () => window.removeEventListener("keydown", shortcut);
   }, []);
-
   useEffect(() => {
-    if (!open) return;
-
-    const returnTarget = returnFocus.current;
-    const launcherTarget = launcher.current;
-    setSearch("");
-    setSelectedIndex(0);
-    document.documentElement.classList.add("search-open");
-    document.querySelector<HTMLElement>(".site-frame")?.setAttribute("inert", "");
-    requestAnimationFrame(() => input.current?.focus());
-
-    return () => {
-      document.documentElement.classList.remove("search-open");
-      document.querySelector<HTMLElement>(".site-frame")?.removeAttribute("inert");
-      const focusTarget = returnTarget?.isConnected ? returnTarget : launcherTarget;
-      returnFocus.current = null;
-      requestAnimationFrame(() => focusTarget?.focus());
-    };
+    if (open) { setSearch(""); setSelectedIndex(0); }
   }, [open, setSearch]);
-
-  useEffect(() => {
-    setOpen(false);
-  }, [location.pathname]);
-
-  useEffect(() => {
-    setSelectedIndex(0);
-  }, [search]);
-
-  const activeResultId = results[selectedIndex] ? `docs-search-result-${selectedIndex}` : undefined;
+  useEffect(() => setOpen(false), [location.pathname]);
 
   return (
-    <>
-      <button
-        ref={launcher}
-        className="search-launcher pressable"
-        type="button"
-        aria-label="Search documentation"
-        title="Search documentation"
-        aria-haspopup="dialog"
-        onClick={show}
-      >
+    <Dialog.Root open={open} onOpenChange={setOpen}>
+      <Dialog.Trigger className="search-launcher pressable" aria-label="Search documentation" title="Search documentation">
         <Search aria-hidden="true" size={16} strokeWidth={2.4} />
         <span>Search</span>
-        <kbd>
-          <Command aria-hidden="true" size={11} />K
-        </kbd>
-      </button>
-
-      {open &&
-        typeof document !== "undefined" &&
-        createPortal(
-          <div className="search-overlay">
-            <button
-              className="search-overlay__dismiss"
-              type="button"
-              aria-label="Close search"
-              onClick={hide}
-            />
-            <dialog
-              open
-              className="search-dialog"
-              aria-modal="true"
-              aria-label="Search documentation"
-              onKeyDown={trapTabFocus}
-            >
-              <div className="search-dialog__input">
-                <Search aria-hidden="true" size={20} strokeWidth={2.3} />
-                {/* oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- The search input owns a custom listbox popup. */}
-                <input
-                  ref={input}
-                  value={search}
-                  type="search"
-                  placeholder="Search docs and components"
-                  aria-label="Search docs and components"
-                  role="combobox"
-                  aria-autocomplete="list"
-                  aria-expanded="true"
-                  aria-controls={resultListId}
-                  aria-activedescendant={activeResultId}
-                  onChange={(event) => setSearch(event.target.value)}
-                  onKeyDown={onInputKeyDown}
-                />
+        <kbd><Command aria-hidden="true" size={11} />K</kbd>
+      </Dialog.Trigger>
+      <Dialog.Portal>
+        <div className="search-overlay">
+          <Dialog.Backdrop className="search-overlay__dismiss" />
+          <Dialog.Popup className="search-dialog" aria-label="Search documentation" initialFocus={input}>
+            <div className="search-dialog__input">
+              <Search aria-hidden="true" size={20} strokeWidth={2.3} />
+              {/* oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- The input owns a custom listbox. */}
+              <input
+                ref={input}
+                value={search}
+                type="search"
+                placeholder="Search docs and components"
+                aria-label="Search docs and components"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-expanded="true"
+                aria-controls={resultListId}
+                aria-activedescendant={results[activeIndex] ? `docs-search-result-${activeIndex}` : undefined}
+                onChange={(event) => { setSelectedIndex(0); setSearch(event.target.value); }}
+                onKeyDown={onInputKeyDown}
+              />
+              <Dialog.Close className="icon-button" aria-label="Close search">
+                <X aria-hidden="true" size={18} strokeWidth={2.4} />
+              </Dialog.Close>
+            </div>
+            {query.error && (
+              <div className="search-dialog__empty" role="status">
+                <p>Full-text search is unavailable. Local navigation results remain available.</p>
+                <button type="button" disabled={query.isLoading} onClick={() => setRetry((value) => value + 1)}>Retry full-text search</button>
+              </div>
+            )}
+            {/* oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- Rich results use a custom listbox. */}
+            <div id={resultListId} className="search-dialog__results" role="listbox" aria-label="Search results" aria-busy={query.isLoading || undefined}>
+              {results.map((entry, index) => (
+                // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- The input owns active-descendant focus.
                 <button
-                  className="icon-button"
+                  id={`docs-search-result-${index}`}
+                  key={entry.href}
                   type="button"
-                  aria-label="Close search"
-                  onClick={hide}
+                  role="option"
+                  tabIndex={-1}
+                  aria-selected={activeIndex === index}
+                  className={activeIndex === index ? "is-selected" : undefined}
+                  onMouseEnter={() => setSelectedIndex(index)}
+                  onClick={() => go(entry)}
                 >
-                  <X aria-hidden="true" size={18} strokeWidth={2.4} />
+                  <span><small>{entry.group}</small><strong>{entry.label}</strong></span>
+                  <ArrowRight aria-hidden="true" size={17} strokeWidth={2.4} />
                 </button>
-              </div>
-
-              {/* oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- Rich search results require a custom listbox. */}
-              <div
-                ref={resultList}
-                id={resultListId}
-                className="search-dialog__results"
-                role="listbox"
-                aria-busy={query.isLoading || undefined}
-              >
-                {results.map((entry, index) => (
-                  // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- Input focus stays on the owning combobox while this option is active.
-                  <button
-                    id={`docs-search-result-${index}`}
-                    key={`${entry.group}:${entry.href}`}
-                    type="button"
-                    role="option"
-                    aria-selected={selectedIndex === index}
-                    className={selectedIndex === index ? "is-selected" : undefined}
-                    onMouseEnter={() => setSelectedIndex(index)}
-                    onClick={() => go(entry)}
-                  >
-                    <span>
-                      <small>{entry.group}</small>
-                      <strong>{entry.label}</strong>
-                    </span>
-                    <ArrowRight aria-hidden="true" size={17} strokeWidth={2.4} />
-                  </button>
-                ))}
-
-                {results.length === 0 && (
-                  <div className="search-dialog__empty">
-                    {query.isLoading ? "Loading full-text index..." : `No matches for "${search}"`}
-                  </div>
-                )}
-              </div>
-
-              <footer className="search-dialog__footer">
-                <span>
-                  <kbd>↑</kbd>
-                  <kbd>↓</kbd> Navigate
-                </span>
-                <span>
-                  <kbd>Enter</kbd> Open
-                </span>
-                <span>
-                  <kbd>Esc</kbd> Close
-                </span>
-              </footer>
-            </dialog>
-          </div>,
-          document.body,
-        )}
-    </>
+              ))}
+              {results.length === 0 && (
+                <div className="search-dialog__empty">
+                  {query.isLoading ? "Loading full-text index..." : `No matches for "${search}"`}
+                </div>
+              )}
+            </div>
+            <footer className="search-dialog__footer">
+              <span><kbd>↑</kbd><kbd>↓</kbd> Navigate</span>
+              <span><kbd>Enter</kbd> Open</span>
+              <span><kbd>Esc</kbd> Close</span>
+            </footer>
+          </Dialog.Popup>
+        </div>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }

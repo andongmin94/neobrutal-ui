@@ -217,7 +217,7 @@ const RadioGroupItem = React.forwardRef<HTMLButtonElement, RadioGroupItemProps>(
         ref={forwardedRef}
         data-slot="radio-group-item"
         className={cn(
-          "group/radio-group-item peer relative flex aspect-square size-4 shrink-0 rounded-full border-2 border-border text-black outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:text-white",
+          "group/radio-group-item peer relative flex aspect-square size-4 shrink-0 rounded-full border-2 border-border text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background disabled:cursor-not-allowed disabled:opacity-50",
           className,
         )}
         nativeButton={resolvedNativeButton}

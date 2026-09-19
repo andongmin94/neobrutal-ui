@@ -101,45 +101,55 @@ Each pairs controls with calculated summaries and an exact data table. All chart
 
 ## Development
 
-Use Node.js 22.12 or newer within the Node 22 release line and npm.
-`format` writes fixes; `lint` only checks files.
+Use Node.js 22.12 or newer within the Node 22 release line and npm. From the repository root:
 
 ```bash
-cd registry
-npm ci
-npm run format
-npm run lint
-npm run typecheck
-npm run build
-npm run registry:validate
-npm run registry:check
-npm run consumer:verify
+npm ci --prefix registry
+npm ci --prefix docs
+npm run build --prefix registry
+npm run dev --prefix docs
+```
 
-cd ../docs
-npm ci
-npm run format
-npm run lint
-npm run typecheck
-npm run build
-npm run check:budget
-npm test
-npx playwright install --with-deps chromium firefox webkit
-npm run test:browser
-npm run test:browser:cross
+`registry/src` is the source of truth. The registry build generates installation JSON and
+synchronizes components, templates, theme modules, theme CSS, and catalog descriptions into docs.
+Generated paths are ignored by Git: rebuild them instead of editing or committing copies.
+The documentation site uses React Router, Vite, and Fumadocs MDX. Preview modules are discovered
+from `docs/src/examples/ui`; `_`-prefixed files are helpers. Markdown styling uses explicit
+`md-*` classes so document typography cannot accidentally restyle live component previews.
 
-cd ..
+`format` writes fixes; `lint` only checks files. During implementation, format changed source
+and run its focused tests. Before publishing, execute the complete sequence in
+[Verify](.github/workflows/ci.yml), including schema/contracts, type and asset checks, all
+independent component installations, browser suites, and clean generation. The release scope
+and evidence limits are defined in [QUALITY.md](QUALITY.md); contributor rules are in
+[AGENTS.md](AGENTS.md).
+
+For the complete isolated installation matrix after building the registry:
+
+```bash
+node registry/scripts/verify-independent-items.mjs
+```
+
+Every file-bearing item is installed into its own fresh project with only its declared
+dependencies and the explicit base. Components and recipes are checked in Next.js and Vite;
+page templates are checked in Next.js. The existing-project integration check separately tests
+custom aliases, selected themes, application CSS, and customized components without docs CSS:
+
+```bash
 npm run consumer:verify --prefix registry -- --integration
 ```
 
-`registry/src` is the source of truth.
-The registry build generates installable JSON and synchronizes the copies used by the docs.
-Do not edit generated copies by hand; CI checks that they match their source.
+## Deployment
 
-Integration verification runs current-CLI onboarding and existing-project scenarios with custom
-aliases, a selected theme, application CSS, and a customized component. It renders the installed
-applications without documentation CSS across three browser engines.
-Production verification checks the deployed commit, security headers, registry endpoints,
-representative fresh installs, and Chromium, Firefox, and WebKit behavior.
+Vercel uses `docs` as its root and `build/client` as output. `docs/vercel.json` installs both
+projects and builds the registry before the documentation. The generated registry is served
+from `/r`; no separate registry server or npm release is required. Set `REGISTRY_BASE_URL`
+before building only when hosting registry dependencies at another origin.
+
+The production Verify job checks the exact deployed commit, security headers, live catalog,
+representative fresh installs, and cross-browser behavior. Both jobs must pass for the final
+commit. Directory metadata is prepared in `registry/directory-entry.json`; official submission
+is a separate owner decision, not an automatic consequence of a successful build.
 
 ## Repository layout
 

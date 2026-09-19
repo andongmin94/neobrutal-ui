@@ -64,8 +64,7 @@
   }
 }
 
-html.menu-open,
-html.search-open {
+html.menu-open {
   overflow: hidden;
 }
 
@@ -135,21 +134,6 @@ body::-webkit-scrollbar-thumb {
   text-decoration: none;
 }
 
-.template-preview-link img {
-  scale: 1;
-  transition: scale 150ms ease;
-}
-
-@media (hover: hover) {
-  .template-preview-link:hover img {
-    scale: 1.01;
-  }
-}
-
-.template-preview-link:focus-visible img {
-  scale: 1.01;
-}
-
 .icon-button {
   display: inline-grid;
   width: 40px;
@@ -194,10 +178,5 @@ body::-webkit-scrollbar-thumb {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-  }
-
-  .template-preview-link:hover img,
-  .template-preview-link:focus-visible img {
-    scale: 1;
   }
 }

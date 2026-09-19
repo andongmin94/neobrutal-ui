@@ -165,11 +165,9 @@ function Calendar({
           if (orientation === "left") {
             return <ChevronLeftIcon className={cn("size-4", className)} {...props} />;
           }
-
           if (orientation === "right") {
             return <ChevronRightIcon className={cn("size-4", className)} {...props} />;
           }
-
           return <ChevronDownIcon className={cn("size-4", className)} {...props} />;
         },
         DayButton: ({ ...props }) => <CalendarDayButton locale={locale} {...props} />,
@@ -197,7 +195,6 @@ function CalendarDayButton({
   ...props
 }: React.ComponentProps<typeof DayButton> & { locale?: Partial<Locale> }) {
   const defaultClassNames = getDefaultClassNames();
-
   const ref = React.useRef<HTMLButtonElement>(null);
   React.useEffect(() => {
     if (modifiers.focused) ref.current?.focus();
@@ -205,6 +202,7 @@ function CalendarDayButton({
 
   return (
     <Button
+      ref={ref}
       variant="noShadow"
       size="icon-sm"
       data-day={day.date.toLocaleDateString(locale?.code)}
@@ -218,7 +216,7 @@ function CalendarDayButton({
       data-range-end={modifiers.range_end}
       data-range-middle={modifiers.range_middle}
       className={cn(
-        "relative isolate z-10 size-9 p-0 font-base leading-none aria-selected:opacity-100 group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:ring-2 group-data-[focused=true]/day:ring-black group-data-[focused=true]/day:ring-offset-2 data-[range-end=true]:rounded-(--cell-radius) data-[range-end=true]:bg-black data-[range-end=true]:text-white data-[range-middle=true]:rounded-none data-[range-middle=true]:bg-black/50 data-[range-middle=true]:text-white data-[range-start=true]:rounded-(--cell-radius) data-[range-start=true]:bg-black data-[range-start=true]:text-white data-[selected-single=true]:rounded-(--cell-radius) data-[selected-single=true]:bg-black data-[selected-single=true]:text-white [&>span]:text-xs [&>span]:opacity-70",
+        "relative isolate z-10 size-9 p-0 font-base leading-none ring-offset-background aria-selected:opacity-100 group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:ring-2 group-data-[focused=true]/day:ring-ring group-data-[focused=true]/day:ring-offset-2 data-[range-end=true]:rounded-(--cell-radius) data-[range-end=true]:bg-black data-[range-end=true]:text-white data-[range-middle=true]:rounded-none data-[range-middle=true]:bg-black/50 data-[range-middle=true]:text-white data-[range-start=true]:rounded-(--cell-radius) data-[range-start=true]:bg-black data-[range-start=true]:text-white data-[selected-single=true]:rounded-(--cell-radius) data-[selected-single=true]:bg-black data-[selected-single=true]:text-white [&>span]:text-xs [&>span]:opacity-70",
         defaultClassNames.day_button,
         className,
       )}

@@ -83,17 +83,34 @@ export default function ProfileForm() {
 }
 ```
 
+## Optional help and custom controls
+
+`FormDescription` and `FormMessage` are optional. Render at most one of each per `FormItem`.
+Their references are registered when mounted and removed when hidden or unmounted, including when an error clears.
+Existing `aria-describedby` references on the control and on `FormControl` are combined without duplicates.
+Application-owned reference targets must exist in the document.
+
+An explicit control ID is preserved and its label follows it after hydration. For a label that must also target a custom control before hydration, pass the same explicit ID as `FormLabel.htmlFor`.
+Custom controls must forward their HTML props and ref to the actual focusable element.
+The wrapper composes child and wrapper event handlers and refs using Base UI, not a second input.
+
+<ComponentPreview component="form" example="composition">
+<include cwd lang="tsx">
+  ./src/examples/ui/form/composition.tsx
+</include>
+</ComponentPreview>
+
 ## API reference
 
 | Part | Purpose and usage |
 | --- | --- |
 | `Form` | Provides React Hook Form methods. Spread the result of `useForm` onto it. |
 | `FormField` | Binds a typed field using `control`, `name`, and `render`. |
-| `FormItem` | Wraps one field and shares its label, control, and message IDs. |
+| `FormItem` | Wraps one field and shares its label, control, and mounted message IDs. |
 | `FormLabel` | Labels the control. Place it inside `FormItem`. |
-| `FormControl` | Passes the field ID, help references, and invalid state to one control that forwards props and ref. |
-| `FormDescription` | Adds help text that is linked to the control automatically. |
-| `FormMessage` | Shows validation feedback that is linked to the control automatically. |
+| `FormControl` | Passes the field ID, mounted help references, and invalid state to one control that forwards props and ref. |
+| `FormDescription` | Optional help text linked to the control after mounting; supports a custom ID. |
+| `FormMessage` | Optional validation feedback linked while rendered; supports a custom ID. |
 
 Form helpers require `Form`, `FormField`, and `FormItem` in the field tree. A missing provider
 produces an explicit diagnostic. `FormControl` does not accept an empty child, text, a Fragment,

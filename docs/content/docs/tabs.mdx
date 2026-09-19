@@ -19,7 +19,7 @@ Complete the [base setup](/docs/installation). For manual installation:
 <Installation component="tabs">
 
 ```bash
-npm install @base-ui/react@^1.8.0
+npm install @base-ui/react@^1.8.0 class-variance-authority@^0.7.1
 ```
 
 Create **`components/ui/tabs.tsx`**:
@@ -53,13 +53,17 @@ export default function ProjectTabs() {
 | Prop / part | Purpose | Default |
 | --- | --- | --- |
 | `Tabs.value` / `onValueChange` | Controlled active panel | Uncontrolled |
-| `Tabs.defaultValue` | Initial panel | Unset |
+| `Tabs.defaultValue` | Initial panel; specify a matching trigger value | Base UI default |
 | `Tabs.orientation` | Horizontal or vertical navigation | `horizontal` |
-| `Tabs.activationMode` | automatic or manual | `automatic` |
+| `TabsList.activateOnFocus` | Activate with arrow-key focus; false requires Enter or Space | `true` |
+| `TabsList.loopFocus` | Wrap focus at the ends | `true` |
 | `TabsList.variant` | default or line styling | `default` |
 | `TabsTrigger.value` / `TabsContent.value` | Matching panel identifier | Required |
 | `TabsTrigger.disabled` | Unavailable tab | `false` |
+| `TabsContent.keepMounted` | Retain an inactive panel in the DOM | `false` |
+
+Tabs delegates selection, keyboard navigation, refs, and rendering to Base UI. Use its `render` prop for element composition and `activateOnFocus` for manual activation; no second state or keyboard implementation is maintained.
 
 ## Accessibility
 
-Name the tab list. Keep labels short and test arrows, Home/End, and Tab into the panel. Use manual activation when opening a panel triggers expensive work. Do not hide critical instructions behind an undiscoverable tab.
+Name the tab list. Keep labels short and test arrows, Home/End, and Tab into the panel. Set `activateOnFocus={false}` on TabsList when opening a panel triggers expensive work. Do not hide critical instructions behind an undiscoverable tab.

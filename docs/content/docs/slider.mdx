@@ -59,12 +59,16 @@ export default function VolumeSetting() {
 | Prop | Purpose | Default |
 | --- | --- | --- |
 | `value` / `onValueChange` | Controlled numeric array | Uncontrolled |
-| `defaultValue` | Initial thumb values | Wrapper default |
+| `defaultValue` | Initial thumb values | `[min]` |
 | `min` / `max` / `step` | Range and step | 0 / 100 / 1 |
 | `orientation` | Horizontal or vertical layout | `horizontal` |
 | `getAriaLabel` | Name for each thumb index | Unset |
 | `disabled` | Prevent adjustment | `false` |
-| `minStepsBetweenThumbs` | Minimum thumb separation | `0` |
+| `minStepsBetweenValues` | Minimum thumb separation in steps | `0` |
+| `thumbCollisionBehavior` | `swap`, `push`, or `none` | `swap` |
+| `onValueCommitted` | Work performed when an interaction commits | Unset |
+
+Base UI owns pointer capture, keyboard stepping, value normalization, collision behavior, form integration, and commit events. The wrapper only composes its styled parts and labels; it does not simulate native events or maintain a second slider engine.
 
 ## Accessibility
 

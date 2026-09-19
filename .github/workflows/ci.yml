@@ -56,28 +56,33 @@ jobs:
         working-directory: docs
         run: npx playwright install --with-deps chromium firefox webkit
 
+      - name: Verify docs in Chromium
+        working-directory: docs
+        run: npm run test:browser
+
+      - name: Verify representative Firefox, WebKit, and reflow behavior
+        working-directory: docs
+        run: npm run test:browser:cross
+
       - name: Verify README setup and rendered existing-project integration
         run: npm run consumer:verify --prefix registry -- --integration
 
-      # Playwright clears test-results at the start of the following docs suites.
-      - name: Save installed-consumer verification evidence
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: installed-consumer-checks
-          retention-days: 3
-          if-no-files-found: ignore
-          path: docs/test-results/installed-consumers
-
-      - name: Verify fresh consumers and every analytical chart independently
+      - name: Verify fresh consumers and every installable item independently
         working-directory: registry
         run: |
           npm run consumer:verify
-          items=$(node --input-type=module -e 'import fs from "node:fs"; const {items} = JSON.parse(fs.readFileSync("public/r/registry.json", "utf8")); console.log(items.filter(item => item.name.startsWith("chart-") && item.categories?.includes("recipe")).map(item => item.name).join(" "));')
-          test -n "$items"
-          for item in $items; do
-            npm run consumer:verify -- --item="$item"
-          done
+          node scripts/verify-independent-items.mjs
+
+      - name: Save installation verification evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: installation-checks
+          retention-days: 3
+          if-no-files-found: ignore
+          path: |
+            docs/test-results/installed-consumers
+            docs/test-results/independent-items
 
       - name: Verify clean generation and unchanged sources
         run: |
@@ -89,14 +94,6 @@ jobs:
             git status --short
             exit 1
           fi
-
-      - name: Verify docs in Chromium
-        working-directory: docs
-        run: npm run test:browser
-
-      - name: Verify representative Firefox, WebKit, and reflow behavior
-        working-directory: docs
-        run: npm run test:browser:cross
 
       - name: Capture formatting diagnostics without modifying sources
         if: failure()

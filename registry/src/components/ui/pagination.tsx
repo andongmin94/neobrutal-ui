@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "lucide-react";
 
 const paginationLinkClassName =
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-base border-2 border-border bg-main text-sm font-base text-main-foreground ring-offset-white transition-all focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0";
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-base border-2 border-border bg-main text-sm font-base text-main-foreground ring-offset-background transition-all focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0";
 
 const paginationLinkSizeClassNames = {
   default: "h-10 px-4 py-2",
@@ -36,7 +36,7 @@ function PaginationContent({ className, ...props }: React.ComponentProps<"ul">) 
 }
 
 function PaginationItem({ className, ...props }: React.ComponentProps<"li">) {
-  return <li data-slot="pagination-item" className={cn("", className)} {...props} />;
+  return <li data-slot="pagination-item" className={className} {...props} />;
 }
 
 type PaginationLinkProps = {
@@ -53,7 +53,7 @@ function PaginationLink({ className, isActive, size = "icon", ...props }: Pagina
         paginationLinkClassName,
         paginationLinkSizeClassNames[size],
         className,
-        isActive && "bg-black text-white",
+        isActive && "bg-foreground text-background",
       )}
       {...props}
     />

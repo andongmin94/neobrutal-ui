@@ -92,7 +92,6 @@ function collectSelectItems(children: React.ReactNode, items: SelectItemDefiniti
     if (!React.isValidElement(child)) {
       return;
     }
-
     if (hasSelectItemProps(child.props)) {
       items.push({
         label: child.props.label ?? child.props.textValue ?? child.props.children,
@@ -100,12 +99,10 @@ function collectSelectItems(children: React.ReactNode, items: SelectItemDefiniti
       });
       return;
     }
-
     if (hasChildren(child.props)) {
       collectSelectItems(child.props.children, items);
     }
   });
-
   return items;
 }
 
@@ -115,7 +112,6 @@ function mergePopupStyle(
   if (typeof style === "function") {
     return (state) => ({ ...selectCssVariables, ...style(state) });
   }
-
   return { ...selectCssVariables, ...style };
 }
 
@@ -129,7 +125,6 @@ function normalizeCollisionBoundary(
     }
     return boundaries;
   }
-
   return collisionBoundary ?? undefined;
 }
 
@@ -137,7 +132,6 @@ function preserveRadixEventCancellation(
   child: React.ReactElement<{ [key: string]: unknown; children?: React.ReactNode }>,
 ) {
   const eventProps: Record<string, unknown> = {};
-
   for (const [name, handler] of Object.entries(child.props)) {
     if (/^on[A-Z]/.test(name) && typeof handler === "function") {
       eventProps[name] = (...args: unknown[]) => {
@@ -149,17 +143,14 @@ function preserveRadixEventCancellation(
       };
     }
   }
-
   return React.cloneElement(child, eventProps);
 }
 
 function getAsChildElement(children: React.ReactNode, componentName: string) {
   const child = React.Children.toArray(children).find(React.isValidElement);
-
   if (!child) {
     throw new Error(`${componentName} with asChild requires a valid React element child.`);
   }
-
   return preserveRadixEventCancellation(
     child as React.ReactElement<{
       [key: string]: unknown;
@@ -180,7 +171,6 @@ function toPointerEvent(originalEvent: Event) {
   if (originalEvent instanceof PointerEvent) {
     return originalEvent;
   }
-
   const mouseEvent = originalEvent instanceof MouseEvent ? originalEvent : undefined;
   return new PointerEvent(originalEvent.type, {
     altKey: mouseEvent?.altKey,
@@ -204,12 +194,10 @@ function createPointerDownOutsideEvent(name: string, originalEvent: Event) {
     cancelable: true,
     detail: { originalEvent: toPointerEvent(originalEvent) },
   });
-
   Object.defineProperty(event, "target", {
     configurable: true,
     value: originalEvent.target,
   });
-
   return event;
 }
 
@@ -251,7 +239,6 @@ function Select({
     if (isControlled || associatedForm === null) {
       return undefined;
     }
-
     const reset = () => setUncontrolledValue(initialValueRef.current);
     associatedForm.addEventListener("reset", reset);
     return () => associatedForm.removeEventListener("reset", reset);
@@ -288,7 +275,6 @@ function Select({
               eventDetails.cancel();
             }
           }
-
           if (!eventDetails.isCanceled) {
             onOpenChange?.(nextOpen, eventDetails);
           }
@@ -301,7 +287,6 @@ function Select({
             eventDetails.cancel();
             return;
           }
-
           onValueChange?.(nextValue, eventDetails);
           if (!eventDetails.isCanceled && !isControlled) {
             setUncontrolledValue(nextValue);
@@ -313,7 +298,6 @@ function Select({
       </SelectPrimitive.Root>
     </SelectDismissContext.Provider>
   );
-
   return dir === undefined ? (
     select
   ) : (
@@ -329,7 +313,6 @@ function SelectGroup({
   ...props
 }: SelectPrimitive.Group.Props & { asChild?: boolean }) {
   const renderElement = asChild ? getAsChildElement(children, "SelectGroup") : render;
-
   return (
     <SelectPrimitive.Group
       data-slot="select-group"
@@ -352,7 +335,6 @@ function SelectValue({
   const renderElement = asChild
     ? getAsChildElement(children as React.ReactNode, "SelectValue")
     : render;
-
   return (
     <SelectPrimitive.Value
       data-slot="select-value"
@@ -387,7 +369,6 @@ function SelectTrigger({
     </>
   );
   const renderElement = child ? React.cloneElement(child, undefined, triggerChildren) : render;
-
   return (
     <SelectPrimitive.Trigger
       data-slot="select-trigger"
@@ -395,7 +376,7 @@ function SelectTrigger({
       data-state={selectContext ? (selectContext.open ? "open" : "closed") : undefined}
       render={renderElement}
       className={cn(
-        "flex h-10 w-full items-center justify-between gap-2 rounded-base border-2 border-border bg-main px-3 py-2 text-sm font-base text-main-foreground ring-offset-white whitespace-nowrap outline-hidden transition-colors select-none placeholder:text-foreground/50 focus:ring-2 focus:ring-black focus:ring-offset-2 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 data-placeholder:text-main-foreground/70 data-[size=sm]:h-9 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "flex h-10 w-full items-center justify-between gap-2 rounded-base border-2 border-border bg-main px-3 py-2 text-sm font-base text-main-foreground ring-offset-background whitespace-nowrap outline-hidden transition-colors select-none placeholder:text-foreground/50 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 data-placeholder:text-main-foreground/70 data-[size=sm]:h-9 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
@@ -470,19 +451,15 @@ function SelectContent({
     ? (closeType) => {
         const event = new Event("select.closeAutoFocus", { cancelable: true });
         onCloseAutoFocus(event);
-
         if (event.defaultPrevented) {
           return false;
         }
-
         if (typeof finalFocus === "function") {
           return finalFocus(closeType);
         }
-
         if (typeof finalFocus === "object" && finalFocus !== null) {
           return finalFocus.current;
         }
-
         return typeof finalFocus === "boolean" ? finalFocus : true;
       }
     : finalFocus;
@@ -491,7 +468,6 @@ function SelectContent({
     if (dismissContext === null) {
       return undefined;
     }
-
     const handlers = { onEscapeKeyDown, onPointerDownOutside };
     const handlersRef = dismissContext.handlersRef;
     handlersRef.current = handlers;
@@ -506,7 +482,6 @@ function SelectContent({
     if (!dismissContext?.open || dismissContext.currentValue !== undefined || !popupElement) {
       return undefined;
     }
-
     const frame = requestAnimationFrame(() => {
       popupElement
         .querySelector<HTMLElement>('[data-slot="select-item"]:not([data-disabled])')
@@ -557,11 +532,9 @@ function SelectContent({
       </SelectPrimitive.Popup>
     </SelectPrimitive.Positioner>
   );
-
   if (forceMount) {
     return typeof document === "undefined" ? null : createPortal(positionedContent, document.body);
   }
-
   return <SelectPrimitive.Portal>{positionedContent}</SelectPrimitive.Portal>;
 }
 
@@ -573,7 +546,6 @@ function SelectLabel({
   ...props
 }: SelectPrimitive.GroupLabel.Props & { asChild?: boolean }) {
   const renderElement = asChild ? getAsChildElement(children, "SelectLabel") : render;
-
   return (
     <SelectPrimitive.GroupLabel
       data-slot="select-label"
@@ -618,7 +590,6 @@ function SelectItem({
     </>
   );
   const renderElement = child ? React.cloneElement(child, undefined, itemChildren) : render;
-
   return (
     <SelectPrimitive.Item
       data-slot="select-item"
@@ -645,7 +616,6 @@ function SelectSeparator({
   ...props
 }: SelectPrimitive.Separator.Props & { asChild?: boolean }) {
   const renderElement = asChild ? getAsChildElement(children, "SelectSeparator") : render;
-
   return (
     <SelectPrimitive.Separator
       data-slot="select-separator"

@@ -4,7 +4,7 @@ description: A split layout whose panels can be resized with a separator.
 shadcnDocsLink: https://react-resizable-panels.vercel.app/
 ---
 
-Use Resizable for workspaces, inspectors, and editors. Give the group a bounded size and each panel a useful minimum. The wrapper uses react-resizable-panels and interprets numeric panel sizes as percentages.
+Use Resizable for workspaces, inspectors, and editors. Give the group a bounded size and each panel a useful minimum. The wrappers use the current react-resizable-panels API directly: numeric sizes are pixels; use explicit strings such as `"35%"` for percentages.
 
 <ComponentPreview component="resizable">
 <include cwd lang="tsx">
@@ -57,11 +57,16 @@ export default function SplitWorkspace() {
 | Prop / part | Purpose | Default |
 | --- | --- | --- |
 | `ResizablePanelGroup.orientation` | Split direction | `horizontal` |
-| `ResizablePanel.defaultSize` | Initial size; numbers are percentages | Distributed by group |
-| `ResizablePanel.minSize` / `maxSize` | Resize constraints | Upstream defaults |
+| `ResizablePanel.defaultSize` | Initial size; number = pixels, `"35%"` = percentage | Distributed by group |
+| `ResizablePanel.minSize` / `maxSize` | Resize constraints in the same units | Upstream defaults |
 | `ResizablePanel.collapsible` | Allow collapse | `false` |
+| `ResizablePanel.panelRef` | Native panel imperative handle | Unset |
+| `ResizablePanelGroup.groupRef` | Native group imperative handle | Unset |
+| `ResizablePanelGroup.onLayoutChanged` | Receive the native layout after resizing | Unset |
 | `ResizableHandle.withHandle` | Display a grip | `false` |
 | `ResizableHandle.disabled` | Prevent adjustment | `false` |
+
+For persisted layouts, use `useDefaultLayout` from react-resizable-panels and pass its returned layout properties to the group. The wrappers do not implement a second storage system, translate callbacks, or reinterpret native size units.
 
 ## Accessibility
 
