@@ -105,6 +105,8 @@ export default function ChartWorkAllocation() {
                 data={data}
                 dataKey="hours"
                 nameKey="work"
+                startAngle={0}
+                endAngle={-360}
                 innerRadius="55%"
                 outerRadius="85%"
                 paddingAngle={3}

@@ -90,13 +90,13 @@ export async function verifyInstalledBrowser({ target, directory, scenario, root
             if (scenario === "existing") {
               await expect(page.locator(".consumer-sentinel")).toHaveCSS("border-top-width", "7px");
               await expect(button).toHaveCSS("border-radius", "13px");
-              const themeItem = JSON.parse(
-                fs.readFileSync(path.join(root, "public/r/theme-red.json"), "utf8"),
-              );
-              const main = await page.evaluate(() =>
-                getComputedStyle(document.documentElement).getPropertyValue("--main").trim(),
-              );
-              assert.equal(main.toLowerCase(), themeItem.cssVars[theme].main.toLowerCase());
+              const palette = ["red", "yellow"].map((name) => {
+                const item = JSON.parse(
+                  fs.readFileSync(path.join(root, `public/r/theme-${name}.json`), "utf8"),
+                );
+                return item.cssVars[theme].main;
+              });
+              await assertThemeColor(button, palette, expect);
               const revenue = page.locator('[data-chart-recipe="revenue"]');
               await expect(revenue).toContainText("$74,300");
               await revenue.getByLabel("Revenue period").selectOption("8");
@@ -111,6 +111,19 @@ export async function verifyInstalledBrowser({ target, directory, scenario, root
               await expect(recordsPane.locator("tbody tr")).toHaveCount(1);
               await recordsPane.getByLabel("Filter email records").fill("");
               await expect(recordsPane.locator("tbody tr")).toHaveCount(5);
+              for (const chart of await page.locator("[data-chart-recipe]").all()) {
+                await expect(chart.locator(".recharts-surface")).toBeVisible();
+                if ((await chart.locator("details").getAttribute("open")) === null) {
+                  await chart.locator("summary").click();
+                }
+                await expect(chart.locator("tbody tr")).not.toHaveCount(0);
+                if (engine === "chromium") {
+                  const kind = await chart.getAttribute("data-chart-recipe");
+                  await chart.screenshot({
+                    path: path.join(reportDirectory, `${engine}-${width}-${theme}-${kind}.png`),
+                  });
+                }
+              }
             }
             await assertPage(page, expect, AxeBuilder, errors, width);
             await page.screenshot({
@@ -156,6 +169,7 @@ export async function verifyInstalledBrowser({ target, directory, scenario, root
                   await expect(summary.locator("..")).toHaveAttribute("open", "");
                 }
                 await assertPage(page, expect, AxeBuilder, errors, width);
+                await page.evaluate(() => window.scrollTo(0, 0));
                 await page.screenshot({
                   path: path.join(
                     reportDirectory,
@@ -197,6 +211,29 @@ export async function verifyInstalledBrowser({ target, directory, scenario, root
     fs.writeFileSync(path.join(reportDirectory, "server.log"), log);
   }
   console.log(`Installed ${target}/${scenario}: ${records.length} rendered checks passed.`);
+}
+
+async function assertThemeColor(button, palette, expect) {
+  const pixels = await button.evaluate((node, references) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+    const context = canvas.getContext("2d", { colorSpace: "srgb" });
+    if (!context) throw new Error("Cannot compare rendered theme colors");
+    const token = getComputedStyle(document.documentElement).getPropertyValue("--main").trim();
+    // CSS optimization may serialize OKLCH as Lab. Compare the rendered
+    // token and button to the selected palette, not their notation strings.
+    return [token, getComputedStyle(node).backgroundColor, ...references].map((color) => {
+      if (!CSS.supports("color", color)) throw new Error(`Invalid theme color: ${color}`);
+      context.clearRect(0, 0, 1, 1);
+      context.fillStyle = color;
+      context.fillRect(0, 0, 1, 1);
+      return Array.from(context.getImageData(0, 0, 1, 1).data);
+    });
+  }, palette);
+  expect(pixels[0], "the selected red theme must remain applied").toEqual(pixels[2]);
+  expect(pixels[1], "the button must render the selected theme").toEqual(pixels[2]);
+  expect(pixels[0], "the base yellow must not replace the selected red").not.toEqual(pixels[3]);
 }
 
 async function assertPage(page, expect, AxeBuilder, errors, width) {
