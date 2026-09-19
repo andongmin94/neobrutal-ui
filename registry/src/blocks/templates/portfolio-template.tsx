@@ -67,7 +67,9 @@ export default function PortfolioTemplate() {
       <main className="flex-1">
         <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
           <section aria-labelledby="portfolio-title">
-            <p className="mb-3 font-mono text-xs uppercase tracking-widest">Independent practice / Seoul</p>
+            <p className="mb-3 font-mono text-xs uppercase tracking-widest">
+              Independent practice / Seoul
+            </p>
             <h1 id="portfolio-title" className="font-heading text-4xl sm:text-5xl">
               Sora Han
             </h1>
@@ -82,9 +84,21 @@ export default function PortfolioTemplate() {
 
           <dl className="mt-7 grid gap-4 border-y-2 border-border py-5 sm:grid-cols-3">
             {[
-              ["01 / Frame", "Product direction", "Scope, workflows, and information architecture."],
-              ["02 / Shape", "Interface systems", "Components, interaction states, and visual language."],
-              ["03 / Ship", "Front-end delivery", "Responsive React interfaces and usability checks."],
+              [
+                "01 / Frame",
+                "Product direction",
+                "Scope, workflows, and information architecture.",
+              ],
+              [
+                "02 / Shape",
+                "Interface systems",
+                "Components, interaction states, and visual language.",
+              ],
+              [
+                "03 / Ship",
+                "Front-end delivery",
+                "Responsive React interfaces and usability checks.",
+              ],
             ].map(([step, title, detail]) => (
               <div key={step}>
                 <dt className="text-xs text-foreground/70">{step}</dt>
@@ -141,7 +155,8 @@ export default function PortfolioTemplate() {
           <section className="mt-9" aria-label="Start a project">
             <h2 className="text-xl font-heading">Have a complex workflow to simplify?</h2>
             <p className="mt-2 text-sm leading-6 text-foreground/75">
-              Tell me about the people using it, the current friction, and what a useful first release would do.
+              Tell me about the people using it, the current friction, and what a useful first
+              release would do.
             </p>
           </section>
           <div

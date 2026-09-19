@@ -188,7 +188,13 @@ function PostEditorPane({
         </div>
 
         <div className="flex flex-wrap gap-3">
-          <Button type="button" size="sm" variant="neutral" disabled={!post.dirty} onClick={onDiscard}>
+          <Button
+            type="button"
+            size="sm"
+            variant="neutral"
+            disabled={!post.dirty}
+            onClick={onDiscard}
+          >
             <RotateCcw aria-hidden="true" />
             Discard
           </Button>
@@ -352,9 +358,9 @@ export default function CmsTemplate() {
       current.map((post) => {
         if (post.id !== selectedId) return post;
         const next = { ...post, ...changes };
-        next.dirty = !saved || (["body", "status", "summary", "title"] as const).some(
-          (key) => next[key] !== saved[key],
-        );
+        next.dirty =
+          !saved ||
+          (["body", "status", "summary", "title"] as const).some((key) => next[key] !== saved[key]);
         return next;
       }),
     );
@@ -370,7 +376,7 @@ export default function CmsTemplate() {
       title: getDisplayPostTitle(selectedPost),
       updatedLabel: "Just now",
     };
-    setPosts((current) => current.map((post) => post.id === saved.id ? saved : post));
+    setPosts((current) => current.map((post) => (post.id === saved.id ? saved : post)));
     setSavedPosts((current) => [...current.filter((post) => post.id !== saved.id), saved]);
     setFeedback("Saved in this preview. Refreshing the page resets all edits.");
   };
@@ -378,7 +384,7 @@ export default function CmsTemplate() {
   const discardSelectedPost = () => {
     const saved = savedPosts.find((post) => post.id === selectedId);
     if (!saved) return;
-    setPosts((current) => current.map((post) => post.id === selectedId ? saved : post));
+    setPosts((current) => current.map((post) => (post.id === selectedId ? saved : post)));
     setFeedback("Restored the last locally saved version.");
     titleInputRef.current?.focus();
   };
@@ -443,7 +449,11 @@ export default function CmsTemplate() {
         <p className="mt-3 text-xs leading-5 text-foreground/70">
           Local workspace demo. Save and discard affect this page only; nothing is published online.
         </p>
-        {feedback ? <p role="status" className="mt-2 text-sm">{feedback}</p> : null}
+        {feedback ? (
+          <p role="status" className="mt-2 text-sm">
+            {feedback}
+          </p>
+        ) : null}
       </div>
 
       <main className="mx-auto flex w-full max-w-screen-xl flex-1 px-4 py-4 sm:px-6 sm:py-5">
@@ -499,7 +509,14 @@ export default function CmsTemplate() {
               </div>
             </div>
 
-            <PostListPane posts={filteredPosts} selectedId={selectedId} onSelect={(id) => { setSelectedId(id); setFeedback(""); }} />
+            <PostListPane
+              posts={filteredPosts}
+              selectedId={selectedId}
+              onSelect={(id) => {
+                setSelectedId(id);
+                setFeedback("");
+              }}
+            />
           </div>
 
           <section aria-labelledby="post-editor-title" className="min-w-0">

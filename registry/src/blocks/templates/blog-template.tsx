@@ -32,7 +32,8 @@ export default function BlogTemplate({ basePath = "/blog" }: BlogTemplateProps) 
         (topic === "All" || post.topic === topic) &&
         [post.title, post.summary, post.topic].join(" ").toLowerCase().includes(normalizedQuery),
     ).sort((a, b) => {
-      if (sort === "shortest") return Number.parseInt(a.readTime, 10) - Number.parseInt(b.readTime, 10);
+      if (sort === "shortest")
+        return Number.parseInt(a.readTime, 10) - Number.parseInt(b.readTime, 10);
       return sort === "oldest"
         ? a.publishedAt.localeCompare(b.publishedAt)
         : b.publishedAt.localeCompare(a.publishedAt);
