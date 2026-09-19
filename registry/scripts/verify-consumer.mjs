@@ -260,7 +260,7 @@ function writeBrowserEntry(target, directory, aliases, scenario, items) {
     ...(scenario === "existing" ? [`import DataTable from "${aliases.ui}/data-table";`] : []),
     ...charts.map((item, index) => `import Chart${index} from "${aliases.ui}/${item.name}";`),
     "export default function Page() {",
-    '  return <main className="mx-auto grid w-full max-w-5xl gap-8 p-6">',
+    '  return <main className="mx-auto grid w-full max-w-5xl grid-cols-1 gap-8 p-6">',
     '    <h1 className="text-2xl font-heading">Installed consumer</h1>',
     "    <Button>Click me</Button>",
     '    <p className="consumer-sentinel">Existing application styles</p>',
