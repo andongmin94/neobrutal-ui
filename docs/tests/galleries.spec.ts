@@ -118,9 +118,11 @@ test("CMS status filter is a flush segmented control", async ({ page }) => {
   await draft.click();
   await expect(draft).toHaveAttribute("aria-pressed", "true");
   await expect(all).toHaveAttribute("aria-pressed", "false");
-  await expect(page.getByText("July product update", { exact: true })).toHaveCount(0);
-  await expect(page.getByText("Organize your first team space", { exact: true })).toBeVisible();
-  await expect(page.getByText("Public page checklist", { exact: true })).toBeVisible();
+  // The reading preview can repeat a title; filter assertions concern the post list.
+  const posts = page.getByRole("region", { name: "Posts", exact: true });
+  await expect(posts.getByText("July product update", { exact: true })).toHaveCount(0);
+  await expect(posts.getByText("Organize your first team space", { exact: true })).toBeVisible();
+  await expect(posts.getByText("Public page checklist", { exact: true })).toBeVisible();
 });
 
 test("marquee pause and reduced motion stop both strips", async ({ page }) => {
@@ -133,6 +135,7 @@ test("marquee pause and reduced motion stop both strips", async ({ page }) => {
     await expect(preview.locator(selector)).toHaveCSS("animation-play-state", "paused");
   }
   await button.click();
+  await expect(button).toHaveAttribute("aria-pressed", "false");
   await page.emulateMedia({ reducedMotion: "reduce" });
   await expect(button).toBeHidden();
   await expect(preview.locator(".animate-marquee")).toHaveCSS("animation-name", "none");

@@ -15,14 +15,20 @@ test("introduction keeps attribution out of product onboarding", async ({ page }
   await expect(page.locator("main")).toContainText("ekmas");
 });
 
-test("CMS saves body edits, previews plain text, and restores the saved version", async ({ page }) => {
+test("CMS saves body edits, previews plain text, and restores the saved version", async ({
+  page,
+}) => {
   await openReady(page, "/templates/cms");
   const title = page.getByRole("textbox", { name: "Title", exact: true });
   const body = page.getByRole("textbox", { name: "Content", exact: true });
   await body.fill("First paragraph.\n\n<script>not executable</script>");
   await page.getByText("Read preview", { exact: true }).click();
-  await expect(page.getByRole("article", { name: "Post preview" })).toContainText("<script>not executable</script>");
-  await expect(page.getByRole("article", { name: "Post preview" }).locator("script")).toHaveCount(0);
+  await expect(page.getByRole("article", { name: "Post preview" })).toContainText(
+    "<script>not executable</script>",
+  );
+  await expect(page.getByRole("article", { name: "Post preview" }).locator("script")).toHaveCount(
+    0,
+  );
   await page.getByRole("button", { name: "Save", exact: true }).click();
   await body.fill("An unsaved replacement.");
   await title.fill("A changed title");
@@ -31,16 +37,25 @@ test("CMS saves body edits, previews plain text, and restores the saved version"
   await expect(body).toHaveValue("First paragraph.\n\n<script>not executable</script>");
   await expect(title).toBeFocused();
   await expect(page.getByRole("button", { name: "Save", exact: true })).toBeDisabled();
-  await expect(page.locator(".special-content")).toContainText("Restored the last locally saved version.");
+  await expect(page.locator(".special-content")).toContainText(
+    "Restored the last locally saved version.",
+  );
 });
 
-test("blog combines topic search and sorting and recovers from an empty intersection", async ({ page }) => {
+test("blog combines topic search and sorting and recovers from an empty intersection", async ({
+  page,
+}) => {
   await openReady(page, "/templates/blog");
   const topics = page.getByRole("group", { name: "Filter posts by topic" });
   await topics.getByRole("button", { name: "Engineering", exact: true }).click();
-  await expect(topics.getByRole("button", { name: "Engineering", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(topics.getByRole("button", { name: "Engineering", exact: true })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
   await page.getByLabel("Sort posts", { exact: true }).selectOption("oldest");
-  const dates = await page.locator("#posts time").evaluateAll((nodes) => nodes.map((node) => node.getAttribute("datetime")));
+  const dates = await page
+    .locator("#posts time")
+    .evaluateAll((nodes) => nodes.map((node) => node.getAttribute("datetime")));
   expect(dates.length).toBeGreaterThan(0);
   expect(dates).toEqual([...dates].sort());
   await page.getByRole("searchbox", { name: "Search posts" }).fill("no-matching-topic-or-post");
@@ -50,7 +65,9 @@ test("blog combines topic search and sorting and recovers from an empty intersec
   await expect(page.locator("#posts article")).toHaveCount(6);
 });
 
-test("portfolio case studies disclose the problem, process, deliverables, and outcome", async ({ page }) => {
+test("portfolio case studies disclose the problem, process, deliverables, and outcome", async ({
+  page,
+}) => {
   await openReady(page, "/templates/portfolio");
   const caseStudy = page.locator(".special-content details").first();
   await caseStudy.locator("summary").click();
@@ -59,20 +76,34 @@ test("portfolio case studies disclose the problem, process, deliverables, and ou
   }
 });
 
-test("link categories filter real destinations and clipboard failure remains actionable", async ({ page }) => {
+test("link categories filter real destinations and clipboard failure remains actionable", async ({
+  page,
+}) => {
   await page.addInitScript(() => {
     Object.defineProperty(navigator, "clipboard", {
       configurable: true,
-      value: { writeText: async () => { throw new Error("Denied"); } },
+      value: {
+        writeText: async () => {
+          throw new Error("Denied");
+        },
+      },
     });
   });
   await openReady(page, "/templates/links");
-  await page.getByRole("group", { name: "Filter links" }).getByRole("button", { name: "Work", exact: true }).click();
+  await page
+    .getByRole("group", { name: "Filter links" })
+    .getByRole("button", { name: "Work", exact: true })
+    .click();
   await expect(page.locator(".special-content main ul a")).toHaveCount(2);
-  await page.getByRole("group", { name: "Filter links" }).getByRole("button", { name: "All", exact: true }).click();
+  await page
+    .getByRole("group", { name: "Filter links" })
+    .getByRole("button", { name: "All", exact: true })
+    .click();
   await expect(page.locator(".special-content main ul a")).toHaveCount(6);
   await page.getByRole("button", { name: "Copy email", exact: true }).click();
-  await expect(page.getByRole("region", { name: "Contact", exact: true })).toContainText("Could not copy.");
+  await expect(page.getByRole("region", { name: "Contact", exact: true })).toContainText(
+    "Could not copy.",
+  );
 });
 
 test("chart summaries and tables follow their controls without losing units", async ({ page }) => {
@@ -99,16 +130,24 @@ test("chart summaries and tables follow their controls without losing units", as
   await expect(latency.getByRole("status")).toContainText("Wed");
   await latency.getByText("View latency data", { exact: true }).click();
   await expect(latency.locator("tbody tr")).toHaveCount(7);
-  const strokes = await latency.locator(".recharts-line-curve").evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).stroke));
+  const strokes = await latency
+    .locator(".recharts-line-curve")
+    .evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).stroke));
   expect(new Set(strokes).size).toBe(2);
   expect(errors).toEqual([]);
 });
 
-test("analytical recipes reflow at 320px and pass automated accessibility checks", async ({ page }) => {
+test("analytical recipes reflow at 320px and pass automated accessibility checks", async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 320, height: 844 });
   await openReady(page, "/charts");
-  for (const summary of await page.locator("[data-chart-recipe] summary").all()) await summary.click();
+  for (const summary of await page.locator("[data-chart-recipe] summary").all())
+    await summary.click();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(321);
-  const results = await new AxeBuilder({ page }).include("section#examples").withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
+  const results = await new AxeBuilder({ page })
+    .include("section#examples")
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+    .analyze();
   expect(results.violations.map(({ id, nodes }) => ({ id, nodes }))).toEqual([]);
 });
