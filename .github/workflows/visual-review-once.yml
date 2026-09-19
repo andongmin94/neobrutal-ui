@@ -8,10 +8,14 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: visual-review-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   review:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 30
     env:
       REVIEW_ROOT: /tmp/neobrutal-visual-review
     steps:
@@ -45,6 +49,14 @@ jobs:
           capture = original.split("          cat > docs/.visual-review.mjs <<'JS'\n", 1)[1].split('\n          JS', 1)[0]
           capture = textwrap.dedent(capture).replace('chromium.launch({channel:"chrome"})', 'chromium.launch()')
           capture = capture.replace('cases.filter(c=>c[0]==="hover-card")', 'cases.filter(c=>["hover-card","popover","context-menu"].includes(c[0]))')
+          animation_wait = '''      await page.evaluate(async()=>{
+                  await Promise.all(document.getAnimations().filter(a=>a.effect?.getTiming().iterations!==Infinity).map(a=>a.finished.catch(()=>{})));
+                });'''
+          animation_wait = textwrap.dedent(animation_wait)
+          start = capture.index('      await page.evaluate(async()=>{')
+          end = capture.index('      row.surfaces=', start)
+          capture = capture[:start] + '      await page.screenshot({path:path.join(root,file),animations:"disabled",caret:"hide",timeout:15000});\n' + capture[end:]
+          capture = capture.replace('    await ready(page,scenario.route,theme);', '    console.log("CAPTURE_START",JSON.stringify(row));\n    await ready(page,scenario.route,theme);')
           Path('docs/.visual-review.mjs').write_text(capture + '\n')
           edits = original.split('      - name: Refine confirmed visual defects\n        run: |\n', 1)[1].split('\n      - name:', 1)[0]
           Path(os.environ['RUNNER_TEMP'], 'apply-visual-fixes.sh').write_text(textwrap.dedent(edits) + '\n')
@@ -68,7 +80,7 @@ jobs:
             sleep 1
           done
           curl --fail --silent http://127.0.0.1:4173/docs/stars >/dev/null
-          node .visual-review.mjs
+          timeout --signal=TERM 240s node .visual-review.mjs
           cleanup
           trap - EXIT
           if curl --fail --silent http://127.0.0.1:4173/docs/stars >/dev/null; then
@@ -77,6 +89,7 @@ jobs:
           fi
           SH
       - name: Build and capture the before state
+        timeout-minutes: 6
         working-directory: docs
         env:
           REVIEW_PHASE: before
@@ -143,16 +156,27 @@ jobs:
           npm run check:budget --prefix docs
           npm test --prefix docs
       - name: Capture revised open states and table layouts
+        timeout-minutes: 5
         working-directory: docs
         env:
           REVIEW_PHASE: after
         run: bash "$RUNNER_TEMP/capture-review.sh"
+      - name: Preserve completed visual captures immediately
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: resumed-visual-captures
+          path: /tmp/neobrutal-visual-review
+          retention-days: 3
+          if-no-files-found: error
       - name: Verify fresh Next.js and Vite consumers
         run: npm run consumer:verify --prefix registry
       - name: Run the complete Chromium regression suite
+        timeout-minutes: 12
         working-directory: docs
         run: npm run test:browser
       - name: Run Firefox, WebKit and narrow-screen regressions
+        timeout-minutes: 5
         working-directory: docs
         run: npm run test:browser:cross
       - name: Prepare the verified commit without publishing it
