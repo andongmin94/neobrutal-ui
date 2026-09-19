@@ -43,8 +43,8 @@ export default function Component() {
     <Card className="h-full min-w-0" data-chart-recipe="revenue">
       <CardHeader>
         <p className="font-mono text-xs uppercase tracking-widest">01 / Plan and compare</p>
-        <CardTitle role="heading" aria-level={3}>
-          Revenue vs target
+        <CardTitle>
+          <h3>Revenue vs target</h3>
         </CardTitle>
         <CardDescription>
           Weekly revenue against an explicit plan. Sample data in USD.
@@ -79,66 +79,58 @@ export default function Component() {
             </div>
           ))}
         </dl>
-        <ChartContainer
-          role="group"
-          config={config}
-          className="h-64 w-full min-w-0 aspect-auto"
-          aria-label="Weekly revenue and target"
-        >
-          <ComposedChart
-            accessibilityLayer
-            data={data}
-            margin={{ top: 12, right: 8, bottom: 0, left: 0 }}
-          >
-            <CartesianGrid vertical={false} />
-            <XAxis dataKey="week" tickLine={false} axisLine={false} tickMargin={10} />
-            <YAxis
-              tickLine={false}
-              axisLine={false}
-              width={48}
-              tickFormatter={(value) => `$${Number(value) / 1000}k`}
-              domain={[0, "auto"]}
-            />
-            <ChartTooltip
-              content={
-                <ChartTooltipContent
-                  formatter={(value, name) =>
-                    `${name === "revenue" ? "Revenue" : "Target"}: ${money.format(Number(value))}`
-                  }
-                />
-              }
-            />
-            <Bar
-              dataKey="revenue"
-              fill="var(--color-revenue)"
-              maxBarSize={48}
-              radius={[3, 3, 0, 0]}
-              isAnimationActive={false}
-            />
-            <Line
-              dataKey="target"
-              type="linear"
-              stroke="var(--color-target)"
-              strokeWidth={2}
-              strokeDasharray="6 4"
-              dot={false}
-              isAnimationActive={false}
-            />
-          </ComposedChart>
-        </ChartContainer>
-        <p className="border-l-4 border-main pl-3 text-sm leading-6" role="status">
+        <figure className="min-w-0" aria-label="Weekly revenue and target">
+          <ChartContainer config={config} className="h-64 w-full min-w-0 aspect-auto">
+            <ComposedChart
+              accessibilityLayer
+              data={data}
+              margin={{ top: 12, right: 8, bottom: 0, left: 0 }}
+            >
+              <CartesianGrid vertical={false} />
+              <XAxis dataKey="week" tickLine={false} axisLine={false} tickMargin={10} />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                width={48}
+                tickFormatter={(value) => `$${Number(value) / 1000}k`}
+                domain={[0, "auto"]}
+              />
+              <ChartTooltip
+                content={
+                  <ChartTooltipContent
+                    formatter={(value, name) =>
+                      `${name === "revenue" ? "Revenue" : "Target"}: ${money.format(Number(value))}`
+                    }
+                  />
+                }
+              />
+              <Bar
+                dataKey="revenue"
+                fill="var(--color-revenue)"
+                maxBarSize={48}
+                radius={[3, 3, 0, 0]}
+                isAnimationActive={false}
+              />
+              <Line
+                dataKey="target"
+                type="linear"
+                stroke="var(--color-target)"
+                strokeWidth={2}
+                strokeDasharray="6 4"
+                dot={false}
+                isAnimationActive={false}
+              />
+            </ComposedChart>
+          </ChartContainer>
+        </figure>
+        <output className="border-l-4 border-main pl-3 text-sm leading-6">
           {((revenue / target) * 100).toFixed(1)}% of target achieved. {belowTarget} of{" "}
           {data.length} weeks below plan.
-        </p>
+        </output>
         <details className="min-w-0 border-t-2 border-border pt-4">
           <summary className="cursor-pointer text-sm font-heading">View revenue data</summary>
           {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- Keyboard access to the data-table scroll area. */}
-          <div
-            className="mt-3 overflow-x-auto"
-            role="region"
-            aria-label="Revenue values"
-            tabIndex={0}
-          >
+          <section tabIndex={0} aria-label="Revenue values" className="mt-3 overflow-x-auto">
             <table className="w-full text-left text-xs tabular-nums">
               <caption className="pb-3 text-left text-foreground/75">
                 The same {data.length} weeks shown in the chart. USD.
@@ -165,7 +157,7 @@ export default function Component() {
                 ))}
               </tbody>
             </table>
-          </div>
+          </section>
         </details>
       </CardContent>
     </Card>

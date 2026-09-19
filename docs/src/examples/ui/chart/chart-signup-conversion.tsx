@@ -34,8 +34,8 @@ export default function Component() {
     <Card className="h-full min-w-0" data-chart-recipe="conversion">
       <CardHeader>
         <p className="font-mono text-xs uppercase tracking-widest">02 / Find the friction</p>
-        <CardTitle role="heading" aria-level={3}>
-          Signup conversion
+        <CardTitle>
+          <h3>Signup conversion</h3>
         </CardTitle>
         <CardDescription>
           One sample cohort through four stages. Counts are people, not events.
@@ -66,47 +66,44 @@ export default function Component() {
             <dd className="mt-1 text-2xl font-heading tabular-nums">{number.format(counts[3])}</dd>
           </div>
         </dl>
-        <ChartContainer
-          role="group"
-          config={config}
-          className="h-64 w-full min-w-0 aspect-auto"
-          aria-label="People remaining at each signup stage"
-        >
-          <BarChart
-            accessibilityLayer
-            data={data}
-            layout="vertical"
-            margin={{ top: 0, right: 12, bottom: 0, left: 0 }}
-          >
-            <CartesianGrid horizontal={false} />
-            <XAxis
-              type="number"
-              domain={[0, counts[0]]}
-              tickLine={false}
-              axisLine={false}
-              tickFormatter={(value) => number.format(Number(value))}
-            />
-            <YAxis type="category" dataKey="stage" width={72} tickLine={false} axisLine={false} />
-            <ChartTooltip
-              content={
-                <ChartTooltipContent
-                  formatter={(value) => `${number.format(Number(value))} people`}
-                />
-              }
-            />
-            <Bar
-              dataKey="people"
-              fill="var(--color-people)"
-              radius={[0, 3, 3, 0]}
-              maxBarSize={36}
-              isAnimationActive={false}
-            />
-          </BarChart>
-        </ChartContainer>
-        <p className="border-l-4 border-main pl-3 text-sm leading-6" role="status">
+        <figure className="min-w-0" aria-label="People remaining at each signup stage">
+          <ChartContainer config={config} className="h-64 w-full min-w-0 aspect-auto">
+            <BarChart
+              accessibilityLayer
+              data={data}
+              layout="vertical"
+              margin={{ top: 0, right: 12, bottom: 0, left: 0 }}
+            >
+              <CartesianGrid horizontal={false} />
+              <XAxis
+                type="number"
+                domain={[0, counts[0]]}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(value) => number.format(Number(value))}
+              />
+              <YAxis type="category" dataKey="stage" width={72} tickLine={false} axisLine={false} />
+              <ChartTooltip
+                content={
+                  <ChartTooltipContent
+                    formatter={(value) => `${number.format(Number(value))} people`}
+                  />
+                }
+              />
+              <Bar
+                dataKey="people"
+                fill="var(--color-people)"
+                radius={[0, 3, 3, 0]}
+                maxBarSize={36}
+                isAnimationActive={false}
+              />
+            </BarChart>
+          </ChartContainer>
+        </figure>
+        <output className="border-l-4 border-main pl-3 text-sm leading-6">
           Largest drop: {largestDrop.from} → {largestDrop.to}. {number.format(largestDrop.lost)}{" "}
           people did not reach the next stage.
-        </p>
+        </output>
         <details className="min-w-0 border-t-2 border-border pt-4">
           <summary className="cursor-pointer text-sm font-heading">View conversion data</summary>
           <table className="mt-3 w-full text-left text-xs tabular-nums">

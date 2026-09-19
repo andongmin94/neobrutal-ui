@@ -48,8 +48,8 @@ export default function Component() {
     <Card className="h-full min-w-0" data-chart-recipe="latency">
       <CardHeader>
         <p className="font-mono text-xs uppercase tracking-widest">03 / Watch the tail</p>
-        <CardTitle role="heading" aria-level={3}>
-          Response-time budget
+        <CardTitle>
+          <h3>Response-time budget</h3>
         </CardTitle>
         <CardDescription>
           Daily p50 and p95 against a 300 ms p95 budget. Illustrative measurements.
@@ -80,51 +80,50 @@ export default function Component() {
             </dd>
           </div>
         </dl>
-        <ChartContainer
-          role="group"
-          config={config}
-          className="h-64 w-full min-w-0 aspect-auto"
-          aria-label="Daily p50 and p95 response times in milliseconds"
-        >
-          <LineChart
-            accessibilityLayer
-            data={data}
-            margin={{ top: 12, right: 12, bottom: 0, left: 0 }}
-          >
-            <CartesianGrid vertical={false} />
-            <XAxis dataKey="day" tickLine={false} axisLine={false} tickMargin={10} />
-            <YAxis domain={[0, 600]} tickLine={false} axisLine={false} width={36} />
-            <ReferenceLine y={budget} stroke="var(--foreground)" strokeDasharray="3 4" />
-            <ChartTooltip
-              content={<ChartTooltipContent formatter={(value, name) => `${name}: ${value} ms`} />}
-            />
-            <Line
-              dataKey="p50"
-              type="linear"
-              stroke="var(--color-p50)"
-              strokeDasharray="8 4"
-              strokeWidth={2}
-              dot={false}
-              isAnimationActive={false}
-            />
-            <Line
-              dataKey="p95"
-              type="linear"
-              stroke="var(--color-p95)"
-              strokeWidth={3}
-              dot={{ r: 3, fill: "var(--color-p95)" }}
-              isAnimationActive={false}
-            />
-          </LineChart>
-        </ChartContainer>
+        <figure className="min-w-0" aria-label="Daily p50 and p95 response times in milliseconds">
+          <ChartContainer config={config} className="h-64 w-full min-w-0 aspect-auto">
+            <LineChart
+              accessibilityLayer
+              data={data}
+              margin={{ top: 12, right: 12, bottom: 0, left: 0 }}
+            >
+              <CartesianGrid vertical={false} />
+              <XAxis dataKey="day" tickLine={false} axisLine={false} tickMargin={10} />
+              <YAxis domain={[0, 600]} tickLine={false} axisLine={false} width={36} />
+              <ReferenceLine y={budget} stroke="var(--foreground)" strokeDasharray="3 4" />
+              <ChartTooltip
+                content={
+                  <ChartTooltipContent formatter={(value, name) => `${name}: ${value} ms`} />
+                }
+              />
+              <Line
+                dataKey="p50"
+                type="linear"
+                stroke="var(--color-p50)"
+                strokeDasharray="8 4"
+                strokeWidth={2}
+                dot={false}
+                isAnimationActive={false}
+              />
+              <Line
+                dataKey="p95"
+                type="linear"
+                stroke="var(--color-p95)"
+                strokeWidth={3}
+                dot={{ r: 3, fill: "var(--color-p95)" }}
+                isAnimationActive={false}
+              />
+            </LineChart>
+          </ChartContainer>
+        </figure>
         <p className="text-xs leading-5 text-foreground/75">
           Solid + dots: p95 / long dash: p50 / dotted horizontal line: 300 ms budget.
         </p>
-        <p className="border-l-4 border-main pl-3 text-sm leading-6" role="status">
+        <output className="border-l-4 border-main pl-3 text-sm leading-6">
           {breaches.length
             ? `Daily p95 exceeded budget on ${breaches.map((row) => row.day).join(", ")}.`
             : "Every daily p95 stayed within budget."}
-        </p>
+        </output>
         <details className="min-w-0 border-t-2 border-border pt-4">
           <summary className="cursor-pointer text-sm font-heading">View latency data</summary>
           <table className="mt-3 w-full text-left text-xs tabular-nums">
