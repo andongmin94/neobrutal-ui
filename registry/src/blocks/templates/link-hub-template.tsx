@@ -138,7 +138,7 @@ export default function LinkHubTemplate() {
                       <span className="block font-heading text-base leading-tight">
                         {link.title}
                       </span>
-                      <span className="mt-1 block truncate text-xs opacity-70">{link.detail}</span>
+                      <span className="mt-1 block truncate text-xs">{link.detail}</span>
                       {link.external ? <span className="sr-only">Opens in a new tab</span> : null}
                     </span>
                   </span>
