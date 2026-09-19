@@ -28,3 +28,15 @@ Review the captures for spacing, borders, shadows, typography and open overlay s
 Final production and cross-browser checks must refer to the published commit, not this preparation run.
 
 Both temporary audit workflows are removed from the prepared commit. The normal Verify workflow is unchanged.
+
+## Follow-up: template interaction states
+
+Baseline `4b10d2f` passed both normal Verify jobs (run 35424190133), including production checks.
+Run 35425248694 reproduced two CMS defects before changing the source: editing a matching title removed the editor, and changing a draft to published selected a different post before Save. Its 32 focused browser checks passed after the fix.
+Selection now changes only when the user changes filters or selects a row; editing and saving keep the same post. A short inline notice explains when the edited post no longer matches the filters and offers Clear filters.
+This also removes the selection-synchronization effect and the memoized filtering block.
+
+Focused browser checks cover all four template families: CMS filtered editing, status changes and empty-state recovery; Blog empty-result keyboard recovery; Portfolio native details keyboard behavior; Link Hub 320px layout and raised press states. Both configured light/desktop and dark/mobile projects are checked, including axe on the resulting template content. Pointer-hover assertions only apply when the browser supports hover. Test route names use the existing catalog slug type.
+The CMS registry item includes `app/cms/page.tsx`, so its fresh-consumer installation is checked in Next.js. Vite verification covers all items supported by the existing consumer harness; no Vite routing support was added or implied for template pages.
+
+These are interaction, layout and accessibility results, not a claim that every captured pixel was visually inspected. The image viewer was unavailable in this follow-up. The remaining full visual sign-off is still pending.

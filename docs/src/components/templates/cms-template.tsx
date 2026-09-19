@@ -75,6 +75,16 @@ const STATUS_TABS: Array<{ label: string; value: StatusFilter }> = [
   { label: "Published", value: "published" },
 ];
 
+function getFilteredPosts(posts: Post[], query: string, statusFilter: StatusFilter) {
+  const normalizedQuery = query.trim().toLowerCase();
+  return posts.filter((post) => {
+    const matchesStatus = statusFilter === "all" || post.status === statusFilter;
+    return (
+      matchesStatus && (post.title + " " + post.summary).toLowerCase().includes(normalizedQuery)
+    );
+  });
+}
+
 function getDisplayPostTitle(post: Post) {
   return post.title.trim() || "Untitled post";
 }
@@ -146,11 +156,15 @@ function PostListPane({
 }
 
 function PostEditorPane({
+  hiddenByFilters,
+  onClearFilters,
   onSubmit,
   onUpdate,
   post,
   titleInputRef,
 }: {
+  hiddenByFilters: boolean;
+  onClearFilters: () => void;
   onSubmit: React.FormEventHandler<HTMLFormElement>;
   onUpdate: (changes: PostChanges) => void;
   post: Post;
@@ -173,6 +187,23 @@ function PostEditorPane({
           Save
         </Button>
       </div>
+
+      {hiddenByFilters ? (
+        <div className="border-b-2 border-border px-4 py-3 text-sm">
+          <p role="status">
+            This post no longer matches the current filters. Your edits are still here.
+          </p>
+          <Button
+            type="button"
+            variant="link"
+            size="sm"
+            className="mt-1 px-0"
+            onClick={onClearFilters}
+          >
+            Clear filters
+          </Button>
+        </div>
+      ) : null}
 
       <div className="grid flex-1 content-start gap-5 p-4 sm:p-5">
         <div className="space-y-1.5">
@@ -256,40 +287,28 @@ export default function CmsTemplate() {
   const nextPostNumber = React.useRef(106);
   const titleInputRef = React.useRef<HTMLInputElement>(null);
 
-  const normalizedQuery = query.trim().toLowerCase();
-  const filteredPosts = React.useMemo(
-    () =>
-      posts.filter((post) => {
-        const matchesStatus = statusFilter === "all" || post.status === statusFilter;
-        const searchText = (post.title + " " + post.summary).toLowerCase();
-        return matchesStatus && searchText.includes(normalizedQuery);
-      }),
-    [normalizedQuery, posts, statusFilter],
-  );
-  const resolvedSelectedId = resolveSelectedPostId(filteredPosts, selectedId);
-  const selectedPost = filteredPosts.find((post) => post.id === resolvedSelectedId);
+  const filteredPosts = getFilteredPosts(posts, query, statusFilter);
+  const selectedPost = posts.find((post) => post.id === selectedId);
 
-  React.useEffect(() => {
-    if (resolvedSelectedId !== selectedId) setSelectedId(resolvedSelectedId);
-  }, [resolvedSelectedId, selectedId]);
-
-  const clearFilters = () => {
-    setQuery("");
-    setStatusFilter("all");
+  const changeFilters = (nextQuery: string, nextStatus: StatusFilter) => {
+    const matches = getFilteredPosts(posts, nextQuery, nextStatus);
+    setQuery(nextQuery);
+    setStatusFilter(nextStatus);
+    setSelectedId(resolveSelectedPostId(matches, selectedId));
   };
+
+  const clearFilters = () => changeFilters("", "all");
 
   const updateSelectedPost = (changes: PostChanges) => {
     setPosts((current) =>
-      current.map((post) =>
-        post.id === resolvedSelectedId ? { ...post, ...changes, dirty: true } : post,
-      ),
+      current.map((post) => (post.id === selectedId ? { ...post, ...changes, dirty: true } : post)),
     );
   };
 
   const saveSelectedPost = () => {
     setPosts((current) =>
       current.map((post) =>
-        post.id === resolvedSelectedId
+        post.id === selectedId
           ? {
               ...post,
               dirty: false,
@@ -364,7 +383,7 @@ export default function CmsTemplate() {
                   className="h-10 pl-9"
                   placeholder="Search posts"
                   value={query}
-                  onChange={(event) => setQuery(event.target.value)}
+                  onChange={(event) => changeFilters(event.target.value, statusFilter)}
                 />
               </div>
 
@@ -387,7 +406,7 @@ export default function CmsTemplate() {
                           ? "bg-main text-main-foreground"
                           : "bg-secondary-background text-foreground hover:bg-background")
                       }
-                      onClick={() => setStatusFilter(tab.value)}
+                      onClick={() => changeFilters(query, tab.value)}
                     >
                       {tab.label}
                     </button>
@@ -396,16 +415,14 @@ export default function CmsTemplate() {
               </div>
             </div>
 
-            <PostListPane
-              posts={filteredPosts}
-              selectedId={resolvedSelectedId}
-              onSelect={setSelectedId}
-            />
+            <PostListPane posts={filteredPosts} selectedId={selectedId} onSelect={setSelectedId} />
           </div>
 
           <section aria-labelledby="post-editor-title" className="min-w-0">
             {selectedPost ? (
               <PostEditorPane
+                hiddenByFilters={!filteredPosts.some((post) => post.id === selectedId)}
+                onClearFilters={clearFilters}
                 post={selectedPost}
                 titleInputRef={titleInputRef}
                 onSubmit={handleSubmit}
