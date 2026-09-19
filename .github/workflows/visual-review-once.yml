@@ -18,18 +18,11 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
-      - name: Delete only the verified merged branch
+      - name: Confirm all work is consolidated on main
         run: |
           set -eu
-          branch=fix/cross-browser-smoke-stability
-          expected=98b27f1febd43f6e6fbdbf34285a2b56e5d156cc
-          actual=$(git ls-remote --heads origin "refs/heads/$branch" | cut -f1)
-          if [ -n "$actual" ]; then
-            test "$actual" = "$expected"
-            git merge-base --is-ancestor "$expected" HEAD
-            git push origin --delete "$branch"
-          fi
-          git ls-remote --heads origin
+          git merge-base --is-ancestor 98b27f1febd43f6e6fbdbf34285a2b56e5d156cc HEAD
+          test "$(git ls-remote --heads origin | cut -f2)" = refs/heads/main
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 22
@@ -51,6 +44,7 @@ jobs:
           original = subprocess.check_output(['git', 'show', '62a0ebe38f464f1a75d613e045aa2cf34d33ec94:.github/workflows/visual-review-once.yml'], text=True)
           capture = original.split("          cat > docs/.visual-review.mjs <<'JS'\n", 1)[1].split('\n          JS', 1)[0]
           capture = textwrap.dedent(capture).replace('chromium.launch({channel:"chrome"})', 'chromium.launch()')
+          capture = capture.replace('cases.filter(c=>c[0]==="hover-card")', 'cases.filter(c=>["hover-card","popover","context-menu"].includes(c[0]))')
           Path('docs/.visual-review.mjs').write_text(capture + '\n')
           edits = original.split('      - name: Refine confirmed visual defects\n        run: |\n', 1)[1].split('\n      - name:', 1)[0]
           Path(os.environ['RUNNER_TEMP'], 'apply-visual-fixes.sh').write_text(textwrap.dedent(edits) + '\n')
@@ -89,37 +83,50 @@ jobs:
         run: |
           npm run build > "$RUNNER_TEMP/before-build.log" 2>&1 || { tail -100 "$RUNNER_TEMP/before-build.log"; exit 1; }
           bash "$RUNNER_TEMP/capture-review.sh"
-      - name: Apply preserved fixes and strengthen the regression checks
+      - name: Apply reviewed fixes and strengthen the regression checks
         run: |
           bash "$RUNNER_TEMP/apply-visual-fixes.sh"
           python3 - <<'PY'
           from pathlib import Path
-          path = Path('docs/README.md')
-          text = path.read_text()
-          before = 'Failure artifacts contain traces, screenshots, and HTML reports under `test-results` and\n`playwright-report`.'
-          after = 'Failure artifacts contain traces, screenshots, and separate HTML reports under `test-results`,\n`playwright-report`, and `playwright-report-cross`.'
-          assert text.count(before) == 1
-          path.write_text(text.replace(before, after, 1))
+          def replace(filename, before, after):
+              path = Path(filename)
+              text = path.read_text()
+              if text.count(before) != 1:
+                  raise SystemExit(f'{filename}: expected exactly one match')
+              path.write_text(text.replace(before, after, 1))
+          replace('docs/README.md', 'Failure artifacts contain traces, screenshots, and HTML reports under `test-results` and\n`playwright-report`.', 'Failure artifacts contain traces, screenshots, and separate HTML reports under `test-results`,\n`playwright-report`, and `playwright-report-cross`.')
+          replace('registry/src/components/ui/popover.tsx', 'bg-main p-4 text-foreground', 'bg-main p-4 text-main-foreground')
+          for name in ['context-menu', 'dropdown-menu']:
+              replace(f'registry/src/components/ui/{name}.tsx', 'data-[variant=destructive]:text-destructive', 'data-[variant=destructive]:bg-destructive data-[variant=destructive]:text-destructive-foreground')
+          replace('registry/src/components/ui/menubar.tsx', ' data-[variant=destructive]:text-destructive', '')
           path = Path('docs/tests/ui-polish.spec.ts')
           path.write_text('import AxeBuilder from "@axe-core/playwright";\n' + path.read_text())
           PY
           cat >> docs/tests/ui-polish.spec.ts <<'TS'
 
-          test("open hover-card text has sufficient contrast in both themes", async ({ page }) => {
-            await page.emulateMedia({ reducedMotion: "reduce" });
-            await openReady(page, "/docs/hover-card");
-            const trigger = page.locator(".component-preview").getByRole("link", {
-              name: "Explore the component registry",
-              exact: true,
+          for (const overlay of [
+            { name: "hover-card", route: "/docs/hover-card", role: "link", trigger: "Explore the component registry", surface: "[data-slot='hover-card-content']", action: "hover" },
+            { name: "popover", route: "/docs/popover", role: "button", trigger: "View release status", surface: "[data-slot='popover-content']", action: "click" },
+            { name: "context-menu", route: "/docs/context-menu", role: "button", trigger: "Open component card context menu", surface: "[data-slot='context-menu-content']", action: "right" },
+          ] as const) {
+            test(`open ${overlay.name} text keeps sufficient contrast`, async ({ page }) => {
+              await page.emulateMedia({ reducedMotion: "reduce" });
+              await openReady(page, overlay.route);
+              const trigger = page.locator(".component-preview").getByRole(overlay.role, {
+                name: overlay.trigger,
+                exact: true,
+              });
+              if (overlay.action === "hover") await trigger.hover();
+              else await trigger.click({ button: overlay.action === "right" ? "right" : "left" });
+              const surface = page.locator(overlay.surface);
+              await expect(surface).toBeVisible();
+              const results = await new AxeBuilder({ page })
+                .include(overlay.surface)
+                .withRules(["color-contrast"])
+                .analyze();
+              expect(results.violations.map(({ id, nodes }) => ({ id, nodes }))).toEqual([]);
             });
-            await trigger.hover();
-            await expect(page.locator("[data-slot='hover-card-content']")).toBeVisible();
-            const results = await new AxeBuilder({ page })
-              .include("[data-slot='hover-card-content']")
-              .withRules(["color-contrast"])
-              .analyze();
-            expect(results.violations.map(({ id, nodes }) => ({ id, nodes }))).toEqual([]);
-          });
+          }
           TS
       - name: Generate, lint, typecheck and verify source contracts
         run: |
@@ -181,7 +188,7 @@ jobs:
                   entry['content'] = Path(filename).read_text()
               entries.append(entry)
           tree = api('/git/trees', {'base_tree': subprocess.check_output(['git', 'rev-parse', 'HEAD^{tree}'], text=True).strip(), 'tree': entries})
-          commit = api('/git/commits', {'message': 'fix: restore readable reference tables, article bullets and hover-card contrast', 'tree': tree['sha'], 'parents': [parent]})
+          commit = api('/git/commits', {'message': 'fix: restore readable tables, article bullets and accent-surface contrast', 'tree': tree['sha'], 'parents': [parent]})
           result = {'prepared_commit': commit['sha'], 'tree': tree['sha'], 'expected_main': parent}
           Path(os.environ['RUNNER_TEMP'], 'prepared', 'commit.json').write_text(json.dumps(result, indent=2))
           print(json.dumps(result))
