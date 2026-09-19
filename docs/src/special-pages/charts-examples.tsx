@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { type ChartExample, charts } from "@/data/charts";
 import { Pre } from "@/components/docs/pre";
 import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import {
   Dialog,
   DialogContent,
@@ -202,13 +203,12 @@ function ChartComponent({ children, chart }: { children: ReactNode; chart: Chart
     <div className="flex h-full min-w-0 flex-col [&>[data-slot=card]]:flex-1">
       {children}
       {chart.registryName && (
-        <Button
-          className="mt-4 w-full"
-          variant="neutral"
-          render={<a href={`/docs/${chart.registryName}`} />}
+        <a
+          className={buttonVariants({ variant: "neutral", className: "mt-4 w-full" })}
+          href={`/docs/${chart.registryName}`}
         >
           Install recipe
-        </Button>
+        </a>
       )}
       <Dialog>
         <DialogTrigger asChild>

@@ -8,10 +8,7 @@ const recipeNames = ["chart-revenue-target", "chart-signup-conversion", "chart-s
 
 test("chart recipes share one source across registry, gallery, and docs", () => {
   const registered = charts.filter((chart) => chart.registryName);
-  assert.deepEqual(
-    registered.map((chart) => chart.registryName).sort(),
-    [...recipeNames].sort(),
-  );
+  assert.deepEqual(registered.map((chart) => chart.registryName).sort(), [...recipeNames].sort());
 
   for (const chart of registered) {
     const name = chart.registryName!;
