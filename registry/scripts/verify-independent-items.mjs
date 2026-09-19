@@ -6,7 +6,9 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const { items } = JSON.parse(fs.readFileSync(path.join(root, "public/r/registry.json"), "utf8"));
-const queue = items.filter((item) => item.files?.length && !["registry:base", "registry:style"].includes(item.type));
+const queue = items.filter(
+  (item) => item.files?.length && !["registry:base", "registry:style"].includes(item.type),
+);
 assert.ok(queue.length > 0, "The independent installation matrix must not be empty");
 const output = path.join(root, "../docs/test-results/independent-items");
 fs.mkdirSync(output, { recursive: true });
@@ -21,12 +23,16 @@ async function worker() {
     let passed = false;
     try {
       passed = await new Promise((resolve, reject) => {
-        const child = spawn(process.execPath, [path.join(root, "scripts/verify-consumer.mjs"), ...targets, `--item=${item.name}`], {
-          cwd: root,
-          env: process.env,
-          stdio: ["ignore", log, log],
-          timeout: 240_000,
-        });
+        const child = spawn(
+          process.execPath,
+          [path.join(root, "scripts/verify-consumer.mjs"), ...targets, `--item=${item.name}`],
+          {
+            cwd: root,
+            env: process.env,
+            stdio: ["ignore", log, log],
+            timeout: 240_000,
+          },
+        );
         child.once("error", reject);
         child.once("exit", (code) => resolve(code === 0));
       });
@@ -36,12 +42,19 @@ async function worker() {
       fs.closeSync(log);
     }
     records.push({ item: item.name, targets, passed });
-    console.log(`${passed ? "PASS" : "FAIL"} independent install: ${item.name} (${targets.join(", ")})`);
+    console.log(
+      `${passed ? "PASS" : "FAIL"} independent install: ${item.name} (${targets.join(", ")})`,
+    );
     if (!passed) console.error(fs.readFileSync(path.join(output, `${item.name}.log`), "utf8"));
     fs.writeFileSync(path.join(output, "report.json"), `${JSON.stringify(records, null, 2)}\n`);
   }
 }
 
 await Promise.all(Array.from({ length: 3 }, worker));
-assert.ok(records.every((record) => record.passed), "Independent installation failures; see independent-items/report.json");
-console.log(`All ${records.length} items passed ${records.reduce((sum, record) => sum + record.targets.length, 0)} independent framework installations.`);
+assert.ok(
+  records.every((record) => record.passed),
+  "Independent installation failures; see independent-items/report.json",
+);
+console.log(
+  `All ${records.length} items passed ${records.reduce((sum, record) => sum + record.targets.length, 0)} independent framework installations.`,
+);

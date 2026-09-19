@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 
-test("failed full-text loading is visible and retry recovers without losing local navigation", async ({ page }) => {
+test("failed full-text loading is visible and retry recovers without losing local navigation", async ({
+  page,
+}) => {
   let requests = 0;
   await page.route("**/api/search*", async (route) => {
     requests++;
@@ -33,7 +35,12 @@ test("composition Enter does not navigate; ordinary Enter does", async ({ page }
   const input = dialog.getByRole("combobox");
   await input.fill("button");
   await expect(dialog.getByRole("option").first()).toBeVisible();
-  await input.dispatchEvent("keydown", { key: "Enter", code: "Enter", isComposing: true, bubbles: true });
+  await input.dispatchEvent("keydown", {
+    key: "Enter",
+    code: "Enter",
+    isComposing: true,
+    bubbles: true,
+  });
   await expect(dialog).toBeVisible();
   await expect(page).toHaveURL(/\/$/);
   await input.press("Enter");

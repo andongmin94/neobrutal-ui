@@ -40,7 +40,9 @@ export default function FormComposition() {
               <FormControl ref={controlRef} onBlur={() => setBlurCount((count) => count + 1)}>
                 <Input {...field} id={`${id}-custom-input`} aria-describedby={`${id}-external`} />
               </FormControl>
-              <p id={`${id}-external`} className="text-sm">This help belongs to the application.</p>
+              <p id={`${id}-external`} className="text-sm">
+                This help belongs to the application.
+              </p>
               {showHelp && (
                 <FormDescription id={`${id}-custom-help`}>Optional field help.</FormDescription>
               )}
@@ -55,7 +57,9 @@ export default function FormComposition() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Second value</FormLabel>
-              <FormControl><Input {...field} /></FormControl>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -70,8 +74,12 @@ export default function FormComposition() {
           <Button type="submit">Validate fields</Button>
         </div>
         <p className="text-sm">First field blur events: {blurCount}</p>
-        <p className="text-sm">First field touched: {form.formState.touchedFields.first ? "yes" : "no"}</p>
-        <p role="status" className="text-sm">{message}</p>
+        <p className="text-sm">
+          First field touched: {form.formState.touchedFields.first ? "yes" : "no"}
+        </p>
+        <p role="status" className="text-sm">
+          {message}
+        </p>
       </form>
     </Form>
   );

@@ -79,7 +79,12 @@ test("FormControl rejects missing, text, sibling, and Fragment children", () => 
 });
 
 test("server-rendered fields have unique labels and do not invent unregistered IDREFs", () => {
-  const html = renderToStaticMarkup(<><FieldFixture /><FieldFixture /></>);
+  const html = renderToStaticMarkup(
+    <>
+      <FieldFixture />
+      <FieldFixture />
+    </>,
+  );
   const inputs = [...html.matchAll(/<input\b[^>]*>/g)].map(([tag]) => tag);
   assert.equal(inputs.length, 2);
   const ids = inputs.map((tag) => {
@@ -129,7 +134,10 @@ test("installable templates inherit tokens; gallery presets stay in docs", () =>
     const original = source(`registry/src/blocks/templates/${name}-template.tsx`);
     const generated = source(`docs/src/components/templates/${name}-template.tsx`);
     assert.equal(generated, original, `${name}: regenerate managed docs copies`);
-    assert.doesNotMatch(original, /TEMPLATE_THEME|\[--(?:background|main|radius|ring|shadow|box-shadow-[xy]):/);
+    assert.doesNotMatch(
+      original,
+      /TEMPLATE_THEME|\[--(?:background|main|radius|ring|shadow|box-shadow-[xy]):/,
+    );
     assert.match(original, /bg-background/);
   }
   assert.match(source("docs/app/components/template-preview.tsx"), /data-template-preview/);
@@ -145,9 +153,14 @@ test("removed decorative collection is absent from sources and built catalogs", 
     "docs/content/stars.mdx",
     "docs/content/docs/stars.mdx",
     "docs/app/components/stars-page.tsx",
-  ]) assert.equal(existsSync(path.join(root, relative)), false, relative);
+  ])
+    assert.equal(existsSync(path.join(root, relative)), false, relative);
 
-  for (const relative of ["registry/registry.json", "registry/public/r/registry.json", "docs/public/r/registry.json"]) {
+  for (const relative of [
+    "registry/registry.json",
+    "registry/public/r/registry.json",
+    "docs/public/r/registry.json",
+  ]) {
     const registry = JSON.parse(source(relative)) as { items: { name: string }[] };
     assert.ok(registry.items.length > 0, `${relative}: the retained catalog is not empty`);
     assert.ok(!registry.items.some(({ name }) => /^s\d+$/.test(name)), relative);
@@ -162,5 +175,10 @@ test("removed decorative collection is absent from sources and built catalogs", 
     "docs/app/components/site-layout.tsx",
     "docs/app/components/special-page.tsx",
     "docs/app/components/component-preview.tsx",
-  ]) assert.doesNotMatch(source(relative), /(?:\/stars|StarsPage|STARS_EXAMPLES|PreviewType)/, relative);
+  ])
+    assert.doesNotMatch(
+      source(relative),
+      /(?:\/stars|StarsPage|STARS_EXAMPLES|PreviewType)/,
+      relative,
+    );
 });

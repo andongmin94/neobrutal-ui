@@ -13,7 +13,11 @@ const focusControls = [
   { route: "tabs", control: '[data-slot="tabs-trigger"]' },
   { route: "calendar", control: 'button[data-day][tabindex="0"]' },
   { route: "resizable", control: '[data-slot="resizable-handle"]' },
-  { route: "input-group", control: 'input[data-slot="input-group-control"]', ring: '[data-slot="input-group"]' },
+  {
+    route: "input-group",
+    control: 'input[data-slot="input-group-control"]',
+    ring: '[data-slot="input-group"]',
+  },
   { route: "slider", control: 'input[type="range"]', ring: '[data-slot="slider-thumb"]' },
 ] as const;
 
@@ -32,8 +36,12 @@ for (const item of focusControls) {
     await control.focus();
     await expect(control).toBeFocused();
     const ring = "ring" in item ? preview.locator(item.ring).first() : control;
-    await expect.poll(() => ring.evaluate((node) => getComputedStyle(node).boxShadow)).toContain("rgb(31, 83, 127)");
-    await expect.poll(() => ring.evaluate((node) => getComputedStyle(node).boxShadow)).toContain("rgb(239, 243, 247)");
+    await expect
+      .poll(() => ring.evaluate((node) => getComputedStyle(node).boxShadow))
+      .toContain("rgb(31, 83, 127)");
+    await expect
+      .poll(() => ring.evaluate((node) => getComputedStyle(node).boxShadow))
+      .toContain("rgb(239, 243, 247)");
   });
 }
 
@@ -51,11 +59,20 @@ test("every public button variant remains readable in every palette", async ({ p
   for (const color of colors) {
     const theme = createThemeCssVars(color);
     for (const mode of ["light", "dark"] as const) {
-      await page.locator("html").evaluate((node, dark) => node.classList.toggle("dark", dark), mode === "dark");
-      await canvas.evaluate((node, values) => {
-        for (const [key, value] of Object.entries(values)) (node as HTMLElement).style.setProperty(`--${key}`, value);
-      }, { ...theme.light, ...theme[mode] });
-      const result = await new AxeBuilder({ page }).include('[data-component="button"] .component-preview__canvas').withRules(["color-contrast"]).analyze();
+      await page
+        .locator("html")
+        .evaluate((node, dark) => node.classList.toggle("dark", dark), mode === "dark");
+      await canvas.evaluate(
+        (node, values) => {
+          for (const [key, value] of Object.entries(values))
+            (node as HTMLElement).style.setProperty(`--${key}`, value);
+        },
+        { ...theme.light, ...theme[mode] },
+      );
+      const result = await new AxeBuilder({ page })
+        .include('[data-component="button"] .component-preview__canvas')
+        .withRules(["color-contrast"])
+        .analyze();
       expect(result.violations, `${color.name}/${mode}`).toEqual([]);
       expect(result.incomplete, `${color.name}/${mode}: unresolved contrast`).toEqual([]);
     }
@@ -69,23 +86,33 @@ test("calendar keyboard focus advances to a different day", async ({ page }) => 
   await first.focus();
   const before = await first.getAttribute("data-day");
   await page.keyboard.press("ArrowRight");
-  await expect.poll(() => page.evaluate(() => document.activeElement?.getAttribute("data-day"))).not.toBe(before);
+  await expect
+    .poll(() => page.evaluate(() => document.activeElement?.getAttribute("data-day")))
+    .not.toBe(before);
   await expect(calendar.locator("button[data-day]:focus")).toHaveCount(1);
 });
 
-test("native panel resizing responds to keyboard without a translation adapter", async ({ page }) => {
+test("native panel resizing responds to keyboard without a translation adapter", async ({
+  page,
+}) => {
   await page.goto("/docs/resizable");
   const handle = page.getByRole("separator", { name: "Resize file explorer", exact: true });
   await expect(handle).toBeVisible();
   const before = Number(await handle.getAttribute("aria-valuenow"));
   await handle.focus();
   await page.keyboard.press("ArrowRight");
-  await expect.poll(async () => Number(await handle.getAttribute("aria-valuenow"))).toBeGreaterThan(before);
+  await expect
+    .poll(async () => Number(await handle.getAttribute("aria-valuenow")))
+    .toBeGreaterThan(before);
   await page.keyboard.press("ArrowLeft");
-  await expect.poll(async () => Number(await handle.getAttribute("aria-valuenow"))).toBeCloseTo(before, 0);
+  await expect
+    .poll(async () => Number(await handle.getAttribute("aria-valuenow")))
+    .toBeCloseTo(before, 0);
 });
 
-test("native slider stepping, boundaries, and pointer input agree with its value", async ({ page }) => {
+test("native slider stepping, boundaries, and pointer input agree with its value", async ({
+  page,
+}) => {
   await page.goto("/docs/slider");
   const preview = page.locator('.component-preview[data-component="slider"]').first();
   const thumb = preview.getByRole("slider").first();
@@ -95,12 +122,17 @@ test("native slider stepping, boundaries, and pointer input agree with its value
   await page.keyboard.press("ArrowRight");
   await expect.poll(async () => Number(await thumb.inputValue())).toBeGreaterThan(before);
   await page.keyboard.press("Home");
-  await expect.poll(async () => Number(await thumb.inputValue())).toBe(Number(await thumb.getAttribute("min")));
+  await expect
+    .poll(async () => Number(await thumb.inputValue()))
+    .toBe(Number(await thumb.getAttribute("min")));
   await page.keyboard.press("End");
-  await expect.poll(async () => Number(await thumb.inputValue())).toBe(Number(await thumb.getAttribute("max")));
+  await expect
+    .poll(async () => Number(await thumb.inputValue()))
+    .toBe(Number(await thumb.getAttribute("max")));
   const track = preview.locator('[data-slot="slider-track"]');
   const box = (await track.boundingBox())!;
-  if (test.info().project.use.hasTouch) await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
+  if (test.info().project.use.hasTouch)
+    await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
   else await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
   const min = Number(await thumb.getAttribute("min"));
   const max = Number(await thumb.getAttribute("max"));

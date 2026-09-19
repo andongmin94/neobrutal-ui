@@ -72,7 +72,12 @@ function FormItem({ id: providedId, className, ...props }: React.ComponentProps<
 
   return (
     <FormItemContext.Provider value={{ id, ids, register }}>
-      <div id={providedId} data-slot="form-item" className={cn("grid gap-2", className)} {...props} />
+      <div
+        id={providedId}
+        data-slot="form-item"
+        className={cn("grid gap-2", className)}
+        {...props}
+      />
     </FormItemContext.Provider>
   );
 }
@@ -118,11 +123,13 @@ const FormControl = React.forwardRef<HTMLElement, FormControlProps>(function For
   const controlId = childProps.id ?? props.id ?? `${id}-form-item`;
   useAssociation(register, "control", controlId);
   const describedBy =
-    [...new Set(
-      [props["aria-describedby"], childProps["aria-describedby"], ids.description, ids.message]
-        .filter(Boolean)
-        .flatMap((value) => value!.split(/\s+/).filter(Boolean)),
-    )].join(" ") || undefined;
+    [
+      ...new Set(
+        [props["aria-describedby"], childProps["aria-describedby"], ids.description, ids.message]
+          .filter(Boolean)
+          .flatMap((value) => value!.split(/\s+/).filter(Boolean)),
+      ),
+    ].join(" ") || undefined;
   const associations = {
     id: controlId,
     "aria-describedby": describedBy,
@@ -134,7 +141,10 @@ const FormControl = React.forwardRef<HTMLElement, FormControlProps>(function For
     props: { "data-slot": "form-control", ...props, ...associations },
     ref: forwardedRef,
     // useRender composes the child's ref and event handlers; only IDREFs need merging here.
-    render: React.cloneElement(children as React.ReactElement<React.HTMLAttributes<HTMLElement>>, associations),
+    render: React.cloneElement(
+      children as React.ReactElement<React.HTMLAttributes<HTMLElement>>,
+      associations,
+    ),
     state: {},
   });
 });
