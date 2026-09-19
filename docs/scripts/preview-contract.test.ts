@@ -27,8 +27,6 @@ function getDocumentedPreviewKeys() {
 
     for (const match of source.matchAll(/<ComponentPreview\s+([^>]+)>/g)) {
       const attributes = match[1];
-      if (attributes.includes('type="star"')) continue;
-
       const component = attributes.match(/component="([^"]+)"/)?.[1];
       const example = attributes.match(/example="([^"]+)"/)?.[1];
       assert.ok(component, `${fileName}: preview has no component name`);
