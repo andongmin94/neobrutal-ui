@@ -136,13 +136,10 @@ test("blog article lists show their bullet markers", async ({ page }) => {
   await expect(list).toHaveCSS("list-style-type", "square");
 });
 
-test("image-card preview preserves the full screenshot at narrow and wide widths", async ({
-  page,
-}) => {
+test("image-card preview preserves its screenshot proportions", async ({ page }) => {
   await openReady(page, "/docs/image-card");
-  const image = page.locator(".component-preview").first().getByRole("img", {
-    name: "neobrutal-ui documentation preview",
-  });
+  const preview = page.locator(".component-preview").first();
+  const image = preview.getByRole("img", { name: "neobrutal-ui documentation preview" });
   await expect(image).toBeVisible();
   await image.evaluate((node) => (node as HTMLImageElement).decode());
   for (const width of [320, 390, 1440]) {
@@ -160,9 +157,9 @@ test("image-card preview preserves the full screenshot at narrow and wide widths
     });
     expect(dimensions.naturalWidth).toBeGreaterThan(0);
     expect(dimensions.naturalHeight).toBeGreaterThan(0);
-    const expectedHeight =
-      (dimensions.width * dimensions.naturalHeight) / dimensions.naturalWidth;
-    expect(Math.abs(dimensions.height - expectedHeight), `${width}px`).toBeLessThanOrEqual(1);
+    const ratio = dimensions.naturalHeight / dimensions.naturalWidth;
+    const heightError = Math.abs(dimensions.height - dimensions.width * ratio);
+    expect(heightError, `${width}px`).toBeLessThanOrEqual(1);
   }
 });
 
@@ -192,7 +189,7 @@ for (const overlay of [
     action: "right",
   },
 ] as const) {
-  test(`open ${overlay.name} stays above document content with readable text`, async ({ page }) => {
+  test(`open ${overlay.name} preserves contrast and stacking`, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await openReady(page, overlay.route);
     const preview = page.locator(".component-preview").first();
