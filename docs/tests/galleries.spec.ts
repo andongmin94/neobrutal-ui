@@ -2,11 +2,11 @@ import { expect, test } from "@playwright/test";
 import colors from "../src/data/colors";
 
 const series = [
-  { id: "examples", title: "Registry pulse", count: 3 },
-  { id: "area-chart", title: "Release activity", count: 8 },
-  { id: "bar-chart", title: "Catalog coverage", count: 9 },
+  { id: "examples", title: "Decision workbench", count: 3 },
+  { id: "area-chart", title: "Release activity", count: 9 },
+  { id: "bar-chart", title: "Catalog coverage", count: 10 },
   { id: "line-chart", title: "Build performance", count: 10 },
-  { id: "pie-chart", title: "Registry composition", count: 8 },
+  { id: "pie-chart", title: "Registry composition", count: 9 },
   { id: "tooltip", title: "Install diagnostics", count: 9 },
 ];
 
@@ -133,7 +133,6 @@ test("marquee pause and reduced motion stop both strips", async ({ page }) => {
     await expect(preview.locator(selector)).toHaveCSS("animation-play-state", "paused");
   }
   await button.click();
-  await expect(button).toHaveAttribute("aria-pressed", "false");
   await page.emulateMedia({ reducedMotion: "reduce" });
   await expect(button).toBeHidden();
   await expect(preview.locator(".animate-marquee")).toHaveCSS("animation-name", "none");

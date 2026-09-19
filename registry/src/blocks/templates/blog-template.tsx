@@ -8,6 +8,8 @@ import { buttonVariants } from "@/components/ui/button-variants";
 import { Input } from "@/components/ui/input";
 import { BLOG_POSTS } from "@/lib/blog-posts";
 
+const TOPICS = ["All", ...new Set(BLOG_POSTS.map((post) => post.topic))];
+
 type BlogTemplateProps = {
   basePath?: string;
 };
@@ -18,17 +20,24 @@ function getPostHref(basePath: string, slug: string) {
 
 export default function BlogTemplate({ basePath = "/blog" }: BlogTemplateProps) {
   const [query, setQuery] = useState("");
+  const [topic, setTopic] = useState("All");
+  const [sort, setSort] = useState("newest");
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const filteredPosts = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
 
-    if (!normalizedQuery) return BLOG_POSTS;
-
-    return BLOG_POSTS.filter((post) =>
-      [post.title, post.summary, post.topic].join(" ").toLowerCase().includes(normalizedQuery),
-    );
-  }, [query]);
+    return BLOG_POSTS.filter(
+      (post) =>
+        (topic === "All" || post.topic === topic) &&
+        [post.title, post.summary, post.topic].join(" ").toLowerCase().includes(normalizedQuery),
+    ).sort((a, b) => {
+      if (sort === "shortest") return Number.parseInt(a.readTime, 10) - Number.parseInt(b.readTime, 10);
+      return sort === "oldest"
+        ? a.publishedAt.localeCompare(b.publishedAt)
+        : b.publishedAt.localeCompare(a.publishedAt);
+    });
+  }, [query, topic, sort]);
 
   return (
     <div id="top" className="flex min-h-dvh flex-col bg-background text-foreground">
@@ -61,11 +70,17 @@ export default function BlogTemplate({ basePath = "/blog" }: BlogTemplateProps) 
 
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
         <section aria-labelledby="page-title">
+          <p className="mb-3 font-mono text-xs uppercase tracking-widest">
+            Field notes / Design & engineering
+          </p>
           <h1 id="page-title" className="text-3xl leading-tight font-heading sm:text-4xl">
             Latest posts
           </h1>
 
-          <search className="mt-4">
+          <p className="mt-3 max-w-lg text-sm leading-6 text-foreground/75">
+            Ideas from the workbench. Practical notes on building products that stay useful.
+          </p>
+          <search className="mt-6">
             <label className="sr-only" htmlFor="post-search">
               Search posts
             </label>
@@ -103,18 +118,45 @@ export default function BlogTemplate({ basePath = "/blog" }: BlogTemplateProps) 
                 </Button>
               ) : null}
             </div>
-            <p className="sr-only" aria-live="polite">
-              {query
-                ? `${filteredPosts.length} ${filteredPosts.length === 1 ? "result" : "results"}`
-                : ""}
-            </p>
           </search>
+          <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
+            <div role="group" aria-label="Filter posts by topic" className="flex flex-wrap gap-2">
+              {TOPICS.map((item) => (
+                <Button
+                  key={item}
+                  type="button"
+                  size="sm"
+                  variant={topic === item ? "default" : "neutral"}
+                  aria-pressed={topic === item}
+                  onClick={() => setTopic(item)}
+                >
+                  {item}
+                </Button>
+              ))}
+            </div>
+            <label className="grid gap-1 text-xs font-heading">
+              Sort posts
+              <select
+                value={sort}
+                onChange={(event) => setSort(event.target.value)}
+                className="min-h-10 rounded-base border-2 border-border bg-secondary-background px-3 text-sm text-foreground"
+              >
+                <option value="newest">Newest first</option>
+                <option value="oldest">Oldest first</option>
+                <option value="shortest">Shortest read</option>
+              </select>
+            </label>
+          </div>
+          <p role="status" className="mt-4 text-xs text-foreground/70">
+            {filteredPosts.length} {filteredPosts.length === 1 ? "post" : "posts"}
+            {topic === "All" ? " across all topics" : ` in ${topic}`}
+          </p>
         </section>
 
         <section id="posts" className="mt-4 scroll-mt-4" aria-label="Post archive">
           {filteredPosts.length > 0 ? (
             <ol className="overflow-hidden rounded-base border-2 border-border bg-secondary-background shadow-shadow">
-              {filteredPosts.map((post) => (
+              {filteredPosts.map((post, index) => (
                 <li key={post.slug} className="border-b-2 border-border last:border-b-0">
                   <article className="grid grid-cols-[minmax(0,1fr)_2.25rem] gap-x-3 gap-y-2 p-4 sm:grid-cols-[6rem_minmax(0,1fr)_2.25rem] sm:items-center sm:gap-4 sm:p-5">
                     <time
@@ -125,6 +167,11 @@ export default function BlogTemplate({ basePath = "/blog" }: BlogTemplateProps) 
                     </time>
 
                     <div className="min-w-0">
+                      {index === 0 && !query && topic === "All" && sort === "newest" ? (
+                        <span className="mb-2 inline-block bg-main px-2 py-1 text-xs font-heading text-main-foreground">
+                          Editor's pick
+                        </span>
+                      ) : null}
                       <h2 className="text-lg leading-snug font-heading sm:text-xl">
                         <a
                           className="underline-offset-4 hover:underline"
@@ -160,7 +207,20 @@ export default function BlogTemplate({ basePath = "/blog" }: BlogTemplateProps) 
               ))}
             </ol>
           ) : (
-            <p className="py-10 text-center text-sm text-foreground/60">No posts found.</p>
+            <div className="grid justify-items-center gap-4 border-2 border-dashed border-border py-10">
+              <p className="text-sm text-foreground/70">No posts found.</p>
+              <Button
+                type="button"
+                variant="neutral"
+                onClick={() => {
+                  setTopic("All");
+                  setQuery("");
+                  searchInputRef.current?.focus();
+                }}
+              >
+                Reset filters
+              </Button>
+            </div>
           )}
         </section>
       </main>

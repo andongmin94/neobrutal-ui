@@ -1,11 +1,14 @@
 "use client";
 
 import { AtSign, BookOpen, GitFork, LayoutGrid, Mail, UserRound } from "lucide-react";
+import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button-variants";
 
 const LINKS = [
   {
+    group: "Work",
     title: "Portfolio",
     detail: "example.com",
     href: "https://example.com",
@@ -14,6 +17,7 @@ const LINKS = [
     external: true,
   },
   {
+    group: "Work",
     title: "GitHub",
     detail: "github.com",
     href: "https://github.com",
@@ -22,6 +26,7 @@ const LINKS = [
     external: true,
   },
   {
+    group: "Connect",
     title: "X",
     detail: "x.com",
     href: "https://x.com",
@@ -30,6 +35,7 @@ const LINKS = [
     external: true,
   },
   {
+    group: "Writing",
     title: "Newsletter",
     detail: "buttondown.email",
     href: "https://buttondown.email",
@@ -38,6 +44,7 @@ const LINKS = [
     external: true,
   },
   {
+    group: "Connect",
     title: "LinkedIn",
     detail: "linkedin.com",
     href: "https://www.linkedin.com",
@@ -46,6 +53,7 @@ const LINKS = [
     external: true,
   },
   {
+    group: "Connect",
     title: "Email",
     detail: "hello@example.com",
     href: "mailto:hello@example.com",
@@ -56,6 +64,19 @@ const LINKS = [
 ] as const;
 
 export default function LinkHubTemplate() {
+  const [group, setGroup] = useState("All");
+  const [copyState, setCopyState] = useState("");
+  const filteredLinks = LINKS.filter((link) => group === "All" || link.group === group);
+
+  async function copyEmail() {
+    try {
+      await navigator.clipboard.writeText("hello@example.com");
+      setCopyState("Email copied.");
+    } catch {
+      setCopyState("Could not copy. Select the email address above and copy it manually.");
+    }
+  }
+
   return (
     <div className="min-h-dvh flex flex-col bg-background text-foreground">
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
@@ -75,8 +96,28 @@ export default function LinkHubTemplate() {
           </p>
         </section>
 
-        <ul className="mt-7 grid gap-3 sm:grid-cols-2">
-          {LINKS.map((link) => {
+        <div className="mt-7 border-y-2 border-border py-4">
+          <p className="text-xs font-heading uppercase tracking-wide">Find your next stop</p>
+          <div role="group" aria-label="Filter links" className="mt-3 flex flex-wrap gap-2">
+            {["All", "Work", "Writing", "Connect"].map((item) => (
+              <Button
+                key={item}
+                type="button"
+                size="sm"
+                variant={group === item ? "default" : "neutral"}
+                aria-pressed={group === item}
+                onClick={() => setGroup(item)}
+              >
+                {item}
+              </Button>
+            ))}
+          </div>
+          <p role="status" className="mt-3 text-xs text-foreground/70">
+            {filteredLinks.length} {filteredLinks.length === 1 ? "link" : "links"}
+          </p>
+        </div>
+        <ul className="mt-5 grid gap-3 sm:grid-cols-2">
+          {filteredLinks.map((link) => {
             const LinkIcon = link.icon;
 
             return (
@@ -106,6 +147,22 @@ export default function LinkHubTemplate() {
             );
           })}
         </ul>
+        <section aria-label="Contact" className="mt-7 border-t-2 border-border pt-5">
+          <h2 className="text-base font-heading">Let's build something useful.</h2>
+          <p className="mt-2 break-all text-sm text-foreground/75">hello@example.com</p>
+          <Button
+            type="button"
+            className="mt-3"
+            variant="neutral"
+            size="sm"
+            onClick={() => void copyEmail()}
+          >
+            Copy email
+          </Button>
+          <p role="status" className="mt-3 text-xs leading-5 text-foreground/75">
+            {copyState}
+          </p>
+        </section>
       </main>
 
       <footer className="px-4 py-4 text-center text-xs text-foreground/60">

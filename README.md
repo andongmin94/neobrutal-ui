@@ -40,7 +40,8 @@ Browse the [component directory](https://neobrutal-ui.andongmin.com) to add more
 ## See the pieces working together
 
 Open the [CMS demo](https://neobrutal-ui.andongmin.com/templates/cms) to search, filter, select,
-and edit posts in one screen. It demonstrates how the controls fit together, not a hosted CMS.
+and edit posts in one screen. Preview the content, save a local version, or discard changes.
+It demonstrates how the controls fit together, not a hosted CMS.
 Edits stay in memory for the current page view and reset on refresh. Connect your own data and
 save handler before using it in an application.
 
@@ -75,21 +76,19 @@ npx shadcn@latest add @neobrutal-ui/dialog
 npx shadcn@latest add @neobrutal-ui/theme-red
 ```
 
-## Themes and templates
+## Themes, templates, and charts
 
 The shared base starts with the yellow theme.
 Install one named theme when you want to replace the project-wide light and dark colors.
 Page templates target the Next.js App Router; regular UI components support Next.js and Vite.
 
-## About the project
+The blog combines topic filters, search, and sorting. The portfolio includes expandable case
+studies. The CMS has a local editor with reading preview and save/discard controls. The link hub
+groups destinations by intent and includes an explicit contact action.
 
-This is an independently maintained derivative of
-[ekmas/neobrutalism-components](https://github.com/ekmas/neobrutalism-components), not the
-upstream project or an official shadcn project.
-It uses Base UI for accessible interaction behavior, Tailwind CSS v4 for styling, and the
-shadcn registry format for source-code installation.
-Our focus is consistent interaction and useful screen composition, not tracking the upstream
-feature list or adding decorative collections.
+The [chart workbench](https://neobrutal-ui.andongmin.com/charts) demonstrates revenue against a
+plan, signup conversion, and response-time budgets. Each recipe includes controls, calculated
+summaries, a data table, and editable source. All chart data is illustrative.
 
 ## Development
 

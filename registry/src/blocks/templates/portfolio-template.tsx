@@ -11,18 +11,30 @@ const NAV_ITEMS = [
 
 const PROJECTS = [
   {
+    challenge: "Dispatchers needed to distinguish urgent route changes from routine updates.",
+    approach: "Mapped the handoff between planning and dispatch, then prototyped one shared queue.",
+    deliverables: "Workflow map, interaction prototype, accessible React workspace.",
+    outcome: "A single view of ownership, exceptions, and the next action for each route.",
     title: "Wayline",
     type: "Product design and front-end",
     year: "2026",
     summary: "A dispatch planning workspace that turns route changes into clear next actions.",
   },
   {
+    challenge: "Monthly reporting scattered assumptions across tables, slides, and messages.",
+    approach: "Designed a common review structure with comparable periods and visible definitions.",
+    deliverables: "Reporting model, chart language, reusable review components.",
+    outcome: "Reviewers can trace each summary back to its source and see unresolved questions.",
     title: "Ledgerline",
     type: "Product design",
     year: "2025",
     summary: "A calm reporting system for finance teams reviewing a busy monthly close.",
   },
   {
+    challenge: "A growing collection of public resources was difficult to browse and maintain.",
+    approach: "Organized resources around user tasks and tested search, filters, and empty states.",
+    deliverables: "Information architecture, responsive directory, keyboard interaction checks.",
+    outcome: "A searchable directory with clear categories and maintainable contribution rules.",
     title: "Open Index",
     type: "Web design and development",
     year: "2025",
@@ -55,6 +67,7 @@ export default function PortfolioTemplate() {
       <main className="flex-1">
         <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
           <section aria-labelledby="portfolio-title">
+            <p className="mb-3 font-mono text-xs uppercase tracking-widest">Independent practice / Seoul</p>
             <h1 id="portfolio-title" className="font-heading text-4xl sm:text-5xl">
               Sora Han
             </h1>
@@ -66,6 +79,20 @@ export default function PortfolioTemplate() {
               <p>I work from early product thinking through accessible front-end delivery.</p>
             </div>
           </section>
+
+          <dl className="mt-7 grid gap-4 border-y-2 border-border py-5 sm:grid-cols-3">
+            {[
+              ["01 / Frame", "Product direction", "Scope, workflows, and information architecture."],
+              ["02 / Shape", "Interface systems", "Components, interaction states, and visual language."],
+              ["03 / Ship", "Front-end delivery", "Responsive React interfaces and usability checks."],
+            ].map(([step, title, detail]) => (
+              <div key={step}>
+                <dt className="text-xs text-foreground/70">{step}</dt>
+                <dd className="mt-2 text-sm font-heading">{title}</dd>
+                <dd className="mt-1 text-xs leading-5 text-foreground/75">{detail}</dd>
+              </div>
+            ))}
+          </dl>
 
           <section id="work" aria-labelledby="work-title" className="mt-9 scroll-mt-16">
             <h2 id="work-title" className="font-heading text-lg">
@@ -92,12 +119,31 @@ export default function PortfolioTemplate() {
                     <p className="border-t-2 border-border px-0 py-3 text-sm leading-relaxed text-foreground/75 sm:px-3">
                       {project.summary}
                     </p>
+                    <dl className="grid gap-5 bg-secondary-background p-4 sm:grid-cols-2 sm:p-5">
+                      {[
+                        ["The challenge", project.challenge],
+                        ["The approach", project.approach],
+                        ["Delivered", project.deliverables],
+                        ["The outcome", project.outcome],
+                      ].map(([label, value]) => (
+                        <div key={label}>
+                          <dt className="text-xs font-heading uppercase tracking-wide">{label}</dt>
+                          <dd className="mt-2 text-sm leading-6 text-foreground/80">{value}</dd>
+                        </div>
+                      ))}
+                    </dl>
                   </details>
                 </li>
               ))}
             </ul>
           </section>
 
+          <section className="mt-9" aria-label="Start a project">
+            <h2 className="text-xl font-heading">Have a complex workflow to simplify?</h2>
+            <p className="mt-2 text-sm leading-6 text-foreground/75">
+              Tell me about the people using it, the current friction, and what a useful first release would do.
+            </p>
+          </section>
           <div
             id="contact"
             aria-label="Contact links"
