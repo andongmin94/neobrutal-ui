@@ -3,6 +3,9 @@
 @import "./theme.css";
 
 @source "..";
+/* Generated mirrors are ignored by Git, but remain required CSS sources. */
+@source "../components/ui";
+@source "../components/templates";
 @source "../../app";
 @source "../../content";
 @custom-variant dark (&:is(.dark *));
@@ -159,7 +162,6 @@ html.dark body::-webkit-scrollbar-thumb {
 
 .code::-webkit-scrollbar-corner {
   background: transparent !important;
-  border: 0 !important;
 }
 
 .command-scrollbar::-webkit-scrollbar {
