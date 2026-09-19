@@ -78,7 +78,7 @@ export default function BlogPostTemplate({ backHref = "/blog", post }: BlogPostT
                     ))}
                   </div>
                   {section.points ? (
-                    <ul className="mt-5 list-square space-y-2 pl-6 leading-7 text-foreground/80">
+                    <ul className="mt-5 list-[square] space-y-2 pl-6 leading-7 text-foreground/80">
                       {section.points.map((point) => (
                         <li key={point}>{point}</li>
                       ))}

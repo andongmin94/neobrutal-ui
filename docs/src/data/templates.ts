@@ -34,7 +34,7 @@ const templatePresentations: TemplatePresentation[] = [
     registryItem: "cms-template",
     title: "CMS",
     description: "A compact CMS for finding, editing, and publishing posts.",
-    preview: "/template-previews/cms-87d9d76bca.png",
+    preview: "/template-previews/cms-c0dbc2ca68.png",
     color: "#7983ff",
   },
   {

@@ -15,7 +15,7 @@ export default function HoverCardDemo() {
       <HoverCardContent className="w-80">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-heading uppercase tracking-wide text-foreground/70">
+            <p className="text-xs font-heading uppercase tracking-wide text-main-foreground/70">
               neobrutal-ui
             </p>
             <h3 className="mt-1 text-lg font-heading">Editable React components</h3>
