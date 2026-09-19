@@ -139,7 +139,9 @@ for (const [route, name] of [
       "--box-shadow-x": "-6px",
       "--base-font-weight": "550",
     });
-    await expect(wrapper.getByText(/Installed templates inherit your project's theme/)).toBeVisible();
+    await expect(
+      wrapper.getByText(/Installed templates inherit your project's theme/),
+    ).toBeVisible();
   });
 }
 

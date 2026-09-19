@@ -174,5 +174,9 @@ test("removed decorative collection is absent from sources and built catalogs", 
     "docs/app/components/special-page.tsx",
     "docs/app/components/component-preview.tsx",
   ])
-    assert.doesNotMatch(source(relative), /(?:\/stars|StarsPage|STARS_EXAMPLES|PreviewType)/, relative);
+    assert.doesNotMatch(
+      source(relative),
+      /(?:\/stars|StarsPage|STARS_EXAMPLES|PreviewType)/,
+      relative,
+    );
 });

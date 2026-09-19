@@ -31,10 +31,7 @@ function toSlug(value: string) {
   return value.trim().toLowerCase().replace(/\s+/g, "-");
 }
 
-async function loadPreview(
-  component: string,
-  example: string | undefined,
-): Promise<ComponentType> {
+async function loadPreview(component: string, example: string | undefined): Promise<ComponentType> {
   const { default: components } = await import("@/data/components");
   const componentData = components.find((candidate) => toSlug(candidate.name) === component);
 
