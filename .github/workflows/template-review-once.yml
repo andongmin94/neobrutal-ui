@@ -65,7 +65,7 @@ jobs:
             await title.fill("A revised release");
             await expect(title).toHaveValue("A revised release");
             await expect(title).toBeFocused();
-            await expect(page.getByRole("status")).toContainText("Your edits are still here");
+            await expect(page.locator(".special-content").getByRole("status")).toContainText("Your edits are still here");
             await page.getByRole("textbox", { name: "Summary", exact: true }).fill("The edited summary");
             const save = page.getByRole("button", { name: "Save", exact: true });
             await save.click();
@@ -175,7 +175,7 @@ jobs:
         working-directory: docs
         run: |
           set +e
-          npm run test:browser -- tests/template-states.spec.ts --project=desktop-light --grep '^CMS editing' --reporter=json > "$RUNNER_TEMP/cms-before.json"
+          npm run test:browser -- tests/template-states.spec.ts --project=desktop-light --grep 'CMS editing' --reporter=json > "$RUNNER_TEMP/cms-before.json"
           result=$?
           set -e
           test "$result" = 1
