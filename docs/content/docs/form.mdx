@@ -85,14 +85,15 @@ export default function ProfileForm() {
 
 ## API reference
 
-| Part | Purpose | Requirement |
-| --- | --- | --- |
-| `Form` | React Hook Form provider | Spread the useForm methods |
-| `FormField.control` / `name` / `render` | Controller field binding | Typed field configuration |
-| `FormItem` | Shared label/control/message IDs | Wrap one field |
-| `FormLabel` | Linked visible label | Inside FormItem |
-| `FormControl` | Passes IDs and invalid state to its child | Exactly one non-Fragment control forwarding props and ref |
-| `FormDescription` / `FormMessage` | Help and validation feedback | Associated automatically |
+| Part | Purpose and usage |
+| --- | --- |
+| `Form` | Provides React Hook Form methods. Spread the result of `useForm` onto it. |
+| `FormField` | Binds a typed field using `control`, `name`, and `render`. |
+| `FormItem` | Wraps one field and shares its label, control, and message IDs. |
+| `FormLabel` | Labels the control. Place it inside `FormItem`. |
+| `FormControl` | Passes the field ID, help references, and invalid state to one control that forwards props and ref. |
+| `FormDescription` | Adds help text that is linked to the control automatically. |
+| `FormMessage` | Shows validation feedback that is linked to the control automatically. |
 
 Form helpers require `Form`, `FormField`, and `FormItem` in the field tree. A missing provider
 produces an explicit diagnostic. `FormControl` does not accept an empty child, text, a Fragment,

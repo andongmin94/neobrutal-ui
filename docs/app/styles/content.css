@@ -325,6 +325,9 @@ ol.md-list {
   overflow-wrap: break-word;
   font-size: 14px;
 }
+.md-table td:first-child .md-code {
+  white-space: nowrap;
+}
 .md-table th {
   background: var(--surface-muted);
   font-weight: 750;
@@ -339,7 +342,7 @@ ol.md-list {
 @media (max-width: 620px) {
   .md-table th,
   .md-table td {
-    padding: 10px 8px;
+    padding: 10px 6px;
   }
   h2.md-heading {
     margin-top: 34px;

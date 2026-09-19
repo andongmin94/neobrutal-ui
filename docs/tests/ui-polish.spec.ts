@@ -6,6 +6,7 @@ async function openReady(page: Page, route: string) {
   expect(response?.ok()).toBe(true);
   await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true");
   await expect(page.locator(".special-page-loading")).toHaveCount(0);
+  await page.evaluate(() => document.fonts.ready);
 }
 
 test("reference tables do not force horizontal scrolling on small screens", async ({ page }) => {
@@ -113,20 +114,53 @@ test("template card actions align despite different description lengths", async 
   expect(Math.abs(firstAction.y - secondAction.y)).toBeLessThanOrEqual(1);
 });
 
-test("reference tables preserve short identifiers and type names", async ({ page }) => {
-  await openReady(page, "/docs/button");
-  for (const width of [320, 390, 1280]) {
-    await page.setViewportSize({ width, height: 844 });
-    for (const text of ["disabled", "aria-busy", "render"]) {
-      const cell = page.getByRole("cell", { name: text, exact: true }).first();
-      const lines = await cell.evaluate((node) => {
-        const range = document.createRange();
-        range.selectNodeContents(node);
-        return new Set([...range.getClientRects()].map((rect) => Math.round(rect.top))).size;
-      });
-      expect(lines, `${text} at ${width}px`).toBe(1);
+function countTextLines(node: Element) {
+  const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
+  const range = document.createRange();
+  const lines = new Set<number>();
+
+  while (walker.nextNode()) {
+    if (!walker.currentNode.textContent?.trim()) continue;
+    // Element rectangles include the inline code border and padding, not just text lines.
+    range.selectNodeContents(walker.currentNode);
+    for (const rect of range.getClientRects()) {
+      if (rect.width > 0 && rect.height > 0) lines.add(Math.round(rect.top));
     }
   }
+
+  return lines.size;
+}
+
+test("reference tables preserve short identifiers and type names", async ({ page }) => {
+  for (const { route, identifiers } of [
+    { route: "/docs/button", identifiers: ["disabled", "aria-busy", "render"] },
+    { route: "/docs/form", identifiers: ["FormField", "FormDescription", "FormMessage"] },
+  ]) {
+    await openReady(page, route);
+    for (const width of [320, 390, 1280]) {
+      await page.setViewportSize({ width, height: 844 });
+      for (const text of identifiers) {
+        const cell = page.getByRole("cell", { name: text, exact: true }).first();
+        await cell.scrollIntoViewIfNeeded();
+        expect(await cell.evaluate(countTextLines), `${route}: ${text} at ${width}px`).toBe(1);
+      }
+    }
+  }
+});
+
+test("text line measurement ignores decoration and detects wrapping", async ({ page }) => {
+  await page.setContent(
+    '<div style="font: 16px monospace; width: 160px"><code style="border: 1px solid; padding: 2px 5px">disabled</code></div>',
+  );
+  const identifier = page.locator("code");
+  expect(await identifier.evaluate(countTextLines)).toBe(1);
+
+  await identifier.evaluate((node) => {
+    node.style.display = "inline-block";
+    node.style.width = "2ch";
+    node.style.overflowWrap = "anywhere";
+  });
+  expect(await identifier.evaluate(countTextLines)).toBeGreaterThan(1);
 });
 
 test("blog article lists show their bullet markers", async ({ page }) => {
