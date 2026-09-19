@@ -1,4 +1,4 @@
-name: Review template states once
+name: Finalize template state review
 
 on:
   push:
@@ -15,9 +15,11 @@ concurrency:
 jobs:
   review:
     runs-on: ubuntu-latest
-    timeout-minutes: 18
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 22
@@ -25,222 +27,29 @@ jobs:
           cache-dependency-path: |
             registry/package-lock.json
             docs/package-lock.json
-      - name: Install and build the unmodified documentation
+      - name: Install verification dependencies
         run: |
           npm ci --prefix registry
           npm ci --prefix docs
           cd docs
           npx playwright install --with-deps chromium
-          npm run build > "$RUNNER_TEMP/template-before-build.log" 2>&1 || { tail -80 "$RUNNER_TEMP/template-before-build.log"; exit 1; }
-      - name: Add focused template state regressions
-        run: |
-          cat > docs/tests/template-states.spec.ts <<'TS'
-          import AxeBuilder from "@axe-core/playwright";
-          import { expect, test, type Page } from "@playwright/test";
-          import type { TemplateEntry } from "../src/data/templates";
-
-          async function openTemplate(page: Page, name: TemplateEntry["slug"]) {
-            await page.emulateMedia({ reducedMotion: "reduce" });
-            const response = await page.goto(`/templates/${name}`);
-            expect(response?.ok()).toBe(true);
-            await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true");
-            await expect(page.locator(".special-page-loading")).toHaveCount(0);
-            await expect(page.locator(".special-content")).toBeVisible();
-            await page.evaluate(() => document.fonts.ready);
-          }
-
-          async function expectHealthyTemplate(page: Page) {
-            const width = await page.evaluate(() => document.documentElement.scrollWidth);
-            expect(width).toBeLessThanOrEqual(page.viewportSize()!.width + 1);
-            const result = await new AxeBuilder({ page })
-              .include(".special-content")
-              .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
-              .analyze();
-            expect(result.violations.map(({ id, nodes }) => ({ id, nodes }))).toEqual([]);
-          }
-
-          test("CMS editing a searched title keeps the same editor and input focus", async ({ page }) => {
-            await openTemplate(page, "cms");
-            await page.getByRole("searchbox", { name: "Search posts" }).fill("July product update");
-            const title = page.getByRole("textbox", { name: "Title", exact: true });
-            await title.fill("A revised release");
-            await expect(title).toHaveValue("A revised release");
-            await expect(title).toBeFocused();
-            await expect(page.locator(".special-content").getByRole("status")).toContainText("Your edits are still here");
-            await page.getByRole("textbox", { name: "Summary", exact: true }).fill("The edited summary");
-            const save = page.getByRole("button", { name: "Save", exact: true });
-            await save.click();
-            await expect(save).toBeDisabled();
-            await expect(title).toHaveValue("A revised release");
-            await page.getByRole("button", { name: "Clear filters", exact: true }).click();
-            await expect(page.getByRole("searchbox", { name: "Search posts" })).toHaveValue("");
-            await expect(page.getByRole("region", { name: "Posts", exact: true }).getByRole("button", { name: /A revised release/ })).toHaveAttribute("aria-pressed", "true");
-            await expectHealthyTemplate(page);
-          });
-
-          test("CMS editing publication status does not switch to the next filtered post", async ({ page }) => {
-            await openTemplate(page, "cms");
-            await page.getByRole("group", { name: "Filter posts by status" }).getByRole("button", { name: "Draft", exact: true }).click();
-            const title = page.getByRole("textbox", { name: "Title", exact: true });
-            await expect(title).toHaveValue("Organize your first team space");
-            const published = page.getByRole("switch", { name: "Published", exact: true });
-            await published.click();
-            await expect(title).toHaveValue("Organize your first team space");
-            await expect(published).toHaveAttribute("aria-checked", "true");
-            await page.getByRole("button", { name: "Save", exact: true }).click();
-            await expect(page.getByRole("button", { name: "Save", exact: true })).toBeDisabled();
-            await page.getByRole("button", { name: "Clear filters", exact: true }).click();
-            const posts = page.getByRole("region", { name: "Posts", exact: true });
-            await expect(posts.getByRole("button", { name: /Organize your first team space/ })).toHaveAttribute("aria-pressed", "true");
-            await expect(posts.getByRole("button", { name: /Public page checklist/ })).toContainText("Draft");
-            await expectHealthyTemplate(page);
-          });
-
-          test("CMS empty filters recover to a post or a focused new draft", async ({ page }) => {
-            await openTemplate(page, "cms");
-            const search = page.getByRole("searchbox", { name: "Search posts" });
-            await search.fill("no-such-post-7319");
-            await expect(page.getByRole("heading", { name: "No post selected" })).toBeVisible();
-            await page.getByRole("button", { name: "Clear filters", exact: true }).click();
-            await expect(page.getByRole("textbox", { name: "Title", exact: true })).toHaveValue("July product update");
-            await search.fill("no-such-post-7319");
-            await page.getByRole("region", { name: "No post selected" }).getByRole("button", { name: "New post", exact: true }).click();
-            await expect(search).toHaveValue("");
-            const title = page.getByRole("textbox", { name: "Title", exact: true });
-            await expect(title).toHaveValue("Untitled post");
-            await expect(title).toBeFocused();
-            await expectHealthyTemplate(page);
-          });
-
-          test("blog empty results keep a usable search and keyboard recovery", async ({ page }) => {
-            await openTemplate(page, "blog");
-            const search = page.getByRole("searchbox", { name: "Search posts" });
-            await search.fill("no-such-post-7319");
-            await expect(page.getByText("No posts found.", { exact: true })).toBeVisible();
-            await expect(search).toBeFocused();
-            await search.press("Tab");
-            const clear = page.getByRole("button", { name: "Clear search", exact: true });
-            await expect(clear).toBeFocused();
-            await clear.press("Enter");
-            await expect(search).toBeFocused();
-            await expect(page.locator(".special-content article").first()).toBeVisible();
-            await expectHealthyTemplate(page);
-          });
-
-          test("portfolio details open and close by keyboard without losing their trigger", async ({ page }) => {
-            await openTemplate(page, "portfolio");
-            const details = page.locator(".special-content details").first();
-            const summary = details.locator("summary");
-            await summary.focus();
-            await summary.press("Enter");
-            await expect(details).toHaveAttribute("open", "");
-            await expect(details.locator("p")).toBeVisible();
-            await expect(summary).toBeFocused();
-            await expectHealthyTemplate(page);
-            await summary.press("Space");
-            await expect(details).not.toHaveAttribute("open", "");
-            await expect(details.locator("p")).toBeHidden();
-            await expect(summary).toBeFocused();
-          });
-
-          test("link hub keeps raised links readable and contained at 320px", async ({ page }) => {
-            await page.setViewportSize({ width: 320, height: 844 });
-            await openTemplate(page, "links");
-            const links = page.locator(".special-content main ul a");
-            await expect(links).toHaveCount(6);
-            for (const link of await links.all()) {
-              const bounds = await link.boundingBox();
-              expect(bounds!.x).toBeGreaterThanOrEqual(0);
-              expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(320);
-              expect(bounds!.height).toBeGreaterThanOrEqual(44);
-              await expect(link).not.toHaveCSS("box-shadow", "none");
-            }
-            if (await page.evaluate(() => matchMedia("(hover: hover)").matches)) {
-              const first = links.first();
-              const resting = await first.evaluate((node) => getComputedStyle(node).boxShadow);
-              await first.hover();
-              await expect(first).not.toHaveCSS("box-shadow", resting);
-              const hovering = await first.evaluate((node) => getComputedStyle(node).boxShadow);
-              await page.mouse.down();
-              try {
-                await expect(first).not.toHaveCSS("box-shadow", hovering);
-              } finally {
-                await page.mouse.move(0, 0);
-                await page.mouse.up();
-              }
-            }
-            await expectHealthyTemplate(page);
-          });
-          TS
-      - name: Reproduce both CMS editor jumps on the unchanged source
-        working-directory: docs
-        run: |
-          set +e
-          npm run test:browser -- tests/template-states.spec.ts --project=desktop-light --grep 'CMS editing' --reporter=json > "$RUNNER_TEMP/cms-before.json"
-          result=$?
-          set -e
-          test "$result" = 1
-          python3 - <<'PY'
-          import json,os
-          from pathlib import Path
-          raw=Path(os.environ['RUNNER_TEMP'],'cms-before.json').read_text()
-          report=json.loads(raw[raw.index('{'):])
-          assert report['stats']['unexpected']==2, report['stats']
-          assert not report.get('errors'), report.get('errors')
-          print('Both CMS editor-jump regressions reproduced:', report['stats'])
-          PY
-      - name: Keep the editor stable until the user explicitly changes filters or selection
+      - name: Restore the source and tests already exercised in run 35425248694
         run: |
           python3 - <<'PY'
+          import os,subprocess,textwrap
           from pathlib import Path
-          path=Path('registry/src/blocks/templates/cms-template.tsx')
-          text=path.read_text()
-          def replace(before,after):
-              global text
-              assert text.count(before)==1, before
-              text=text.replace(before,after,1)
-          replace('function getDisplayPostTitle(post: Post) {', '''function getFilteredPosts(posts: Post[], query: string, statusFilter: StatusFilter) {
-            const normalizedQuery = query.trim().toLowerCase();
-            return posts.filter((post) => {
-              const matchesStatus = statusFilter === "all" || post.status === statusFilter;
-              return matchesStatus && (post.title + " " + post.summary).toLowerCase().includes(normalizedQuery);
-            });
-          }
-
-          function getDisplayPostTitle(post: Post) {''')
-          start=text.index('  const normalizedQuery = query.trim().toLowerCase();', text.index('export default function CmsTemplate()'))
-          end=text.index('  const updateSelectedPost =',start)
-          text=text[:start]+'''  const filteredPosts = getFilteredPosts(posts, query, statusFilter);
-            const selectedPost = posts.find((post) => post.id === selectedId);
-
-            const changeFilters = (nextQuery: string, nextStatus: StatusFilter) => {
-              const matches = getFilteredPosts(posts, nextQuery, nextStatus);
-              setQuery(nextQuery);
-              setStatusFilter(nextStatus);
-              setSelectedId(resolveSelectedPostId(matches, selectedId));
-            };
-
-            const clearFilters = () => changeFilters("", "all");
-
-          '''+text[end:]
-          text=text.replace('resolvedSelectedId','selectedId')
-          replace('function PostEditorPane({\n  onSubmit,', 'function PostEditorPane({\n  hiddenByFilters,\n  onClearFilters,\n  onSubmit,')
-          replace('  onSubmit: React.FormEventHandler<HTMLFormElement>;', '  hiddenByFilters: boolean;\n  onClearFilters: () => void;\n  onSubmit: React.FormEventHandler<HTMLFormElement>;')
-          replace('      <div className="grid flex-1 content-start gap-5 p-4 sm:p-5">', '''      {hiddenByFilters ? (
-                  <div className="border-b-2 border-border px-4 py-3 text-sm">
-                    <p role="status">This post no longer matches the current filters. Your edits are still here.</p>
-                    <Button type="button" variant="link" size="sm" className="mt-1 px-0" onClick={onClearFilters}>
-                      Clear filters
-                    </Button>
-                  </div>
-                ) : null}
-
-                <div className="grid flex-1 content-start gap-5 p-4 sm:p-5">''')
-          replace('onChange={(event) => setQuery(event.target.value)}', 'onChange={(event) => changeFilters(event.target.value, statusFilter)}')
-          replace('onClick={() => setStatusFilter(tab.value)}', 'onClick={() => changeFilters(query, tab.value)}')
-          replace('              <PostEditorPane\n                post={selectedPost}', '              <PostEditorPane\n                hiddenByFilters={!filteredPosts.some((post) => post.id === selectedId)}\n                onClearFilters={clearFilters}\n                post={selectedPost}')
-          path.write_text(text)
+          previous=subprocess.check_output(['git','show','148933306f705d808049418523be8dae0cae0230:.github/workflows/template-review-once.yml'],text=True)
+          for title,filename in [
+              ('Add focused template state regressions','template-tests.sh'),
+              ('Keep the editor stable until the user explicitly changes filters or selection','template-source.sh'),
+          ]:
+              prefix='      - name: '+title+'\n        run: |\n'
+              assert previous.count(prefix)==1
+              script=previous.split(prefix,1)[1].split('\n      - name:',1)[0]
+              Path(os.environ['RUNNER_TEMP'],filename).write_text(textwrap.dedent(script)+'\n')
           PY
+          bash "$RUNNER_TEMP/template-tests.sh"
+          bash "$RUNNER_TEMP/template-source.sh"
       - name: Regenerate and verify the fixed source
         run: |
           npm run format --prefix registry
@@ -252,10 +61,10 @@ jobs:
           npm run format --prefix docs
           npm run lint --prefix docs
           npm run typecheck --prefix docs
-          npm run build --prefix docs > "$RUNNER_TEMP/template-after-build.log" 2>&1 || { tail -80 "$RUNNER_TEMP/template-after-build.log"; exit 1; }
+          npm run build --prefix docs > "$RUNNER_TEMP/template-build.log" 2>&1 || { tail -80 "$RUNNER_TEMP/template-build.log"; exit 1; }
           npm run check:budget --prefix docs
           npm test --prefix docs
-      - name: Check all four template families in light and dark and retain state screenshots
+      - name: Verify all four template families and existing layout regressions
         working-directory: docs
         run: |
           cat > .template-review.config.ts <<'TS'
@@ -269,11 +78,11 @@ jobs:
           TS
           npx playwright test tests/template-states.spec.ts tests/ui-polish.spec.ts --config=.template-review.config.ts
           rm .template-review.config.ts
-      - name: Install and build the CMS in fresh consumers
+      - name: Verify the CMS page in Next.js and all supported Vite components
         run: |
-          npm run consumer:verify --prefix registry -- vite --item=cms-template
           npm run consumer:verify --prefix registry -- next --item=cms-template
-      - name: Update the audit record and prepare the verified change
+          npm run consumer:verify --prefix registry -- vite
+      - name: Record the verified scope and prepare the publication commit
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -282,12 +91,12 @@ jobs:
           ## Follow-up: template interaction states
 
           Baseline `4b10d2f` passed both normal Verify jobs (run 35424190133), including production checks.
-          The focused follow-up reproduced two CMS defects before changing the source: editing a matching title removed the editor, and changing a draft to published selected a different post before Save.
+          Run 35425248694 reproduced two CMS defects before changing the source: editing a matching title removed the editor, and changing a draft to published selected a different post before Save. Its 32 focused browser checks passed after the fix.
           Selection now changes only when the user changes filters or selects a row; editing and saving keep the same post. A short inline notice explains when the edited post no longer matches the filters and offers Clear filters.
           This also removes the selection-synchronization effect and the memoized filtering block.
 
-          Focused browser checks cover all four template families: CMS filtered editing, status changes and empty-state recovery; Blog empty-result keyboard recovery; Portfolio native details keyboard behavior; Link Hub 320px layout and raised press states. Both configured light/desktop and dark/mobile projects are checked, including axe on the resulting template content. Pointer-hover assertions only apply when the browser supports hover.
-          The installed CMS source is checked in fresh Next.js and Vite consumers.
+          Focused browser checks cover all four template families: CMS filtered editing, status changes and empty-state recovery; Blog empty-result keyboard recovery; Portfolio native details keyboard behavior; Link Hub 320px layout and raised press states. Both configured light/desktop and dark/mobile projects are checked, including axe on the resulting template content. Pointer-hover assertions only apply when the browser supports hover. Test route names use the existing catalog slug type.
+          The CMS registry item includes `app/cms/page.tsx`, so its fresh-consumer installation is checked in Next.js. Vite verification covers all items supported by the existing consumer harness; no Vite routing support was added or implied for template pages.
 
           These are interaction, layout and accessibility results, not a claim that every captured pixel was visually inspected. The image viewer was unavailable in this follow-up. The remaining full visual sign-off is still pending.
           MD
@@ -319,16 +128,15 @@ jobs:
           Path(os.environ['RUNNER_TEMP'],'template-publication','commit.json').write_text(json.dumps(result,indent=2))
           print(json.dumps(result))
           PY
-      - name: Preserve diagnostic evidence and prepared commit
+      - name: Preserve verification evidence
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: template-state-review
+          name: template-state-publication
           path: |
-            ${{ runner.temp }}/cms-before.json
             ${{ runner.temp }}/template-publication
             ${{ runner.temp }}/template-state-captures
-            ${{ runner.temp }}/template-*-build.log
+            ${{ runner.temp }}/template-build.log
             docs/test-results
             docs/playwright-report
           retention-days: 3
