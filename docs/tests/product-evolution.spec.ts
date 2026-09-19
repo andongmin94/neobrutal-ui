@@ -52,7 +52,7 @@ test("blog combines topic search and sorting and recovers from an empty intersec
     "aria-pressed",
     "true",
   );
-  await page.getByLabel("Sort posts", { exact: true }).selectOption("oldest");
+  await page.getByRole("combobox", { name: "Sort posts", exact: true }).selectOption("oldest");
   const dates = await page
     .locator("#posts time")
     .evaluateAll((nodes) => nodes.map((node) => node.getAttribute("datetime")));
@@ -114,18 +114,20 @@ test("chart summaries and tables follow their controls without losing units", as
   await expect(revenue).toContainText("$74,300");
   await revenue.getByText("View revenue data", { exact: true }).click();
   await expect(revenue.locator("tbody tr")).toHaveCount(4);
-  await revenue.getByLabel("Revenue period").selectOption("8");
+  await revenue.getByRole("combobox", { name: "Revenue period", exact: true }).selectOption("8");
   await expect(revenue.locator("tbody tr")).toHaveCount(8);
   await expect(revenue).toContainText("$132,800");
   await expect(revenue.getByRole("status")).toContainText("107.1%");
   const conversion = page.locator('[data-chart-recipe="conversion"]');
-  await conversion.getByLabel("Acquisition cohort").selectOption("Sales-led");
+  await conversion
+    .getByRole("combobox", { name: "Acquisition cohort", exact: true })
+    .selectOption("Sales-led");
   await expect(conversion).toContainText("29.4%");
   await conversion.getByText("View conversion data", { exact: true }).click();
   await expect(conversion.locator("tbody tr").last()).toContainText("470");
   const latency = page.locator('[data-chart-recipe="latency"]');
   await expect(latency).toContainText("470 ms");
-  await latency.getByLabel("Service", { exact: true }).selectOption("Search");
+  await latency.getByRole("combobox", { name: "Service", exact: true }).selectOption("Search");
   await expect(latency).toContainText("310 ms");
   await expect(latency.getByRole("status")).toContainText("Wed");
   await latency.getByText("View latency data", { exact: true }).click();
