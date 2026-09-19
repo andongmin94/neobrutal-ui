@@ -77,9 +77,7 @@ export default function FormComposition() {
         <p className="text-sm">
           First field touched: {form.formState.touchedFields.first ? "yes" : "no"}
         </p>
-        <p role="status" className="text-sm">
-          {message}
-        </p>
+        <output className="text-sm">{message}</output>
       </form>
     </Form>
   );
