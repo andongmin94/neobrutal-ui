@@ -126,10 +126,9 @@ for (const [route, name] of [
     const values = await component.evaluate((node) => {
       const style = getComputedStyle(node);
       return Object.fromEntries(
-        ["--main", "--background", "--radius", "--box-shadow-x", "--base-font-weight"].map((key) => [
-          key,
-          style.getPropertyValue(key).trim(),
-        ]),
+        ["--main", "--background", "--radius", "--box-shadow-x", "--base-font-weight"].map(
+          (key) => [key, style.getPropertyValue(key).trim()],
+        ),
       );
     });
     expect(values).toEqual({

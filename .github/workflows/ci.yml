@@ -57,12 +57,13 @@ jobs:
           npm run check:budget
           npm test
 
-      - name: Verify generated files are current
+      - name: Verify clean generation and unchanged sources
         run: |
+          node registry/scripts/verify-generated.mjs
           git diff --binary > "$RUNNER_TEMP/generated-files.diff"
           git diff --exit-code
           if [ -n "$(git ls-files --others --exclude-standard)" ]; then
-            echo "Untracked generated files were created:"
+            echo "Unexpected untracked files were created:"
             git status --short
             exit 1
           fi
@@ -145,6 +146,8 @@ jobs:
         run: |
           npm ci --prefix registry
           npm ci --prefix docs
+      - name: Build registry verification inputs
+        run: npm run build --prefix registry
       - name: Wait for the current production documentation
         working-directory: docs
         env:
