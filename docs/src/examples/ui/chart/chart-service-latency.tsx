@@ -35,7 +35,11 @@ const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const budget = 300;
 const config = {
   p50: { label: "p50", color: "var(--foreground)" },
-  p95: { label: "p95", color: "var(--chart-1)" },
+  p95: {
+    label: "p95",
+    // Keep the palette hue without losing the line against its background.
+    color: "color-mix(in srgb, var(--chart-1) 50%, var(--foreground))",
+  },
 } satisfies ChartConfig;
 
 export default function Component() {
