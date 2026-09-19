@@ -6,34 +6,198 @@ on:
     paths: [.github/workflows/visual-review-once.yml]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   review:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 35
+    env:
+      REVIEW_ROOT: /tmp/neobrutal-visual-review
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
-      - name: Preserve exact source and merge evidence
+      - name: Delete only the verified merged branch
         run: |
           set -eu
-          mkdir -p "$RUNNER_TEMP/consolidation"
-          cd "$RUNNER_TEMP/consolidation"
-          git -C "$GITHUB_WORKSPACE" archive HEAD | gzip > main-source.tar.gz
-          git -C "$GITHUB_WORKSPACE" archive 98b27f1febd43f6e6fbdbf34285a2b56e5d156cc | gzip > branch-source.tar.gz
-          git -C "$GITHUB_WORKSPACE" diff 9ab42af32e6ee1794d972ca4ce9ab0b6c8ca5130 98b27f1febd43f6e6fbdbf34285a2b56e5d156cc > branch-changes.patch
-          git -C "$GITHUB_WORKSPACE" log --oneline 9ab42af32e6ee1794d972ca4ce9ab0b6c8ca5130..98b27f1febd43f6e6fbdbf34285a2b56e5d156cc > branch-commits.txt
-          git -C "$GITHUB_WORKSPACE" show 62a0ebe38f464f1a75d613e045aa2cf34d33ec94:.github/workflows/visual-review-once.yml > original-review.yml
-          set +e
-          git -C "$GITHUB_WORKSPACE" merge-tree --write-tree HEAD 98b27f1febd43f6e6fbdbf34285a2b56e5d156cc > merge-result.txt
-          result=$?
-          set -e
-          test "$result" -le 1
-          cat branch-commits.txt merge-result.txt
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+          branch=fix/cross-browser-smoke-stability
+          expected=98b27f1febd43f6e6fbdbf34285a2b56e5d156cc
+          actual=$(git ls-remote --heads origin "refs/heads/$branch" | cut -f1)
+          if [ -n "$actual" ]; then
+            test "$actual" = "$expected"
+            git merge-base --is-ancestor "$expected" HEAD
+            git push origin --delete "$branch"
+          fi
+          git ls-remote --heads origin
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          name: main-consolidation-source
-          path: ${{ runner.temp }}/consolidation
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            registry/package-lock.json
+            docs/package-lock.json
+      - name: Install dependencies and browser engines
+        run: |
+          npm ci --prefix registry
+          npm ci --prefix docs
+          cd docs
+          npx playwright install --with-deps chromium firefox webkit
+      - name: Recover the preserved visual review and its source edits
+        run: |
+          python3 - <<'PY'
+          import os, subprocess, textwrap
+          from pathlib import Path
+          original = subprocess.check_output(['git', 'show', '62a0ebe38f464f1a75d613e045aa2cf34d33ec94:.github/workflows/visual-review-once.yml'], text=True)
+          capture = original.split("          cat > docs/.visual-review.mjs <<'JS'\n", 1)[1].split('\n          JS', 1)[0]
+          capture = textwrap.dedent(capture).replace('chromium.launch({channel:"chrome"})', 'chromium.launch()')
+          Path('docs/.visual-review.mjs').write_text(capture + '\n')
+          edits = original.split('      - name: Refine confirmed visual defects\n        run: |\n', 1)[1].split('\n      - name:', 1)[0]
+          Path(os.environ['RUNNER_TEMP'], 'apply-visual-fixes.sh').write_text(textwrap.dedent(edits) + '\n')
+          PY
+          cat > "$RUNNER_TEMP/capture-review.sh" <<'SH'
+          set -eu
+          if curl --fail --silent http://127.0.0.1:4173/docs/stars >/dev/null; then
+            echo 'Refusing to capture from an existing server'
+            exit 1
+          fi
+          node node_modules/vite/bin/vite.js preview --outDir build/client --host 127.0.0.1 --port 4173 --strictPort > "$RUNNER_TEMP/review-server.log" 2>&1 &
+          pid=$!
+          cleanup() {
+            kill "$pid" 2>/dev/null || true
+            wait "$pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+          for attempt in $(seq 1 30); do
+            kill -0 "$pid"
+            if curl --fail --silent http://127.0.0.1:4173/docs/stars >/dev/null; then break; fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:4173/docs/stars >/dev/null
+          node .visual-review.mjs
+          cleanup
+          trap - EXIT
+          if curl --fail --silent http://127.0.0.1:4173/docs/stars >/dev/null; then
+            echo 'Capture server did not release port 4173'
+            exit 1
+          fi
+          SH
+      - name: Build and capture the before state
+        working-directory: docs
+        env:
+          REVIEW_PHASE: before
+        run: |
+          npm run build > "$RUNNER_TEMP/before-build.log" 2>&1 || { tail -100 "$RUNNER_TEMP/before-build.log"; exit 1; }
+          bash "$RUNNER_TEMP/capture-review.sh"
+      - name: Apply preserved fixes and strengthen the regression checks
+        run: |
+          bash "$RUNNER_TEMP/apply-visual-fixes.sh"
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('docs/README.md')
+          text = path.read_text()
+          before = 'Failure artifacts contain traces, screenshots, and HTML reports under `test-results` and\n`playwright-report`.'
+          after = 'Failure artifacts contain traces, screenshots, and separate HTML reports under `test-results`,\n`playwright-report`, and `playwright-report-cross`.'
+          assert text.count(before) == 1
+          path.write_text(text.replace(before, after, 1))
+          path = Path('docs/tests/ui-polish.spec.ts')
+          path.write_text('import AxeBuilder from "@axe-core/playwright";\n' + path.read_text())
+          PY
+          cat >> docs/tests/ui-polish.spec.ts <<'TS'
+
+          test("open hover-card text has sufficient contrast in both themes", async ({ page }) => {
+            await page.emulateMedia({ reducedMotion: "reduce" });
+            await openReady(page, "/docs/hover-card");
+            const trigger = page.locator(".component-preview").getByRole("link", {
+              name: "Explore the component registry",
+              exact: true,
+            });
+            await trigger.hover();
+            await expect(page.locator("[data-slot='hover-card-content']")).toBeVisible();
+            const results = await new AxeBuilder({ page })
+              .include("[data-slot='hover-card-content']")
+              .withRules(["color-contrast"])
+              .analyze();
+            expect(results.violations.map(({ id, nodes }) => ({ id, nodes }))).toEqual([]);
+          });
+          TS
+      - name: Generate, lint, typecheck and verify source contracts
+        run: |
+          npm run format --prefix registry
+          npm run lint --prefix registry
+          npm run typecheck --prefix registry
+          npm run build --prefix registry
+          npm run registry:validate --prefix registry
+          npm run registry:check --prefix registry
+          npm run format --prefix docs
+          npm run lint --prefix docs
+          npm run typecheck --prefix docs
+          npm run build --prefix docs > "$RUNNER_TEMP/after-build.log" 2>&1 || { tail -100 "$RUNNER_TEMP/after-build.log"; exit 1; }
+          npm run check:budget --prefix docs
+          npm test --prefix docs
+      - name: Capture revised open states and table layouts
+        working-directory: docs
+        env:
+          REVIEW_PHASE: after
+        run: bash "$RUNNER_TEMP/capture-review.sh"
+      - name: Verify fresh Next.js and Vite consumers
+        run: npm run consumer:verify --prefix registry
+      - name: Run the complete Chromium regression suite
+        working-directory: docs
+        run: npm run test:browser
+      - name: Run Firefox, WebKit and narrow-screen regressions
+        working-directory: docs
+        run: npm run test:browser:cross
+      - name: Prepare the verified commit without publishing it
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          rm docs/.visual-review.mjs .github/workflows/visual-review-once.yml
+          git add registry docs .github/workflows/visual-review-once.yml
+          git diff --cached --check
+          git diff --cached --stat
+          mkdir -p "$RUNNER_TEMP/prepared"
+          git diff --cached > "$RUNNER_TEMP/prepared/changes.patch"
+          python3 - <<'PY'
+          import base64, json, os, subprocess, urllib.request
+          from pathlib import Path
+          base = 'https://api.github.com/repos/' + os.environ['GITHUB_REPOSITORY']
+          def api(endpoint, payload=None):
+              request = urllib.request.Request(base + endpoint, data=None if payload is None else json.dumps(payload).encode(), headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json', 'X-GitHub-Api-Version': '2022-11-28'})
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  return json.load(response)
+          parent = os.environ['GITHUB_SHA']
+          if api('/git/ref/heads/main')['object']['sha'] != parent:
+              raise SystemExit('main moved; refusing stale publication')
+          entries = []
+          for line in subprocess.check_output(['git', 'diff', '--cached', '--name-status', '--no-renames'], text=True).splitlines():
+              status, filename = line.split('\t', 1)
+              entry = {'path': filename, 'mode': '100644', 'type': 'blob'}
+              if status == 'D':
+                  entry['sha'] = None
+              elif filename.endswith('.png'):
+                  entry['sha'] = api('/git/blobs', {'encoding': 'base64', 'content': base64.b64encode(Path(filename).read_bytes()).decode()})['sha']
+              else:
+                  entry['content'] = Path(filename).read_text()
+              entries.append(entry)
+          tree = api('/git/trees', {'base_tree': subprocess.check_output(['git', 'rev-parse', 'HEAD^{tree}'], text=True).strip(), 'tree': entries})
+          commit = api('/git/commits', {'message': 'fix: restore readable reference tables, article bullets and hover-card contrast', 'tree': tree['sha'], 'parents': [parent]})
+          result = {'prepared_commit': commit['sha'], 'tree': tree['sha'], 'expected_main': parent}
+          Path(os.environ['RUNNER_TEMP'], 'prepared', 'commit.json').write_text(json.dumps(result, indent=2))
+          print(json.dumps(result))
+          PY
+      - name: Preserve verification evidence and prepared commit
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: resumed-visual-review
+          path: |
+            /tmp/neobrutal-visual-review
+            ${{ runner.temp }}/prepared
+            ${{ runner.temp }}/*build.log
+            ${{ runner.temp }}/review-server.log
+            docs/test-results
+            docs/playwright-report
+            docs/playwright-report-cross
           retention-days: 3
+          if-no-files-found: error
