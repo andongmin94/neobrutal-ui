@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 
-test("template thumbnails use current, inert layouts and remain inside their cards", async ({ page }) => {
+test("template thumbnails use current, inert layouts and remain inside their cards", async ({
+  page,
+}) => {
   await page.goto("/templates");
   const thumbnails = page.locator("[data-thumbnail-ready]");
   await expect(thumbnails).toHaveCount(4);
