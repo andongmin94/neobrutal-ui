@@ -717,7 +717,8 @@ const RECIPES = [
   {
     name: "chart-service-latency",
     title: "Response-time budget",
-    description: "Daily p50 and p95 with service controls, budget breaches, and an exact data table.",
+    description:
+      "Daily p50 and p95 with service controls, budget breaches, and an exact data table.",
     categories: ["data-display", "data-visualization", "recipe"],
     type: "registry:component",
     dependencies: ["recharts"],

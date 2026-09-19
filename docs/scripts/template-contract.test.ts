@@ -29,6 +29,12 @@ test("template cards are an exact presentation of the installable registry templ
     const item = templateByName.get(template.registryItem);
     assert.ok(item, `${template.registryItem}: registry item is missing`);
     assert.equal(template.description, item.description);
+    const page = fs.readFileSync(`content/templates/${template.slug}.mdx`, "utf8");
+    assert.equal(
+      page.match(/^description: (.+)$/m)?.[1],
+      item.description,
+      `${template.slug}: page metadata must describe the installed template`,
+    );
     assert.equal(template.installCommand, registryInstallCommand(template.registryItem));
     assert.ok(
       fs.existsSync(`public${template.preview}`),
