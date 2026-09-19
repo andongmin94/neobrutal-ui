@@ -28,6 +28,9 @@ const componentCategoryBySlug = {
   card: "Data display",
   carousel: "Layout",
   chart: "Data display",
+  "chart-revenue-target": "Data display",
+  "chart-signup-conversion": "Data display",
+  "chart-service-latency": "Data display",
   checkbox: "Forms",
   collapsible: "Disclosure",
   combobox: "Forms",
@@ -74,7 +77,13 @@ export function getComponentCategory(slug: string): ComponentGroup {
   return category;
 }
 
-const recipeSlugs = new Set<string>([...COMPOSITION_RECIPE_SLUGS, "data-table"]);
+const recipeSlugs = new Set<string>([
+  ...COMPOSITION_RECIPE_SLUGS,
+  "data-table",
+  "chart-revenue-target",
+  "chart-signup-conversion",
+  "chart-service-latency",
+]);
 
 export function getComponentInstallMode(slug: string): ComponentInstallMode {
   return recipeSlugs.has(slug) ? "Recipe" : "Component";

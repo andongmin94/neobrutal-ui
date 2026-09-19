@@ -42,6 +42,9 @@ jobs:
           npm run registry:validate
           npm run registry:check
           npm run consumer:verify
+          for item in chart-revenue-target chart-signup-conversion chart-service-latency; do
+            npm run consumer:verify -- --item="$item"
+          done
 
       - name: Install docs dependencies
         working-directory: docs

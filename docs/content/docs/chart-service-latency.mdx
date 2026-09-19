@@ -1,0 +1,64 @@
+---
+title: Response-time budget
+description: Compare daily p50 and p95 latency with a budget and identify the days that breach it.
+---
+
+Switch between the API and Search samples to inspect their daily response times. Line patterns distinguish p50, p95, and the budget without relying only on color. The summary and table update with the service selection.
+
+<ComponentPreview component="chart-service-latency">
+<include cwd lang="tsx">
+  ./src/examples/ui/chart-service-latency.tsx
+</include>
+</ComponentPreview>
+
+## Installation
+
+Complete the [base setup](/docs/installation), then install this recipe with the CLI tab below.
+It works in React 19 projects using Next.js or Vite and Tailwind CSS v4.
+
+<Installation component="chart-service-latency">
+
+For manual installation, install [Chart](/docs/chart) and [Card](/docs/card), then add Recharts:
+
+```bash
+npm install recharts@^3.9.2
+```
+
+Create **`components/ui/chart-service-latency.tsx`**:
+
+<include cwd lang="tsx">
+  ./src/components/ui/chart-service-latency.tsx
+</include>
+</Installation>
+
+## Usage
+
+```tsx
+import ChartServiceLatency from "@/components/ui/chart-service-latency";
+
+export default function Example() {
+  return <ChartServiceLatency />;
+}
+```
+
+## API reference
+
+The default export is an editable recipe with no required props. It includes illustrative data,
+not a live data connection. Edit the following constants in the installed source to adapt it.
+
+| Source setting | Meaning |
+| --- | --- |
+| `samples` | Seven daily `[p50, p95]` pairs per service, measured in milliseconds. |
+| `days` | Labels matching the sample order. |
+| `budget` | The daily p95 threshold, initially 300 milliseconds. |
+| `service` | Initially selected service. |
+| `config` | Series labels, shared colors, and the contrasting p95 color. |
+
+The summary reports the worst daily p95, not a pooled weekly percentile. A day is over budget only when p95 is strictly greater than the threshold. When changing the budget or data range, update the displayed budget labels and Y-axis domain together.
+
+## Accessibility
+
+The selector has a visible label and supports keyboard input. The chart enables Recharts keyboard
+navigation. Calculated summaries remain visible without hovering, and the expandable data table
+provides the exact values behind the plot. Preserve these alternatives when adapting the recipe.
+The plot does not animate and inherits the consuming project's light and dark theme tokens.

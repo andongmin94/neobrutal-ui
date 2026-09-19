@@ -1,0 +1,63 @@
+---
+title: Revenue vs target
+description: Compare weekly revenue with a plan, inspect variance, and read the exact values.
+---
+
+Use the period selector to compare the last four or all eight sample weeks. Bars show revenue and the dashed line shows the target. The totals, achievement rate, and table use the same selected weeks.
+
+<ComponentPreview component="chart-revenue-target">
+<include cwd lang="tsx">
+  ./src/examples/ui/chart-revenue-target.tsx
+</include>
+</ComponentPreview>
+
+## Installation
+
+Complete the [base setup](/docs/installation), then install this recipe with the CLI tab below.
+It works in React 19 projects using Next.js or Vite and Tailwind CSS v4.
+
+<Installation component="chart-revenue-target">
+
+For manual installation, install [Chart](/docs/chart) and [Card](/docs/card), then add Recharts:
+
+```bash
+npm install recharts@^3.9.2
+```
+
+Create **`components/ui/chart-revenue-target.tsx`**:
+
+<include cwd lang="tsx">
+  ./src/components/ui/chart-revenue-target.tsx
+</include>
+</Installation>
+
+## Usage
+
+```tsx
+import ChartRevenueTarget from "@/components/ui/chart-revenue-target";
+
+export default function Example() {
+  return <ChartRevenueTarget />;
+}
+```
+
+## API reference
+
+The default export is an editable recipe with no required props. It includes illustrative data,
+not a live data connection. Edit the following constants in the installed source to adapt it.
+
+| Source setting | Meaning |
+| --- | --- |
+| `weeks` | Ordered rows containing `week`, `revenue`, and `target`. Amounts are USD. |
+| `range` | Initial period: `"4"` for the last four weeks or `"8"` for all weeks. |
+| `money` | Currency formatter shared by summaries, tooltip, and table. |
+| `config` | Series labels and shared theme colors. |
+
+Keep weekly targets positive when adapting this sample. Achievement is total revenue divided by total target; it is not the average of weekly percentages. Variance is revenue minus target.
+
+## Accessibility
+
+The selector has a visible label and supports keyboard input. The chart enables Recharts keyboard
+navigation. Calculated summaries remain visible without hovering, and the expandable data table
+provides the exact values behind the plot. Preserve these alternatives when adapting the recipe.
+The plot does not animate and inherits the consuming project's light and dark theme tokens.

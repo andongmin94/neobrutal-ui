@@ -201,6 +201,15 @@ function ChartComponent({ children, chart }: { children: ReactNode; chart: Chart
   return (
     <div className="flex h-full min-w-0 flex-col [&>[data-slot=card]]:flex-1">
       {children}
+      {chart.registryName && (
+        <Button
+          className="mt-4 w-full"
+          variant="neutral"
+          render={<a href={`/docs/${chart.registryName}`} />}
+        >
+          Install recipe
+        </Button>
+      )}
       <Dialog>
         <DialogTrigger asChild>
           <Button className="mt-4 w-full" variant="outline">
@@ -212,8 +221,9 @@ function ChartComponent({ children, chart }: { children: ReactNode; chart: Chart
           <DialogHeader>
             <DialogTitle>{chart.name}</DialogTitle>
             <DialogDescription>
-              Complete example with sample data. Install Chart and Card, then copy and adapt this
-              source.
+              {chart.registryName
+                ? "The same source delivered by the registry. Use Install recipe for setup and usage."
+                : "Complete example with sample data. Install Chart and Card, then copy and adapt this source."}
             </DialogDescription>
           </DialogHeader>
           <Pre

@@ -5,6 +5,7 @@ import { format } from "oxfmt";
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const chartExamplesDirectory = path.resolve(scriptDirectory, "../examples/ui/chart");
+const registryChartsDirectory = path.resolve(scriptDirectory, "../components/ui");
 const outputPath = path.resolve(scriptDirectory, "../data/charts.ts");
 
 function componentName(file: string) {
@@ -15,28 +16,46 @@ function componentName(file: string) {
     .join("");
 }
 
-const chartFiles = fs
-  .readdirSync(chartExamplesDirectory)
-  .filter((file) => file.endsWith(".tsx"))
-  .sort();
+const chartFiles = [
+  ...fs
+    .readdirSync(chartExamplesDirectory)
+    .filter((file) => file.endsWith(".tsx"))
+    .map((file) => ({
+      file,
+      directory: chartExamplesDirectory,
+      importPath: `@/examples/ui/chart/${file.replace(/\.tsx$/, "")}`,
+      registryName: undefined,
+    })),
+  ...fs
+    .readdirSync(registryChartsDirectory)
+    .filter((file) => file.startsWith("chart-") && file.endsWith(".tsx"))
+    .map((file) => ({
+      file,
+      directory: registryChartsDirectory,
+      importPath: `@/components/ui/${file.replace(/\.tsx$/, "")}`,
+      registryName: file.replace(/\.tsx$/, ""),
+    })),
+].sort((a, b) => a.file.localeCompare(b.file));
+
+const names = chartFiles.map(({ file }) => componentName(file));
+if (new Set(names).size !== names.length) {
+  throw new Error("Duplicate chart source. Keep installable recipes in registry/src only.");
+}
 
 const imports = chartFiles.map(
-  (file) =>
-    `import ${componentName(file)} from "@/examples/ui/chart/${file.replace(/\.tsx$/, "")}";`,
+  ({ file, importPath }) => `import ${componentName(file)} from "${importPath}";`,
 );
 
-const entries = chartFiles.map((file) => {
+const entries = chartFiles.map(({ file, directory, registryName }) => {
   const name = componentName(file);
-  const source = fs
-    .readFileSync(path.join(chartExamplesDirectory, file), "utf8")
-    .replaceAll("\r\n", "\n")
-    .replace(/export default function Component\(\)/, `export function ${name}()`);
+  const source = fs.readFileSync(path.join(directory, file), "utf8").replaceAll("\r\n", "\n");
 
   return [
     "  {",
     `    component: ${name},`,
     `    code: ${JSON.stringify(source)},`,
     `    name: "${name}",`,
+    ...(registryName ? [`    registryName: "${registryName}",`] : []),
     "  }",
   ].join("\n");
 });
@@ -49,6 +68,7 @@ export interface ChartExample {
   component: React.ComponentType;
   code: string;
   name: string;
+  registryName?: string;
 }
 
 export const charts: ChartExample[] = [

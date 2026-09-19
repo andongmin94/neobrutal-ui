@@ -684,6 +684,51 @@ const RECIPES = [
       },
     ],
   },
+  {
+    name: "chart-revenue-target",
+    title: "Revenue vs target",
+    description: "Weekly revenue with period controls, target variance, and an exact data table.",
+    categories: ["data-display", "data-visualization", "recipe"],
+    type: "registry:component",
+    dependencies: ["recharts"],
+    registryDependencies: ["chart", "card"],
+    files: [
+      {
+        path: "src/components/ui/chart-revenue-target.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
+    name: "chart-signup-conversion",
+    title: "Signup conversion",
+    description: "Cohort conversion with stage losses, conversion rates, and an exact data table.",
+    categories: ["data-display", "data-visualization", "recipe"],
+    type: "registry:component",
+    dependencies: ["recharts"],
+    registryDependencies: ["chart", "card"],
+    files: [
+      {
+        path: "src/components/ui/chart-signup-conversion.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
+    name: "chart-service-latency",
+    title: "Response-time budget",
+    description: "Daily p50 and p95 with service controls, budget breaches, and an exact data table.",
+    categories: ["data-display", "data-visualization", "recipe"],
+    type: "registry:component",
+    dependencies: ["recharts"],
+    registryDependencies: ["chart", "card"],
+    files: [
+      {
+        path: "src/components/ui/chart-service-latency.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
 ] satisfies DiscoverableRegistryItem[];
 
 const TEMPLATES = [

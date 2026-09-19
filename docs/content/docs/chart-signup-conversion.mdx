@@ -1,0 +1,63 @@
+---
+title: Signup conversion
+description: Compare acquisition cohorts, find stage losses, and inspect conversion denominators.
+---
+
+Choose a sample acquisition cohort to update all four stages together. The visible summary identifies the largest loss by number of people, while the table exposes each step conversion rate.
+
+<ComponentPreview component="chart-signup-conversion">
+<include cwd lang="tsx">
+  ./src/examples/ui/chart-signup-conversion.tsx
+</include>
+</ComponentPreview>
+
+## Installation
+
+Complete the [base setup](/docs/installation), then install this recipe with the CLI tab below.
+It works in React 19 projects using Next.js or Vite and Tailwind CSS v4.
+
+<Installation component="chart-signup-conversion">
+
+For manual installation, install [Chart](/docs/chart) and [Card](/docs/card), then add Recharts:
+
+```bash
+npm install recharts@^3.9.2
+```
+
+Create **`components/ui/chart-signup-conversion.tsx`**:
+
+<include cwd lang="tsx">
+  ./src/components/ui/chart-signup-conversion.tsx
+</include>
+</Installation>
+
+## Usage
+
+```tsx
+import ChartSignupConversion from "@/components/ui/chart-signup-conversion";
+
+export default function Example() {
+  return <ChartSignupConversion />;
+}
+```
+
+## API reference
+
+The default export is an editable recipe with no required props. It includes illustrative data,
+not a live data connection. Edit the following constants in the installed source to adapt it.
+
+| Source setting | Meaning |
+| --- | --- |
+| `cohorts` | Four ordered counts per acquisition cohort. Counts represent people, not repeated events. |
+| `stages` | Labels in the same order as the counts. |
+| `cohort` | Initially selected acquisition cohort. |
+| `config` | The series label and shared theme color. |
+
+Use one consistently defined cohort for all stages. Visit-to-paid conversion uses the first stage as its denominator; step conversion uses the preceding stage. Keep denominators positive in this sample and define an explicit no-data state before connecting an empty dataset.
+
+## Accessibility
+
+The selector has a visible label and supports keyboard input. The chart enables Recharts keyboard
+navigation. Calculated summaries remain visible without hovering, and the expandable data table
+provides the exact values behind the plot. Preserve these alternatives when adapting the recipe.
+The plot does not animate and inherits the consuming project's light and dark theme tokens.
