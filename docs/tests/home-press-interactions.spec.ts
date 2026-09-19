@@ -10,10 +10,11 @@ async function interactionState(locator: import("@playwright/test").Locator) {
 test("home shortcuts use the shared raised and pressed interaction", async ({ page }) => {
   await page.goto("/");
 
+  const cms = page.getByRole("link", { name: "Try the CMS demo", exact: true });
   const shortcuts = [
     page.getByRole("link", { name: "Get started", exact: true }),
     page.getByRole("link", { name: /Browse \d+ components/ }),
-    page.getByRole("link", { name: "View components", exact: true }),
+    cms,
     page.getByRole("link", { name: /Explore complete templates/ }),
     page.locator(".directory-card").first(),
   ];
@@ -22,6 +23,7 @@ test("home shortcuts use the shared raised and pressed interaction", async ({ pa
     await expect(shortcut).toBeVisible();
     expect((await interactionState(shortcut)).boxShadow).not.toBe("none");
   }
+  await expect(cms).toHaveAttribute("href", "/templates/cms");
 
   const card = page.locator(".directory-card").first();
   await expect(card).toHaveClass(/pressable/);

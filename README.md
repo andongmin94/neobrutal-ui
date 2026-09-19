@@ -1,11 +1,15 @@
 # neobrutal-ui
 
-Neobrutalist React components, themes, and page templates that you install with the shadcn CLI.
-The source files are copied into your project, so you can read, edit, and own the code.
+**Bold by design. Clear in use.**
 
-[Documentation](https://neobrutal-ui.andongmin.com) ·
+Neobrutalist React UI for building interfaces with clear actions, selection, and feedback.
+Raised buttons press down in stages; shared colors, borders, and shadows keep the pieces together.
+Install components, themes, and page templates with the shadcn CLI and edit the source in your project.
+
+[Documentation](https://neobrutal-ui.andongmin.com/docs) ·
 [Installation](https://neobrutal-ui.andongmin.com/docs/installation) ·
-[Component directory](https://neobrutal-ui.andongmin.com)
+[Component directory](https://neobrutal-ui.andongmin.com) ·
+[Try the CMS demo](https://neobrutal-ui.andongmin.com/templates/cms)
 
 ![neobrutal-ui component preview](docs/public/preview.png)
 
@@ -32,6 +36,16 @@ export default function Example() {
 
 A button with a bold border and hard shadow means the setup worked.
 Browse the [component directory](https://neobrutal-ui.andongmin.com) to add more pieces.
+
+## See the pieces working together
+
+Open the [CMS demo](https://neobrutal-ui.andongmin.com/templates/cms) to search, filter, select,
+and edit posts in one screen. It demonstrates how the controls fit together, not a hosted CMS.
+Edits stay in memory for the current page view and reset on refresh. Connect your own data and
+save handler before using it in an application.
+
+Our [interaction rules](https://neobrutal-ui.andongmin.com/docs#interaction-rules) explain when
+to use raised actions, persistent selection, visible focus, and simple containers.
 
 ## Adding neobrutal-ui to an existing project
 
@@ -74,6 +88,8 @@ This is an independently maintained derivative of
 upstream project or an official shadcn project.
 It uses Base UI for accessible interaction behavior, Tailwind CSS v4 for styling, and the
 shadcn registry format for source-code installation.
+Our focus is consistent interaction and useful screen composition, not tracking the upstream
+feature list or adding decorative collections.
 
 ## Development
 

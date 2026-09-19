@@ -1,10 +1,11 @@
 ---
 title: Introduction
-description: What neobrutal-ui provides and how to start using it.
+description: Build clear interfaces with bold controls and feedback you can feel.
 ---
 
 neobrutal-ui is a collection of React UI components with bold borders, hard shadows, and clear
 interaction states.
+The goal is a complete interface that feels consistent, not a collection of unrelated effects.
 You install the source files into your own project with the shadcn CLI, so you can read and edit
 everything you use.
 
@@ -16,12 +17,56 @@ everything you use.
 
 You do not need to understand the registry format or configure a namespace before getting started.
 
+## Try a complete screen
+
+Open the [CMS demo](/templates/cms) to see search, filters, selection, and editing together.
+Select a draft, change its title or status, and save it.
+The editor keeps your current post selected while you edit, even when it no longer matches the
+active filter.
+Clear the filters to return to the full list.
+
+This is a front-end example, not a hosted CMS.
+Edits stay in memory for the current page view and reset on refresh.
+Connect your own data and save handler before using it in an application.
+UI components work with Next.js and Vite; the page templates target the Next.js App Router.
+
+## Interaction rules
+
+Use these rules when composing or customizing a screen.
+
+### Actions should feel pressable
+
+Raised buttons start with a hard shadow, press down partway on hover, and press fully during a
+click.
+Keep keyboard focus visible, and keep disabled actions still.
+Use this treatment for actions and clickable cards, not for every piece of content.
+
+### Selection is not hover
+
+A selected tab, filter, or row stays selected after the pointer leaves.
+Use a persistent fill or indicator for selection and a separate visible focus treatment for
+keyboard navigation.
+A segmented filter needs one outer frame and internal dividers, not a second raised button
+inside the selected segment.
+
+### Containers should organize, not compete
+
+Use borders to group content and dividers to separate content inside the group.
+Avoid giving every nested panel another heavy frame and shadow.
+A non-interactive card should not move as though it were a button.
+
+### Inputs and feedback should stay clear
+
+Keep input labels visible, explain errors near their fields, and distinguish editing from saving.
+Do not use motion as the only way to communicate state.
+Respect reduced-motion preferences without hiding selection, focus, or feedback.
+
 ## What you get
 
 - React 19 components with accessible interaction behavior from Base UI where needed.
 - Tailwind CSS v4 styles for colors, type, borders, radii, and hard shadows.
 - Editable component files copied directly into your application.
-- Charts, decorative stars, themes, and focused starter templates using the same visual system.
+- Charts, shared themes, and focused page templates for composing useful screens.
 
 ## How installation works
 
@@ -35,8 +80,9 @@ optional short names, and the different item types when you need those details.
 
 ## Project background
 
-neobrutal-ui is a maintained remake of
+neobrutal-ui is an independently maintained derivative of
 [ekmas/neobrutalism-components](https://github.com/ekmas/neobrutalism-components).
-The current project maintains its own Base UI components, templates, examples, documentation, and
-installation checks.
+It maintains its own components, templates, examples, documentation, and installation checks.
+Its direction is clear interaction and screen composition, independent of the upstream release
+schedule.
 See [Credits & license](/docs/credits) for attribution details.

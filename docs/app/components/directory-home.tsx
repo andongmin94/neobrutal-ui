@@ -96,11 +96,11 @@ export function DirectoryHome() {
             <h1>
               Bold by design.
               <br />
-              Yours to build.
+              Clear in use.
             </h1>
             <p className="directory-hero__description">
-              Neobrutalist components with hard shadows, clear interactions, and source you own.
-              Install the pieces. Make them yours.
+              Raised controls that press down in stages. Clear selection and feedback. Build a
+              complete interface with shared styles and source you can edit.
             </p>
             <div className="directory-hero__actions">
               <Link className={buttonVariants({ size: "lg" })} to="/docs/installation">

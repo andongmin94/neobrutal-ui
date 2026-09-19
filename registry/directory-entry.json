@@ -2,6 +2,6 @@
   "name": "@neobrutal-ui",
   "homepage": "https://neobrutal-ui.andongmin.com",
   "url": "https://neobrutal-ui.andongmin.com/r/{name}.json",
-  "description": "Neobrutalist React components and Next.js templates built with Base UI and Tailwind CSS v4.",
+  "description": "Neobrutalist React UI with staged press feedback, shared themes, and editable Next.js page templates, built with Base UI.",
   "logo": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><path d='M7 7h23v23H7z' fill='var(--foreground,currentColor)'/><path d='M2 2h23v23H2z' fill='var(--background,white)' stroke='var(--foreground,currentColor)' stroke-width='2'/><path d='M8 19V8l11 11V8' stroke='var(--foreground,currentColor)' stroke-width='3' stroke-linecap='square' stroke-linejoin='miter'/></svg>"
 }

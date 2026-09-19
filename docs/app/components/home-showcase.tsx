@@ -14,14 +14,14 @@ export function HomeShowcase() {
   return (
     <div className="home-showcase">
       <div className="home-showcase__caption">
-        <span>Not a screenshot.</span>
+        <span>Real controls. Shared rules.</span>
         <span>Try it out ↓</span>
       </div>
       <Card className="w-full bg-secondary-background">
         <CardHeader>
           <Badge className="w-fit">Built with neobrutal-ui</Badge>
-          <h2 className="text-2xl font-heading">Your next big idea.</h2>
-          <p className="text-sm text-foreground/70">A few components. A little personality.</p>
+          <h2 className="text-2xl font-heading">One interface. Not loose parts.</h2>
+          <p className="text-sm text-foreground/70">Edit a field, change a setting, then save.</p>
         </CardHeader>
         <CardContent>
           <form
@@ -41,7 +41,11 @@ export function HomeShowcase() {
             </div>
             <div className="flex items-center justify-between gap-4">
               <Label htmlFor="showcase-notifications">Keep me in the loop</Label>
-              <Switch id="showcase-notifications" defaultChecked />
+              <Switch
+                id="showcase-notifications"
+                defaultChecked
+                onCheckedChange={() => setSaved(false)}
+              />
             </div>
             <div className="flex flex-wrap items-center gap-4">
               <Button type="submit">
@@ -50,16 +54,16 @@ export function HomeShowcase() {
               </Button>
               <Link
                 className={`${buttonVariants({ variant: "outline", size: "sm" })} directory-action-link`}
-                to="/docs/card"
+                to="/templates/cms"
               >
-                View components
+                Try the CMS demo
                 <ArrowUpRight aria-hidden="true" size={16} />
               </Link>
             </div>
             <output className="min-h-5 text-sm text-foreground/70">
               {saved
-                ? "Saved locally in this demo. Nothing was sent."
-                : "Editable source. No hosted UI dependency."}
+                ? "Saved for this page view. Nothing was sent."
+                : "Demo only. Edits reset when you refresh."}
             </output>
           </form>
         </CardContent>
