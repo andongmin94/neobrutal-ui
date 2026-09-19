@@ -11,16 +11,17 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 
+// Timing keys must not collide with SVG attributes such as transform.
 const traces = {
-  Local: { resolve: 120, download: 840, transform: 210, write: 90 },
-  CI: { resolve: 180, download: 1480, transform: 240, write: 110 },
+  Local: { resolveMs: 120, downloadMs: 840, transformMs: 210, writeMs: 90 },
+  CI: { resolveMs: 180, downloadMs: 1480, transformMs: 240, writeMs: 110 },
 };
-const stages = ["resolve", "download", "transform", "write"] as const;
+const stages = ["resolveMs", "downloadMs", "transformMs", "writeMs"] as const;
 const config = {
-  resolve: { label: "Resolve", color: "var(--chart-1)" },
-  download: { label: "Download", color: "var(--chart-2)" },
-  transform: { label: "Transform", color: "var(--chart-3)" },
-  write: { label: "Write", color: "var(--chart-4)" },
+  resolveMs: { label: "Resolve", color: "var(--chart-1)" },
+  downloadMs: { label: "Download", color: "var(--chart-2)" },
+  transformMs: { label: "Transform", color: "var(--chart-3)" },
+  writeMs: { label: "Write", color: "var(--chart-4)" },
 } satisfies ChartConfig;
 
 export default function ChartInstallDiagnostics() {

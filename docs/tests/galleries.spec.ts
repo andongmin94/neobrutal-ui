@@ -20,7 +20,12 @@ for (const group of series) {
       .getByRole("button", { name: new RegExp(group.title) })
       .click();
     const section = page.locator(`section#${group.id}`);
-    await expect(section.getByRole("heading", { name: group.title, exact: true })).toBeVisible();
+    const heading = section.getByRole("heading", {
+      name: group.title,
+      exact: true,
+      level: 2,
+    });
+    await expect(heading).toBeVisible();
     const sources = section.getByRole("button", { name: "View source", exact: true });
     await expect(sources).toHaveCount(group.count);
     await expect(section.getByRole("link", { name: "Install recipe", exact: true })).toHaveCount(
