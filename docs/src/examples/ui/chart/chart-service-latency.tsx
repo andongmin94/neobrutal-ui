@@ -11,7 +11,7 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 
-const samples = {
+const samples: Record<"API" | "Search", Array<[number, number]>> = {
   API: [
     [80, 210],
     [76, 195],
@@ -30,7 +30,7 @@ const samples = {
     [102, 250],
     [99, 245],
   ],
-} as const;
+};
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const budget = 300;
 const config = {

@@ -690,7 +690,7 @@ const TEMPLATES = [
   {
     name: "blog-template",
     title: "Blog template",
-    description: "A focused blog archive with search and readable post rows.",
+    description: "An editorial archive with topic filters, search, sorting, and reading pages.",
     type: "registry:block",
     dependencies: ["lucide-react"],
     registryDependencies: ["neobrutal-ui", "button", "input"],
@@ -726,7 +726,7 @@ const TEMPLATES = [
   {
     name: "portfolio-template",
     title: "Portfolio template",
-    description: "A minimal portfolio with an introduction, selected work, and contact links.",
+    description: "A design practice with services, expandable case studies, and a project inquiry.",
     type: "registry:block",
     dependencies: ["lucide-react"],
     registryDependencies: ["neobrutal-ui", "button"],
@@ -747,7 +747,7 @@ const TEMPLATES = [
   {
     name: "cms-template",
     title: "CMS template",
-    description: "A compact CMS for finding, editing, and publishing posts.",
+    description: "An editorial workspace with content preview, local save, and change recovery.",
     type: "registry:block",
     dependencies: ["lucide-react"],
     registryDependencies: ["neobrutal-ui", "badge", "button", "input", "switch", "textarea"],
@@ -768,7 +768,7 @@ const TEMPLATES = [
   {
     name: "link-hub-template",
     title: "Link in bio template",
-    description: "A compact profile and link grid for projects, social profiles, and contact.",
+    description: "A creator profile with categorized destinations and a copyable contact address.",
     type: "registry:block",
     dependencies: ["lucide-react"],
     registryDependencies: ["neobrutal-ui", "button"],

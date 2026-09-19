@@ -212,7 +212,7 @@ function ChartComponent({ children, chart }: { children: ReactNode; chart: Chart
           <DialogHeader>
             <DialogTitle>{chart.name}</DialogTitle>
             <DialogDescription>
-              Complete example with sample data. Install Chart first, then copy and adapt this
+              Complete example with sample data. Install Chart and Card, then copy and adapt this
               source.
             </DialogDescription>
           </DialogHeader>
