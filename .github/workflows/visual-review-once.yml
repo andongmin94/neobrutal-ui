@@ -6,281 +6,34 @@ on:
     paths: [.github/workflows/visual-review-once.yml]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   review:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    env:
-      REVIEW_ROOT: /tmp/neobrutal-visual-review
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: |
-            registry/package-lock.json
-            docs/package-lock.json
-      - name: Install dependencies and build the before state
+          fetch-depth: 0
+      - name: Preserve exact source and merge evidence
         run: |
-          npm ci --prefix registry
-          npm ci --prefix docs
-          npm run build --prefix docs
-      - name: Prepare open-state capture script
-        run: |
-          cat > docs/.visual-review.mjs <<'JS'
-          import fs from "node:fs";
-          import path from "node:path";
-          import crypto from "node:crypto";
-          import { chromium, expect } from "@playwright/test";
-          const phase=process.env.REVIEW_PHASE;
-          const root=path.join(process.env.REVIEW_ROOT,phase);
-          fs.mkdirSync(root,{recursive:true});
-          const browser=await chromium.launch({channel:"chrome"});
-          const rows=[];
-          async function ready(page,route,theme){
-            const response=await page.goto("http://127.0.0.1:4173"+route,{waitUntil:"domcontentloaded"});
-            expect(response?.ok()).toBe(true);
-            await expect(page.locator("html")).toHaveAttribute("data-hydrated","true");
-            await expect(page.locator("html")).toHaveAttribute("data-theme",theme);
-            await expect(page.locator(".special-page-loading")).toHaveCount(0);
-            for(const host of await page.locator(".react-host").all()){
-              await host.scrollIntoViewIfNeeded();
-              await expect(host).not.toHaveAttribute("aria-busy","true");
-            }
-            await expect(page.locator(".react-host__error")).toHaveCount(0);
-            await page.evaluate(()=>document.fonts.ready);
-          }
-          const cases=[
-            ["dialog","dialog","button","Edit profile","[role='dialog']"],
-            ["dialog-scroll","dialog","button","Scrollable Content","[role='dialog']"],
-            ["dialog-footer","dialog","button","Sticky Footer","[role='dialog']"],
-            ["alert-dialog","alert-dialog","button","Archive release candidate","[role='alertdialog']"],
-            ["drawer","drawer","button","Open drawer","[role='dialog']"],
-            ["drawer-scroll","drawer","button","Scrollable Content","[role='dialog']"],
-            ["sheet","sheet","button","Open sheet","[role='dialog']"],
-            ...["top","right","bottom","left"].map(side=>[`sheet-${side}`,"sheet","button",`${side} sheet`,"[role='dialog']"]),
-            ["select","select","combobox","Publication status","[role='listbox']"],
-            ["dropdown","dropdown-menu","button","Registry actions","[role='menu']"],
-            ["dropdown-submenu","dropdown-menu","button","Registry actions","[role='menu']","Apply theme"],
-            ["context-menu","context-menu","button","Open component card context menu","[role='menu']",null,"right"],
-            ["context-submenu","context-menu","button","Open component card context menu","[role='menu']","Move to collection","right"],
-            ["menubar","menubar","menuitem","Project","[role='menu']"],
-            ["menubar-submenu","menubar","menuitem","Project","[role='menu']","Export"],
-            ["navigation-menu","navigation-menu","button","Components","[data-slot='navigation-menu-content']"],
-            ["combobox","combobox","combobox",null,"[data-slot='popover-content']"],
-            ["date-picker","date-picker","button","Pick a date","[data-slot='popover-content']"],
-            ["hover-card","hover-card","link","Explore the component registry","[data-slot='hover-card-content']",null,"hover"],
-            ["popover","popover","button","View release status","[data-slot='popover-content']"],
-            ["tooltip","tooltip","button","Registry verification status","[role='tooltip']",null,"hover"],
-            ["command","command","button","Open command menu","[role='dialog']"],
-          ];
-          const statics=[
-            ["stars-table","/docs/stars",".md-table-shell"],
-            ["button-table","/docs/button",".md-table-shell"],
-            ["tokens-table","/docs/design-tokens",".md-table-shell"],
-            ["blog-bullets","/templates/blog/small-interfaces","main article section ul"],
-          ];
-          const scenarios=(phase==="before"?cases.filter(c=>c[0]==="hover-card"):cases).map(([name,slug,role,label,surface,sub,action])=>({name,route:`/docs/${slug}`,role,label,surface,sub,action}));
-          scenarios.push(...statics.map(([name,route,selector])=>({name,route,selector})));
-          const profiles=[{name:"desktop",width:1440,height:1000},{name:"mobile",width:390,height:844}];
-          const jobs=profiles.flatMap(profile=>["light","dark"].flatMap(theme=>scenarios.map(scenario=>({profile,theme,scenario}))));
-          if(phase==="after")for(const theme of ["light","dark"])jobs.push({profile:{name:"320",width:320,height:844},theme,scenario:scenarios.find(c=>c.name==="stars-table")});
-          async function capture({profile,theme,scenario}){
-            const context=await browser.newContext({viewport:{width:profile.width,height:profile.height},colorScheme:theme,reducedMotion:"reduce"});
-            await context.addInitScript(t=>localStorage.setItem("neobrutal-ui-theme",t),theme);
-            const page=await context.newPage();page.setDefaultTimeout(15000);
-            const row={phase,case:scenario.name,route:scenario.route,profile:profile.name,theme,errors:[]};
-            page.on("pageerror",e=>row.errors.push(e.message));
-            const file=`${theme}-${profile.name}-${scenario.name}.png`;
-            try{
-              await ready(page,scenario.route,theme);
-              if(scenario.role){
-                const control=page.locator(".component-preview").getByRole(scenario.role,scenario.label?{name:scenario.label,exact:true}:{}).first();
-                await control.scrollIntoViewIfNeeded();
-                if(scenario.action==="hover")await control.hover();
-                else await control.click(scenario.action==="right"?{button:"right"}:{});
-                await expect(page.locator(scenario.surface).filter({visible:true}).first()).toBeVisible();
-                if(scenario.sub){
-                  await page.getByRole("menuitem",{name:scenario.sub,exact:true}).hover();
-                  await expect(page.getByRole("menu")).toHaveCount(2);
-                }
-                await page.evaluate(async()=>{
-                  await Promise.all(document.getAnimations().filter(a=>a.effect?.getTiming().iterations!==Infinity).map(a=>a.finished.catch(()=>{})));
-                });
-                row.surfaces=await page.locator(scenario.surface).filter({visible:true}).evaluateAll(nodes=>nodes.map(n=>{
-                  const r=n.getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height,text:n.textContent.slice(0,80)};
-                }));
-                if(scenario.name==="hover-card")row.eyebrow=await page.locator("[data-slot='hover-card-content'] p").first().evaluate(n=>({color:getComputedStyle(n).color,background:getComputedStyle(n.closest("[data-slot='hover-card-content']")).backgroundColor}));
-              }else await page.locator(scenario.selector).first().scrollIntoViewIfNeeded();
-              expect(row.errors).toEqual([]);
-              await page.screenshot({path:path.join(root,file),animations:"disabled",caret:"hide"});
-              row.file=file;row.success=true;
-            }catch(error){row.failure=String(error);await page.screenshot({path:path.join(root,file)}).catch(()=>{});}
-            finally{rows.push(row);console.log(JSON.stringify(row));fs.writeFileSync(path.join(root,"report.json"),JSON.stringify(rows,null,2));await context.close();}
-          }
-          let next=0;
-          await Promise.all(Array.from({length:2},async()=>{while(next<jobs.length)await capture(jobs[next++]);}));
-          if(phase==="before"){
-            const context=await browser.newContext({viewport:{width:1280,height:720},colorScheme:"light",reducedMotion:"reduce"});
-            await context.addInitScript(()=>localStorage.setItem("neobrutal-ui-theme","light"));
-            const page=await context.newPage();await ready(page,"/templates/cms","light");
-            const template=page.locator(".special-content > div");
-            await expect(template).toHaveCount(1);
-            const image=await template.screenshot({animations:"disabled",caret:"hide"});
-            const name=`cms-${crypto.createHash("sha256").update(image).digest("hex").slice(0,10)}.png`;
-            fs.writeFileSync(`public/template-previews/${name}`,image);
-            const data=fs.readFileSync("src/data/templates.ts","utf8");
-            expect(data).toContain("cms-87d9d76bca.png");
-            fs.writeFileSync("src/data/templates.ts",data.replace("cms-87d9d76bca.png",name));
-            fs.unlinkSync("public/template-previews/cms-87d9d76bca.png");
-            fs.writeFileSync(path.join(root,"cms-thumbnail.png"),image);
-            await context.close();
-          }
-          await browser.close();
-          const failures=rows.filter(r=>!r.success);
-          console.log("CAPTURE_TOTALS",JSON.stringify({attempted:rows.length,passed:rows.length-failures.length,failed:failures.length}));
-          if(failures.length)process.exitCode=1;
-          JS
-          cat > "$RUNNER_TEMP/capture-review.sh" <<'SH'
           set -eu
-          npm run start -- --host 127.0.0.1 --port 4173 > "$RUNNER_TEMP/review-server.log" 2>&1 &
-          pid=$!
-          trap 'kill "$pid" 2>/dev/null || true' EXIT
-          for attempt in $(seq 1 30); do
-            if curl --fail --silent http://127.0.0.1:4173/docs/stars >/dev/null; then break; fi
-            sleep 1
-          done
-          curl --fail --silent http://127.0.0.1:4173/docs/stars >/dev/null
-          node .visual-review.mjs
-          SH
-      - name: Capture before states and an isolated CMS thumbnail
-        working-directory: docs
-        env:
-          REVIEW_PHASE: before
-        run: bash "$RUNNER_TEMP/capture-review.sh"
-      - name: Refine confirmed visual defects
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          def replace(filename, before, after):
-              path=Path(filename)
-              text=path.read_text()
-              if text.count(before)!=1:
-                  raise SystemExit(f'{filename}: expected exactly one match')
-              path.write_text(text.replace(before,after,1))
-          replace('docs/app/styles/content.css','  overflow-wrap: anywhere;\n  font-size: 14px;','  overflow-wrap: break-word;\n  font-size: 14px;')
-          replace('docs/app/styles/content.css','@media (max-width: 620px) {\n','@media (max-width: 620px) {\n  .md-table th,\n  .md-table td {\n    padding: 10px 8px;\n  }\n')
-          replace('docs/content/docs/stars.mdx','<TableHead className="w-[100px]">Name</TableHead>','<TableHead>Name</TableHead>')
-          replace('registry/src/blocks/templates/blog-post-template.tsx','list-square','list-[square]')
-          replace('docs/src/examples/ui/hover-card.tsx','tracking-wide text-foreground/70','tracking-wide text-main-foreground/70')
-          PY
-          cat >> docs/tests/ui-polish.spec.ts <<'TS'
-
-          test("reference tables preserve short identifiers and type names", async ({ page }) => {
-            await openReady(page, "/docs/stars");
-            for (const width of [320, 390, 1280]) {
-              await page.setViewportSize({ width, height: 844 });
-              for (const text of ["strokeWidth", "pathClassName", "number"]) {
-                const cell = page.getByRole("cell", { name: text, exact: true }).first();
-                const lines = await cell.evaluate((node) => {
-                  const range = document.createRange();
-                  range.selectNodeContents(node);
-                  return new Set([...range.getClientRects()].map((rect) => Math.round(rect.top))).size;
-                });
-                expect(lines, `${text} at ${width}px`).toBe(1);
-              }
-            }
-          });
-
-          test("blog article lists show their bullet markers", async ({ page }) => {
-            await openReady(page, "/templates/blog/small-interfaces");
-            const list = page.locator("main article section ul").first();
-            await expect(list).toBeVisible();
-            await expect(list).toHaveCSS("list-style-type", "square");
-          });
-          TS
-      - name: Generate and check the revised source
-        run: |
-          npm run format --prefix registry
-          npm run lint --prefix registry
-          npm run typecheck --prefix registry
-          npm run build --prefix registry
-          npm run registry:validate --prefix registry
-          npm run registry:check --prefix registry
-          npm run format --prefix docs
-          npm run lint --prefix docs
-          npm run typecheck --prefix docs
-          npm run build --prefix docs
-          npm run check:budget --prefix docs
-          npm test --prefix docs
-      - name: Capture all open states and revised details
-        working-directory: docs
-        env:
-          REVIEW_PHASE: after
-        run: bash "$RUNNER_TEMP/capture-review.sh"
-      - name: Save visual evidence for direct inspection
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+          mkdir -p "$RUNNER_TEMP/consolidation"
+          cd "$RUNNER_TEMP/consolidation"
+          git -C "$GITHUB_WORKSPACE" archive HEAD | gzip > main-source.tar.gz
+          git -C "$GITHUB_WORKSPACE" archive 98b27f1febd43f6e6fbdbf34285a2b56e5d156cc | gzip > branch-source.tar.gz
+          git -C "$GITHUB_WORKSPACE" diff 9ab42af32e6ee1794d972ca4ce9ab0b6c8ca5130 98b27f1febd43f6e6fbdbf34285a2b56e5d156cc > branch-changes.patch
+          git -C "$GITHUB_WORKSPACE" log --oneline 9ab42af32e6ee1794d972ca4ce9ab0b6c8ca5130..98b27f1febd43f6e6fbdbf34285a2b56e5d156cc > branch-commits.txt
+          git -C "$GITHUB_WORKSPACE" show 62a0ebe38f464f1a75d613e045aa2cf34d33ec94:.github/workflows/visual-review-once.yml > original-review.yml
+          set +e
+          git -C "$GITHUB_WORKSPACE" merge-tree --write-tree HEAD 98b27f1febd43f6e6fbdbf34285a2b56e5d156cc > merge-result.txt
+          result=$?
+          set -e
+          test "$result" -le 1
+          cat branch-commits.txt merge-result.txt
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: open-state-visual-review
-          path: /tmp/neobrutal-visual-review
+          name: main-consolidation-source
+          path: ${{ runner.temp }}/consolidation
           retention-days: 3
-          if-no-files-found: error
-      - name: Verify consumers and browser regressions
-        run: |
-          npm run consumer:verify --prefix registry
-          cd docs
-          npx playwright install --with-deps chromium
-          npm run test:browser
-      - name: Prepare the reviewed change without moving main
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          rm docs/.visual-review.mjs .github/workflows/visual-review-once.yml
-          git add registry docs .github/workflows/visual-review-once.yml
-          git diff --cached --check
-          git diff --cached --stat
-          python3 - <<'PY'
-          import base64,json,os,subprocess,urllib.request
-          from pathlib import Path
-          base='https://api.github.com/repos/'+os.environ['GITHUB_REPOSITORY']
-          def api(endpoint,payload=None):
-              request=urllib.request.Request(base+endpoint,data=None if payload is None else json.dumps(payload).encode(),headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json','Content-Type':'application/json','X-GitHub-Api-Version':'2022-11-28'})
-              with urllib.request.urlopen(request,timeout=30) as response:return json.load(response)
-          parent=os.environ['GITHUB_SHA']
-          if api('/git/ref/heads/main')['object']['sha']!=parent:raise SystemExit('main moved; refusing stale publication')
-          entries=[]
-          for line in subprocess.check_output(['git','diff','--cached','--name-status','--no-renames'],text=True).splitlines():
-              status,filename=line.split('\t',1)
-              entry={'path':filename,'mode':'100644','type':'blob'}
-              if status=='D':entry['sha']=None
-              elif filename.endswith('.png'):
-                  blob=api('/git/blobs',{'encoding':'base64','content':base64.b64encode(Path(filename).read_bytes()).decode()})
-                  entry['sha']=blob['sha']
-              else:entry['content']=Path(filename).read_text()
-              entries.append(entry)
-          tree=api('/git/trees',{'base_tree':subprocess.check_output(['git','rev-parse','HEAD^{tree}'],text=True).strip(),'tree':entries})
-          commit=api('/git/commits',{'message':'fix: preserve readable tables, article bullets and consistent previews','tree':tree['sha'],'parents':[parent]})
-          result={'prepared_commit':commit['sha'],'tree':tree['sha'],'expected_main':parent}
-          Path(os.environ['RUNNER_TEMP'],'prepared-review.json').write_text(json.dumps(result,indent=2))
-          print(json.dumps(result))
-          PY
-      - name: Save prepared commit identity
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: prepared-visual-review
-          path: ${{ runner.temp }}/prepared-review.json
-          retention-days: 3
-      - name: Save failed browser reports
-        if: failure()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: visual-review-failure
-          path: |
-            docs/test-results
-            docs/playwright-report
-          retention-days: 3
-          if-no-files-found: ignore
