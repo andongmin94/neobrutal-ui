@@ -14,6 +14,8 @@ export const themeCss = {
   '@import "shadcn/tailwind.css"': {},
   "@layer base": {
     "*": { "@apply border-border outline-ring/50": {} },
+    ":root": { "color-scheme": "light" },
+    ".dark": { "color-scheme": "dark" },
     body: { "@apply bg-background text-foreground": {} },
   },
 };
@@ -43,6 +45,7 @@ export function createCustomizedTheme(
 function cssRules(rules: Record<string, unknown>, indent = ""): string {
   return Object.entries(rules)
     .map(([selector, value]) => {
+      if (typeof value === "string") return `${indent}${selector}: ${value};`;
       const declarations = value as Record<string, unknown>;
       return Object.keys(declarations).length === 0
         ? `${indent}${selector};`

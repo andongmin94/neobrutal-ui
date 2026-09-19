@@ -245,6 +245,13 @@ async function assertThemeColor(button, palette, expect) {
 
 async function assertPage(page, expect, AxeBuilder, errors, width) {
   expect(errors).toEqual([]);
+  const scheme = await page.evaluate(() =>
+    document.documentElement.classList.contains("dark") ? "dark" : "light",
+  );
+  await expect(page.locator("html")).toHaveCSS("color-scheme", scheme);
+  for (const select of await page.locator("select").all()) {
+    await expect(select).toHaveCSS("color-scheme", scheme);
+  }
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
     width + 1,
   );

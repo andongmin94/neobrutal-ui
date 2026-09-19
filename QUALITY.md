@@ -12,9 +12,9 @@ The templates include combined blog filters and sorting, local CMS save/discard 
 
 ## Current product work
 
-Template thumbnails now render scaled, inert previews of the current template components. Navigation uses a separate overlay link. The old PNG assets and preview metadata are removed. Verify #217 completed documentation, source, aggregate/individual consumer builds, Chromium, and cross-browser checks for commit 67821b3a5499cc056dd4d83c81c7725e9fc7f193. This does not verify later chart changes.
+Template thumbnails render scaled, inert previews of the current template components. Navigation uses a separate overlay link. The old PNG assets and preview metadata are removed.
 
-The 47 docs-only chart reference examples have been replaced, not retained as alternate implementations. Eight installable recipes now cover revenue targets, signup conversion, latency budgets, release counts/shares, delivery variance, paired build duration, work allocation, and sequential installation traces. Each uses registry-owned source, documented controls, calculated summaries, a labeled data table, and no plot entrance animation. Consolidation is not a claim that all former examples were individually redesigned.
+The 47 docs-only chart reference examples have been replaced, not retained as alternate implementations. Eight installable recipes cover revenue targets, signup conversion, latency budgets, release counts/shares, delivery variance, paired build duration, work allocation, and sequential installation traces. Each uses registry-owned source, documented controls, calculated summaries, a labeled data table, and no plot entrance animation. Consolidation is not a claim that all former examples were individually redesigned.
 
 Chart metadata is maintained with the registry definitions. Gallery source is generated from synchronized installed files. Contracts compare source, generated mirror, displayed source, and built JSON. The consumer matrix derives all analytical-chart names from the built catalog, so new charts cannot silently miss independent Next.js/Vite installation checks.
 
@@ -22,16 +22,21 @@ Data-table and template modules use alias-aware targets. App Router pages keep e
 
 ## Installation findings and checks
 
-Verify #217's new README browser check found that shadcn init's scaffolded button survived the original add command. The rendered button had a 1px border and no neobrutal shadow. The first-button setup command now explicitly replaces that scaffold with --overwrite. README and Installation explain the replacement and warn against overwriting a customized existing button without review.
+The README browser check found that shadcn init's scaffolded button survived the original add command. The first-button setup now deliberately replaces that scaffold with --overwrite. README and Installation explain the replacement and warn against overwriting a customized existing button without review.
 
-The existing-project scenario uses custom component/lib/hooks aliases, a red theme, custom radius and CSS, an application source file, and a previously installed button with an application-owned modification. Subsequent recipe/template installation must preserve these files and settings. Only the deliberate first-button scaffold replacement uses overwrite in the onboarding scenario; the existing-project scenario does not.
+The existing-project scenario uses custom component/lib/hooks aliases, a red theme, custom radius and CSS, an application source file, and a previously installed button with an application-owned modification. Subsequent recipe/template installation must preserve these files and settings. The existing-project scenario does not overwrite these files.
 
-Rendered checks launch fresh Next.js/Vite applications without documentation CSS. They use Chromium, Firefox, and WebKit with desktop-light/mobile-dark contexts, check styles and errors, and operate chart/data-table and Next.js template flows. JSON results and viewport captures are evidence for review, not automatic visual approval. Prepared checks are not passing checks; the exact current commit must run successfully.
+Verify #226 exposed a 515px-wide page in the 390px installed consumer. Its implicit automatic grid column inherited a wide table's intrinsic minimum. The consumer composition now uses grid-cols-1, preserving the table's own keyboard-accessible horizontal scrolling without clipping page overflow or reducing the dataset. The chart guide documents this layout requirement.
+
+For commit 317aa23e0c843a6c308eb60eb705440ccbc44fb1, Verify #228's installed-consumer artifact records 48 passing rendered route checks: Next.js README 6, Next.js existing-project 30, Vite README 6, and Vite existing-project 6. Each uses Chromium, Firefox, and WebKit in desktop-light and mobile-dark contexts. The run was cancelled after the integration step when the next source revision was published; this is not a claim that its entire workflow or later revisions passed.
+
+Captured installed charts and all four template viewports were visually reviewed in the red theme. That review identified opaque bar-hover bands, a generic allocation tooltip label, and dark delivery outlines overridden by common chart CSS. Hover cursors now use translucent foreground; allocation names the hovered workstream; bar-outline defaults are inherited from their group so explicit series strokes and widths take precedence. Browser regressions cover these properties and keyboard access to a narrow table. Their final result is the exact current commit's Verify run, not the earlier captures.
+
+Rendered checks launch fresh applications without documentation CSS. JSON results and viewport captures are evidence for the specific tested routes and states, not comprehensive visual or assistive-technology approval.
 
 ## Remaining review
 
-- Inspect current chart and installed-template captures and resolve any actual visual failures. An axe scan and an overflow assertion do not constitute a complete visual or assistive-technology audit.
-- Review every public variant and relevant state across supported palettes and widths, including keyboard/touch, actual IME composition, disabled/error/loading states, nested overlays, scrolling, and reduced motion.
+- Inspect final captures after the chart styling fixes. Extend review beyond the captured red-theme viewports to every public variant and relevant state across supported palettes and widths, including keyboard/touch, actual IME composition, disabled/error/loading states, nested overlays, scrolling, and reduced motion.
 - Extend isolated installation coverage beyond analytical charts. Aggregate builds cannot prove every item's independent npm dependency declarations.
 - Review optional FormDescription/FormMessage composition, missing IDREF targets, custom IDs/descriptions, ref/event composition, and cross-field recovery.
 - Audit remaining API examples and search timing/error states. Keep source, installation guidance, and advertised behavior aligned.

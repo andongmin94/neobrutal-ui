@@ -54,3 +54,16 @@ test("wide records remain keyboard-scrollable on a narrow page", async ({ page }
   const pageWidth = await page.evaluate(() => document.documentElement.scrollWidth);
   expect(pageWidth).toBeLessThanOrEqual(391);
 });
+
+test("delivery outlines preserve the series foreground and width", async ({ page }) => {
+  await page.goto("/docs/chart-delivery-capacity");
+  const chart = page.locator('.component-preview [data-chart-recipe="capacity"]').first();
+  const planned = chart.locator(".recharts-bar-rectangle path").first();
+  await expect(planned).toBeVisible();
+  await expect(planned).toHaveAttribute("stroke-dasharray", "4 3");
+  const foreground = await chart.evaluate((node) => getComputedStyle(node).color);
+  await expect(planned).toHaveCSS("stroke", foreground);
+  await expect(planned).toHaveCSS("stroke-width", "2px");
+  await planned.evaluate((node) => node.setAttribute("stroke-width", "5"));
+  await expect(planned).toHaveCSS("stroke-width", "5px");
+});
