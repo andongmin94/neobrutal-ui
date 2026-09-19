@@ -70,10 +70,10 @@ function getTemplateFiles() {
 
   for (const item of REGISTRY.filter((entry) => entry.categories.includes("template"))) {
     for (const file of item.files as RegistryFile[]) {
-      if (!file.target?.startsWith("components/templates/")) continue;
+      if (!file.target?.startsWith("@components/templates/")) continue;
 
       const source = path.resolve(process.cwd(), file.path);
-      const target = path.join(docsSourceDir, file.target);
+      const target = path.join(docsSourceDir, file.target.replace(/^@components\//, "components/"));
       const existing = targets.get(target);
 
       if (existing && existing !== source) {

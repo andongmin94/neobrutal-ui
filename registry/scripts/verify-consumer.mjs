@@ -1,3 +1,4 @@
+import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import fs from "node:fs";
 import http from "node:http";
@@ -14,6 +15,7 @@ const { values: options, positionals: requestedTargets } = parseArgs({
   options: {
     item: { type: "string" },
     "registry-url": { type: "string" },
+    integration: { type: "boolean", default: false },
   },
 });
 if (
@@ -25,13 +27,14 @@ if (
 ) {
   throw new Error(`Unknown installable item: ${options.item}`);
 }
+if (options.integration && options.item) {
+  throw new Error("Integration verification selects its own installation scenarios.");
+}
 const targets = requestedTargets.length > 0 ? requestedTargets : ["next", "vite"];
 const supportedTargets = new Set(["next", "vite"]);
 
 for (const target of targets) {
-  if (!supportedTargets.has(target)) {
-    throw new Error(`Unknown consumer target: ${target}`);
-  }
+  if (!supportedTargets.has(target)) throw new Error(`Unknown consumer target: ${target}`);
 }
 
 const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), "neobrutal-registry-consumer-"));
@@ -52,38 +55,97 @@ try {
   }
 
   for (const target of targets) {
-    await verifyTarget(target, path.join(temporaryRoot, target));
+    for (const scenario of options.integration ? ["readme", "existing"] : ["standard"]) {
+      await verifyTarget(target, path.join(temporaryRoot, `${target}-${scenario}`), scenario);
+    }
   }
 } finally {
   if (server.listening) await new Promise((resolve) => server.close(resolve));
   fs.rmSync(temporaryRoot, { force: true, recursive: true });
 }
 
-async function verifyTarget(target, fixtureDirectory) {
+async function verifyTarget(target, fixtureDirectory, scenario) {
   fs.mkdirSync(fixtureDirectory, { recursive: true });
   if (target === "next") createNextFixture(fixtureDirectory);
   else createViteFixture(fixtureDirectory);
 
-  console.log(`Installing ${target} fixture dependencies...`);
+  const configPath = path.join(fixtureDirectory, "components.json");
+  if (scenario === "existing") {
+    const config = readJson(configPath);
+    config.aliases = {
+      components: "@/design-system",
+      ui: "@/design-system/ui",
+      lib: "@/shared",
+      utils: "@/shared/utils",
+      hooks: "@/shared/hooks",
+    };
+    writeJson(configPath, config);
+  }
+
+  console.log(`Installing ${target}/${scenario} fixture dependencies...`);
   await run(npmExecutable(), ["install", "--no-audit", "--no-fund"], fixtureDirectory);
+
+  if (scenario === "readme") {
+    fs.rmSync(configPath);
+    await run(
+      npmExecutable(),
+      [
+        "exec", "--yes", "--package=shadcn@latest", "--", "shadcn", "init",
+        "--defaults", "--template", target, "--base", "base", "--no-monorepo",
+        "--cwd", fixtureDirectory,
+      ],
+      fixtureDirectory,
+    );
+    assert.ok(fs.existsSync(configPath), "shadcn init must create components.json");
+  }
+
+  const initialConfig = readJson(configPath);
+  const cssPath = path.join(fixtureDirectory, initialConfig.tailwind.css);
+  const sentinelPath = path.join(fixtureDirectory, "src", "consumer-owned.ts");
+  const sentinel = 'export const consumerOwned = "keep this application code";\n';
+  if (scenario === "existing") {
+    writeFile(sentinelPath, sentinel);
+    fs.appendFileSync(cssPath, "\n.consumer-sentinel { border-top: 7px solid currentColor; }\n");
+  }
 
   const baseItem = catalog.items.find((item) => item.type === "registry:base");
   if (!baseItem) throw new Error("The registry has no registry:base item");
+  const overwrite = scenario === "standard" ? ["--overwrite"] : [];
+  const add = async (...names) => {
+    const args = ["add", "--yes", ...overwrite, "--cwd", fixtureDirectory, ...names.map(itemUrl)];
+    if (scenario === "readme") {
+      await run(
+        npmExecutable(),
+        ["exec", "--yes", "--package=shadcn@latest", "--", "shadcn", ...args],
+        fixtureDirectory,
+      );
+    } else {
+      await run(shadcnExecutable(), args, root);
+    }
+  };
+  await add(baseItem.name);
 
-  await run(
-    shadcnExecutable(),
-    ["add", "--yes", "--overwrite", "--cwd", fixtureDirectory, itemUrl(baseItem.name)],
-    root,
-  );
-
-  await run(
-    shadcnExecutable(),
-    ["add", "--yes", "--overwrite", "--cwd", fixtureDirectory, styleUrl("red")],
-    root,
-  );
+  if (scenario !== "readme") await add("theme-red");
+  if (scenario === "existing") {
+    fs.appendFileSync(cssPath, "\n:root { --radius: 13px; }\n");
+    assert.deepEqual(
+      readJson(configPath).aliases,
+      initialConfig.aliases,
+      "base installation reset custom aliases",
+    );
+  }
+  const cssBeforeItems = fs.readFileSync(cssPath, "utf8");
 
   const installableItems = catalog.items.filter((item) => {
     if (item.name === baseItem.name || item.type === "registry:style") return false;
+    if (scenario === "readme") return item.name === "button";
+    if (scenario === "existing") {
+      return (
+        ["button", "data-table"].includes(item.name) ||
+        (item.name.startsWith("chart-") && item.categories?.includes("recipe")) ||
+        (target === "next" && item.categories?.includes("template"))
+      );
+    }
     if (options.item && item.name !== options.item) return false;
     if (target === "next") return true;
     return (
@@ -92,29 +154,71 @@ async function verifyTarget(target, fixtureDirectory) {
       item.name === "data-table"
     );
   });
-
   if (installableItems.length === 0) throw new Error(`No selected items support ${target}`);
+  await add(...installableItems.map((item) => item.name));
 
-  await run(
-    shadcnExecutable(),
-    [
-      "add",
-      "--yes",
-      "--overwrite",
-      "--cwd",
-      fixtureDirectory,
-      ...installableItems.map((item) => itemUrl(item.name)),
-    ],
-    root,
-  );
+  if (scenario === "existing") {
+    assert.equal(
+      fs.readFileSync(cssPath, "utf8"),
+      cssBeforeItems,
+      "adding recipes or templates changed the selected theme or custom CSS",
+    );
+    assert.equal(fs.readFileSync(sentinelPath, "utf8"), sentinel, "consumer-owned source changed");
+    assert.deepEqual(readJson(configPath).aliases, initialConfig.aliases);
+    for (const item of installableItems) {
+      for (const file of item.files ?? []) {
+        if (file.type === "registry:page") continue;
+        const targetPath = file.target
+          ? file.target.replace(
+              /^@(components|ui|lib|hooks)\//,
+              (_, alias) => `${initialConfig.aliases[alias].replace(/^@\//, "src/")}/`,
+            )
+          : `${initialConfig.aliases.ui.replace(/^@\//, "src/")}/${path.basename(file.path)}`;
+        assert.ok(
+          fs.existsSync(path.join(fixtureDirectory, targetPath)),
+          `missing custom-alias target: ${targetPath}`,
+        );
+      }
+    }
+    assert.ok(
+      !fs.existsSync(path.join(fixtureDirectory, "src/components")),
+      "installation leaked into the default components path",
+    );
+  }
 
-  if (target === "vite") createViteBundleEntry(fixtureDirectory);
+  if (scenario === "standard") {
+    if (target === "vite") createViteBundleEntry(fixtureDirectory);
+  } else {
+    writeBrowserEntry(target, fixtureDirectory, readJson(configPath).aliases, scenario, installableItems);
+  }
+  console.log(`Building the fresh ${target}/${scenario} consumer...`);
+  await run(npmExecutable(), ["run", "build"], fixtureDirectory, { NEXT_TELEMETRY_DISABLED: "1" });
+  if (scenario !== "standard") {
+    const { verifyInstalledBrowser } = await import("./verify-installed-browser.mjs");
+    await verifyInstalledBrowser({ target, directory: fixtureDirectory, scenario, root });
+  }
+  console.log(`Fresh ${target}/${scenario} consumer passed: ${options.item ?? "selected items"}.`);
+}
 
-  console.log(`Building the fresh ${target} consumer...`);
-  await run(npmExecutable(), ["run", "build"], fixtureDirectory, {
-    NEXT_TELEMETRY_DISABLED: "1",
-  });
-  console.log(`Fresh ${target} consumer passed: ${options.item ?? "all items"}.`);
+function writeBrowserEntry(target, directory, aliases, scenario, items) {
+  const charts = scenario === "existing" ? items.filter((item) => item.name.startsWith("chart-")) : [];
+  const source = [
+    '"use client";',
+    `import { Button } from "${aliases.ui}/button";`,
+    ...(scenario === "existing" ? [`import DataTable from "${aliases.ui}/data-table";`] : []),
+    ...charts.map((item, index) => `import Chart${index} from "${aliases.ui}/${item.name}";`),
+    "export default function Page() {",
+    '  return <main className="mx-auto grid w-full max-w-5xl gap-8 p-6">',
+    '    <h1 className="text-2xl font-heading">Installed consumer</h1>',
+    '    <Button>Click me</Button>',
+    '    <p className="consumer-sentinel">Existing application styles</p>',
+    ...charts.map((item, index) => `    <section aria-label="${item.name}"><Chart${index} /></section>`),
+    ...(scenario === "existing" ? ['    <section aria-label="Records"><DataTable /></section>'] : []),
+    "  </main>;",
+    "}",
+  ].join("\n");
+  const entry = target === "next" ? ["app", "page.tsx"] : ["App.tsx"];
+  writeFile(path.join(directory, "src", ...entry), `${source}\n`);
 }
 
 function createNextFixture(directory) {
@@ -122,11 +226,7 @@ function createNextFixture(directory) {
     name: "neobrutal-registry-next-consumer",
     private: true,
     scripts: { build: "next build" },
-    dependencies: {
-      next: "^16.3.5",
-      react: "19.2.8",
-      "react-dom": "19.2.8",
-    },
+    dependencies: { next: "^16.3.5", react: "19.2.8", "react-dom": "19.2.8" },
     devDependencies: {
       "@tailwindcss/postcss": "^4.3.3",
       "@types/node": "^26.1.1",
@@ -169,7 +269,7 @@ function createNextFixture(directory) {
   writeFile(path.join(directory, "src", "app", "globals.css"), '@import "tailwindcss";\n');
   writeFile(
     path.join(directory, "src", "app", "layout.tsx"),
-    'import "./globals.css";\n\nexport default function Layout({ children }: { children: React.ReactNode }) {\n  return <html lang="en"><body>{children}</body></html>;\n}\n',
+    'import "./globals.css";\nexport default function Layout({ children }: { children: React.ReactNode }) { return <html lang="en"><body>{children}</body></html>; }\n',
   );
   writeFile(
     path.join(directory, "src", "app", "page.tsx"),
@@ -219,16 +319,16 @@ function createViteFixture(directory) {
   });
   writeFile(
     path.join(directory, "index.html"),
-    '<div id="root"></div><script type="module" src="/src/main.tsx"></script>\n',
+    '<!doctype html><html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>\n',
   );
   writeFile(
     path.join(directory, "vite.config.ts"),
-    'import path from "node:path";\nimport tailwindcss from "@tailwindcss/vite";\nimport react from "@vitejs/plugin-react";\nimport { defineConfig } from "vite";\n\nexport default defineConfig({ plugins: [react(), tailwindcss()], resolve: { alias: { "@": path.resolve(import.meta.dirname, "src") } } });\n',
+    'import path from "node:path";\nimport tailwindcss from "@tailwindcss/vite";\nimport react from "@vitejs/plugin-react";\nimport { defineConfig } from "vite";\nexport default defineConfig({ plugins: [react(), tailwindcss()], resolve: { alias: { "@": path.resolve(import.meta.dirname, "src") } } });\n',
   );
   writeFile(path.join(directory, "src", "index.css"), '@import "tailwindcss";\n');
   writeFile(
     path.join(directory, "src", "main.tsx"),
-    'import { StrictMode } from "react";\nimport { createRoot } from "react-dom/client";\nimport App from "./App";\nimport "./index.css";\n\ncreateRoot(document.getElementById("root")!).render(<StrictMode><App /></StrictMode>);\n',
+    'import { StrictMode } from "react";\nimport { createRoot } from "react-dom/client";\nimport App from "./App";\nimport "./index.css";\ncreateRoot(document.getElementById("root")!).render(<StrictMode><App /></StrictMode>);\n',
   );
   writeFile(
     path.join(directory, "src", "App.tsx"),
@@ -237,36 +337,31 @@ function createViteFixture(directory) {
 }
 
 function createViteBundleEntry(directory) {
-  const componentsDirectory = path.join(directory, "src", "components");
-  const componentFiles = collectFiles(componentsDirectory).filter((filePath) =>
-    /\.[cm]?[jt]sx?$/.test(filePath),
+  const componentFiles = collectFiles(path.join(directory, "src", "components")).filter((file) =>
+    /\.[cm]?[jt]sx?$/.test(file),
   );
-
   if (componentFiles.length === 0) {
     throw new Error("The Vite consumer did not install any component modules");
   }
-
   const imports = componentFiles
     .sort()
-    .map((filePath) => {
+    .map((file) => {
       const modulePath = path
-        .relative(path.join(directory, "src"), filePath)
+        .relative(path.join(directory, "src"), file)
         .replaceAll("\\", "/")
         .replace(/\.[cm]?[jt]sx?$/, "");
       return `import "./${modulePath}";`;
     })
     .join("\n");
-
   writeFile(path.join(directory, "src", "registry-smoke.ts"), `${imports}\n`);
   writeFile(
     path.join(directory, "src", "App.tsx"),
-    'import "./registry-smoke";\n\nexport default function App() { return <main>Registry consumer</main>; }\n',
+    'import "./registry-smoke";\nexport default function App() { return <main>Registry consumer</main>; }\n',
   );
 }
 
 function collectFiles(directory) {
   if (!fs.existsSync(directory)) return [];
-
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     const entryPath = path.join(directory, entry.name);
     return entry.isDirectory() ? collectFiles(entryPath) : [entryPath];
@@ -300,18 +395,16 @@ function componentsConfig(rsc) {
 
 function serveRegistryFile(request, response) {
   const pathname = new URL(request.url ?? "/", registryOrigin || "http://127.0.0.1").pathname;
-  const requestedPath = pathname.replace(/^\/+/, "");
-  const filePath = path.resolve(outputDirectory, requestedPath);
-
+  const filePath = path.resolve(outputDirectory, pathname.replace(/^\/+/, ""));
   if (
     !filePath.startsWith(`${path.resolve(outputDirectory)}${path.sep}`) ||
-    !fs.existsSync(filePath)
+    !fs.existsSync(filePath) ||
+    !fs.statSync(filePath).isFile()
   ) {
     response.writeHead(404, { "content-type": "application/json" });
     response.end('{"message":"Registry item not found"}');
     return;
   }
-
   const content = fs
     .readFileSync(filePath, "utf8")
     .replaceAll(`${catalog.homepage}/r/`, `${registryOrigin}/`);
@@ -321,10 +414,6 @@ function serveRegistryFile(request, response) {
 
 function itemUrl(name) {
   return `${registryOrigin}/${name}.json`;
-}
-
-function styleUrl(name) {
-  return itemUrl(`theme-${name}`);
 }
 
 function readJson(filePath) {
@@ -355,8 +444,7 @@ function run(command, args, cwd, additionalEnvironment = {}) {
       process.platform === "win32"
         ? [command, ...args].map(quoteCommandArgument).join(" ")
         : command;
-    const spawnArguments = process.platform === "win32" ? [] : args;
-    const child = spawn(spawnCommand, spawnArguments, {
+    const child = spawn(spawnCommand, process.platform === "win32" ? [] : args, {
       cwd,
       env: { ...process.env, CI: "1", ...additionalEnvironment },
       shell: process.platform === "win32",
@@ -371,6 +459,5 @@ function run(command, args, cwd, additionalEnvironment = {}) {
 }
 
 function quoteCommandArgument(value) {
-  if (/^[\w./:\\-]+$/.test(value)) return value;
-  return `"${value.replaceAll('"', '""')}"`;
+  return /^[\w./:\\-]+$/.test(value) ? value : `"${value.replaceAll('"', '""')}"`;
 }

@@ -9,13 +9,18 @@ type CatalogItem = {
   categories?: string[];
   description: string;
   name: string;
+  registryDependencies?: string[];
+  files: { path: string; type: string; target?: string }[];
 };
 
-test("template cards are an exact presentation of the installable registry templates", () => {
-  const catalog = JSON.parse(fs.readFileSync("../registry/registry.json", "utf8")) as {
+function readCatalog() {
+  return JSON.parse(fs.readFileSync("../registry/registry.json", "utf8")) as {
     items: CatalogItem[];
   };
-  const registryTemplates = catalog.items.filter((item) => item.categories?.includes("template"));
+}
+
+test("template cards are an exact presentation of the installable registry templates", () => {
+  const registryTemplates = readCatalog().items.filter((item) => item.categories?.includes("template"));
   const templateByName = new Map(registryTemplates.map((item) => [item.name, item]));
 
   assert.equal(new Set(TEMPLATES.map((template) => template.slug)).size, TEMPLATES.length);
@@ -40,4 +45,21 @@ test("template thumbnails render current templates rather than stale screenshot 
   assert.match(source, /<TemplateThumbnail>[\s\S]*?<TemplateDetailPage slug=\{template\.slug\}/);
   assert.doesNotMatch(source, /template\.preview|<iframe/);
   assert.ok(!fs.existsSync("public/template-previews"));
+});
+
+test("compositions do not reinstall the base and explicit module targets respect aliases", () => {
+  const items = readCatalog().items.filter((item) =>
+    item.categories?.some((category) => ["template", "recipe"].includes(category)),
+  );
+  assert.ok(items.length > 0);
+  for (const item of items) {
+    assert.ok(
+      !item.registryDependencies?.some((dependency) => dependency.endsWith("/neobrutal-ui.json")),
+      `${item.name}: composition reinstalls the base theme`,
+    );
+    for (const file of item.files) {
+      if (file.type === "registry:page" || !file.target) continue;
+      assert.match(file.target, /^@(components|ui|lib|hooks)\//, `${item.name}: ${file.path}`);
+    }
+  }
 });

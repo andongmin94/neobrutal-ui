@@ -675,12 +675,12 @@ const RECIPES = [
     categories: ["data-display", "table", "recipe"],
     type: "registry:block",
     dependencies: ["@tanstack/react-table", "lucide-react"],
-    registryDependencies: ["neobrutal-ui", "button", "checkbox", "dropdown-menu", "input", "table"],
+    registryDependencies: ["button", "checkbox", "dropdown-menu", "input", "table"],
     files: [
       {
         path: "src/components/ui/data-table.tsx",
         type: "registry:component",
-        target: "components/ui/data-table.tsx",
+        target: "@ui/data-table.tsx",
       },
     ],
   },
@@ -739,23 +739,23 @@ const TEMPLATES = [
     description: "An editorial archive with topic filters, search, sorting, and reading pages.",
     type: "registry:block",
     dependencies: ["lucide-react"],
-    registryDependencies: ["neobrutal-ui", "button", "input"],
+    registryDependencies: ["button", "input"],
     categories: ["template", "blog"],
     files: [
       {
         path: "src/lib/blog-posts.ts",
         type: "registry:lib",
-        target: "lib/blog-posts.ts",
+        target: "@lib/blog-posts.ts",
       },
       {
         path: "src/blocks/templates/blog-post-template.tsx",
         type: "registry:component",
-        target: "components/templates/blog-post-template.tsx",
+        target: "@components/templates/blog-post-template.tsx",
       },
       {
         path: "src/blocks/templates/blog-template.tsx",
         type: "registry:component",
-        target: "components/templates/blog-template.tsx",
+        target: "@components/templates/blog-template.tsx",
       },
       {
         path: "src/blocks/templates/pages/blog/page.tsx",
@@ -775,13 +775,13 @@ const TEMPLATES = [
     description: "A design practice with services, expandable case studies, and a project inquiry.",
     type: "registry:block",
     dependencies: ["lucide-react"],
-    registryDependencies: ["neobrutal-ui", "button"],
+    registryDependencies: ["button"],
     categories: ["template", "portfolio"],
     files: [
       {
         path: "src/blocks/templates/portfolio-template.tsx",
         type: "registry:component",
-        target: "components/templates/portfolio-template.tsx",
+        target: "@components/templates/portfolio-template.tsx",
       },
       {
         path: "src/blocks/templates/pages/portfolio/page.tsx",
@@ -796,13 +796,13 @@ const TEMPLATES = [
     description: "An editorial workspace with content preview, local save, and change recovery.",
     type: "registry:block",
     dependencies: ["lucide-react"],
-    registryDependencies: ["neobrutal-ui", "badge", "button", "input", "switch", "textarea"],
+    registryDependencies: ["badge", "button", "input", "switch", "textarea"],
     categories: ["template", "cms"],
     files: [
       {
         path: "src/blocks/templates/cms-template.tsx",
         type: "registry:component",
-        target: "components/templates/cms-template.tsx",
+        target: "@components/templates/cms-template.tsx",
       },
       {
         path: "src/blocks/templates/pages/cms/page.tsx",
@@ -817,13 +817,13 @@ const TEMPLATES = [
     description: "A creator profile with categorized destinations and a copyable contact address.",
     type: "registry:block",
     dependencies: ["lucide-react"],
-    registryDependencies: ["neobrutal-ui", "button"],
+    registryDependencies: ["button"],
     categories: ["template", "profile", "links"],
     files: [
       {
         path: "src/blocks/templates/link-hub-template.tsx",
         type: "registry:component",
-        target: "components/templates/link-hub-template.tsx",
+        target: "@components/templates/link-hub-template.tsx",
       },
       {
         path: "src/blocks/templates/pages/links/page.tsx",

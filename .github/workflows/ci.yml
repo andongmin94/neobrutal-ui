@@ -32,7 +32,7 @@ jobs:
         working-directory: registry
         run: npm ci
 
-      - name: Verify registry and fresh consumers
+      - name: Verify registry
         working-directory: registry
         run: |
           npm audit --audit-level=high
@@ -41,10 +41,6 @@ jobs:
           npm run build
           npm run registry:validate
           npm run registry:check
-          npm run consumer:verify
-          for item in chart-revenue-target chart-signup-conversion chart-service-latency; do
-            npm run consumer:verify -- --item="$item"
-          done
 
       - name: Install docs dependencies
         working-directory: docs
@@ -59,6 +55,14 @@ jobs:
           npm run build
           npm run check:budget
           npm test
+
+      - name: Verify fresh consumers and independent analytical charts
+        working-directory: registry
+        run: |
+          npm run consumer:verify
+          for item in chart-revenue-target chart-signup-conversion chart-service-latency; do
+            npm run consumer:verify -- --item="$item"
+          done
 
       - name: Verify clean generation and unchanged sources
         run: |
@@ -86,6 +90,18 @@ jobs:
       - name: Verify representative Firefox, WebKit, and reflow behavior
         working-directory: docs
         run: npm run test:browser:cross
+
+      - name: Verify README setup and rendered existing-project integration
+        run: npm run consumer:verify --prefix registry -- --integration
+
+      - name: Save installed-consumer verification evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: installed-consumer-checks
+          retention-days: 3
+          if-no-files-found: ignore
+          path: docs/test-results/installed-consumers
 
       - name: Capture formatting diagnostics without modifying sources
         if: failure()
