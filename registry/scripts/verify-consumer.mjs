@@ -90,20 +90,9 @@ async function verifyTarget(target, fixtureDirectory, scenario) {
     await run(
       npmExecutable(),
       [
-        "exec",
-        "--yes",
-        "--package=shadcn@latest",
-        "--",
-        "shadcn",
-        "init",
-        "--defaults",
-        "--template",
-        target,
-        "--base",
-        "base",
-        "--no-monorepo",
-        "--cwd",
-        fixtureDirectory,
+        "exec", "--yes", "--package=shadcn@latest", "--", "shadcn", "init",
+        "--defaults", "--template", target, "--base", "base", "--no-monorepo",
+        "--cwd", fixtureDirectory,
       ],
       fixtureDirectory,
     );
@@ -121,9 +110,11 @@ async function verifyTarget(target, fixtureDirectory, scenario) {
 
   const baseItem = catalog.items.find((item) => item.type === "registry:base");
   if (!baseItem) throw new Error("The registry has no registry:base item");
-  const overwrite = scenario === "standard" ? ["--overwrite"] : [];
   const add = async (...names) => {
-    const args = ["add", "--yes", ...overwrite, "--cwd", fixtureDirectory, ...names.map(itemUrl)];
+    // The documented first-button step deliberately replaces the init scaffold.
+    // Existing-project checks never overwrite a user's customized component.
+    const overwrite = scenario === "standard" || (scenario === "readme" && names.includes("button"));
+    const args = ["add", "--yes", ...(overwrite ? ["--overwrite"] : []), "--cwd", fixtureDirectory, ...names.map(itemUrl)];
     if (scenario === "readme") {
       await run(
         npmExecutable(),
@@ -137,13 +128,14 @@ async function verifyTarget(target, fixtureDirectory, scenario) {
   await add(baseItem.name);
 
   if (scenario !== "readme") await add("theme-red");
+  let customizedButton;
+  const buttonPath = path.join(fixtureDirectory, initialConfig.aliases.ui.replace(/^@\//, "src/"), "button.tsx");
   if (scenario === "existing") {
     fs.appendFileSync(cssPath, "\n:root, .dark { --radius: 13px; }\n");
-    assert.deepEqual(
-      readJson(configPath).aliases,
-      initialConfig.aliases,
-      "base installation reset custom aliases",
-    );
+    assert.deepEqual(readJson(configPath).aliases, initialConfig.aliases, "base installation reset custom aliases");
+    await add("button");
+    fs.appendFileSync(buttonPath, "\n// Application-owned customization; later installs must retain this file.\n");
+    customizedButton = fs.readFileSync(buttonPath, "utf8");
   }
   const cssBeforeItems = fs.readFileSync(cssPath, "utf8");
 
@@ -159,54 +151,32 @@ async function verifyTarget(target, fixtureDirectory, scenario) {
     }
     if (options.item && item.name !== options.item) return false;
     if (target === "next") return true;
-    return (
-      item.type === "registry:ui" ||
-      item.type === "registry:component" ||
-      item.name === "data-table"
-    );
+    return item.type === "registry:ui" || item.type === "registry:component" || item.name === "data-table";
   });
   if (installableItems.length === 0) throw new Error(`No selected items support ${target}`);
   await add(...installableItems.map((item) => item.name));
 
   if (scenario === "existing") {
-    assert.equal(
-      fs.readFileSync(cssPath, "utf8"),
-      cssBeforeItems,
-      "adding recipes or templates changed the selected theme or custom CSS",
-    );
+    assert.equal(fs.readFileSync(cssPath, "utf8"), cssBeforeItems, "adding recipes or templates changed the selected theme or custom CSS");
     assert.equal(fs.readFileSync(sentinelPath, "utf8"), sentinel, "consumer-owned source changed");
+    assert.equal(fs.readFileSync(buttonPath, "utf8"), customizedButton, "a dependency installation overwrote a customized component");
     assert.deepEqual(readJson(configPath).aliases, initialConfig.aliases);
     for (const item of installableItems) {
       for (const file of item.files ?? []) {
         if (file.type === "registry:page") continue;
         const targetPath = file.target
-          ? file.target.replace(
-              /^@(components|ui|lib|hooks)\//,
-              (_, alias) => `${initialConfig.aliases[alias].replace(/^@\//, "src/")}/`,
-            )
+          ? file.target.replace(/^@(components|ui|lib|hooks)\//, (_, alias) => `${initialConfig.aliases[alias].replace(/^@\//, "src/")}/`)
           : `${initialConfig.aliases.ui.replace(/^@\//, "src/")}/${path.basename(file.path)}`;
-        assert.ok(
-          fs.existsSync(path.join(fixtureDirectory, targetPath)),
-          `missing custom-alias target: ${targetPath}`,
-        );
+        assert.ok(fs.existsSync(path.join(fixtureDirectory, targetPath)), `missing custom-alias target: ${targetPath}`);
       }
     }
-    assert.ok(
-      !fs.existsSync(path.join(fixtureDirectory, "src/components")),
-      "installation leaked into the default components path",
-    );
+    assert.ok(!fs.existsSync(path.join(fixtureDirectory, "src/components")), "installation leaked into the default components path");
   }
 
   if (scenario === "standard") {
     if (target === "vite") createViteBundleEntry(fixtureDirectory);
   } else {
-    writeBrowserEntry(
-      target,
-      fixtureDirectory,
-      readJson(configPath).aliases,
-      scenario,
-      installableItems,
-    );
+    writeBrowserEntry(target, fixtureDirectory, readJson(configPath).aliases, scenario, installableItems);
   }
   console.log(`Building the fresh ${target}/${scenario} consumer...`);
   await run(npmExecutable(), ["run", "build"], fixtureDirectory, { NEXT_TELEMETRY_DISABLED: "1" });
@@ -218,8 +188,7 @@ async function verifyTarget(target, fixtureDirectory, scenario) {
 }
 
 function writeBrowserEntry(target, directory, aliases, scenario, items) {
-  const charts =
-    scenario === "existing" ? items.filter((item) => item.name.startsWith("chart-")) : [];
+  const charts = scenario === "existing" ? items.filter((item) => item.name.startsWith("chart-")) : [];
   const source = [
     '"use client";',
     `import { Button } from "${aliases.ui}/button";`,
@@ -230,12 +199,8 @@ function writeBrowserEntry(target, directory, aliases, scenario, items) {
     '    <h1 className="text-2xl font-heading">Installed consumer</h1>',
     "    <Button>Click me</Button>",
     '    <p className="consumer-sentinel">Existing application styles</p>',
-    ...charts.map(
-      (item, index) => `    <section aria-label="${item.name}"><Chart${index} /></section>`,
-    ),
-    ...(scenario === "existing"
-      ? ['    <section aria-label="Records"><DataTable /></section>']
-      : []),
+    ...charts.map((item, index) => `    <section aria-label="${item.name}"><Chart${index} /></section>`),
+    ...(scenario === "existing" ? ['    <section aria-label="Records"><DataTable /></section>'] : []),
     "  </main>;",
     "}",
   ].join("\n");
@@ -263,123 +228,61 @@ function createNextFixture(directory) {
   writeJson(path.join(directory, "components.json"), config);
   writeJson(path.join(directory, "tsconfig.json"), {
     compilerOptions: {
-      target: "ES2017",
-      lib: ["dom", "dom.iterable", "esnext"],
-      allowJs: true,
-      skipLibCheck: true,
-      strict: true,
-      noEmit: true,
-      esModuleInterop: true,
-      module: "esnext",
-      moduleResolution: "bundler",
-      resolveJsonModule: true,
-      isolatedModules: true,
-      jsx: "react-jsx",
-      incremental: true,
-      plugins: [{ name: "next" }],
-      paths: { "@/*": ["./src/*"] },
+      target: "ES2017", lib: ["dom", "dom.iterable", "esnext"], allowJs: true,
+      skipLibCheck: true, strict: true, noEmit: true, esModuleInterop: true,
+      module: "esnext", moduleResolution: "bundler", resolveJsonModule: true,
+      isolatedModules: true, jsx: "react-jsx", incremental: true,
+      plugins: [{ name: "next" }], paths: { "@/*": ["./src/*"] },
     },
     include: ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
     exclude: ["node_modules"],
   });
   writeFile(path.join(directory, "next-env.d.ts"), '/// <reference types="next" />\n');
   writeFile(path.join(directory, "next.config.mjs"), "export default {};\n");
-  writeFile(
-    path.join(directory, "postcss.config.mjs"),
-    'export default { plugins: { "@tailwindcss/postcss": {} } };\n',
-  );
+  writeFile(path.join(directory, "postcss.config.mjs"), 'export default { plugins: { "@tailwindcss/postcss": {} } };\n');
   writeFile(path.join(directory, "src", "app", "globals.css"), '@import "tailwindcss";\n');
-  writeFile(
-    path.join(directory, "src", "app", "layout.tsx"),
-    'import "./globals.css";\nexport const metadata = { title: "Registry installation verification" };\nexport default function Layout({ children }: { children: React.ReactNode }) { return <html lang="en"><body>{children}</body></html>; }\n',
-  );
-  writeFile(
-    path.join(directory, "src", "app", "page.tsx"),
-    "export default function Page() { return <main>Registry consumer</main>; }\n",
-  );
+  writeFile(path.join(directory, "src", "app", "layout.tsx"), 'import "./globals.css";\nexport const metadata = { title: "Registry installation verification" };\nexport default function Layout({ children }: { children: React.ReactNode }) { return <html lang="en"><body>{children}</body></html>; }\n');
+  writeFile(path.join(directory, "src", "app", "page.tsx"), "export default function Page() { return <main>Registry consumer</main>; }\n");
 }
 
 function createViteFixture(directory) {
   writeJson(path.join(directory, "package.json"), {
-    name: "neobrutal-registry-vite-consumer",
-    private: true,
-    type: "module",
+    name: "neobrutal-registry-vite-consumer", private: true, type: "module",
     scripts: { build: "tsc --noEmit && vite build" },
     dependencies: { react: "19.2.8", "react-dom": "19.2.8" },
     devDependencies: {
-      "@tailwindcss/vite": "^4.3.3",
-      "@types/react": "^19.2.17",
-      "@types/react-dom": "^19.2.3",
-      "@vitejs/plugin-react": "^6.0.1",
-      tailwindcss: "^4.3.3",
-      typescript: "^7.0.2",
-      vite: "^8.3.0",
+      "@tailwindcss/vite": "^4.3.3", "@types/react": "^19.2.17",
+      "@types/react-dom": "^19.2.3", "@vitejs/plugin-react": "^6.0.1",
+      tailwindcss: "^4.3.3", typescript: "^7.0.2", vite: "^8.3.0",
     },
   });
   writeJson(path.join(directory, "components.json"), componentsConfig(false));
   writeJson(path.join(directory, "tsconfig.json"), {
     compilerOptions: {
-      target: "ES2022",
-      useDefineForClassFields: true,
-      lib: ["ES2022", "DOM", "DOM.Iterable"],
-      allowJs: false,
-      skipLibCheck: true,
-      esModuleInterop: true,
-      allowSyntheticDefaultImports: true,
-      strict: true,
-      forceConsistentCasingInFileNames: true,
-      module: "ESNext",
-      moduleResolution: "Bundler",
-      resolveJsonModule: true,
-      isolatedModules: true,
-      noEmit: true,
-      jsx: "react-jsx",
-      types: ["vite/client"],
-      paths: { "@/*": ["./src/*"] },
+      target: "ES2022", useDefineForClassFields: true, lib: ["ES2022", "DOM", "DOM.Iterable"],
+      allowJs: false, skipLibCheck: true, esModuleInterop: true, allowSyntheticDefaultImports: true,
+      strict: true, forceConsistentCasingInFileNames: true, module: "ESNext", moduleResolution: "Bundler",
+      resolveJsonModule: true, isolatedModules: true, noEmit: true, jsx: "react-jsx",
+      types: ["vite/client"], paths: { "@/*": ["./src/*"] },
     },
     include: ["src"],
   });
-  writeFile(
-    path.join(directory, "index.html"),
-    '<!doctype html><html lang="en"><head><title>Registry installation verification</title><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>\n',
-  );
-  writeFile(
-    path.join(directory, "vite.config.ts"),
-    'import path from "node:path";\nimport tailwindcss from "@tailwindcss/vite";\nimport react from "@vitejs/plugin-react";\nimport { defineConfig } from "vite";\nexport default defineConfig({ plugins: [react(), tailwindcss()], resolve: { alias: { "@": path.resolve(import.meta.dirname, "src") } } });\n',
-  );
+  writeFile(path.join(directory, "index.html"), '<!doctype html><html lang="en"><head><title>Registry installation verification</title><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>\n');
+  writeFile(path.join(directory, "vite.config.ts"), 'import path from "node:path";\nimport tailwindcss from "@tailwindcss/vite";\nimport react from "@vitejs/plugin-react";\nimport { defineConfig } from "vite";\nexport default defineConfig({ plugins: [react(), tailwindcss()], resolve: { alias: { "@": path.resolve(import.meta.dirname, "src") } } });\n');
   writeFile(path.join(directory, "src", "index.css"), '@import "tailwindcss";\n');
-  writeFile(
-    path.join(directory, "src", "main.tsx"),
-    'import { StrictMode } from "react";\nimport { createRoot } from "react-dom/client";\nimport App from "./App";\nimport "./index.css";\ncreateRoot(document.getElementById("root")!).render(<StrictMode><App /></StrictMode>);\n',
-  );
-  writeFile(
-    path.join(directory, "src", "App.tsx"),
-    "export default function App() { return <main>Registry consumer</main>; }\n",
-  );
+  writeFile(path.join(directory, "src", "main.tsx"), 'import { StrictMode } from "react";\nimport { createRoot } from "react-dom/client";\nimport App from "./App";\nimport "./index.css";\ncreateRoot(document.getElementById("root")!).render(<StrictMode><App /></StrictMode>);\n');
+  writeFile(path.join(directory, "src", "App.tsx"), "export default function App() { return <main>Registry consumer</main>; }\n");
 }
 
 function createViteBundleEntry(directory) {
-  const componentFiles = collectFiles(path.join(directory, "src", "components")).filter((file) =>
-    /\.[cm]?[jt]sx?$/.test(file),
-  );
-  if (componentFiles.length === 0) {
-    throw new Error("The Vite consumer did not install any component modules");
-  }
-  const imports = componentFiles
-    .sort()
-    .map((file) => {
-      const modulePath = path
-        .relative(path.join(directory, "src"), file)
-        .replaceAll("\\", "/")
-        .replace(/\.[cm]?[jt]sx?$/, "");
-      return `import "./${modulePath}";`;
-    })
-    .join("\n");
+  const componentFiles = collectFiles(path.join(directory, "src", "components")).filter((file) => /\.[cm]?[jt]sx?$/.test(file));
+  if (componentFiles.length === 0) throw new Error("The Vite consumer did not install any component modules");
+  const imports = componentFiles.sort().map((file) => {
+    const modulePath = path.relative(path.join(directory, "src"), file).replaceAll("\\", "/").replace(/\.[cm]?[jt]sx?$/, "");
+    return `import "./${modulePath}";`;
+  }).join("\n");
   writeFile(path.join(directory, "src", "registry-smoke.ts"), `${imports}\n`);
-  writeFile(
-    path.join(directory, "src", "App.tsx"),
-    'import "./registry-smoke";\nexport default function App() { return <main>Registry consumer</main>; }\n',
-  );
+  writeFile(path.join(directory, "src", "App.tsx"), 'import "./registry-smoke";\nexport default function App() { return <main>Registry consumer</main>; }\n');
 }
 
 function collectFiles(directory) {
@@ -392,25 +295,10 @@ function collectFiles(directory) {
 
 function componentsConfig(rsc) {
   return {
-    $schema: "https://ui.shadcn.com/schema.json",
-    style: "new-york",
-    rsc,
-    tsx: true,
-    tailwind: {
-      config: "",
-      css: "src/index.css",
-      baseColor: "neutral",
-      cssVariables: true,
-      prefix: "",
-    },
+    $schema: "https://ui.shadcn.com/schema.json", style: "new-york", rsc, tsx: true,
+    tailwind: { config: "", css: "src/index.css", baseColor: "neutral", cssVariables: true, prefix: "" },
     iconLibrary: "lucide",
-    aliases: {
-      components: "@/components",
-      utils: "@/lib/utils",
-      ui: "@/components/ui",
-      lib: "@/lib",
-      hooks: "@/hooks",
-    },
+    aliases: { components: "@/components", utils: "@/lib/utils", ui: "@/components/ui", lib: "@/lib", hooks: "@/hooks" },
     registries: {},
   };
 }
@@ -418,59 +306,33 @@ function componentsConfig(rsc) {
 function serveRegistryFile(request, response) {
   const pathname = new URL(request.url ?? "/", registryOrigin || "http://127.0.0.1").pathname;
   const filePath = path.resolve(outputDirectory, pathname.replace(/^\/+/, ""));
-  if (
-    !filePath.startsWith(`${path.resolve(outputDirectory)}${path.sep}`) ||
-    !fs.existsSync(filePath) ||
-    !fs.statSync(filePath).isFile()
-  ) {
+  if (!filePath.startsWith(`${path.resolve(outputDirectory)}${path.sep}`) || !fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
     response.writeHead(404, { "content-type": "application/json" });
     response.end('{"message":"Registry item not found"}');
     return;
   }
-  const content = fs
-    .readFileSync(filePath, "utf8")
-    .replaceAll(`${catalog.homepage}/r/`, `${registryOrigin}/`);
+  const content = fs.readFileSync(filePath, "utf8").replaceAll(`${catalog.homepage}/r/`, `${registryOrigin}/`);
   response.writeHead(200, { "content-type": "application/json; charset=utf-8" });
   response.end(content);
 }
 
-function itemUrl(name) {
-  return `${registryOrigin}/${name}.json`;
-}
-
-function readJson(filePath) {
-  return JSON.parse(fs.readFileSync(filePath, "utf8"));
-}
-
-function writeJson(filePath, value) {
-  writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`);
-}
-
+function itemUrl(name) { return `${registryOrigin}/${name}.json`; }
+function readJson(filePath) { return JSON.parse(fs.readFileSync(filePath, "utf8")); }
+function writeJson(filePath, value) { writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`); }
 function writeFile(filePath, content) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(filePath, content, "utf8");
 }
-
-function npmExecutable() {
-  return process.platform === "win32" ? "npm.cmd" : "npm";
-}
-
+function npmExecutable() { return process.platform === "win32" ? "npm.cmd" : "npm"; }
 function shadcnExecutable() {
   const executable = process.platform === "win32" ? "shadcn.cmd" : "shadcn";
   return path.join(root, "node_modules", ".bin", executable);
 }
-
 function run(command, args, cwd, additionalEnvironment = {}) {
   return new Promise((resolve, reject) => {
-    const spawnCommand =
-      process.platform === "win32"
-        ? [command, ...args].map(quoteCommandArgument).join(" ")
-        : command;
+    const spawnCommand = process.platform === "win32" ? [command, ...args].map(quoteCommandArgument).join(" ") : command;
     const child = spawn(spawnCommand, process.platform === "win32" ? [] : args, {
-      cwd,
-      env: { ...process.env, CI: "1", ...additionalEnvironment },
-      shell: process.platform === "win32",
-      stdio: "inherit",
+      cwd, env: { ...process.env, CI: "1", ...additionalEnvironment }, shell: process.platform === "win32", stdio: "inherit",
     });
     child.once("error", reject);
     child.once("exit", (code) => {
@@ -479,7 +341,6 @@ function run(command, args, cwd, additionalEnvironment = {}) {
     });
   });
 }
-
 function quoteCommandArgument(value) {
   return /^[\w./:\\-]+$/.test(value) ? value : `"${value.replaceAll('"', '""')}"`;
 }

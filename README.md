@@ -21,8 +21,12 @@ Choose Base UI if `shadcn init` asks which component library to use.
 ```bash
 npx shadcn@latest init
 npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json
-npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json
+npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json --overwrite
 ```
+
+The first-button command replaces the default button that `init` may have created.
+Commit an existing customized button before using `--overwrite`; it replaces the selected files.
+Subsequent installs do not need to overwrite your customizations.
 
 Then render your first component:
 
@@ -57,6 +61,9 @@ Commit your current work first, then inspect the base before installing it:
 npx shadcn@latest view https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json
 ```
 
+Compositions follow your configured component and utility aliases. Adding a template or recipe
+does not reinstall the base theme. Page routes still target the Next.js App Router.
+
 ## Optional: shorter install commands
 
 Direct URLs work without extra configuration.
@@ -84,11 +91,13 @@ Page templates target the Next.js App Router; regular UI components support Next
 
 The blog combines topic filters, search, and sorting. The portfolio includes expandable case
 studies. The CMS has a local editor with reading preview and save/discard controls. The link hub
-groups destinations by intent and includes an explicit contact action.
+groups destinations by intent and includes an explicit contact action. Gallery thumbnails
+render the same current template components rather than separate screenshot assets.
 
-The [chart workbench](https://neobrutal-ui.andongmin.com/charts) demonstrates revenue against a
-plan, signup conversion, and response-time budgets. Each recipe includes controls, calculated
-summaries, a data table, and editable source. All chart data is illustrative.
+The [chart workbench](https://neobrutal-ui.andongmin.com/charts) includes eight independently
+installable recipes: revenue targets, signup conversion, response-time budgets, release activity,
+delivery capacity, paired build durations, work allocation, and sequential installation traces.
+Each pairs controls with calculated summaries and an exact data table. All chart data is illustrative.
 
 ## Development
 
@@ -117,12 +126,18 @@ npm test
 npx playwright install --with-deps chromium firefox webkit
 npm run test:browser
 npm run test:browser:cross
+
+cd ..
+npm run consumer:verify --prefix registry -- --integration
 ```
 
 `registry/src` is the source of truth.
 The registry build generates installable JSON and synchronizes the copies used by the docs.
 Do not edit generated copies by hand; CI checks that they match their source.
 
+Integration verification runs current-CLI onboarding and existing-project scenarios with custom
+aliases, a selected theme, application CSS, and a customized component. It renders the installed
+applications without documentation CSS across three browser engines.
 Production verification checks the deployed commit, security headers, registry endpoints,
 representative fresh installs, and Chromium, Firefox, and WebKit behavior.
 

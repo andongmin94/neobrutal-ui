@@ -19,7 +19,6 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 22
@@ -28,9 +27,10 @@ jobs:
             registry/package-lock.json
             docs/package-lock.json
 
-      - name: Install registry dependencies
-        working-directory: registry
-        run: npm ci
+      - name: Install verification dependencies
+        run: |
+          npm ci --prefix registry
+          npm ci --prefix docs
 
       - name: Verify registry
         working-directory: registry
@@ -42,10 +42,6 @@ jobs:
           npm run registry:validate
           npm run registry:check
 
-      - name: Install docs dependencies
-        working-directory: docs
-        run: npm ci
-
       - name: Verify docs, budgets, and shared contracts
         working-directory: docs
         run: |
@@ -56,11 +52,20 @@ jobs:
           npm run check:budget
           npm test
 
-      - name: Verify fresh consumers and independent analytical charts
+      - name: Install browser engines
+        working-directory: docs
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Verify README setup and rendered existing-project integration
+        run: npm run consumer:verify --prefix registry -- --integration
+
+      - name: Verify fresh consumers and every analytical chart independently
         working-directory: registry
         run: |
           npm run consumer:verify
-          for item in chart-revenue-target chart-signup-conversion chart-service-latency; do
+          items=$(node --input-type=module -e 'import fs from "node:fs"; const {items} = JSON.parse(fs.readFileSync("public/r/registry.json", "utf8")); console.log(items.filter(item => item.name.startsWith("chart-") && item.categories?.includes("recipe")).map(item => item.name).join(" "));')
+          test -n "$items"
+          for item in $items; do
             npm run consumer:verify -- --item="$item"
           done
 
@@ -75,24 +80,13 @@ jobs:
             exit 1
           fi
 
-      - name: Install Chromium
-        working-directory: docs
-        run: npx playwright install --with-deps chromium
-
       - name: Verify docs in Chromium
         working-directory: docs
         run: npm run test:browser
 
-      - name: Install Firefox and WebKit
-        working-directory: docs
-        run: npx playwright install --with-deps firefox webkit
-
       - name: Verify representative Firefox, WebKit, and reflow behavior
         working-directory: docs
         run: npm run test:browser:cross
-
-      - name: Verify README setup and rendered existing-project integration
-        run: npm run consumer:verify --prefix registry -- --integration
 
       - name: Save installed-consumer verification evidence
         if: always()

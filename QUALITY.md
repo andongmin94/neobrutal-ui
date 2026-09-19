@@ -1,44 +1,45 @@
 # Product readiness
 
-Official shadcn directory submission is not approved by this work. Implemented code, executed checks, and remaining review are separate statuses.
+Official shadcn directory submission is not approved by this work. Implemented code, executed checks, and remaining review are separate statuses. Use the Verify run attached to the exact commit as the execution record.
 
-## Completed foundation
+## Foundation
 
-The standalone Stars collection, its routes, catalog items, sources, and generator are removed. Do not restore aliases for it. The button API uses neutral instead of a duplicate secondary variant. Form provider and child-composition diagnostics are explicit. Focus and error text use shared tokens. Gallery presets are confined to docs; installed templates inherit the application's theme.
+The standalone Stars collection and its routes, catalog entries, sources, and generator are removed. No compatibility routes are retained. The button API uses neutral instead of a duplicate secondary variant. Form provider and child-composition diagnostics are explicit. Focus and error text use shared tokens. Gallery presets remain docs-only; installed templates inherit the application's theme.
 
 The README and introduction no longer foreground derivative-project background. LICENSE, Credits & license, and the short attribution notice remain intact.
 
-The four templates include combined blog filters and sorting, a local CMS editor with save/discard and plain-text preview, expandable portfolio case studies, and categorized profile links with clipboard feedback. CMS edits are in memory and reset on refresh; this is not a publishing backend.
+The templates include combined blog filters and sorting, local CMS save/discard and plain-text preview, expandable portfolio cases, and categorized profile links. CMS edits reset on refresh; it is not a publishing backend.
 
-The revenue, signup-conversion, and service-latency recipes are individually installable. Their registry source, generated docs mirror, source dialog, and installed JSON are checked for equality. Existing individual Next.js and Vite installation checks cover all three.
+## Current product work
 
-Verify #213 passed for commit 9857af44dbf41759fa11a5082235a6d377e127f5, including deployment. That result does not verify later changes.
+Template thumbnails now render scaled, inert previews of the current template components. Navigation uses a separate overlay link. The old PNG assets and preview metadata are removed. Verify #217 completed documentation, source, aggregate/individual consumer builds, Chromium, and cross-browser checks for commit 67821b3a5499cc056dd4d83c81c7725e9fc7f193. This does not verify later chart changes.
 
-## Current integration pass
+The 47 docs-only chart reference examples have been replaced, not retained as alternate implementations. Eight installable recipes now cover revenue targets, signup conversion, latency budgets, release counts/shares, delivery variance, paired build duration, work allocation, and sequential installation traces. Each uses registry-owned source, documented controls, calculated summaries, a labeled data table, and no plot entrance animation. Consolidation is not a claim that all former examples were individually redesigned.
 
-Template cards now render scaled, inert previews of their actual current components, with a separate navigation link. The outdated PNG assets and preview metadata are removed. The previews inherit the selected theme and use the current viewport's responsive layout. Browser checks cover scaling, inertness, and page overflow.
+Chart metadata is maintained with the registry definitions. Gallery source is generated from synchronized installed files. Contracts compare source, generated mirror, displayed source, and built JSON. The consumer matrix derives all analytical-chart names from the built catalog, so new charts cannot silently miss independent Next.js/Vite installation checks.
 
-Data-table and template modules use @ui, @components, and @lib installation targets. Page routes retain their explicit App Router destinations. Compositions no longer reinstall the base; the base remains a separate, documented first installation step. The docs synchronizer resolves the same new target convention without legacy-path fallbacks.
+Data-table and template modules use alias-aware targets. App Router pages keep explicit destinations. Compositions do not reinstall the base theme.
 
-The existing consumer verifier has an integration mode. It exercises current shadcn init/add onboarding, then a separate existing-project scenario with custom aliases, application-owned source and CSS, a red theme, and a custom radius. It checks that later component/template installation preserves those settings before building and rendering the applications.
+## Installation findings and checks
 
-Rendered integration runs operate the installed charts and data table in Next.js and Vite. In Next.js they also operate all four template routes without importing documentation CSS. Chromium, Firefox, and WebKit run at desktop-light and mobile-dark settings. The checks cover calculated chart values, filtering, CMS save/discard and escaped text, theme inheritance, application style preservation, page errors, overflow, and axe results. Viewport screenshots and result records are retained as review evidence, not automatic visual approval.
+Verify #217's new README browser check found that shadcn init's scaffolded button survived the original add command. The rendered button had a 1px border and no neobrutal shadow. The first-button setup command now explicitly replaces that scaffold with --overwrite. README and Installation explain the replacement and warn against overwriting a customized existing button without review.
 
-The first thumbnail run stopped at a test-file formatting error; it was corrected without relaxing checks. Follow the exact final commit's Verify run for all current-pass outcomes. Local syntax checks and prepared tests do not establish a passing integration run.
+The existing-project scenario uses custom component/lib/hooks aliases, a red theme, custom radius and CSS, an application source file, and a previously installed button with an application-owned modification. Subsequent recipe/template installation must preserve these files and settings. Only the deliberate first-button scaffold replacement uses overwrite in the onboarding scenario; the existing-project scenario does not.
 
-## Remaining product gates
+Rendered checks launch fresh Next.js/Vite applications without documentation CSS. They use Chromium, Firefox, and WebKit with desktop-light/mobile-dark contexts, check styles and errors, and operate chart/data-table and Next.js template flows. JSON results and viewport captures are evidence for review, not automatic visual approval. Prepared checks are not passing checks; the exact current commit must run successfully.
 
-- Finish the old 47 chart reference examples. Their presence is not a claim that they have been redesigned or visually audited.
-- Inspect current gallery and installed-template screenshots. A passing axe scan or overflow assertion is not a comprehensive visual or assistive-technology review.
-- Exercise every public variant and relevant state across supported palettes and widths, including keyboard/touch, long Korean/English/Japanese content and IME, disabled/error/loading states, nested overlays, scrolling, and reduced motion.
-- Extend isolated installation coverage beyond the three original analytical charts. The aggregate all-item build cannot prove each item's independent npm dependencies.
-- Review optional FormDescription/FormMessage composition, absent IDREF targets, custom IDs/descriptions, ref/event composition, and cross-field recovery.
-- Audit remaining documentation/API examples and search timing/error states. Keep source, installation guidance, demonstrations, and advertised capabilities consistent.
+## Remaining review
+
+- Inspect current chart and installed-template captures and resolve any actual visual failures. An axe scan and an overflow assertion do not constitute a complete visual or assistive-technology audit.
+- Review every public variant and relevant state across supported palettes and widths, including keyboard/touch, actual IME composition, disabled/error/loading states, nested overlays, scrolling, and reduced motion.
+- Extend isolated installation coverage beyond analytical charts. Aggregate builds cannot prove every item's independent npm dependency declarations.
+- Review optional FormDescription/FormMessage composition, missing IDREF targets, custom IDs/descriptions, ref/event composition, and cross-field recovery.
+- Audit remaining API examples and search timing/error states. Keep source, installation guidance, and advertised behavior aligned.
 
 ## Verification procedure
 
-Run registry format, lint, typecheck, build, registry:validate, registry:check, and consumer:verify. Run docs format, lint, typecheck, build, check:budget, test, test:browser, and test:browser:cross. With docs dependencies and all three browser engines installed, run `npm run consumer:verify --prefix registry -- --integration` from the repository root.
+Run registry format, lint, typecheck, build, registry:validate, registry:check, and consumer:verify. Run docs format, lint, typecheck, build, check:budget, test, test:browser, and test:browser:cross. With docs dependencies and all browser engines installed, run `npm run consumer:verify --prefix registry -- --integration` from the repository root.
 
-Run `node registry/scripts/verify-generated.mjs` and verify a clean source tree. Generated JSON and docs copies remain build outputs, never separately edited sources. Confirm the deployed commit, headers, live catalog, representative live installs, and deployed browser checks. The catalog must omit s1 through s40 and all obsolete published JSON.
+Run `node registry/scripts/verify-generated.mjs` and verify a clean source tree. Never hand-edit generated JSON or docs copies. Confirm the deployed commit, headers, live catalog, representative live installs, and deployed browser checks. The catalog and published files must omit s1 through s40.
 
-A gate is complete only when the actual check and result are recorded. Do not replace missing evidence with a percentage score or an earlier commit's green check.
+A gate is complete only after the actual check and result are recorded. Do not substitute a percentage score or an earlier commit's green check for current evidence.
