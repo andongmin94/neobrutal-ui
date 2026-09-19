@@ -23,7 +23,9 @@ for (const group of series) {
     await expect(section.getByRole("heading", { name: group.title, exact: true })).toBeVisible();
     const sources = section.getByRole("button", { name: "View source", exact: true });
     await expect(sources).toHaveCount(group.count);
-    await expect(section.getByRole("link", { name: "Install recipe", exact: true })).toHaveCount(group.count);
+    await expect(section.getByRole("link", { name: "Install recipe", exact: true })).toHaveCount(
+      group.count,
+    );
     for (let index = 0; index < group.count; index++) {
       const button = sources.nth(index);
       await button.scrollIntoViewIfNeeded();
@@ -50,12 +52,18 @@ test("every palette has an isolated live preview", async ({ page }) => {
   await page.goto("/styling");
   const select = page.getByLabel("Palette", { exact: true });
   const preview = page.locator("[data-theme-preview]");
-  const shell = await page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--main"));
+  const shell = await page
+    .locator("html")
+    .evaluate((node) => getComputedStyle(node).getPropertyValue("--main"));
   for (const color of colors) {
     await select.selectOption(color.name);
     await expect(select).toHaveValue(color.name);
     await expect(preview.locator(".theme-workbench__stage-label")).toContainText(color.name);
-    expect(await page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--main"))).toBe(shell);
+    expect(
+      await page
+        .locator("html")
+        .evaluate((node) => getComputedStyle(node).getPropertyValue("--main")),
+    ).toBe(shell);
   }
 });
 
@@ -65,7 +73,11 @@ test("clipboard denial shows honest feedback without runtime errors", async ({ p
   await page.addInitScript(() => {
     Object.defineProperty(navigator, "clipboard", {
       configurable: true,
-      value: { writeText: async () => { throw new Error("Denied for regression test"); } },
+      value: {
+        writeText: async () => {
+          throw new Error("Denied for regression test");
+        },
+      },
     });
   });
   await page.goto("/templates");
@@ -87,7 +99,13 @@ test("CMS status filter is a flush segmented control", async ({ page }) => {
   const frame = await group.evaluate((node) => getComputedStyle(node).borderTopWidth);
   const selected = await all.evaluate((node) => {
     const style = getComputedStyle(node);
-    return { background: style.backgroundColor, borderBottom: style.borderBottomWidth, borderLeft: style.borderLeftWidth, borderRadius: style.borderRadius, borderTop: style.borderTopWidth };
+    return {
+      background: style.backgroundColor,
+      borderBottom: style.borderBottomWidth,
+      borderLeft: style.borderLeftWidth,
+      borderRadius: style.borderRadius,
+      borderTop: style.borderTopWidth,
+    };
   });
   const inactiveBackground = await draft.evaluate((node) => getComputedStyle(node).backgroundColor);
   expect(frame).toBe("2px");

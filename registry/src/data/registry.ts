@@ -532,7 +532,15 @@ const UI = [
     categories: ["layout", "navigation"],
     type: "registry:ui",
     registryDependencies: [
-      "avatar", "collapsible", "dropdown-menu", "button", "input", "sheet", "skeleton", "tooltip", "separator",
+      "avatar",
+      "collapsible",
+      "dropdown-menu",
+      "button",
+      "input",
+      "sheet",
+      "skeleton",
+      "tooltip",
+      "separator",
     ],
     files: [
       { path: "src/components/ui/sidebar.tsx", type: "registry:ui" },

@@ -39,7 +39,9 @@ test("delivery variance keeps negative and positive values around zero", async (
   await expect(chart.locator("figure")).toContainText("8");
 });
 
-test("build-series visibility does not silently change the comparison population", async ({ page }) => {
+test("build-series visibility does not silently change the comparison population", async ({
+  page,
+}) => {
   const chart = await openChart(page, "chart-build-duration", "builds");
   await expect(chart.locator("dl")).toContainText("106.5 s");
   await expect(chart.locator(".recharts-line-curve")).toHaveCount(2);
@@ -55,7 +57,9 @@ test("build-series visibility does not silently change the comparison population
   await expect(chart.locator("tbody tr").last()).toContainText("95");
 });
 
-test("allocation inspection preserves all categories and updates its denominator", async ({ page }) => {
+test("allocation inspection preserves all categories and updates its denominator", async ({
+  page,
+}) => {
   const chart = await openChart(page, "chart-work-allocation", "allocation");
   await expect(chart.locator("dl")).toContainText("180 h");
   await chart.getByLabel("Inspect workstream").selectOption("Test");
@@ -70,7 +74,9 @@ test("allocation inspection preserves all categories and updates its denominator
   await expect(chart.locator(".recharts-pie-sector")).toHaveCount(4);
 });
 
-test("installation trace changes duration units consistently without changing shares", async ({ page }) => {
+test("installation trace changes duration units consistently without changing shares", async ({
+  page,
+}) => {
   const chart = await openChart(page, "chart-install-diagnostics", "diagnostics");
   await expect(chart.locator("dl")).toContainText("1260 ms");
   await chart.getByLabel("Install environment").selectOption("CI");
@@ -86,8 +92,11 @@ test("installation trace changes duration units consistently without changing sh
 });
 
 for (const name of [
-  "chart-release-activity", "chart-delivery-capacity", "chart-build-duration",
-  "chart-work-allocation", "chart-install-diagnostics",
+  "chart-release-activity",
+  "chart-delivery-capacity",
+  "chart-build-duration",
+  "chart-work-allocation",
+  "chart-install-diagnostics",
 ]) {
   test(`analytical recipe remains readable and keyboard-operable: ${name}`, async ({ page }) => {
     const errors: string[] = [];
@@ -103,11 +112,14 @@ for (const name of [
     await summary.focus();
     await page.keyboard.press("Enter");
     await expect(preview.locator("details")).toHaveAttribute("open", "");
-    const results = await new AxeBuilder({ page }).include(".component-preview")
-      .withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
+    const results = await new AxeBuilder({ page })
+      .include(".component-preview")
+      .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+      .analyze();
     expect(results.violations).toEqual([]);
-    expect(await page.evaluate(() => document.documentElement.scrollWidth))
-      .toBeLessThanOrEqual(page.viewportSize()!.width + 1);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+      page.viewportSize()!.width + 1,
+    );
     expect(errors).toEqual([]);
   });
 }

@@ -14,17 +14,20 @@ const definitions = [
   {
     name: "chart-service-latency",
     title: "Response-time budget",
-    description: "Daily p50 and p95 with service controls, budget breaches, and an exact data table.",
+    description:
+      "Daily p50 and p95 with service controls, budget breaches, and an exact data table.",
   },
   {
     name: "chart-release-activity",
     title: "Release adoption",
-    description: "Install and update activity with count/share views, period controls, and exact values.",
+    description:
+      "Install and update activity with count/share views, period controls, and exact values.",
   },
   {
     name: "chart-delivery-capacity",
     title: "Delivery capacity",
-    description: "Planned and delivered work with team controls, signed variance, and exact values.",
+    description:
+      "Planned and delivered work with team controls, signed variance, and exact values.",
   },
   {
     name: "chart-build-duration",
@@ -34,12 +37,14 @@ const definitions = [
   {
     name: "chart-work-allocation",
     title: "Work allocation",
-    description: "Planned hours with period controls, a workstream inspector, and part-to-whole values.",
+    description:
+      "Planned hours with period controls, a workstream inspector, and part-to-whole values.",
   },
   {
     name: "chart-install-diagnostics",
     title: "Installation trace",
-    description: "Sequential install stages with environment controls, duration units, and stage shares.",
+    description:
+      "Sequential install stages with environment controls, duration units, and stage shares.",
   },
 ];
 

@@ -1,5 +1,13 @@
 export const COMPONENT_CATEGORIES = [
-  "All", "Actions", "Forms", "Navigation", "Overlays", "Feedback", "Disclosure", "Data display", "Layout",
+  "All",
+  "Actions",
+  "Forms",
+  "Navigation",
+  "Overlays",
+  "Feedback",
+  "Disclosure",
+  "Data display",
+  "Layout",
 ] as const;
 
 export type ComponentCategory = (typeof COMPONENT_CATEGORIES)[number];
@@ -84,8 +92,10 @@ export function getComponentInstallMode(slug: string): ComponentInstallMode {
 }
 
 function titleFromSlug(slug: string) {
-  return slug.split("-")
-    .map((word) => word === "otp" ? "OTP" : word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+  return slug
+    .split("-")
+    .map((word) => (word === "otp" ? "OTP" : word.charAt(0).toUpperCase() + word.slice(1)))
+    .join(" ");
 }
 
 export const COMPONENT_DIRECTORY_LINKS = Object.keys(componentCategoryBySlug)

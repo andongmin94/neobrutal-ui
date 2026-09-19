@@ -88,7 +88,9 @@ export default function ChartReleaseActivity() {
           ))}
         </dl>
         <figure
-          aria-label={share ? "Install and update share by release" : "Install and update events by release"}
+          aria-label={
+            share ? "Install and update share by release" : "Install and update events by release"
+          }
           className="min-w-0"
         >
           <ChartContainer config={config} className="h-72 w-full min-w-0 aspect-auto">
@@ -168,7 +170,9 @@ export default function ChartReleaseActivity() {
             <tbody>
               {data.map((row) => (
                 <tr key={row.release}>
-                  <th scope="row" className="py-3 pr-2">{row.release}</th>
+                  <th scope="row" className="py-3 pr-2">
+                    {row.release}
+                  </th>
                   <td>{row.installs}</td>
                   <td>{row.updates}</td>
                   <td>{((row.updates / (row.installs + row.updates)) * 100).toFixed(1)}%</td>

@@ -25,37 +25,43 @@ const chartGroups: ChartGroup[] = [
   {
     id: "examples",
     title: "Decision workbench",
-    description: "Compare revenue with a plan, find conversion losses, and check a response-time budget.",
+    description:
+      "Compare revenue with a plan, find conversion losses, and check a response-time budget.",
     items: ["ChartRevenueTarget", "ChartSignupConversion", "ChartServiceLatency"],
   },
   {
     id: "area-chart",
     title: "Release activity",
-    description: "Switch between event counts and normalized shares without confusing volume with composition.",
+    description:
+      "Switch between event counts and normalized shares without confusing volume with composition.",
     items: ["ChartReleaseActivity"],
   },
   {
     id: "bar-chart",
     title: "Delivery planning",
-    description: "Compare planned and completed work, then inspect the signed difference around a real zero baseline.",
+    description:
+      "Compare planned and completed work, then inspect the signed difference around a real zero baseline.",
     items: ["ChartDeliveryCapacity"],
   },
   {
     id: "line-chart",
     title: "Build performance",
-    description: "Compare paired cold and cached runs with an explicit duration budget and calculated time savings.",
+    description:
+      "Compare paired cold and cached runs with an explicit duration budget and calculated time savings.",
     items: ["ChartBuildDuration"],
   },
   {
     id: "pie-chart",
     title: "Work allocation",
-    description: "Inspect a workstream's hours and share while keeping the complete allocation visible.",
+    description:
+      "Inspect a workstream's hours and share while keeping the complete allocation visible.",
     items: ["ChartWorkAllocation"],
   },
   {
     id: "tooltip",
     title: "Install diagnostics",
-    description: "Locate the slowest sequential stage and switch units consistently across the chart, summary, and data.",
+    description:
+      "Locate the slowest sequential stage and switch units consistently across the chart, summary, and data.",
     items: ["ChartInstallDiagnostics"],
   },
 ];
@@ -78,7 +84,9 @@ export default function Examples() {
     <div className="pb-8">
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div className="max-w-xl">
-          <p className="font-mono text-xs uppercase tracking-widest">Charts that answer questions</p>
+          <p className="font-mono text-xs uppercase tracking-widest">
+            Charts that answer questions
+          </p>
           <p className="mt-3 text-sm leading-6 text-foreground/80">
             Eight installable analytical recipes. Every chart pairs controls with calculated
             summaries and an exact data table. All data is illustrative, not live telemetry.
@@ -124,7 +132,9 @@ export default function Examples() {
             if (!chart) throw new Error(`Missing chart recipe: ${name}`);
             return (
               <div className={index === 0 ? "min-w-0 xl:col-span-2" : "min-w-0"} key={name}>
-                <ChartComponent chart={chart}><chart.component /></ChartComponent>
+                <ChartComponent chart={chart}>
+                  <chart.component />
+                </ChartComponent>
               </div>
             );
           })}
@@ -158,7 +168,10 @@ function ChartComponent({ children, chart }: { children: ReactNode; chart: Chart
               The same source delivered by the registry. Use Install recipe for setup and usage.
             </DialogDescription>
           </DialogHeader>
-          <Pre wrapperClassName="w-full max-w-full overflow-x-auto text-white" __rawstring__={chart.code}>
+          <Pre
+            wrapperClassName="w-full max-w-full overflow-x-auto text-white"
+            __rawstring__={chart.code}
+          >
             {chart.code}
           </Pre>
         </DialogContent>

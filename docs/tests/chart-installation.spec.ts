@@ -1,14 +1,62 @@
 import { expect, test } from "@playwright/test";
 
 const recipes = [
-  { name: "chart-revenue-target", kind: "revenue", group: "examples", control: "Revenue period", value: "8" },
-  { name: "chart-signup-conversion", kind: "conversion", group: "examples", control: "Acquisition cohort", value: "Sales-led" },
-  { name: "chart-service-latency", kind: "latency", group: "examples", control: "Service", value: "Search" },
-  { name: "chart-release-activity", kind: "activity", group: "area-chart", control: "Activity measure", value: "share" },
-  { name: "chart-delivery-capacity", kind: "capacity", group: "bar-chart", control: "Delivery view", value: "variance" },
-  { name: "chart-build-duration", kind: "builds", group: "line-chart", control: "Visible build series", value: "warm" },
-  { name: "chart-work-allocation", kind: "allocation", group: "pie-chart", control: "Inspect workstream", value: "Test" },
-  { name: "chart-install-diagnostics", kind: "diagnostics", group: "tooltip", control: "Duration unit", value: "s" },
+  {
+    name: "chart-revenue-target",
+    kind: "revenue",
+    group: "examples",
+    control: "Revenue period",
+    value: "8",
+  },
+  {
+    name: "chart-signup-conversion",
+    kind: "conversion",
+    group: "examples",
+    control: "Acquisition cohort",
+    value: "Sales-led",
+  },
+  {
+    name: "chart-service-latency",
+    kind: "latency",
+    group: "examples",
+    control: "Service",
+    value: "Search",
+  },
+  {
+    name: "chart-release-activity",
+    kind: "activity",
+    group: "area-chart",
+    control: "Activity measure",
+    value: "share",
+  },
+  {
+    name: "chart-delivery-capacity",
+    kind: "capacity",
+    group: "bar-chart",
+    control: "Delivery view",
+    value: "variance",
+  },
+  {
+    name: "chart-build-duration",
+    kind: "builds",
+    group: "line-chart",
+    control: "Visible build series",
+    value: "warm",
+  },
+  {
+    name: "chart-work-allocation",
+    kind: "allocation",
+    group: "pie-chart",
+    control: "Inspect workstream",
+    value: "Test",
+  },
+  {
+    name: "chart-install-diagnostics",
+    kind: "diagnostics",
+    group: "tooltip",
+    control: "Duration unit",
+    value: "s",
+  },
 ];
 
 for (const recipe of recipes) {
