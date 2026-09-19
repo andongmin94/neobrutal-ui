@@ -29,16 +29,15 @@ test("template cards are an exact presentation of the installable registry templ
     const item = templateByName.get(template.registryItem);
     assert.ok(item, `${template.registryItem}: registry item is missing`);
     assert.equal(template.description, item.description);
-    const page = fs.readFileSync(`content/templates/${template.slug}.mdx`, "utf8");
-    assert.equal(
-      page.match(/^description: (.+)$/m)?.[1],
-      item.description,
-      `${template.slug}: page metadata must describe the installed template`,
-    );
     assert.equal(template.installCommand, registryInstallCommand(template.registryItem));
-    assert.ok(
-      fs.existsSync(`public${template.preview}`),
-      `${template.registryItem}: preview image is missing`,
-    );
+    const page = fs.readFileSync(`content/templates/${template.slug}.mdx`, "utf8");
+    assert.ok(page.includes(`description: ${item.description}\n`), template.slug);
   }
+});
+
+test("template thumbnails render current templates rather than stale screenshot assets", () => {
+  const source = fs.readFileSync("app/components/template-pages.tsx", "utf8");
+  assert.match(source, /<TemplateThumbnail>[\s\S]*?<TemplateDetailPage slug=\{template\.slug\}/);
+  assert.doesNotMatch(source, /template\.preview|<iframe/);
+  assert.ok(!fs.existsSync("public/template-previews"));
 });

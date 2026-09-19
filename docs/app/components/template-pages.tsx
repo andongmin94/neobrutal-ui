@@ -10,6 +10,7 @@ import TEMPLATES from "@/data/templates";
 import { getBlogPost } from "@/lib/blog-posts";
 import { copyText } from "~/lib/clipboard";
 import { TemplatePreview } from "./template-preview";
+import { TemplateThumbnail } from "./template-thumbnail";
 
 const templateComponents: Record<string, ComponentType> = {
   cms: CmsTemplate,
@@ -43,18 +44,18 @@ export function TemplatesPage() {
           className="flex flex-col overflow-hidden rounded-base border-2 border-border bg-secondary-background shadow-shadow"
           key={template.slug}
         >
-          <Link
-            aria-label={`Open ${template.title} template`}
-            className="template-preview-link block shrink-0 overflow-hidden border-b-2 border-border bg-background outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
-            to={`/templates/${template.slug}`}
-          >
-            <img
-              alt=""
-              className="aspect-video w-full object-cover"
-              loading="lazy"
-              src={template.preview}
-            />
-          </Link>
+          <div className="relative shrink-0 border-b-2 border-border">
+            <TemplateThumbnail>
+              <TemplateDetailPage slug={template.slug} />
+            </TemplateThumbnail>
+            <Link
+              aria-label={`Open ${template.title} template`}
+              className="template-preview-link absolute inset-0 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+              to={`/templates/${template.slug}`}
+            >
+              <span className="sr-only">Open {template.title} template</span>
+            </Link>
+          </div>
           <div className="flex flex-1 flex-col p-5">
             <div className="flex items-start justify-between gap-4">
               <div>
