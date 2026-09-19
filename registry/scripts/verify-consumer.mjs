@@ -90,9 +90,20 @@ async function verifyTarget(target, fixtureDirectory, scenario) {
     await run(
       npmExecutable(),
       [
-        "exec", "--yes", "--package=shadcn@latest", "--", "shadcn", "init",
-        "--defaults", "--template", target, "--base", "base", "--no-monorepo",
-        "--cwd", fixtureDirectory,
+        "exec",
+        "--yes",
+        "--package=shadcn@latest",
+        "--",
+        "shadcn",
+        "init",
+        "--defaults",
+        "--template",
+        target,
+        "--base",
+        "base",
+        "--no-monorepo",
+        "--cwd",
+        fixtureDirectory,
       ],
       fixtureDirectory,
     );
@@ -127,7 +138,7 @@ async function verifyTarget(target, fixtureDirectory, scenario) {
 
   if (scenario !== "readme") await add("theme-red");
   if (scenario === "existing") {
-    fs.appendFileSync(cssPath, "\n:root { --radius: 13px; }\n");
+    fs.appendFileSync(cssPath, "\n:root, .dark { --radius: 13px; }\n");
     assert.deepEqual(
       readJson(configPath).aliases,
       initialConfig.aliases,
@@ -189,7 +200,13 @@ async function verifyTarget(target, fixtureDirectory, scenario) {
   if (scenario === "standard") {
     if (target === "vite") createViteBundleEntry(fixtureDirectory);
   } else {
-    writeBrowserEntry(target, fixtureDirectory, readJson(configPath).aliases, scenario, installableItems);
+    writeBrowserEntry(
+      target,
+      fixtureDirectory,
+      readJson(configPath).aliases,
+      scenario,
+      installableItems,
+    );
   }
   console.log(`Building the fresh ${target}/${scenario} consumer...`);
   await run(npmExecutable(), ["run", "build"], fixtureDirectory, { NEXT_TELEMETRY_DISABLED: "1" });
@@ -201,7 +218,8 @@ async function verifyTarget(target, fixtureDirectory, scenario) {
 }
 
 function writeBrowserEntry(target, directory, aliases, scenario, items) {
-  const charts = scenario === "existing" ? items.filter((item) => item.name.startsWith("chart-")) : [];
+  const charts =
+    scenario === "existing" ? items.filter((item) => item.name.startsWith("chart-")) : [];
   const source = [
     '"use client";',
     `import { Button } from "${aliases.ui}/button";`,
@@ -210,10 +228,14 @@ function writeBrowserEntry(target, directory, aliases, scenario, items) {
     "export default function Page() {",
     '  return <main className="mx-auto grid w-full max-w-5xl gap-8 p-6">',
     '    <h1 className="text-2xl font-heading">Installed consumer</h1>',
-    '    <Button>Click me</Button>',
+    "    <Button>Click me</Button>",
     '    <p className="consumer-sentinel">Existing application styles</p>',
-    ...charts.map((item, index) => `    <section aria-label="${item.name}"><Chart${index} /></section>`),
-    ...(scenario === "existing" ? ['    <section aria-label="Records"><DataTable /></section>'] : []),
+    ...charts.map(
+      (item, index) => `    <section aria-label="${item.name}"><Chart${index} /></section>`,
+    ),
+    ...(scenario === "existing"
+      ? ['    <section aria-label="Records"><DataTable /></section>']
+      : []),
     "  </main>;",
     "}",
   ].join("\n");
@@ -269,7 +291,7 @@ function createNextFixture(directory) {
   writeFile(path.join(directory, "src", "app", "globals.css"), '@import "tailwindcss";\n');
   writeFile(
     path.join(directory, "src", "app", "layout.tsx"),
-    'import "./globals.css";\nexport default function Layout({ children }: { children: React.ReactNode }) { return <html lang="en"><body>{children}</body></html>; }\n',
+    'import "./globals.css";\nexport const metadata = { title: "Registry installation verification" };\nexport default function Layout({ children }: { children: React.ReactNode }) { return <html lang="en"><body>{children}</body></html>; }\n',
   );
   writeFile(
     path.join(directory, "src", "app", "page.tsx"),
@@ -319,7 +341,7 @@ function createViteFixture(directory) {
   });
   writeFile(
     path.join(directory, "index.html"),
-    '<!doctype html><html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>\n',
+    '<!doctype html><html lang="en"><head><title>Registry installation verification</title><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>\n',
   );
   writeFile(
     path.join(directory, "vite.config.ts"),

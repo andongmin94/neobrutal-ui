@@ -20,7 +20,9 @@ function readCatalog() {
 }
 
 test("template cards are an exact presentation of the installable registry templates", () => {
-  const registryTemplates = readCatalog().items.filter((item) => item.categories?.includes("template"));
+  const registryTemplates = readCatalog().items.filter((item) =>
+    item.categories?.includes("template"),
+  );
   const templateByName = new Map(registryTemplates.map((item) => [item.name, item]));
 
   assert.equal(new Set(TEMPLATES.map((template) => template.slug)).size, TEMPLATES.length);

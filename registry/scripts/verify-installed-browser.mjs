@@ -11,15 +11,18 @@ export async function verifyInstalledBrowser({ target, directory, scenario, root
   const { chromium, firefox, webkit, expect } = requireDocs("@playwright/test");
   const { default: AxeBuilder } = requireDocs("@axe-core/playwright");
   const reportDirectory = path.join(
-    root, "../docs/test-results/installed-consumers", `${target}-${scenario}`,
+    root,
+    "../docs/test-results/installed-consumers",
+    `${target}-${scenario}`,
   );
   fs.mkdirSync(reportDirectory, { recursive: true });
   const port = await availablePort();
   const origin = `http://127.0.0.1:${port}`;
   const executable = path.join(directory, "node_modules/.bin", target === "next" ? "next" : "vite");
-  const args = target === "next"
-    ? ["start", "--hostname", "127.0.0.1", "--port", String(port)]
-    : ["preview", "--host", "127.0.0.1", "--port", String(port), "--strictPort"];
+  const args =
+    target === "next"
+      ? ["start", "--hostname", "127.0.0.1", "--port", String(port)]
+      : ["preview", "--host", "127.0.0.1", "--port", String(port), "--strictPort"];
   const child = spawn(executable, args, {
     cwd: directory,
     env: { ...process.env, NEXT_TELEMETRY_DISABLED: "1" },
@@ -27,9 +30,15 @@ export async function verifyInstalledBrowser({ target, directory, scenario, root
   });
   let log = "";
   let spawnError;
-  child.on("error", (error) => { spawnError = error; });
-  child.stdout.on("data", (chunk) => { log += chunk.toString(); });
-  child.stderr.on("data", (chunk) => { log += chunk.toString(); });
+  child.on("error", (error) => {
+    spawnError = error;
+  });
+  child.stdout.on("data", (chunk) => {
+    log += chunk.toString();
+  });
+  child.stderr.on("data", (chunk) => {
+    log += chunk.toString();
+  });
   const records = [];
 
   try {
@@ -46,15 +55,20 @@ export async function verifyInstalledBrowser({ target, directory, scenario, root
       await delay(500);
     }
     for (const [engine, browserType] of [
-      ["chromium", chromium], ["firefox", firefox], ["webkit", webkit],
+      ["chromium", chromium],
+      ["firefox", firefox],
+      ["webkit", webkit],
     ]) {
       const browser = await browserType.launch();
       try {
         for (const { width, theme } of [
-          { width: 1440, theme: "light" }, { width: 390, theme: "dark" },
+          { width: 1440, theme: "light" },
+          { width: 390, theme: "dark" },
         ]) {
           const context = await browser.newContext({
-            viewport: { width, height: 900 }, colorScheme: theme, reducedMotion: "reduce",
+            viewport: { width, height: 900 },
+            colorScheme: theme,
+            reducedMotion: "reduce",
           });
           await context.addInitScript((dark) => {
             document.addEventListener("DOMContentLoaded", () => {
@@ -69,7 +83,10 @@ export async function verifyInstalledBrowser({ target, directory, scenario, root
             const button = page.getByRole("button", { name: "Click me", exact: true });
             await expect(button).toBeVisible();
             await expect(button).toHaveCSS("border-top-width", "2px");
-            assert.notEqual(await button.evaluate((node) => getComputedStyle(node).boxShadow), "none");
+            assert.notEqual(
+              await button.evaluate((node) => getComputedStyle(node).boxShadow),
+              "none",
+            );
             if (scenario === "existing") {
               await expect(page.locator(".consumer-sentinel")).toHaveCSS("border-top-width", "7px");
               await expect(button).toHaveCSS("border-radius", "13px");
@@ -96,7 +113,9 @@ export async function verifyInstalledBrowser({ target, directory, scenario, root
               await expect(recordsPane.locator("tbody tr")).toHaveCount(5);
             }
             await assertPage(page, expect, AxeBuilder, errors, width);
-            await page.screenshot({ path: path.join(reportDirectory, `${engine}-${width}-${theme}-charts.png`) });
+            await page.screenshot({
+              path: path.join(reportDirectory, `${engine}-${width}-${theme}-charts.png`),
+            });
             records.push({ engine, width, theme, route: "/", passed: true });
 
             if (scenario === "existing" && target === "next") {
@@ -104,22 +123,32 @@ export async function verifyInstalledBrowser({ target, directory, scenario, root
                 await page.goto(`${origin}${route}`);
                 await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
                 if (route === "/blog") {
-                  const search = page.getByRole("textbox").first();
+                  const search = page.getByRole("searchbox", { name: "Search posts" });
                   await search.fill("does-not-exist-한글-検索");
                   await expect(page.getByText("No posts found.", { exact: true })).toBeVisible();
                   await search.fill("");
                 }
                 if (route === "/cms") {
                   await page.getByRole("button", { name: "New post", exact: true }).click();
-                  await page.getByLabel("Title", { exact: true }).fill("설치 검수 / 編集 / Working title");
-                  await page.getByLabel("Content", { exact: true }).fill("Plain text <script>not executable</script>\n\nSecond paragraph.");
+                  await page
+                    .getByLabel("Title", { exact: true })
+                    .fill("설치 검수 / 編集 / Working title");
+                  await page
+                    .getByLabel("Content", { exact: true })
+                    .fill("Plain text <script>not executable</script>\n\nSecond paragraph.");
                   await page.getByText("Read preview", { exact: true }).click();
-                  await expect(page.getByRole("article", { name: "Post preview" })).toContainText("<script>not executable</script>");
+                  await expect(page.getByRole("article", { name: "Post preview" })).toContainText(
+                    "<script>not executable</script>",
+                  );
                   await page.getByRole("button", { name: "Save", exact: true }).click();
-                  await expect(page.getByRole("button", { name: "Save", exact: true })).toBeDisabled();
+                  await expect(
+                    page.getByRole("button", { name: "Save", exact: true }),
+                  ).toBeDisabled();
                   await page.getByLabel("Title", { exact: true }).fill("Temporary change");
                   await page.getByRole("button", { name: "Discard", exact: true }).click();
-                  await expect(page.getByLabel("Title", { exact: true })).toHaveValue("설치 검수 / 編集 / Working title");
+                  await expect(page.getByLabel("Title", { exact: true })).toHaveValue(
+                    "설치 검수 / 編集 / Working title",
+                  );
                 }
                 if (route === "/portfolio") {
                   const summary = page.locator("details summary").first();
@@ -127,13 +156,29 @@ export async function verifyInstalledBrowser({ target, directory, scenario, root
                   await expect(summary.locator("..")).toHaveAttribute("open", "");
                 }
                 await assertPage(page, expect, AxeBuilder, errors, width);
-                await page.screenshot({ path: path.join(reportDirectory, `${engine}-${width}-${theme}-${route.slice(1)}.png`) });
+                await page.screenshot({
+                  path: path.join(
+                    reportDirectory,
+                    `${engine}-${width}-${theme}-${route.slice(1)}.png`,
+                  ),
+                });
                 records.push({ engine, width, theme, route, passed: true });
               }
             }
           } catch (error) {
-            records.push({ engine, width, theme, route: page.url(), passed: false, error: String(error) });
-            await page.screenshot({ path: path.join(reportDirectory, `${engine}-${width}-${theme}-failed.png`) }).catch(() => {});
+            records.push({
+              engine,
+              width,
+              theme,
+              route: page.url(),
+              passed: false,
+              error: String(error),
+            });
+            await page
+              .screenshot({
+                path: path.join(reportDirectory, `${engine}-${width}-${theme}-failed.png`),
+              })
+              .catch(() => {});
             throw error;
           } finally {
             await context.close();
@@ -145,7 +190,10 @@ export async function verifyInstalledBrowser({ target, directory, scenario, root
     }
   } finally {
     child.kill("SIGTERM");
-    fs.writeFileSync(path.join(reportDirectory, "report.json"), `${JSON.stringify(records, null, 2)}\n`);
+    fs.writeFileSync(
+      path.join(reportDirectory, "report.json"),
+      `${JSON.stringify(records, null, 2)}\n`,
+    );
     fs.writeFileSync(path.join(reportDirectory, "server.log"), log);
   }
   console.log(`Installed ${target}/${scenario}: ${records.length} rendered checks passed.`);
@@ -153,11 +201,17 @@ export async function verifyInstalledBrowser({ target, directory, scenario, root
 
 async function assertPage(page, expect, AxeBuilder, errors, width) {
   expect(errors).toEqual([]);
-  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width + 1);
-  expect(await page.locator('link[rel="stylesheet"]').evaluateAll((links) =>
-    links.every((link) => new URL(link.href).origin === location.origin),
-  )).toBe(true);
-  const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+    width + 1,
+  );
+  expect(
+    await page
+      .locator('link[rel="stylesheet"]')
+      .evaluateAll((links) => links.every((link) => new URL(link.href).origin === location.origin)),
+  ).toBe(true);
+  const results = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+    .analyze();
   expect(results.violations).toEqual([]);
 }
 
@@ -168,7 +222,8 @@ async function availablePort() {
     server.listen(0, "127.0.0.1", resolve);
   });
   const address = server.address();
-  if (!address || typeof address === "string") throw new Error("Could not allocate a consumer port");
+  if (!address || typeof address === "string")
+    throw new Error("Could not allocate a consumer port");
   await new Promise((resolve) => server.close(resolve));
   return address.port;
 }
