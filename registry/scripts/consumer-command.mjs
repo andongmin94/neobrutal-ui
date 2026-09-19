@@ -44,12 +44,13 @@ export function run(command, args, cwd, additionalEnvironment = {}, preserveFile
           }
           declined = true;
           // prompts submits on "n". Do not send Enter into a later question.
-          child.stdin.write("n");
+          child.stdin.end("n");
         });
       }
     }
     child.once("close", (code, signal) => {
       if (failure) reject(failure);
+      else if (child.killed) reject(new Error(`${path.basename(command)} was terminated`));
       else if (code !== 0) {
         reject(new Error(`${path.basename(command)} exited with ${signal ?? code ?? "unknown"}`));
       } else if (preserveFile && !declined) {

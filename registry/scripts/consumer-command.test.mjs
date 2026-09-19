@@ -55,3 +55,17 @@ test("a nonzero exit after declining still fails the command", async () => {
 test("ordinary commands do not need an interactive answer", async () => {
   await run(process.execPath, ["-e", "process.exit(0)"], process.cwd());
 });
+
+test("closes input after declining so the installer can exit normally", async () => {
+  await fixture(`
+    let answered = false;
+    process.stdin.on("data", (answer) => {
+      answered = answer.toString() === "n";
+    });
+    process.stdin.once("end", () => {
+      if (!answered) process.exit(2);
+    });
+    setTimeout(() => process.exit(9), 750).unref();
+    process.stdout.write("? The file button.tsx already exists. Would you like to overwrite?");
+  `);
+});
