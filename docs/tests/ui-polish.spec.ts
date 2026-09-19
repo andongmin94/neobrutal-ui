@@ -96,14 +96,17 @@ test("blog search has one clear action and returns focus after clearing", async 
 test("template card actions align despite different description lengths", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 1000 });
   await openReady(page, "/templates");
-  const cards = page.locator("main article article");
+  const cards = page.locator(".not-prose > article");
   await expect(cards).toHaveCount(4);
   const first = cards.nth(0);
   const second = cards.nth(1);
-  await first.locator("p").evaluate((node) => {
+  const description = first.locator(":scope > div:last-child p");
+  const originalHeight = (await description.boundingBox())!.height;
+  await description.evaluate((node) => {
     node.textContent +=
       " Extra descriptive text verifies that a taller introduction does not shift this card's actions above its neighbor's actions.";
   });
+  expect((await description.boundingBox())!.height).toBeGreaterThan(originalHeight);
   const firstCard = (await first.boundingBox())!;
   const secondCard = (await second.boundingBox())!;
   expect(Math.abs(firstCard.y - secondCard.y)).toBeLessThanOrEqual(1);
