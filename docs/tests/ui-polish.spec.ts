@@ -136,6 +136,36 @@ test("blog article lists show their bullet markers", async ({ page }) => {
   await expect(list).toHaveCSS("list-style-type", "square");
 });
 
+test("image-card preview preserves the full screenshot at narrow and wide widths", async ({
+  page,
+}) => {
+  await openReady(page, "/docs/image-card");
+  const image = page.locator(".component-preview").first().getByRole("img", {
+    name: "neobrutal-ui documentation preview",
+  });
+  await expect(image).toBeVisible();
+  await image.evaluate((node) => (node as HTMLImageElement).decode());
+  for (const width of [320, 390, 1440]) {
+    await page.setViewportSize({ width, height: 844 });
+    await expect(image).toHaveCSS("aspect-ratio", "auto");
+    const dimensions = await image.evaluate((node) => {
+      const image = node as HTMLImageElement;
+      const bounds = image.getBoundingClientRect();
+      return {
+        width: bounds.width,
+        height: bounds.height,
+        naturalWidth: image.naturalWidth,
+        naturalHeight: image.naturalHeight,
+      };
+    });
+    expect(dimensions.naturalWidth).toBeGreaterThan(0);
+    expect(dimensions.naturalHeight).toBeGreaterThan(0);
+    const expectedHeight =
+      (dimensions.width * dimensions.naturalHeight) / dimensions.naturalWidth;
+    expect(Math.abs(dimensions.height - expectedHeight), `${width}px`).toBeLessThanOrEqual(1);
+  }
+});
+
 for (const overlay of [
   {
     name: "hover-card",
@@ -162,13 +192,15 @@ for (const overlay of [
     action: "right",
   },
 ] as const) {
-  test(`open ${overlay.name} text keeps sufficient contrast`, async ({ page }) => {
+  test(`open ${overlay.name} stays above document content with readable text`, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await openReady(page, overlay.route);
-    const trigger = page.locator(".component-preview").getByRole(overlay.role, {
+    const preview = page.locator(".component-preview").first();
+    const trigger = preview.getByRole(overlay.role, {
       name: overlay.trigger,
       exact: true,
     });
+    await expect(preview.locator(".component-preview__canvas")).toHaveCSS("isolation", "auto");
     if (overlay.action === "hover") await trigger.hover();
     else await trigger.click({ button: overlay.action === "right" ? "right" : "left" });
     const surface = page.locator(overlay.surface);
@@ -178,5 +210,20 @@ for (const overlay of [
       .withRules(["color-contrast"])
       .analyze();
     expect(results.violations.map(({ id, nodes }) => ({ id, nodes }))).toEqual([]);
+    // Sample overlapping headings, including their top borders, rather than only popup centers.
+    const obscuredHeadings = await surface.evaluate((node) => {
+      const bounds = node.getBoundingClientRect();
+      return [...document.querySelectorAll("h2.md-heading")].flatMap((heading) => {
+        const headingBounds = heading.getBoundingClientRect();
+        const left = Math.max(bounds.left + 4, headingBounds.left, 0);
+        const right = Math.min(bounds.right - 4, headingBounds.right, innerWidth);
+        const top = Math.max(bounds.top + 4, headingBounds.top + 0.5, 0);
+        const bottom = Math.min(bounds.bottom - 4, headingBounds.bottom, innerHeight);
+        if (right <= left || bottom <= top) return [];
+        const topmost = document.elementFromPoint((left + right) / 2, top);
+        return node.contains(topmost) ? [] : [heading.textContent];
+      });
+    });
+    expect(obscuredHeadings).toEqual([]);
   });
 }

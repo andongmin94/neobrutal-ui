@@ -5,7 +5,7 @@ export default function ImageCardDemo() {
     <ImageCard
       caption="neobrutal-ui documentation preview"
       imageUrl="/preview.png"
-      className="w-full max-w-sm"
+      className="w-full max-w-sm [&_img]:aspect-auto"
     />
   );
 }

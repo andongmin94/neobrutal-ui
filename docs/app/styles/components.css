@@ -101,7 +101,6 @@
 
 .component-preview__canvas {
   position: relative;
-  isolation: isolate;
   display: flex;
   min-height: 13.75rem;
   align-items: center;
