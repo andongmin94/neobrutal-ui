@@ -98,7 +98,7 @@ jobs:
                 paths+=(tsconfig.consumer.json)
               fi
               node_modules/.bin/oxfmt --list-different "${paths[@]}" > "$RUNNER_TEMP/$project-format-files.txt" || true
-              while IFS= read -r file; do
+              while IFS= read -r file || [ -n "$file" ]; do
                 if [ ! -f "$file" ]; then continue; fi
                 output="$RUNNER_TEMP/formatted/$project/$file"
                 mkdir -p "$(dirname "$output")"
