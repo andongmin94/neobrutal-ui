@@ -1,0 +1,57 @@
+---
+title: Delivery capacity
+description: Compare planned and completed work, including signed variance.
+---
+
+Compare a team's plan with completed work across four sprints. Switch to signed variance to see the difference around zero. Counts describe sample work items, not their size, quality, or team productivity.
+
+<ComponentPreview component="chart-delivery-capacity">
+<include cwd lang="tsx">
+  ./src/components/ui/chart-delivery-capacity.tsx
+</include>
+</ComponentPreview>
+
+## Installation
+
+Complete the [base setup](/docs/installation). The CLI installs Chart and Card with this recipe and does not reinstall the base theme.
+
+<Installation component="chart-delivery-capacity">
+
+```bash
+npm install recharts@^3.9.2
+```
+
+Install [Chart](/docs/chart) and [Card](/docs/card), then create **`components/ui/chart-delivery-capacity.tsx`**:
+
+<include cwd lang="tsx">
+  ./src/components/ui/chart-delivery-capacity.tsx
+</include>
+</Installation>
+
+## Usage
+
+```tsx
+import ChartDeliveryCapacity from "@/components/ui/chart-delivery-capacity";
+
+export default function DeliveryReport() {
+  return <ChartDeliveryCapacity />;
+}
+```
+
+## API reference
+
+The component has no required props. Adapt the installed source rather than configuring an extra chart abstraction.
+
+| Source / control | Purpose |
+| --- | --- |
+| `teams` | Paired planned and delivered counts for each sprint. |
+| `config` | Labels and shared-theme colors. |
+| Delivery team | Product or Platform sample data. |
+| Delivery view | Paired bars or signed delivered-minus-planned values. |
+| View delivery data | Exact values for the selected team. |
+
+The comparison view starts at zero. Variance uses a symmetric scale around zero. Update the fixed domains when replacing the sample data; both views must contain the full data range. Variance is a count, not a percentage.
+
+## Accessibility
+
+Controls have visible labels. Planned bars are outlined and dashed; delivered bars are filled and solid. Negative values are identified by position and signed table values, not just color. A visible summary and exact table remain available in either view. Plot animations are disabled.

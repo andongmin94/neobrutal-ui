@@ -4,58 +4,33 @@ import { fileURLToPath } from "node:url";
 import { format } from "oxfmt";
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
-const chartExamplesDirectory = path.resolve(scriptDirectory, "../examples/ui/chart");
-const registryChartsDirectory = path.resolve(scriptDirectory, "../components/ui");
+const sourceDirectory = path.resolve(scriptDirectory, "../components/ui");
 const outputPath = path.resolve(scriptDirectory, "../data/charts.ts");
+const chartFiles = fs.readdirSync(sourceDirectory)
+  .filter((file) => file.startsWith("chart-") && file.endsWith(".tsx"))
+  .sort();
 
 function componentName(file: string) {
-  return path
-    .basename(file, ".tsx")
-    .split("-")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join("");
+  return path.basename(file, ".tsx").split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join("");
 }
 
-const chartFiles = [
-  ...fs
-    .readdirSync(chartExamplesDirectory)
-    .filter((file) => file.endsWith(".tsx"))
-    .map((file) => ({
-      file,
-      directory: chartExamplesDirectory,
-      importPath: `@/examples/ui/chart/${file.replace(/\.tsx$/, "")}`,
-      registryName: undefined,
-    })),
-  ...fs
-    .readdirSync(registryChartsDirectory)
-    .filter((file) => file.startsWith("chart-") && file.endsWith(".tsx"))
-    .map((file) => ({
-      file,
-      directory: registryChartsDirectory,
-      importPath: `@/components/ui/${file.replace(/\.tsx$/, "")}`,
-      registryName: file.replace(/\.tsx$/, ""),
-    })),
-].sort((a, b) => a.file.localeCompare(b.file));
-
-const names = chartFiles.map(({ file }) => componentName(file));
-if (new Set(names).size !== names.length) {
-  throw new Error("Duplicate chart source. Keep installable recipes in registry/src only.");
+const names = chartFiles.map(componentName);
+if (!chartFiles.length || new Set(names).size !== names.length) {
+  throw new Error("Expected unique installable chart recipes. Build the registry first.");
 }
 
-const imports = chartFiles.map(
-  ({ file, importPath }) => `import ${componentName(file)} from "${importPath}";`,
+const imports = chartFiles.map((file) =>
+  `import ${componentName(file)} from "@/components/ui/${path.basename(file, ".tsx")}";`,
 );
-
-const entries = chartFiles.map(({ file, directory, registryName }) => {
-  const name = componentName(file);
-  const source = fs.readFileSync(path.join(directory, file), "utf8").replaceAll("\r\n", "\n");
-
+const entries = chartFiles.map((file) => {
+  const source = fs.readFileSync(path.join(sourceDirectory, file), "utf8").replaceAll("\r\n", "\n");
   return [
     "  {",
-    `    component: ${name},`,
+    `    component: ${componentName(file)},`,
     `    code: ${JSON.stringify(source)},`,
-    `    name: "${name}",`,
-    ...(registryName ? [`    registryName: "${registryName}",`] : []),
+    `    name: "${componentName(file)}",`,
+    `    registryName: "${path.basename(file, ".tsx")}",`,
     "  }",
   ].join("\n");
 });
@@ -68,22 +43,14 @@ export interface ChartExample {
   component: React.ComponentType;
   code: string;
   name: string;
-  registryName?: string;
+  registryName: string;
 }
 
 export const charts: ChartExample[] = [
 ${entries.join(",\n")}
 ];
 `;
-
 const { code } = await format(outputPath, output);
-const current = fs.existsSync(outputPath)
-  ? fs.readFileSync(outputPath, "utf8").replaceAll("\r\n", "\n")
-  : undefined;
-
-if (current !== code) {
-  fs.writeFileSync(outputPath, code, "utf8");
-  console.log(`Updated ${chartFiles.length} chart examples.`);
-} else {
-  console.log(`${chartFiles.length} chart examples are up to date.`);
-}
+const current = fs.existsSync(outputPath) ? fs.readFileSync(outputPath, "utf8") : undefined;
+if (current !== code) fs.writeFileSync(outputPath, code, "utf8");
+console.log(`${chartFiles.length} installable chart recipes synchronized.`);

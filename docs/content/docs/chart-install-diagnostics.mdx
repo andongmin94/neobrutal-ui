@@ -1,0 +1,57 @@
+---
+title: Installation trace
+description: Sequential stage durations with consistent units and exact values.
+---
+
+Locate the longest stage in a sample installation. Switch between local and CI traces, then between milliseconds and seconds. The summary, axis, tooltip, and table change units together. These are illustrative sequential traces, not live CLI telemetry.
+
+<ComponentPreview component="chart-install-diagnostics">
+<include cwd lang="tsx">
+  ./src/components/ui/chart-install-diagnostics.tsx
+</include>
+</ComponentPreview>
+
+## Installation
+
+Complete the [base setup](/docs/installation). Chart and Card are installed with this recipe without replacing your selected theme.
+
+<Installation component="chart-install-diagnostics">
+
+```bash
+npm install recharts@^3.9.2
+```
+
+Install [Chart](/docs/chart) and [Card](/docs/card), then create **`components/ui/chart-install-diagnostics.tsx`**:
+
+<include cwd lang="tsx">
+  ./src/components/ui/chart-install-diagnostics.tsx
+</include>
+</Installation>
+
+## Usage
+
+```tsx
+import ChartInstallDiagnostics from "@/components/ui/chart-install-diagnostics";
+
+export default function InstallationReport() {
+  return <ChartInstallDiagnostics />;
+}
+```
+
+## API reference
+
+The recipe has no required props. Adapt the installed source to your own measurements.
+
+| Source / control | Purpose |
+| --- | --- |
+| `traces` | Stage durations stored in milliseconds. |
+| `stages` | Resolve, download, transform, and write in execution order. |
+| Install environment | Selects the local or CI sample. |
+| Duration unit | Formats all durations as milliseconds or seconds. |
+| View installation data | Each stage's duration and share of the sequential total. |
+
+The total is the sum of sequential stages. Do not use this calculation for overlapping or parallel operations. The fixed axis domain accommodates both samples; update it for other traces. Zero-duration traces need a defined empty state before calculating shares.
+
+## Accessibility
+
+The execution-order caption and labeled data table identify stages independently of color. Important values remain visible without a tooltip. Both selects have visible labels and native keyboard behavior. The plot has a definite height and no entrance animation.

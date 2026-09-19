@@ -1,0 +1,57 @@
+---
+title: Build duration
+description: Paired cold and cached runs, time savings, and an explicit budget.
+---
+
+Compare cold and cached runs of the same builds. The period control updates arithmetic means, paired time savings, and the budget-breach count. Hiding a plotted series does not change the summary's comparison population. All measurements are illustrative.
+
+<ComponentPreview component="chart-build-duration">
+<include cwd lang="tsx">
+  ./src/components/ui/chart-build-duration.tsx
+</include>
+</ComponentPreview>
+
+## Installation
+
+Complete the [base setup](/docs/installation). Chart and Card are installed as dependencies without reinstalling your theme.
+
+<Installation component="chart-build-duration">
+
+```bash
+npm install recharts@^3.9.2
+```
+
+Install [Chart](/docs/chart) and [Card](/docs/card), then create **`components/ui/chart-build-duration.tsx`**:
+
+<include cwd lang="tsx">
+  ./src/components/ui/chart-build-duration.tsx
+</include>
+</Installation>
+
+## Usage
+
+```tsx
+import ChartBuildDuration from "@/components/ui/chart-build-duration";
+
+export default function BuildReport() {
+  return <ChartBuildDuration />;
+}
+```
+
+## API reference
+
+The recipe has no required props. Edit its installed data and presentation directly.
+
+| Source / control | Purpose |
+| --- | --- |
+| `builds` | Paired cold/cached duration values in seconds. |
+| `budget` | Cold-run threshold, initially 220 seconds. |
+| Build period | All six builds or the latest three. |
+| Visible build series | Both, cold only, or cached only. |
+| View build data | Both paired values and cold-minus-cached time saved. |
+
+The vertical scale remains fixed when hiding a series so apparent differences are not rescaled. Adjust its domain when introducing other measurements. Means require a nonempty array. The fixed sample is not a benchmark or a confidence interval.
+
+## Accessibility
+
+Solid lines with filled dots and dashed lines with open dots distinguish series without relying on color. The dotted horizontal line is the stated budget. Controls, visible summaries, and the exact table work without hover; the chart is labeled and has no entrance animation.

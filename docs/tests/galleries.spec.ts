@@ -3,11 +3,11 @@ import colors from "../src/data/colors";
 
 const series = [
   { id: "examples", title: "Decision workbench", count: 3 },
-  { id: "area-chart", title: "Release activity", count: 9 },
-  { id: "bar-chart", title: "Catalog coverage", count: 10 },
-  { id: "line-chart", title: "Build performance", count: 10 },
-  { id: "pie-chart", title: "Registry composition", count: 9 },
-  { id: "tooltip", title: "Install diagnostics", count: 9 },
+  { id: "area-chart", title: "Release activity", count: 1 },
+  { id: "bar-chart", title: "Delivery planning", count: 1 },
+  { id: "line-chart", title: "Build performance", count: 1 },
+  { id: "pie-chart", title: "Work allocation", count: 1 },
+  { id: "tooltip", title: "Install diagnostics", count: 1 },
 ];
 
 for (const group of series) {
@@ -23,6 +23,7 @@ for (const group of series) {
     await expect(section.getByRole("heading", { name: group.title, exact: true })).toBeVisible();
     const sources = section.getByRole("button", { name: "View source", exact: true });
     await expect(sources).toHaveCount(group.count);
+    await expect(section.getByRole("link", { name: "Install recipe", exact: true })).toHaveCount(group.count);
     for (let index = 0; index < group.count; index++) {
       const button = sources.nth(index);
       await button.scrollIntoViewIfNeeded();
@@ -49,18 +50,12 @@ test("every palette has an isolated live preview", async ({ page }) => {
   await page.goto("/styling");
   const select = page.getByLabel("Palette", { exact: true });
   const preview = page.locator("[data-theme-preview]");
-  const shell = await page
-    .locator("html")
-    .evaluate((node) => getComputedStyle(node).getPropertyValue("--main"));
+  const shell = await page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--main"));
   for (const color of colors) {
     await select.selectOption(color.name);
     await expect(select).toHaveValue(color.name);
     await expect(preview.locator(".theme-workbench__stage-label")).toContainText(color.name);
-    expect(
-      await page
-        .locator("html")
-        .evaluate((node) => getComputedStyle(node).getPropertyValue("--main")),
-    ).toBe(shell);
+    expect(await page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--main"))).toBe(shell);
   }
 });
 
@@ -70,15 +65,11 @@ test("clipboard denial shows honest feedback without runtime errors", async ({ p
   await page.addInitScript(() => {
     Object.defineProperty(navigator, "clipboard", {
       configurable: true,
-      value: {
-        writeText: async () => {
-          throw new Error("Denied for regression test");
-        },
-      },
+      value: { writeText: async () => { throw new Error("Denied for regression test"); } },
     });
   });
   await page.goto("/templates");
-  const card = page.locator("main article article").first();
+  const card = page.locator(".not-prose > article").first();
   await card.getByRole("button", { name: /Copy/ }).click();
   await expect(card.getByRole("button", { name: "Copy failed", exact: true })).toBeVisible();
   expect(errors).toEqual([]);
@@ -89,36 +80,25 @@ test("CMS status filter is a flush segmented control", async ({ page }) => {
   const group = page.getByRole("group", { name: "Filter posts by status" });
   const all = group.getByRole("button", { name: "All", exact: true });
   const draft = group.getByRole("button", { name: "Draft", exact: true });
-
   await expect(group).toBeVisible();
   await expect(group.getByRole("button")).toHaveCount(3);
   await expect(all).toHaveAttribute("aria-pressed", "true");
   await expect(draft).toHaveAttribute("aria-pressed", "false");
-
   const frame = await group.evaluate((node) => getComputedStyle(node).borderTopWidth);
   const selected = await all.evaluate((node) => {
     const style = getComputedStyle(node);
-    return {
-      background: style.backgroundColor,
-      borderBottom: style.borderBottomWidth,
-      borderLeft: style.borderLeftWidth,
-      borderRadius: style.borderRadius,
-      borderTop: style.borderTopWidth,
-    };
+    return { background: style.backgroundColor, borderBottom: style.borderBottomWidth, borderLeft: style.borderLeftWidth, borderRadius: style.borderRadius, borderTop: style.borderTopWidth };
   });
   const inactiveBackground = await draft.evaluate((node) => getComputedStyle(node).backgroundColor);
-
   expect(frame).toBe("2px");
   expect(selected.borderTop).toBe("0px");
   expect(selected.borderBottom).toBe("0px");
   expect(selected.borderLeft).toBe("0px");
   expect(selected.borderRadius).toBe("0px");
   expect(selected.background).not.toBe(inactiveBackground);
-
   await draft.click();
   await expect(draft).toHaveAttribute("aria-pressed", "true");
   await expect(all).toHaveAttribute("aria-pressed", "false");
-  // The reading preview can repeat a title; filter assertions concern the post list.
   const posts = page.getByRole("region", { name: "Posts", exact: true });
   await expect(posts.getByText("July product update", { exact: true })).toHaveCount(0);
   await expect(posts.getByText("Organize your first team space", { exact: true })).toBeVisible();

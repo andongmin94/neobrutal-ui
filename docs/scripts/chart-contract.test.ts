@@ -4,14 +4,18 @@ import { test } from "node:test";
 
 import { charts } from "../src/data/charts";
 
-const recipeNames = ["chart-revenue-target", "chart-signup-conversion", "chart-service-latency"];
+const recipeNames = [
+  "chart-revenue-target", "chart-signup-conversion", "chart-service-latency",
+  "chart-release-activity", "chart-delivery-capacity", "chart-build-duration",
+  "chart-work-allocation", "chart-install-diagnostics",
+];
 
-test("chart recipes share one source across registry, gallery, and docs", () => {
-  const registered = charts.filter((chart) => chart.registryName);
-  assert.deepEqual(registered.map((chart) => chart.registryName).sort(), [...recipeNames].sort());
+test("all analytical recipes share one source across registry, gallery, and docs", () => {
+  assert.deepEqual(charts.map((chart) => chart.registryName).sort(), [...recipeNames].sort());
+  assert.ok(!fs.existsSync("src/examples/ui/chart"), "obsolete chart implementations remain");
 
-  for (const chart of registered) {
-    const name = chart.registryName!;
+  for (const chart of charts) {
+    const name = chart.registryName;
     const source = fs.readFileSync(`../registry/src/components/ui/${name}.tsx`, "utf8");
     const item = JSON.parse(fs.readFileSync(`public/r/${name}.json`, "utf8"));
     assert.equal(chart.code, source);
@@ -24,15 +28,13 @@ test("chart recipes share one source across registry, gallery, and docs", () => 
     assert.ok(item.categories.includes("recipe"));
     assert.ok(item.dependencies.some((dependency: string) => dependency.startsWith("recharts@")));
     for (const dependency of ["chart", "card"]) {
-      assert.ok(
-        item.registryDependencies.some((url: string) => url.endsWith(`/r/${dependency}.json`)),
-      );
+      assert.ok(item.registryDependencies.some((url: string) => url.endsWith(`/r/${dependency}.json`)));
     }
-    assert.ok(
-      !item.registryDependencies.some((url: string) => url.endsWith("/r/neobrutal-ui.json")),
-      "Adding a chart must not reinstall the base theme.",
-    );
-    assert.ok(!fs.existsSync(`src/examples/ui/chart/${name}.tsx`));
+    assert.ok(!item.registryDependencies.some((url: string) => url.endsWith("/r/neobrutal-ui.json")));
     assert.equal(typeof chart.component, "function");
+    assert.match(source, /<table\b/);
+    assert.match(source, /<caption\b/);
+    assert.match(source, /<output\b/);
+    assert.match(source, /isAnimationActive=\{false\}/);
   }
 });

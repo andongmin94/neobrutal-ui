@@ -1,0 +1,58 @@
+---
+title: Work allocation
+description: Inspect planned hours and shares without losing the whole.
+---
+
+Compare the current and next sample planning periods. Select a workstream to inspect its hours and share, while the donut and the table retain all four workstreams. The values are planned hours, not time-tracking records.
+
+<ComponentPreview component="chart-work-allocation">
+<include cwd lang="tsx">
+  ./src/components/ui/chart-work-allocation.tsx
+</include>
+</ComponentPreview>
+
+## Installation
+
+Complete the [base setup](/docs/installation). The recipe installs Chart and Card and keeps the application's selected theme.
+
+<Installation component="chart-work-allocation">
+
+```bash
+npm install recharts@^3.9.2
+```
+
+Install [Chart](/docs/chart) and [Card](/docs/card), then create **`components/ui/chart-work-allocation.tsx`**:
+
+<include cwd lang="tsx">
+  ./src/components/ui/chart-work-allocation.tsx
+</include>
+</Installation>
+
+## Usage
+
+```tsx
+import ChartWorkAllocation from "@/components/ui/chart-work-allocation";
+
+export default function AllocationReport() {
+  return <ChartWorkAllocation />;
+}
+```
+
+## API reference
+
+This source-editable recipe requires no props.
+
+| Source / control | Purpose |
+| --- | --- |
+| `periods` | Four nonnegative hour values per sample planning period. |
+| `workstreams` | The corresponding ordered category names. |
+| `config` | Names and shared-theme colors. |
+| Allocation period | Switches all values and the denominator together. |
+| Inspect workstream | Changes the readout, not the total population. |
+| View allocation data | Hours and shares for all categories, including the selected one. |
+
+Keep category order aligned with the data arrays. Handle zero totals or empty data before computing shares when integrating live data. Rounded shares may not sum to exactly 100%.
+
+## Accessibility
+
+The workstream inspector is a labeled native select, not a pointer-only chart interaction. A textual readout, category order caption, and exact table provide a color-independent reading path. The selected row includes an accessible selected marker. The chart is labeled and animations are disabled.

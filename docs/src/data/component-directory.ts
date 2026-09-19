@@ -1,19 +1,10 @@
 export const COMPONENT_CATEGORIES = [
-  "All",
-  "Actions",
-  "Forms",
-  "Navigation",
-  "Overlays",
-  "Feedback",
-  "Disclosure",
-  "Data display",
-  "Layout",
+  "All", "Actions", "Forms", "Navigation", "Overlays", "Feedback", "Disclosure", "Data display", "Layout",
 ] as const;
 
 export type ComponentCategory = (typeof COMPONENT_CATEGORIES)[number];
 export type ComponentGroup = Exclude<ComponentCategory, "All">;
 export type ComponentInstallMode = "Component" | "Recipe";
-
 export const COMPOSITION_RECIPE_SLUGS = ["combobox", "date-picker"] as const;
 
 const componentCategoryBySlug = {
@@ -31,6 +22,11 @@ const componentCategoryBySlug = {
   "chart-revenue-target": "Data display",
   "chart-signup-conversion": "Data display",
   "chart-service-latency": "Data display",
+  "chart-release-activity": "Data display",
+  "chart-delivery-capacity": "Data display",
+  "chart-build-duration": "Data display",
+  "chart-work-allocation": "Data display",
+  "chart-install-diagnostics": "Data display",
   checkbox: "Forms",
   collapsible: "Disclosure",
   combobox: "Forms",
@@ -80,9 +76,7 @@ export function getComponentCategory(slug: string): ComponentGroup {
 const recipeSlugs = new Set<string>([
   ...COMPOSITION_RECIPE_SLUGS,
   "data-table",
-  "chart-revenue-target",
-  "chart-signup-conversion",
-  "chart-service-latency",
+  ...Object.keys(componentCategoryBySlug).filter((slug) => slug.startsWith("chart-")),
 ]);
 
 export function getComponentInstallMode(slug: string): ComponentInstallMode {
@@ -90,15 +84,10 @@ export function getComponentInstallMode(slug: string): ComponentInstallMode {
 }
 
 function titleFromSlug(slug: string) {
-  return slug
-    .split("-")
-    .map((word) => (word === "otp" ? "OTP" : word.charAt(0).toUpperCase() + word.slice(1)))
-    .join(" ");
+  return slug.split("-")
+    .map((word) => word === "otp" ? "OTP" : word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
 }
 
 export const COMPONENT_DIRECTORY_LINKS = Object.keys(componentCategoryBySlug)
-  .map((slug) => ({
-    href: `/docs/${slug}`,
-    text: titleFromSlug(slug),
-  }))
+  .map((slug) => ({ href: `/docs/${slug}`, text: titleFromSlug(slug) }))
   .sort((a, b) => a.text.localeCompare(b.text));

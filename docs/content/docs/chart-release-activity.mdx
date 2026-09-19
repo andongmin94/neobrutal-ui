@@ -1,0 +1,57 @@
+---
+title: Release adoption
+description: Install and update activity with count/share views and exact values.
+---
+
+Compare total activity with its composition. Count view adds installs and updates; share view normalizes each release to 100%. The summary uses the combined event totals, not an average of release percentages. All data is illustrative.
+
+<ComponentPreview component="chart-release-activity">
+<include cwd lang="tsx">
+  ./src/components/ui/chart-release-activity.tsx
+</include>
+</ComponentPreview>
+
+## Installation
+
+Complete the [base setup](/docs/installation). The CLI installs this recipe with Chart and Card without replacing your theme.
+
+<Installation component="chart-release-activity">
+
+```bash
+npm install recharts@^3.9.2
+```
+
+Install [Chart](/docs/chart) and [Card](/docs/card), then create **`components/ui/chart-release-activity.tsx`**:
+
+<include cwd lang="tsx">
+  ./src/components/ui/chart-release-activity.tsx
+</include>
+</Installation>
+
+## Usage
+
+```tsx
+import ChartReleaseActivity from "@/components/ui/chart-release-activity";
+
+export default function AdoptionReport() {
+  return <ChartReleaseActivity />;
+}
+```
+
+## API reference
+
+This editable recipe has no required props. Change the constants in the installed source to connect application data.
+
+| Source / control | Purpose |
+| --- | --- |
+| `releases` | Ordered release labels with nonnegative install and update counts. |
+| `config` | Series labels and shared-theme colors. |
+| Activity measure | Counts or shares, with matching vertical-axis units. |
+| Release period | All six releases or the latest three. |
+| View activity data | Exact counts and per-release update shares. |
+
+For dynamic data, handle an empty array or zero totals before calculating shares. Do not interpret repeat events as unique users. Normalized areas show composition, not absolute volume; tooltips retain the original event counts.
+
+## Accessibility
+
+Both controls have visible labels and native keyboard behavior. Solid and dashed boundaries distinguish the two series in addition to color. The text summary and table provide the values without requiring hover. The chart has a definite height, an accessible figure label, and no entrance animation.

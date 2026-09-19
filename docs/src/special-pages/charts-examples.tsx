@@ -25,102 +25,44 @@ const chartGroups: ChartGroup[] = [
   {
     id: "examples",
     title: "Decision workbench",
-    description:
-      "Start with a question. Compare a plan, locate a drop-off, or check a performance budget. Controls, summaries, and data tables stay in sync.",
+    description: "Compare revenue with a plan, find conversion losses, and check a response-time budget.",
     items: ["ChartRevenueTarget", "ChartSignupConversion", "ChartServiceLatency"],
   },
   {
     id: "area-chart",
     title: "Release activity",
-    description:
-      "Area patterns for change over time. Use stacked series for totals and normalized stacks for shares.",
-    items: [
-      "ChartAreaStacked",
-      "ChartAreaInteractive",
-      "ChartAreaDefault",
-      "ChartAreaLinear",
-      "ChartAreaStep",
-      "ChartAreaStackedExpand",
-      "ChartAreaLegend",
-      "ChartAreaAxes",
-      "ChartAreaIcons",
-    ],
+    description: "Switch between event counts and normalized shares without confusing volume with composition.",
+    items: ["ChartReleaseActivity"],
   },
   {
     id: "bar-chart",
-    title: "Catalog coverage",
-    description:
-      "Bar patterns for comparing categories. Keep a common baseline and label what each quantity counts.",
-    items: [
-      "ChartBarMultiple",
-      "ChartBarInteractive",
-      "ChartBarHorizontal",
-      "ChartBarDefault",
-      "ChartBarLabel",
-      "ChartBarActive",
-      "ChartBarNegative",
-      "ChartBarStacked",
-      "ChartBarLabelCustom",
-      "ChartBarMixed",
-    ],
+    title: "Delivery planning",
+    description: "Compare planned and completed work, then inspect the signed difference around a real zero baseline.",
+    items: ["ChartDeliveryCapacity"],
   },
   {
     id: "line-chart",
     title: "Build performance",
-    description:
-      "Line patterns for trends and comparisons. Distinguish series with dash styles as well as color.",
-    items: [
-      "ChartLineInteractive",
-      "ChartLineMultiple",
-      "ChartLineDefault",
-      "ChartLineLinear",
-      "ChartLineStep",
-      "ChartLineDots",
-      "ChartLineDotsCustom",
-      "ChartLineDotsColors",
-      "ChartLineLabel",
-      "ChartLineLabelCustom",
-    ],
+    description: "Compare paired cold and cached runs with an explicit duration budget and calculated time savings.",
+    items: ["ChartBuildDuration"],
   },
   {
     id: "pie-chart",
-    title: "Registry composition",
-    description:
-      "Part-to-whole patterns with a small number of categories. Sample values are not the current registry inventory.",
-    items: [
-      "ChartPieDonutText",
-      "ChartPieStacked",
-      "ChartPieSimple",
-      "ChartPieLegend",
-      "ChartPieDonut",
-      "ChartPieLabel",
-      "ChartPieLabelCustom",
-      "ChartPieLabelList",
-      "ChartPieDonutActive",
-    ],
+    title: "Work allocation",
+    description: "Inspect a workstream's hours and share while keeping the complete allocation visible.",
+    items: ["ChartWorkAllocation"],
   },
   {
     id: "tooltip",
     title: "Install diagnostics",
-    description:
-      "Tooltip patterns for names, units, and comparisons. Keep important conclusions visible without requiring a hover.",
-    items: [
-      "ChartTooltipAdvanced",
-      "ChartTooltipFormatter",
-      "ChartTooltipDefault",
-      "ChartTooltipIndicatorLine",
-      "ChartTooltipIndicatorNone",
-      "ChartTooltipIcons",
-      "ChartTooltipLabelCustom",
-      "ChartTooltipLabelFormatter",
-      "ChartTooltipLabelNone",
-    ],
+    description: "Locate the slowest sequential stage and switch units consistently across the chart, summary, and data.",
+    items: ["ChartInstallDiagnostics"],
   },
 ];
 
 export default function Examples() {
   const [activeGroupId, setActiveGroupId] = useState(chartGroups[0].id);
-  const activeGroup = chartGroups.find((group) => group.id === activeGroupId) ?? chartGroups[0];
+  const activeGroup = chartGroups.find((group) => group.id === activeGroupId)!;
 
   useEffect(() => {
     const selectHashGroup = () => {
@@ -136,12 +78,10 @@ export default function Examples() {
     <div className="pb-8">
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div className="max-w-xl">
-          <p className="font-mono text-xs uppercase tracking-widest">
-            Charts that answer questions
-          </p>
+          <p className="font-mono text-xs uppercase tracking-widest">Charts that answer questions</p>
           <p className="mt-3 text-sm leading-6 text-foreground/80">
-            Three complete analytical recipes, followed by the building blocks to adapt them. All
-            data is illustrative, not live business or registry telemetry.
+            Eight installable analytical recipes. Every chart pairs controls with calculated
+            summaries and an exact data table. All data is illustrative, not live telemetry.
           </p>
         </div>
         <a href="/docs/chart" className="text-sm font-heading underline underline-offset-4">
@@ -169,10 +109,10 @@ export default function Examples() {
         </div>
       </nav>
       <section id={activeGroup.id} key={activeGroup.id} className="mt-8 scroll-mt-24">
-        <header className="mb-6 grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-end">
+        <header className="mb-6 grid gap-3 md:grid-cols-2 md:items-end">
           <div>
             <p className="font-mono text-xs uppercase">
-              {activeGroup.items.length} working examples / Editable source
+              {activeGroup.items.length} working recipes / Editable source
             </p>
             <h2 className="mt-2 text-2xl font-heading">{activeGroup.title}</h2>
           </div>
@@ -181,14 +121,10 @@ export default function Examples() {
         <div className="grid min-w-0 items-stretch gap-6 xl:grid-cols-2">
           {activeGroup.items.map((name, index) => {
             const chart = charts.find((candidate) => candidate.name === name);
-            if (!chart) throw new Error(`Missing chart example: ${name}`);
-            const wide =
-              name.includes("Interactive") || (activeGroup.id === "examples" && index === 0);
+            if (!chart) throw new Error(`Missing chart recipe: ${name}`);
             return (
-              <div className={wide ? "min-w-0 xl:col-span-2" : "min-w-0"} key={name}>
-                <ChartComponent chart={chart}>
-                  <chart.component />
-                </ChartComponent>
+              <div className={index === 0 ? "min-w-0 xl:col-span-2" : "min-w-0"} key={name}>
+                <ChartComponent chart={chart}><chart.component /></ChartComponent>
               </div>
             );
           })}
@@ -202,14 +138,12 @@ function ChartComponent({ children, chart }: { children: ReactNode; chart: Chart
   return (
     <div className="flex h-full min-w-0 flex-col [&>[data-slot=card]]:flex-1">
       {children}
-      {chart.registryName && (
-        <a
-          className={buttonVariants({ variant: "neutral", className: "mt-4 w-full" })}
-          href={`/docs/${chart.registryName}`}
-        >
-          Install recipe
-        </a>
-      )}
+      <a
+        className={buttonVariants({ variant: "neutral", className: "mt-4 w-full" })}
+        href={`/docs/${chart.registryName}`}
+      >
+        Install recipe
+      </a>
       <Dialog>
         <DialogTrigger asChild>
           <Button className="mt-4 w-full" variant="outline">
@@ -221,15 +155,10 @@ function ChartComponent({ children, chart }: { children: ReactNode; chart: Chart
           <DialogHeader>
             <DialogTitle>{chart.name}</DialogTitle>
             <DialogDescription>
-              {chart.registryName
-                ? "The same source delivered by the registry. Use Install recipe for setup and usage."
-                : "Complete example with sample data. Install Chart and Card, then copy and adapt this source."}
+              The same source delivered by the registry. Use Install recipe for setup and usage.
             </DialogDescription>
           </DialogHeader>
-          <Pre
-            wrapperClassName="w-full max-w-full overflow-x-auto text-white"
-            __rawstring__={chart.code}
-          >
+          <Pre wrapperClassName="w-full max-w-full overflow-x-auto text-white" __rawstring__={chart.code}>
             {chart.code}
           </Pre>
         </DialogContent>

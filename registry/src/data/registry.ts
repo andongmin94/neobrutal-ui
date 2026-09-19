@@ -1,4 +1,5 @@
 import type { RegistryItem } from "shadcn/schema";
+import CHART_RECIPES from "./chart-recipes";
 
 type DiscoverableRegistryItem = RegistryItem & {
   description: string;
@@ -363,20 +364,12 @@ const UI = [
     },
     css: {
       "@keyframes marquee": {
-        "0%": {
-          transform: "translateX(0%)",
-        },
-        "100%": {
-          transform: "translateX(-100%)",
-        },
+        "0%": { transform: "translateX(0%)" },
+        "100%": { transform: "translateX(-100%)" },
       },
       "@keyframes marquee2": {
-        "0%": {
-          transform: "translateX(100%)",
-        },
-        "100%": {
-          transform: "translateX(0%)",
-        },
+        "0%": { transform: "translateX(100%)" },
+        "100%": { transform: "translateX(0%)" },
       },
     },
     files: [
@@ -539,25 +532,11 @@ const UI = [
     categories: ["layout", "navigation"],
     type: "registry:ui",
     registryDependencies: [
-      "avatar",
-      "collapsible",
-      "dropdown-menu",
-      "button",
-      "input",
-      "sheet",
-      "skeleton",
-      "tooltip",
-      "separator",
+      "avatar", "collapsible", "dropdown-menu", "button", "input", "sheet", "skeleton", "tooltip", "separator",
     ],
     files: [
-      {
-        path: "src/components/ui/sidebar.tsx",
-        type: "registry:ui",
-      },
-      {
-        path: "src/hooks/use-mobile.ts",
-        type: "registry:hook",
-      },
+      { path: "src/components/ui/sidebar.tsx", type: "registry:ui" },
+      { path: "src/hooks/use-mobile.ts", type: "registry:hook" },
     ],
   },
   {
@@ -566,12 +545,7 @@ const UI = [
     description: "A placeholder that communicates content is loading.",
     categories: ["feedback", "loading"],
     type: "registry:ui",
-    files: [
-      {
-        path: "src/components/ui/skeleton.tsx",
-        type: "registry:ui",
-      },
-    ],
+    files: [{ path: "src/components/ui/skeleton.tsx", type: "registry:ui" }],
   },
   {
     name: "slider",
@@ -579,12 +553,7 @@ const UI = [
     description: "A draggable control for selecting a value or range.",
     categories: ["form", "input"],
     type: "registry:ui",
-    files: [
-      {
-        path: "src/components/ui/slider.tsx",
-        type: "registry:ui",
-      },
-    ],
+    files: [{ path: "src/components/ui/slider.tsx", type: "registry:ui" }],
   },
   {
     name: "sonner",
@@ -593,12 +562,7 @@ const UI = [
     categories: ["feedback", "notification"],
     type: "registry:ui",
     dependencies: ["sonner", "next-themes"],
-    files: [
-      {
-        path: "src/components/ui/sonner.tsx",
-        type: "registry:ui",
-      },
-    ],
+    files: [{ path: "src/components/ui/sonner.tsx", type: "registry:ui" }],
   },
   {
     name: "switch",
@@ -606,12 +570,7 @@ const UI = [
     description: "A binary control for turning a setting on or off.",
     categories: ["form", "selection"],
     type: "registry:ui",
-    files: [
-      {
-        path: "src/components/ui/switch.tsx",
-        type: "registry:ui",
-      },
-    ],
+    files: [{ path: "src/components/ui/switch.tsx", type: "registry:ui" }],
   },
   {
     name: "table",
@@ -619,12 +578,7 @@ const UI = [
     description: "Semantic table primitives for structured rows and columns.",
     categories: ["data-display", "table"],
     type: "registry:ui",
-    files: [
-      {
-        path: "src/components/ui/table.tsx",
-        type: "registry:ui",
-      },
-    ],
+    files: [{ path: "src/components/ui/table.tsx", type: "registry:ui" }],
   },
   {
     name: "tabs",
@@ -632,12 +586,7 @@ const UI = [
     description: "A tabbed interface for switching between related content panels.",
     categories: ["navigation", "layout"],
     type: "registry:ui",
-    files: [
-      {
-        path: "src/components/ui/tabs.tsx",
-        type: "registry:ui",
-      },
-    ],
+    files: [{ path: "src/components/ui/tabs.tsx", type: "registry:ui" }],
   },
   {
     name: "textarea",
@@ -645,12 +594,7 @@ const UI = [
     description: "A multiline text field for collecting longer user input.",
     categories: ["form", "input"],
     type: "registry:ui",
-    files: [
-      {
-        path: "src/components/ui/textarea.tsx",
-        type: "registry:ui",
-      },
-    ],
+    files: [{ path: "src/components/ui/textarea.tsx", type: "registry:ui" }],
   },
   {
     name: "tooltip",
@@ -658,12 +602,7 @@ const UI = [
     description: "A concise text hint shown when an element is hovered or focused.",
     categories: ["overlay", "feedback"],
     type: "registry:ui",
-    files: [
-      {
-        path: "src/components/ui/tooltip.tsx",
-        type: "registry:ui",
-      },
-    ],
+    files: [{ path: "src/components/ui/tooltip.tsx", type: "registry:ui" }],
   },
 ] satisfies DiscoverableRegistryItem[];
 
@@ -684,52 +623,7 @@ const RECIPES = [
       },
     ],
   },
-  {
-    name: "chart-revenue-target",
-    title: "Revenue vs target",
-    description: "Weekly revenue with period controls, target variance, and an exact data table.",
-    categories: ["data-display", "data-visualization", "recipe"],
-    type: "registry:component",
-    dependencies: ["recharts"],
-    registryDependencies: ["chart", "card"],
-    files: [
-      {
-        path: "src/components/ui/chart-revenue-target.tsx",
-        type: "registry:ui",
-      },
-    ],
-  },
-  {
-    name: "chart-signup-conversion",
-    title: "Signup conversion",
-    description: "Cohort conversion with stage losses, conversion rates, and an exact data table.",
-    categories: ["data-display", "data-visualization", "recipe"],
-    type: "registry:component",
-    dependencies: ["recharts"],
-    registryDependencies: ["chart", "card"],
-    files: [
-      {
-        path: "src/components/ui/chart-signup-conversion.tsx",
-        type: "registry:ui",
-      },
-    ],
-  },
-  {
-    name: "chart-service-latency",
-    title: "Response-time budget",
-    description:
-      "Daily p50 and p95 with service controls, budget breaches, and an exact data table.",
-    categories: ["data-display", "data-visualization", "recipe"],
-    type: "registry:component",
-    dependencies: ["recharts"],
-    registryDependencies: ["chart", "card"],
-    files: [
-      {
-        path: "src/components/ui/chart-service-latency.tsx",
-        type: "registry:ui",
-      },
-    ],
-  },
+  ...CHART_RECIPES,
 ] satisfies DiscoverableRegistryItem[];
 
 const TEMPLATES = [
@@ -742,11 +636,7 @@ const TEMPLATES = [
     registryDependencies: ["button", "input"],
     categories: ["template", "blog"],
     files: [
-      {
-        path: "src/lib/blog-posts.ts",
-        type: "registry:lib",
-        target: "@lib/blog-posts.ts",
-      },
+      { path: "src/lib/blog-posts.ts", type: "registry:lib", target: "@lib/blog-posts.ts" },
       {
         path: "src/blocks/templates/blog-post-template.tsx",
         type: "registry:component",
