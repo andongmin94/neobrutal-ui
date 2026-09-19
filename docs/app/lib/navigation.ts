@@ -7,7 +7,6 @@ export const PRIMARY_NAVIGATION_LINKS = [
   { href: "/docs", text: "Docs" },
   { href: "/styling", text: "Styling" },
   { href: "/charts", text: "Charts" },
-  { href: "/stars", text: "Stars" },
   { href: "/templates", text: "Templates" },
 ] as const satisfies readonly NavigationLink[];
 

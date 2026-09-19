@@ -32,7 +32,6 @@ const siteGroups = [
   {
     label: "Project",
     links: [
-      { href: "/docs/stars", text: "Stars data" },
       { href: "/docs/resources", text: "Resources" },
       { href: "/docs/credits", text: "Credits & license" },
     ],
@@ -40,7 +39,6 @@ const siteGroups = [
 ];
 
 const projectLinks = [
-  { href: "/docs/stars", text: "Stars" },
   { href: "/docs/resources", text: "Resources" },
   { href: "/docs/credits", text: "Credits & license" },
 ];

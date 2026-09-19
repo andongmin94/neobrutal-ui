@@ -4,13 +4,12 @@ const raisedPress =
   "shadow-shadow hover:not-data-disabled:translate-x-pressX hover:not-data-disabled:translate-y-pressY hover:not-data-disabled:shadow-press focus-visible:not-data-disabled:translate-x-pressX focus-visible:not-data-disabled:translate-y-pressY focus-visible:not-data-disabled:shadow-press active:not-data-disabled:translate-x-boxShadowX active:not-data-disabled:translate-y-boxShadowY active:not-data-disabled:shadow-[0_0_0_0_var(--border)]";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-base text-sm font-base ring-offset-white transition-[translate,box-shadow,background-color,color] duration-[140ms] ease-[ease] motion-reduce:transition-none gap-2 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-base text-sm font-base ring-offset-background transition-[translate,box-shadow,background-color,color] duration-[140ms] ease-[ease] motion-reduce:transition-none gap-2 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50",
   {
     variants: {
       variant: {
         default: `text-main-foreground bg-main border-2 border-border ${raisedPress}`,
         outline: `bg-background text-foreground border-2 border-border ${raisedPress}`,
-        secondary: `bg-secondary-background text-foreground border-2 border-border ${raisedPress}`,
         ghost:
           "border-2 border-transparent bg-transparent text-foreground hover:border-border hover:bg-main hover:text-main-foreground",
         destructive: `bg-destructive text-destructive-foreground border-2 border-border ${raisedPress}`,

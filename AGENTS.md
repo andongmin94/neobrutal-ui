@@ -20,6 +20,10 @@ Follow the interaction rules in `docs/content/docs/index.mdx`: staged presses fo
 
 Keep the current CI structure. Do not add temporary workflows, automatic source-writing verification steps, or permanent full-page capture jobs for product polish.
 
-## Pending scope reduction
+## Product readiness
 
-Stars removal is approved but not implemented by the product-copy pass. Remove its registry items, source and generated copies, routes, navigation, examples, generator, and dedicated tests together, then regenerate with the existing build and run the existing checks. Do not merely hide it from navigation or preserve old route aliases. Do not report this removal as complete until the installable catalog and documentation have both been rebuilt and verified.
+The standalone decorative Stars collection is outside the product scope. Do not restore its items, routes, or compatibility aliases. A removal is complete only after the registry and documentation are rebuilt and verified.
+
+Keep gallery-only presentation presets in docs, never in installable templates. Components and templates must inherit the consuming project's shared tokens.
+
+Use QUALITY.md to distinguish implemented source changes from verified behavior and remaining release gates. Official directory submission is not approved by passing a build alone.

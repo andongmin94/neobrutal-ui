@@ -788,28 +788,6 @@ const TEMPLATES = [
   },
 ] satisfies DiscoverableRegistryItem[];
 
-function createStarRegistryItem(number: number) {
-  const name = `s${number}`;
-
-  return {
-    name,
-    title: `Star ${number}`,
-    description: `A neobrutalist star graphic variant ${number} for decorative accents.`,
-    categories: ["graphic", "icon", "decoration"],
-    type: "registry:component",
-    files: [
-      {
-        path: `src/components/stars/${name}.tsx`,
-        type: "registry:component",
-        target: `components/stars/${name}.tsx`,
-      },
-    ],
-  } satisfies DiscoverableRegistryItem;
-}
-
-const STAR_COUNT = 40;
-const STARS = Array.from({ length: STAR_COUNT }, (_, index) => createStarRegistryItem(index + 1));
-
-const REGISTRY = [...UI, ...RECIPES, ...TEMPLATES, ...STARS];
+const REGISTRY = [...UI, ...RECIPES, ...TEMPLATES];
 
 export default REGISTRY;

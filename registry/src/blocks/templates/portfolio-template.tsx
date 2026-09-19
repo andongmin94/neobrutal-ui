@@ -4,9 +4,6 @@ import { ArrowUpRight, ChevronDown, Mail } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button-variants";
 
-const TEMPLATE_THEME =
-  "[color-scheme:light] [--background:#fff0dc] [--secondary-background:#fff] [--foreground:#000] [--main-foreground:#000] [--main:#ff7b07] [--border:#000] [--ring:#000] [--box-shadow-x:4px] [--box-shadow-y:4px] [--reverse-box-shadow-x:-4px] [--reverse-box-shadow-y:-4px] [--shadow:4px_4px_0px_0px_var(--border)] [--radius:5px] [--base-font-weight:500] [--heading-font-weight:700] dark:[color-scheme:dark] dark:[--background:#2c304c] dark:[--secondary-background:#222] dark:[--foreground:#ececec] dark:[--main:#ff7b07] dark:[--ring:#fff]";
-
 const NAV_ITEMS = [
   { label: "Work", href: "#work" },
   { label: "Contact", href: "#contact" },
@@ -37,7 +34,7 @@ export default function PortfolioTemplate() {
   return (
     <div
       id="top"
-      className={`min-h-dvh flex flex-col bg-background text-foreground selection:bg-main selection:text-main-foreground ${TEMPLATE_THEME}`}
+      className="min-h-dvh flex flex-col bg-background text-foreground selection:bg-main selection:text-main-foreground"
     >
       <header className="border-b-2 border-border">
         <div className="mx-auto flex h-12 w-full max-w-3xl items-center justify-between gap-4 px-4 sm:px-6">

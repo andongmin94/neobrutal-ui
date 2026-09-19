@@ -3,19 +3,12 @@ import { lazy, Suspense, type ReactNode } from "react";
 import { ClientOnly } from "./client-only";
 import { PreviewErrorBoundary } from "./preview-error-boundary";
 
-export type SpecialPageName =
-  | "blog-post"
-  | "charts"
-  | "stars"
-  | "styling"
-  | "template-detail"
-  | "templates";
+export type SpecialPageName = "blog-post" | "charts" | "styling" | "template-detail" | "templates";
 
 const BlogPostPage = lazy(() =>
   import("./template-pages").then((module) => ({ default: module.BlogPostPage })),
 );
 const ChartsPage = lazy(() => import("@/special-pages/charts-examples"));
-const StarsPage = lazy(() => import("./stars-page"));
 const StylingPage = lazy(() => import("@/special-pages/styling/controls"));
 const TemplateDetailPage = lazy(() =>
   import("./template-pages").then((module) => ({ default: module.TemplateDetailPage })),
@@ -30,8 +23,6 @@ function renderPage(kind: SpecialPageName, slug?: string): ReactNode {
       return <BlogPostPage slug={slug} />;
     case "charts":
       return <ChartsPage />;
-    case "stars":
-      return <StarsPage />;
     case "styling":
       return <StylingPage />;
     case "template-detail":

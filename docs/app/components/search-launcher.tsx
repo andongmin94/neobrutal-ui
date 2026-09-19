@@ -51,7 +51,6 @@ const staticEntries: SearchEntry[] = [
     href: link.href,
     label: link.text,
   })),
-  { group: "Project", href: "/docs/stars", label: "GitHub stars data" },
   { group: "Project", href: "/docs/resources", label: "Resources" },
   { group: "Project", href: "/docs/credits", label: "Credits & license" },
   ...COMPONENT_DIRECTORY_LINKS.map((entry) => ({

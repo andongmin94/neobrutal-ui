@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const catalogPath = path.join(root, "registry.json");
 const catalog = JSON.parse(fs.readFileSync(catalogPath, "utf8"));
-const managedDirectories = ["src/components/ui", "src/components/stars", "src/blocks/templates"];
+const managedDirectories = ["src/components/ui", "src/blocks/templates"];
 const managedFiles = new Set(["src/hooks/use-mobile.ts", "src/lib/blog-posts.ts"]);
 const ownersBySourcePath = new Map();
 const errors = [];

@@ -33,7 +33,7 @@ export default function FormDemo() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    setMessage(`${values.username} was saved.`);
+    setMessage(`${values.username} was updated in this demo. Nothing was saved to a server.`);
   }
 
   return (

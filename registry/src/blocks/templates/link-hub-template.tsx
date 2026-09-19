@@ -4,9 +4,6 @@ import { AtSign, BookOpen, GitFork, LayoutGrid, Mail, UserRound } from "lucide-r
 
 import { buttonVariants } from "@/components/ui/button-variants";
 
-const TEMPLATE_THEME =
-  "[color-scheme:light] [--background:#dceafe] [--secondary-background:#fff] [--foreground:#000] [--main-foreground:#000] [--main:#5093fe] [--border:#000] [--ring:#000] [--box-shadow-x:4px] [--box-shadow-y:4px] [--reverse-box-shadow-x:-4px] [--reverse-box-shadow-y:-4px] [--shadow:4px_4px_0px_0px_var(--border)] [--radius:5px] [--base-font-weight:400] [--heading-font-weight:600] dark:[color-scheme:dark] dark:[--background:#2c304c] dark:[--secondary-background:#222] dark:[--foreground:#ececec] dark:[--main:#5093fe] dark:[--ring:#fff]";
-
 const LINKS = [
   {
     title: "Portfolio",
@@ -60,7 +57,7 @@ const LINKS = [
 
 export default function LinkHubTemplate() {
   return (
-    <div className={`min-h-dvh flex flex-col bg-background text-foreground ${TEMPLATE_THEME}`}>
+    <div className="min-h-dvh flex flex-col bg-background text-foreground">
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
         <section aria-labelledby="profile-name" className="text-center">
           <div className="mx-auto grid size-24 place-items-center rounded-full border-2 border-border bg-main text-main-foreground">

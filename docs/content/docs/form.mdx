@@ -91,8 +91,13 @@ export default function ProfileForm() {
 | `FormField.control` / `name` / `render` | Controller field binding | Typed field configuration |
 | `FormItem` | Shared label/control/message IDs | Wrap one field |
 | `FormLabel` | Linked visible label | Inside FormItem |
-| `FormControl` | Passes IDs and invalid state to its child | One control forwarding props and ref |
+| `FormControl` | Passes IDs and invalid state to its child | Exactly one non-Fragment control forwarding props and ref |
 | `FormDescription` / `FormMessage` | Help and validation feedback | Associated automatically |
+
+Form helpers require `Form`, `FormField`, and `FormItem` in the field tree. A missing provider
+produces an explicit diagnostic. `FormControl` does not accept an empty child, text, a Fragment,
+or multiple children. Error text uses the shared `--error` token, independently of filled
+destructive-action colors.
 
 ## Accessibility
 

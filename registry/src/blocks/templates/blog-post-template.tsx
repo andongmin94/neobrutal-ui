@@ -3,9 +3,6 @@ import { ArrowLeft, Clock3, FileText } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button-variants";
 import type { BlogPost } from "@/lib/blog-posts";
 
-const TEMPLATE_THEME =
-  "[color-scheme:light] [--background:#fff5cc] [--secondary-background:#fff] [--foreground:#000] [--main-foreground:#000] [--main:#ffbe00] [--border:#000] [--ring:#000] [--box-shadow-x:0px] [--box-shadow-y:4px] [--reverse-box-shadow-x:0px] [--reverse-box-shadow-y:-4px] [--shadow:0px_4px_0px_0px_var(--border)] [--radius:10px] [--base-font-weight:500] [--heading-font-weight:700] dark:[color-scheme:dark] dark:[--background:#2c304c] dark:[--secondary-background:#222] dark:[--foreground:#ececec] dark:[--main:#ffbe00] dark:[--ring:#fff]";
-
 type BlogPostTemplateProps = {
   backHref?: string;
   post: BlogPost;
@@ -13,10 +10,7 @@ type BlogPostTemplateProps = {
 
 export default function BlogPostTemplate({ backHref = "/blog", post }: BlogPostTemplateProps) {
   return (
-    <div
-      id="top"
-      className={`flex min-h-dvh flex-col bg-background text-foreground ${TEMPLATE_THEME}`}
-    >
+    <div id="top" className="flex min-h-dvh flex-col bg-background text-foreground">
       <header className="border-b-2 border-border bg-secondary-background">
         <div className="mx-auto flex h-12 w-full max-w-3xl items-center justify-between px-4 sm:px-6">
           <a

@@ -27,8 +27,6 @@ const compactComponents = new Set([
   "tooltip",
 ]);
 
-type PreviewType = "component" | "star";
-
 function toSlug(value: string) {
   return value.trim().toLowerCase().replace(/\s+/g, "-");
 }
@@ -36,16 +34,7 @@ function toSlug(value: string) {
 async function loadPreview(
   component: string,
   example: string | undefined,
-  type: PreviewType,
 ): Promise<ComponentType> {
-  if (type === "star") {
-    const { STARS_EXAMPLES } = await import("@/data/stars");
-    const Preview = STARS_EXAMPLES[component as keyof typeof STARS_EXAMPLES];
-
-    if (!Preview) throw new Error(`Unknown star preview: ${component}`);
-    return Preview as ComponentType;
-  }
-
   const { default: components } = await import("@/data/components");
   const componentData = components.find((candidate) => toSlug(candidate.name) === component);
 
@@ -64,12 +53,10 @@ function PreviewHost({
   component,
   eager,
   example,
-  type,
 }: {
   component: string;
   eager: boolean;
   example?: string;
-  type: PreviewType;
 }) {
   const host = useRef<HTMLDivElement>(null);
   const [requested, setRequested] = useState(eager);
@@ -103,7 +90,7 @@ function PreviewHost({
     setPreview(undefined);
     setError(undefined);
 
-    void loadPreview(component, example, type)
+    void loadPreview(component, example)
       .then((LoadedPreview) => {
         if (!cancelled) setPreview(() => LoadedPreview);
       })
@@ -116,13 +103,13 @@ function PreviewHost({
     return () => {
       cancelled = true;
     };
-  }, [component, example, requested, type]);
+  }, [component, example, requested]);
 
   return (
     <div
       ref={host}
       className="react-host"
-      data-react-host={type}
+      data-react-host="component"
       data-react-component={component}
       aria-busy={!Preview && !error ? true : undefined}
     >
@@ -133,7 +120,7 @@ function PreviewHost({
             <span>{error.message}</span>
           </div>
         ) : Preview ? (
-          <PreviewErrorBoundary key={`${type}:${component}:${example ?? ""}`}>
+          <PreviewErrorBoundary key={`${component}:${example ?? ""}`}>
             <Preview />
           </PreviewErrorBoundary>
         ) : null}
@@ -148,19 +135,17 @@ export function ComponentPreview({
   children,
   component,
   example,
-  type = "component",
   wrapperClassName = "",
 }: {
   children?: ReactNode;
   component: string;
   example?: string;
-  type?: PreviewType;
   wrapperClassName?: string;
 }) {
   const [activeTab, setActiveTab] = useState<"code" | "preview">("preview");
   const instanceId = useId();
   const normalizedComponent = toSlug(component);
-  const isPrimaryPreview = type === "component" && !example;
+  const isPrimaryPreview = !example;
   const previewLabel = `${component} ${example?.replaceAll("-", " ") ?? "primary"} preview`;
 
   function handleTabKeyDown(event: KeyboardEvent<HTMLDivElement>) {
@@ -235,12 +220,7 @@ export function ComponentPreview({
         aria-labelledby={`${instanceId}-preview-tab`}
         hidden={activeTab !== "preview"}
       >
-        <PreviewHost
-          component={normalizedComponent}
-          eager={isPrimaryPreview}
-          example={example}
-          type={type}
-        />
+        <PreviewHost component={normalizedComponent} eager={isPrimaryPreview} example={example} />
       </div>
 
       <div

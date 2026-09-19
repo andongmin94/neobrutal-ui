@@ -10,7 +10,7 @@ async function openReady(page: Page, route: string) {
 
 test("reference tables do not force horizontal scrolling on small screens", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 844 });
-  for (const route of ["/docs/button", "/docs/design-tokens", "/docs/stars"]) {
+  for (const route of ["/docs/button", "/docs/design-tokens", "/docs/form"]) {
     await openReady(page, route);
     const shells = page.locator(".md-table-shell");
     expect(await shells.count()).toBeGreaterThan(0);
@@ -114,10 +114,10 @@ test("template card actions align despite different description lengths", async 
 });
 
 test("reference tables preserve short identifiers and type names", async ({ page }) => {
-  await openReady(page, "/docs/stars");
+  await openReady(page, "/docs/button");
   for (const width of [320, 390, 1280]) {
     await page.setViewportSize({ width, height: 844 });
-    for (const text of ["strokeWidth", "pathClassName", "number"]) {
+    for (const text of ["disabled", "aria-busy", "render"]) {
       const cell = page.getByRole("cell", { name: text, exact: true }).first();
       const lines = await cell.evaluate((node) => {
         const range = document.createRange();

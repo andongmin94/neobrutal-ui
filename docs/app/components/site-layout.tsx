@@ -12,7 +12,7 @@ import { SiteHeader } from "./site-header";
 import { TableOfContents } from "./table-of-contents";
 
 const componentPaths = new Set(COMPONENT_DIRECTORY_LINKS.map((link) => normalizePath(link.href)));
-const specialPagePaths = new Set(["/styling", "/charts", "/stars", "/templates"]);
+const specialPagePaths = new Set(["/styling", "/charts", "/templates"]);
 
 export function SiteLayout({
   children,

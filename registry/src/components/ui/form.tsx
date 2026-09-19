@@ -26,7 +26,13 @@ type FormFieldContextValue<
   name: TName;
 };
 
-const FormFieldContext = React.createContext<FormFieldContextValue>({} as FormFieldContextValue);
+const FormFieldContext = React.createContext<FormFieldContextValue | null>(null);
+
+type FormItemContextValue = {
+  id: string;
+};
+
+const FormItemContext = React.createContext<FormItemContextValue | null>(null);
 
 function FormField<
   TFieldValues extends FieldValues = FieldValues,
@@ -42,14 +48,23 @@ function FormField<
 const useFormField = () => {
   const fieldContext = React.useContext(FormFieldContext);
   const itemContext = React.useContext(FormItemContext);
-  const { getFieldState } = useFormContext();
-  const formState = useFormState({ name: fieldContext.name });
-  const fieldState = getFieldState(fieldContext.name, formState);
+  const formContext = useFormContext();
 
+  if (!formContext) {
+    throw new Error("useFormField should be used within <Form>");
+  }
   if (!fieldContext) {
     throw new Error("useFormField should be used within <FormField>");
   }
+  if (!itemContext) {
+    throw new Error("useFormField should be used within <FormItem>");
+  }
 
+  const formState = useFormState({
+    control: formContext.control,
+    name: fieldContext.name,
+  });
+  const fieldState = formContext.getFieldState(fieldContext.name, formState);
   const { id } = itemContext;
 
   return {
@@ -61,12 +76,6 @@ const useFormField = () => {
     ...fieldState,
   };
 };
-
-type FormItemContextValue = {
-  id: string;
-};
-
-const FormItemContext = React.createContext<FormItemContextValue>({} as FormItemContextValue);
 
 function FormItem({ className, ...props }: React.ComponentProps<"div">) {
   const id = React.useId();
@@ -93,7 +102,7 @@ function FormLabel({ className, ...props }: React.ComponentProps<typeof Label>) 
 }
 
 type FormControlProps = React.HTMLAttributes<HTMLElement> & {
-  children?: React.ReactNode;
+  children: React.ReactElement;
 };
 
 const FormControl = React.forwardRef<HTMLElement, FormControlProps>(function FormControl(
@@ -101,11 +110,15 @@ const FormControl = React.forwardRef<HTMLElement, FormControlProps>(function For
   forwardedRef,
 ) {
   const { error, formItemId, formDescriptionId, formMessageId } = useFormField();
-  const child = React.Children.toArray(children).find(React.isValidElement);
+
+  // A fragment cannot receive the ID, accessibility attributes, and forwarded ref.
+  // Never silently discard siblings or turn a missing control into an empty span.
+  if (!React.isValidElement(children) || children.type === React.Fragment) {
+    throw new Error("FormControl requires exactly one non-Fragment React element.");
+  }
 
   return useRender({
     defaultTagName: "span",
-    enabled: child !== undefined,
     props: {
       "data-slot": "form-control",
       id: formItemId,
@@ -114,7 +127,7 @@ const FormControl = React.forwardRef<HTMLElement, FormControlProps>(function For
       ...props,
     },
     ref: forwardedRef,
-    render: child,
+    render: children,
     state: {},
   });
 });
@@ -144,7 +157,7 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
     <p
       data-slot="form-message"
       id={formMessageId}
-      className={cn("text-sm font-base text-red-500", className)}
+      className={cn("text-sm font-base text-error", className)}
       {...props}
     >
       {body}

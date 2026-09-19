@@ -9,9 +9,6 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 
-const TEMPLATE_THEME =
-  "[color-scheme:light] [--background:#e7e8ff] [--secondary-background:#fff] [--foreground:#000] [--main-foreground:#000] [--main:#7983ff] [--border:#000] [--ring:#000] [--box-shadow-x:4px] [--box-shadow-y:4px] [--reverse-box-shadow-x:-4px] [--reverse-box-shadow-y:-4px] [--shadow:4px_4px_0px_0px_var(--border)] [--radius:5px] [--base-font-weight:600] [--heading-font-weight:700] dark:[color-scheme:dark] dark:[--background:#2c304c] dark:[--secondary-background:#222] dark:[--foreground:#ececec] dark:[--main:#7983ff] dark:[--ring:#fff]";
-
 type PostStatus = "draft" | "published";
 type StatusFilter = "all" | PostStatus;
 
@@ -351,7 +348,7 @@ export default function CmsTemplate() {
   const publishedCount = posts.filter((post) => post.status === "published").length;
 
   return (
-    <div className={`flex min-h-dvh flex-col bg-background text-foreground ${TEMPLATE_THEME}`}>
+    <div className="flex min-h-dvh flex-col bg-background text-foreground">
       <header className="border-b-2 border-border bg-secondary-background">
         <div className="mx-auto flex h-12 w-full max-w-screen-xl items-center justify-between px-4 sm:px-6">
           <h1 className="text-base font-heading">Folio CMS</h1>

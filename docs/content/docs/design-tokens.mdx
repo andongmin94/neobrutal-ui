@@ -57,6 +57,13 @@ The base item also defines chart colors, sidebar colors, destructive states, foc
 light and dark theme values. Components consume semantic names instead of hard-coded palette
 values.
 
+`--ring` controls the keyboard focus indicator. `--error` controls error-message text on page
+and panel surfaces; it is separate from the filled-action `--destructive` color and its
+`--destructive-foreground` content color. The `text-error` utility uses the shared error token.
+
+Installed templates inherit these tokens. Documentation template previews use explicitly
+labeled gallery presets that are not included in the installed source.
+
 ## Customize
 
 Use the <Link href="/styling">Styling tool</Link> to change the palette, radius, and shadow

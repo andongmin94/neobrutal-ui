@@ -45,20 +45,6 @@ for (const group of series) {
   });
 }
 
-test("every star renders and copies its source", async ({ page }) => {
-  await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
-  await page.goto("/stars");
-  const cards = page.locator("main article article");
-  await expect(cards).toHaveCount(40);
-  for (let index = 0; index < 40; index++) {
-    const card = cards.nth(index);
-    await expect(card.locator("svg").first()).toBeVisible();
-    await card.getByRole("button", { name: "Copy source", exact: true }).click();
-    await expect(card.getByRole("button", { name: "Copied", exact: true })).toBeVisible();
-    expect((await page.evaluate(() => navigator.clipboard.readText())).length).toBeGreaterThan(100);
-  }
-});
-
 test("every palette has an isolated live preview", async ({ page }) => {
   await page.goto("/styling");
   const select = page.getByLabel("Palette", { exact: true });
@@ -91,12 +77,10 @@ test("clipboard denial shows honest feedback without runtime errors", async ({ p
       },
     });
   });
-  for (const route of ["/stars", "/templates"]) {
-    await page.goto(route);
-    const card = page.locator("main article article").first();
-    await card.getByRole("button", { name: /Copy/ }).click();
-    await expect(card.getByRole("button", { name: "Copy failed", exact: true })).toBeVisible();
-  }
+  await page.goto("/templates");
+  const card = page.locator("main article article").first();
+  await card.getByRole("button", { name: /Copy/ }).click();
+  await expect(card.getByRole("button", { name: "Copy failed", exact: true })).toBeVisible();
   expect(errors).toEqual([]);
 });
 

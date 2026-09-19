@@ -8,7 +8,6 @@ export default function ButtonDemo() {
           [
             "default",
             "outline",
-            "secondary",
             "ghost",
             "destructive",
             "link",

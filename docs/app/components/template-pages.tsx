@@ -9,6 +9,7 @@ import PortfolioTemplate from "@/components/templates/portfolio-template";
 import TEMPLATES from "@/data/templates";
 import { getBlogPost } from "@/lib/blog-posts";
 import { copyText } from "~/lib/clipboard";
+import { TemplatePreview } from "./template-preview";
 
 const templateComponents: Record<string, ComponentType> = {
   cms: CmsTemplate,
@@ -97,12 +98,22 @@ export function TemplatesPage() {
 export function TemplateDetailPage({ slug }: { slug?: string }) {
   if (!slug) throw new Error("A template slug is required.");
 
-  if (slug === "blog") return <BlogTemplate basePath="/templates/blog" />;
+  if (slug === "blog") {
+    return (
+      <TemplatePreview name="blog">
+        <BlogTemplate basePath="/templates/blog" />
+      </TemplatePreview>
+    );
+  }
 
   const Template = templateComponents[slug];
   if (!Template) throw new Error(`Unknown template: ${slug}`);
 
-  return <Template />;
+  return (
+    <TemplatePreview name={slug}>
+      <Template />
+    </TemplatePreview>
+  );
 }
 
 export function BlogPostPage({ slug }: { slug?: string }) {
@@ -112,5 +123,9 @@ export function BlogPostPage({ slug }: { slug?: string }) {
     throw new Error(slug ? `Unknown blog post: ${slug}` : "A blog post slug is required.");
   }
 
-  return <BlogPostTemplate backHref="/templates/blog" post={post} />;
+  return (
+    <TemplatePreview name="blog">
+      <BlogPostTemplate backHref="/templates/blog" post={post} />
+    </TemplatePreview>
+  );
 }

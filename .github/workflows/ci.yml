@@ -59,6 +59,7 @@ jobs:
 
       - name: Verify generated files are current
         run: |
+          git diff --binary > "$RUNNER_TEMP/generated-files.diff"
           git diff --exit-code
           if [ -n "$(git ls-files --others --exclude-standard)" ]; then
             echo "Untracked generated files were created:"
@@ -82,7 +83,7 @@ jobs:
         working-directory: docs
         run: npm run test:browser:cross
 
-      - name: Save failed browser reports
+      - name: Save failed verification reports
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
@@ -93,6 +94,11 @@ jobs:
             docs/test-results
             docs/playwright-report
             docs/playwright-report-cross
+            registry/registry.json
+            registry/public/r
+            docs/src/data/component-descriptions.json
+            docs/src/styling/theme.css
+            ${{ runner.temp }}/generated-files.diff
 
   verify-deployment:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
