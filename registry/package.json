@@ -14,7 +14,7 @@
     "list": "shadcn list https://neobrutal-ui.andongmin.com/r/registry.json",
     "list:local": "shadcn list http://127.0.0.1:5177/r/registry.json",
     "registry:validate": "shadcn registry validate ./registry.json",
-    "registry:check": "node scripts/check-source-ownership.mjs && node scripts/check-registry.mjs",
+    "registry:check": "node scripts/check-source-ownership.mjs && node scripts/check-registry.mjs && node --test scripts/consumer-command.test.mjs",
     "registry:verify-live": "node scripts/verify-live.mjs",
     "typecheck": "tsc --project tsconfig.json && tsc --project tsconfig.consumer.json"
   },

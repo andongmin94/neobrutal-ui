@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
 import fs from "node:fs";
 import http from "node:http";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
+
+import { run } from "./consumer-command.mjs";
 
 const root = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const outputDirectory = path.join(root, "public", "r");
@@ -141,7 +142,13 @@ async function verifyTarget(target, fixtureDirectory, scenario) {
         fixtureDirectory,
       );
     } else {
-      await run(shadcnExecutable(), args, root);
+      await run(
+        shadcnExecutable(),
+        args,
+        root,
+        {},
+        scenario === "existing" && names.includes("data-table") ? "button.tsx" : undefined,
+      );
     }
   };
   await add(baseItem.name);
@@ -479,26 +486,4 @@ function npmExecutable() {
 function shadcnExecutable() {
   const executable = process.platform === "win32" ? "shadcn.cmd" : "shadcn";
   return path.join(root, "node_modules", ".bin", executable);
-}
-function run(command, args, cwd, additionalEnvironment = {}) {
-  return new Promise((resolve, reject) => {
-    const spawnCommand =
-      process.platform === "win32"
-        ? [command, ...args].map(quoteCommandArgument).join(" ")
-        : command;
-    const child = spawn(spawnCommand, process.platform === "win32" ? [] : args, {
-      cwd,
-      env: { ...process.env, CI: "1", ...additionalEnvironment },
-      shell: process.platform === "win32",
-      stdio: "inherit",
-    });
-    child.once("error", reject);
-    child.once("exit", (code) => {
-      if (code === 0) resolve();
-      else reject(new Error(`${path.basename(command)} exited with code ${code ?? "unknown"}`));
-    });
-  });
-}
-function quoteCommandArgument(value) {
-  return /^[\w./:\\-]+$/.test(value) ? value : `"${value.replaceAll('"', '""')}"`;
 }
