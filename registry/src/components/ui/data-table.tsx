@@ -108,7 +108,7 @@ function PaymentActions({ payment }: { payment: Payment }) {
           <DropdownMenuItem onClick={copyId}>Copy payment ID</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <output className="block max-w-44 whitespace-normal text-xs" aria-live="polite">
+      <output className="mt-1 block w-40 whitespace-normal text-xs" aria-live="polite">
         {copy === "pending"
           ? "Copying ID…"
           : copy === "success"

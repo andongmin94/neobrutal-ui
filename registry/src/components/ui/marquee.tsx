@@ -18,11 +18,14 @@ export default function Marquee({ items }: { items: string[] }) {
         {paused ? "Resume" : "Pause"}
       </button>
       <div
-        className="animate-marquee whitespace-nowrap py-12 motion-reduce:animate-none"
+        className="animate-marquee whitespace-nowrap py-12 motion-reduce:flex motion-reduce:w-full motion-reduce:min-w-0 motion-reduce:animate-none motion-reduce:flex-wrap motion-reduce:gap-x-8 motion-reduce:gap-y-3 motion-reduce:whitespace-normal motion-reduce:px-4 motion-reduce:py-6"
         style={animationStyle}
       >
         {items.map((item) => (
-          <span key={item} className="mx-4 text-4xl">
+          <span
+            key={item}
+            className="mx-4 text-4xl motion-reduce:mx-0 motion-reduce:max-w-full motion-reduce:[overflow-wrap:anywhere]"
+          >
             {item}
           </span>
         ))}

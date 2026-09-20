@@ -28,7 +28,13 @@ for (const denied of [false, true]) {
     if (!denied) {
       await expect(page.locator("html")).toHaveAttribute("data-copied-payment", "m5gr84i9");
     }
-    await info.attach("copy-result", { body: await row.screenshot(), contentType: "image/png" });
+    const feedback = row.getByRole("status");
+    await feedback.evaluate((node) => node.scrollIntoView({ block: "center", inline: "nearest" }));
+    expect((await feedback.boundingBox())!.width).toBeGreaterThanOrEqual(160);
+    await info.attach("copy-result", {
+      body: await feedback.screenshot(),
+      contentType: "image/png",
+    });
     expect(errors).toEqual([]);
   });
 }
