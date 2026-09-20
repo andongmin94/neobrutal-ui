@@ -15,7 +15,7 @@ test("project pages describe the product and retain the license link", async ({ 
     await expect(page.getByRole("heading", { name: "Upstream project" })).toHaveCount(0);
     await expect(page.locator("main")).not.toContainText(/ekmas|Samuel Breznjak/);
     if (route === "/docs/credits") {
-      await expect(page.getByRole("heading", { name: "Maintenance", exact: true })).toBeVisible();
+      await expect(page.getByRole("heading", { name: /Maintenance$/, level: 2 })).toBeVisible();
       await expect(page.getByRole("link", { name: "MIT License", exact: true })).toHaveAttribute(
         "href",
         "https://github.com/andongmin94/neobrutal-ui/blob/main/LICENSE",
