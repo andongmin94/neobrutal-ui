@@ -1,10 +1,10 @@
 const colors = [
   {
     name: "mono",
-    main: "#292b29",
-    darkMain: "#e5e2d9",
-    bg: "#f5f4f0",
-    darkBg: "#181a19",
+    main: "#27282b",
+    darkMain: "#e4e7ec",
+    bg: "#f4f5f7",
+    darkBg: "#18191c",
 
     chart1: "#526e85",
     chart2: "#687e62",

@@ -8,9 +8,11 @@ test("mono matches installation in both modes", async ({ page }, info) => {
   const base = await baseResponse.json();
   const mono = await monoResponse.json();
   expect(base.cssVars).toEqual(mono.cssVars);
-  expect(mono.cssVars.light.main).toBe("#292b29");
-  expect(mono.cssVars.light["main-foreground"]).toBe("#f5f4f0");
-  expect(mono.cssVars.dark.main).toBe("#e5e2d9");
+  expect(mono.cssVars.light.main).toBe("#27282b");
+  expect(mono.cssVars.light["main-foreground"]).toBe("#f4f5f7");
+  expect(mono.cssVars.light.background).toBe("#f4f5f7");
+  expect(mono.cssVars.dark.main).toBe("#e4e7ec");
+  expect(mono.cssVars.dark.background).toBe("#18191c");
 
   const initial = info.project.use.colorScheme === "dark" ? "dark" : "light";
   const alternate = initial === "light" ? "dark" : "light";
