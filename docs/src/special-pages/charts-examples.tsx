@@ -168,14 +168,62 @@ function ChartComponent({ children, chart }: { children: ReactNode; chart: Chart
               The same source delivered by the registry. Use Install recipe for setup and usage.
             </DialogDescription>
           </DialogHeader>
-          <Pre
-            className="shiki"
-            wrapperClassName="w-full max-w-full overflow-x-auto"
-            __rawstring__={chart.code}
-            dangerouslySetInnerHTML={{ __html: chart.highlightedCode }}
-          />
+          <ChartSource name={chart.registryName} />
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+function ChartSource({ name }: { name: string }) {
+  const [source, setSource] = useState<{ code: string; highlightedCode: string }>();
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    setSource(undefined);
+    setFailed(false);
+    void fetch(`/chart-source/${name}.json`, { signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Source request failed");
+        const data = await response.json();
+        if (typeof data.code !== "string" || typeof data.highlightedCode !== "string") {
+          throw new Error("Invalid source response");
+        }
+        return data;
+      })
+      .then(setSource)
+      .catch(() => {
+        if (!controller.signal.aborted) setFailed(true);
+      });
+    return () => controller.abort();
+  }, [name, attempt]);
+
+  if (failed) {
+    return (
+      <div role="alert" className="grid justify-items-start gap-3 py-6">
+        <p>Could not load this source. Try again.</p>
+        <Button variant="neutral" onClick={() => setAttempt((value) => value + 1)}>
+          Retry source
+        </Button>
+      </div>
+    );
+  }
+  if (!source) {
+    return (
+      <p role="status" className="py-6">
+        Loading source…
+      </p>
+    );
+  }
+
+  return (
+    <Pre
+      className="shiki"
+      wrapperClassName="w-full max-w-full overflow-x-auto"
+      __rawstring__={source.code}
+      dangerouslySetInnerHTML={{ __html: source.highlightedCode }}
+    />
   );
 }

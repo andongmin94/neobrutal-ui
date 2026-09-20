@@ -8,6 +8,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const sourceDirectory = path.resolve(scriptDirectory, "../components/ui");
 const outputPath = path.resolve(scriptDirectory, "../data/charts.ts");
+const sourceOutputDirectory = path.resolve(scriptDirectory, "../../public/chart-source");
 const chartFiles = fs
   .readdirSync(sourceDirectory)
   .filter((file) => file.startsWith("chart-") && file.endsWith(".tsx"))
@@ -26,6 +27,9 @@ if (!chartFiles.length || new Set(names).size !== names.length) {
   throw new Error("Expected unique installable chart recipes. Build the registry first.");
 }
 
+fs.rmSync(sourceOutputDirectory, { recursive: true, force: true });
+fs.mkdirSync(sourceOutputDirectory, { recursive: true });
+
 const imports = chartFiles.map(
   (file) => `import ${componentName(file)} from "@/components/ui/${path.basename(file, ".tsx")}";`,
 );
@@ -40,11 +44,14 @@ const entries = await Promise.all(
       defaultColor: false,
       components: { pre: ({ children }) => children },
     });
+    fs.writeFileSync(
+      path.join(sourceOutputDirectory, `${path.basename(file, ".tsx")}.json`),
+      `${JSON.stringify({ code: source, highlightedCode: renderToStaticMarkup(highlighted) })}\n`,
+      "utf8",
+    );
     return [
       "  {",
       `    component: ${componentName(file)},`,
-      `    code: ${JSON.stringify(source)},`,
-      `    highlightedCode: ${JSON.stringify(renderToStaticMarkup(highlighted))},`,
       `    name: "${componentName(file)}",`,
       `    registryName: "${path.basename(file, ".tsx")}",`,
       "  }",
@@ -58,8 +65,6 @@ ${imports.join("\n")}
 
 export interface ChartExample {
   component: React.ComponentType;
-  code: string;
-  highlightedCode: string;
   name: string;
   registryName: string;
 }

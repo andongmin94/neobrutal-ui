@@ -73,8 +73,8 @@ test("date picker stays anchored, uses a neutral surface, and restores focus", a
   const initialMonth = await caption.textContent();
   await calendar.getByRole("button", { name: /next month/i }).click();
   await expect(caption).not.toHaveText(initialMonth!);
-  await calendar.getByRole("button", { name: /previous month/i }).click();
   const day = calendar.locator("button[data-day]:not([disabled])").nth(10);
+  await calendar.getByRole("button", { name: /previous month/i }).click();
   await day.focus();
   await page.keyboard.press("ArrowRight");
   await page.keyboard.press("Enter");
@@ -126,13 +126,27 @@ test("code previews and chart source use real Dark+ syntax colors", async ({ pag
     body: await preview.screenshot(),
     contentType: "image/png",
   });
+  let sourceRequests = 0;
+  await page.route("**/chart-source/*.json", async (route) => {
+    sourceRequests += 1;
+    if (sourceRequests === 1) await route.fulfill({ status: 503, body: "Unavailable" });
+    else await route.continue();
+  });
   await page.goto("/charts#area-chart");
   const chart = page.locator('[data-chart-recipe="activity"]').locator("..");
+  await expect(chart.locator(".recharts-surface")).toBeVisible();
+  expect(sourceRequests).toBe(0);
   await chart.getByRole("button", { name: "View source", exact: true }).click();
-  const source = page.getByRole("dialog").locator(".docs-code pre");
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.getByRole("alert")).toContainText("Could not load this source");
+  await dialog.getByRole("button", { name: "Retry source", exact: true }).click();
+  const source = dialog.locator(".docs-code pre");
   await expect(source.locator("code span").first()).toBeVisible();
+  expect(sourceRequests).toBe(2);
   await expect(source).toContainText("ChartSelect");
   await expect(source).toHaveCSS("background-color", "rgb(30, 30, 30)");
+  const item = await (await page.request.get("/r/chart-release-activity.json")).json();
+  expect((await source.textContent())?.trimEnd()).toBe(item.files[0].content.trimEnd());
   await info.attach("dark-plus-chart-source", {
     body: await page.screenshot(),
     contentType: "image/png",
