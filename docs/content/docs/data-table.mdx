@@ -6,6 +6,8 @@ shadcnDocsLink: https://tanstack.com/table/latest/docs/introduction
 
 This is an installable recipe with sample payment data, not a generic table component accepting arbitrary data and columns. Copy it, define your row type and columns, then connect application data. Use [Table](/docs/table) for a simple semantic table without state management.
 
+The row menu copies the payment ID and reports success or failure beside that row. If clipboard access is unavailable, the message displays the ID for manual copying. Customer navigation and payment-detail screens are application responsibilities, not inactive menu entries in this recipe.
+
 <ComponentPreview component="data-table">
 <include cwd lang="tsx">
   ./src/examples/ui/data-table.tsx
@@ -54,4 +56,4 @@ The default export initially renders the bundled example. Replace its `data` and
 
 ## Accessibility
 
-Preserve semantic table elements, meaningful column headers, and names on row-selection controls. Make sorting and row actions keyboard accessible. Keep empty, loading, and error states distinct. For large or server-paginated datasets, explicitly configure server state and stable row IDs; this sample is not a database grid or backend integration.
+Preserve semantic table elements, meaningful column headers, and names on row-selection controls. Sorting exposes its direction with `aria-sort`. Row actions announce their result without depending on a toast provider. Keep empty, loading, and error states distinct. The sample uses payment IDs as stable row IDs; configure your own stable IDs and server state for large or server-paginated datasets. This sample is not a database grid or backend integration.

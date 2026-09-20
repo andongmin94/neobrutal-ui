@@ -13,13 +13,17 @@ export default defineConfig({
   use: {
     baseURL,
     browserName: "chromium",
-    trace: { mode: "on", sources: false },
+    trace: "retain-on-failure",
     screenshot: "on",
   },
   projects: [
     {
       name: "desktop-light",
-      use: { viewport: { width: 1440, height: 900 }, colorScheme: "light" },
+      use: {
+        viewport: { width: 1440, height: 900 },
+        colorScheme: "light",
+        video: { mode: "on", size: { width: 1440, height: 900 } },
+      },
     },
     {
       name: "mobile-dark",
@@ -28,6 +32,7 @@ export default defineConfig({
         colorScheme: "dark",
         isMobile: true,
         hasTouch: true,
+        video: { mode: "on", size: { width: 390, height: 844 } },
       },
     },
   ],

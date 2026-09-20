@@ -24,7 +24,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -76,6 +75,51 @@ export type Payment = {
   status: "pending" | "processing" | "success" | "failed";
   email: string;
 };
+
+function PaymentActions({ payment }: { payment: Payment }) {
+  const [copy, setCopy] = React.useState<"idle" | "pending" | "success" | "error">("idle");
+
+  async function copyId() {
+    setCopy("pending");
+    try {
+      await navigator.clipboard.writeText(payment.id);
+      setCopy("success");
+    } catch {
+      setCopy("error");
+    }
+  }
+
+  return (
+    <div>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="noShadow"
+            className="size-8 p-0"
+            disabled={copy === "pending"}
+            aria-busy={copy === "pending" || undefined}
+          >
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuItem onClick={copyId}>Copy payment ID</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <output className="block max-w-44 whitespace-normal text-xs" aria-live="polite">
+        {copy === "pending"
+          ? "Copying ID…"
+          : copy === "success"
+            ? "Copied payment ID."
+            : copy === "error"
+              ? `Copy failed. Payment ID: ${payment.id}`
+              : null}
+      </output>
+    </div>
+  );
+}
 
 export const columns: ColumnDef<Payment>[] = [
   {
@@ -132,7 +176,6 @@ export const columns: ColumnDef<Payment>[] = [
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("amount"));
 
-      // Format the amount as a dollar amount
       const formatted = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
@@ -144,29 +187,7 @@ export const columns: ColumnDef<Payment>[] = [
   {
     id: "actions",
     enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="noShadow" className="size-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(payment.id)}>
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    cell: ({ row }) => <PaymentActions payment={row.original} />,
   },
 ];
 
@@ -179,6 +200,7 @@ export default function DataTableDemo() {
   const table = useReactTable({
     data,
     columns,
+    getRowId: (payment) => payment.id,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -236,8 +258,15 @@ export default function DataTableDemo() {
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow className="bg-secondary-background text-foreground" key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
+                  const sort = header.column.getIsSorted();
                   return (
-                    <TableHead className="text-foreground" key={header.id}>
+                    <TableHead
+                      className="text-foreground"
+                      key={header.id}
+                      aria-sort={
+                        sort === "asc" ? "ascending" : sort === "desc" ? "descending" : undefined
+                      }
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(header.column.columnDef.header, header.getContext())}
@@ -264,7 +293,10 @@ export default function DataTableDemo() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={table.getVisibleLeafColumns().length}
+                  className="h-24 text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>
