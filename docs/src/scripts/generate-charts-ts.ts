@@ -31,7 +31,9 @@ const imports = chartFiles.map(
 );
 const entries = await Promise.all(
   chartFiles.map(async (file) => {
-    const source = fs.readFileSync(path.join(sourceDirectory, file), "utf8").replaceAll("\r\n", "\n");
+    const source = fs
+      .readFileSync(path.join(sourceDirectory, file), "utf8")
+      .replaceAll("\r\n", "\n");
     const highlighted = await highlight(source, {
       lang: "tsx",
       themes: { light: "dark-plus", dark: "dark-plus" },

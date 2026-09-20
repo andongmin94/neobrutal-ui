@@ -118,9 +118,9 @@ test("code previews and chart source use real Dark+ syntax colors", async ({ pag
   const pre = preview.locator(".docs-code pre");
   await expect(pre).toBeVisible();
   await expect(pre).toHaveCSS("background-color", "rgb(30, 30, 30)");
-  const colors = await pre.locator("span").evaluateAll((nodes) =>
-    nodes.map((node) => getComputedStyle(node).color),
-  );
+  const colors = await pre
+    .locator("span")
+    .evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).color));
   expect(colors).toContain("rgb(206, 145, 120)");
   await info.attach("dark-plus-component-source", {
     body: await preview.screenshot(),

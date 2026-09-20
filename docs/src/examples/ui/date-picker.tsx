@@ -45,6 +45,7 @@ export default function DatePickerDemo() {
               mode="single"
               selected={date}
               defaultMonth={date}
+              // oxlint-disable-next-line jsx-a11y/no-autofocus -- Focus the active day only inside this user-opened popup.
               autoFocus
               onSelect={(selectedDate) => {
                 setDate(selectedDate);
