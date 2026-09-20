@@ -1,5 +1,7 @@
-import { useEffect, useState, type CSSProperties } from "react";
-import { Toaster, type ToasterProps } from "sonner";
+import { useEffect, useState } from "react";
+import type { ToasterProps } from "sonner";
+
+import { Toaster } from "@/components/ui/sonner";
 
 function getDocumentTheme(): NonNullable<ToasterProps["theme"]> {
   if (typeof document === "undefined") return "light";
@@ -22,29 +24,5 @@ export function BridgeToaster() {
     return () => observer.disconnect();
   }, []);
 
-  return (
-    <Toaster
-      className="toaster group"
-      theme={theme}
-      style={
-        {
-          fontFamily: "inherit",
-          overflowWrap: "anywhere",
-        } as CSSProperties
-      }
-      toastOptions={{
-        unstyled: true,
-        classNames: {
-          toast:
-            "bg-background text-foreground border-border border-2 font-heading shadow-shadow rounded-base text-[13px] flex items-center gap-2.5 p-4 w-[356px] [&:has(button)]:justify-between",
-          description: "font-base",
-          actionButton:
-            "font-base border-2 text-[12px] h-6 px-2 bg-main text-main-foreground border-border rounded-base shrink-0",
-          cancelButton:
-            "font-base border-2 text-[12px] h-6 px-2 bg-secondary-background text-foreground border-border rounded-base shrink-0",
-          error: "bg-black text-white",
-        },
-      }}
-    />
-  );
+  return <Toaster theme={theme} />;
 }

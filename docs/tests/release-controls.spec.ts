@@ -75,6 +75,12 @@ test("every public button variant remains readable in every palette", async ({ p
         .analyze();
       expect(result.violations, `${color.name}/${mode}`).toEqual([]);
       expect(result.incomplete, `${color.name}/${mode}: unresolved contrast`).toEqual([]);
+      if (test.info().project.name === "desktop-light") {
+        await test.info().attach(`palette-${color.name}-${mode}`, {
+          body: await canvas.screenshot({ animations: "disabled" }),
+          contentType: "image/png",
+        });
+      }
     }
   }
 });
