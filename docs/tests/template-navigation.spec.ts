@@ -58,7 +58,9 @@ for (const slug of ["blog", "portfolio", "cms", "links"]) {
     if (await menu.isVisible()) {
       await menu.click();
       await expect(menu).toHaveAttribute("aria-expanded", "true");
-      await expect(page.locator(".docs-sidebar--site.is-open")).toBeVisible();
+      const navigation = page.locator(".docs-sidebar--site.is-open");
+      await expect(navigation).toBeVisible();
+      await expect(navigation.locator(".docs-nav a").first()).toBeFocused();
       await page.keyboard.press("Escape");
       await expect(menu).toHaveAttribute("aria-expanded", "false");
       await expect(menu).toBeFocused();

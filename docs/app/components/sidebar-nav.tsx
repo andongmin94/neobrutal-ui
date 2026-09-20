@@ -1,5 +1,5 @@
 import { BookOpen, Box, Search, X } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
 
 import { COMPONENT_DIRECTORY_LINKS } from "@/data/component-directory";
@@ -129,26 +129,10 @@ export function SidebarNav({
     return () => viewport.removeEventListener("change", onViewportChange);
   }, [mobileOpen, onClose]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    const container = sidebar.current;
     document.documentElement.classList.toggle("menu-open", mobileOpen);
     setBackgroundInert(mobileOpen);
-
-    if (mobileOpen) {
-      requestAnimationFrame(() => {
-        if (mode === "docs") searchInput.current?.focus();
-        else sidebar.current?.querySelector<HTMLAnchorElement>(".docs-nav a")?.focus();
-      });
-    }
-
-    return () => {
-      document.documentElement.classList.remove("menu-open");
-      setBackgroundInert(false);
-    };
-  }, [mobileOpen, mode, setBackgroundInert]);
-
-  useEffect(() => {
-    const container = sidebar.current;
-    if (!mobileOpen || !container) return;
 
     function onKeyDown(event: globalThis.KeyboardEvent) {
       if (event.key === "Escape") {
@@ -160,9 +144,19 @@ export function SidebarNav({
       trapTabFocus(event);
     }
 
-    container.addEventListener("keydown", onKeyDown);
-    return () => container.removeEventListener("keydown", onKeyDown);
-  }, [closeAndRestoreFocus, mobileOpen]);
+    if (mobileOpen && container) {
+      // The visible menu must own focus and Escape before the next browser paint.
+      container.addEventListener("keydown", onKeyDown);
+      if (mode === "docs") searchInput.current?.focus();
+      else container.querySelector<HTMLAnchorElement>(".docs-nav a")?.focus();
+    }
+
+    return () => {
+      container?.removeEventListener("keydown", onKeyDown);
+      document.documentElement.classList.remove("menu-open");
+      setBackgroundInert(false);
+    };
+  }, [closeAndRestoreFocus, mobileOpen, mode, setBackgroundInert]);
 
   useEffect(() => {
     onClose();
