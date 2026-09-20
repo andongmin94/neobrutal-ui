@@ -22,7 +22,7 @@ export default defineConfig({
       use: {
         viewport: { width: 1440, height: 900 },
         colorScheme: "light",
-        video: { mode: "on", size: { width: 1440, height: 900 } },
+        video: { mode: "retain-on-failure", size: { width: 1440, height: 900 } },
       },
     },
     {
@@ -32,7 +32,7 @@ export default defineConfig({
         colorScheme: "dark",
         isMobile: true,
         hasTouch: true,
-        video: { mode: "on", size: { width: 390, height: 844 } },
+        video: { mode: "retain-on-failure", size: { width: 390, height: 844 } },
       },
     },
   ],

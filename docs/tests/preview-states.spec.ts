@@ -1,5 +1,16 @@
 import { expect, test, type Locator, type TestInfo } from "@playwright/test";
 
+async function readyCanvas(preview: Locator) {
+  const canvas = preview.locator(".component-preview__canvas");
+  // Secondary examples are loaded only after entering the viewport.
+  const host = canvas.locator("[data-react-host]");
+  await host.scrollIntoViewIfNeeded();
+  await expect(host).not.toHaveAttribute("aria-busy", "true");
+  await expect(host.locator(".react-host__mount > *").first()).toBeAttached();
+  await expect(host.locator(".react-host__error")).toHaveCount(0);
+  return canvas;
+}
+
 async function capture(surface: Locator, name: string, info: TestInfo) {
   await expect(surface).toBeVisible();
   await info.attach(name, {
@@ -17,9 +28,10 @@ for (const component of ["alert-dialog", "dialog", "drawer", "sheet"]) {
     test.setTimeout(90_000);
     await page.goto(`/docs/${component}`);
     const previews = page.locator(`.component-preview[data-component="${component}"]`);
-    for (let index = 0; index < (await previews.count()); index++) {
-      const canvas = previews.nth(index).locator(".component-preview__canvas");
-      await canvas.scrollIntoViewIfNeeded();
+    await expect(previews.first()).toBeVisible();
+    const previewCount = await previews.count();
+    for (let index = 0; index < previewCount; index++) {
+      const canvas = await readyCanvas(previews.nth(index));
       const triggers = canvas.getByRole("button");
       expect(await triggers.count()).toBeGreaterThan(0);
       for (let triggerIndex = 0; triggerIndex < (await triggers.count()); triggerIndex++) {
@@ -27,12 +39,11 @@ for (const component of ["alert-dialog", "dialog", "drawer", "sheet"]) {
         const name = `${index + 1}-${triggerIndex + 1}`;
         await trigger.click();
         const surface = page.getByRole(component === "alert-dialog" ? "alertdialog" : "dialog");
-        await expect(surface).toBeVisible();
+        await capture(surface, `${component}-${name}-open`, info);
         const bounds = (await surface.boundingBox())!;
         expect(bounds.x).toBeGreaterThanOrEqual(-1);
         expect(bounds.x + bounds.width).toBeLessThanOrEqual(page.viewportSize()!.width + 1);
         expect(bounds.height).toBeLessThanOrEqual(page.viewportSize()!.height + 1);
-        await capture(surface, `${component}-${name}-open`, info);
         if ((await surface.locator("p").count()) > 1) {
           await surface.locator("p").last().scrollIntoViewIfNeeded();
           await capture(surface, `${component}-${name}-last-content`, info);
@@ -90,9 +101,10 @@ for (const { component, triggerSelector, surfaceSelector } of [
     test.setTimeout(90_000);
     await page.goto(`/docs/${component}`);
     const previews = page.locator(`.component-preview[data-component="${component}"]`);
-    for (let index = 0; index < (await previews.count()); index++) {
-      const canvas = previews.nth(index).locator(".component-preview__canvas");
-      await canvas.scrollIntoViewIfNeeded();
+    await expect(previews.first()).toBeVisible();
+    const previewCount = await previews.count();
+    for (let index = 0; index < previewCount; index++) {
+      const canvas = await readyCanvas(previews.nth(index));
       const triggers = canvas.locator(`${triggerSelector}:visible`);
       expect(await triggers.count()).toBeGreaterThan(0);
       for (let triggerIndex = 0; triggerIndex < (await triggers.count()); triggerIndex++) {
@@ -123,12 +135,15 @@ for (const { component, triggerSelector, surfaceSelector } of [
 test("published toast feedback states", async ({ page }, info) => {
   test.setTimeout(90_000);
   await page.goto("/docs/sonner");
-  const count = await page.locator('.component-preview[data-component="sonner"]').count();
+  const previews = page.locator('.component-preview[data-component="sonner"]');
+  await expect(previews.first()).toBeVisible();
+  const count = await previews.count();
   expect(count).toBeGreaterThan(0);
   for (let index = 0; index < count; index++) {
     if (index) await page.reload();
     const preview = page.locator('.component-preview[data-component="sonner"]').nth(index);
-    const trigger = preview.locator(".component-preview__canvas").getByRole("button");
+    const canvas = await readyCanvas(preview);
+    const trigger = canvas.getByRole("button");
     await trigger.click();
     const toast = page.locator("[data-sonner-toast]").first();
     await capture(toast, `toast-${index + 1}`, info);
@@ -169,7 +184,7 @@ for (const component of ["accordion", "collapsible"]) {
   test(`published disclosure states: ${component}`, async ({ page }, info) => {
     await page.goto(`/docs/${component}`);
     const preview = page.locator(`.component-preview[data-component="${component}"]`).first();
-    const canvas = preview.locator(".component-preview__canvas");
+    const canvas = await readyCanvas(preview);
     const triggers = canvas.locator("button[aria-expanded]");
     expect(await triggers.count()).toBeGreaterThan(0);
     for (let index = 0; index < (await triggers.count()); index++) {
@@ -185,13 +200,27 @@ for (const component of ["accordion", "collapsible"]) {
 
 test("published carousel slides remain usable through the last slide", async ({ page }, info) => {
   await page.goto("/docs/carousel");
-  const canvas = page.locator(
-    '.component-preview[data-component="carousel"] .component-preview__canvas',
+  const canvas = await readyCanvas(
+    page.locator('.component-preview[data-component="carousel"]').first(),
   );
   const next = canvas.getByRole("button", { name: /next/i });
-  for (let index = 0; index < 5 && !(await next.isDisabled()); index++) {
+  // Embla initializes after React mounts; its initial disabled state is not the last slide.
+  await expect(next).toBeEnabled();
+  const slides = canvas.locator('[data-slot="carousel-item"]');
+  const count = await slides.count();
+  expect(count).toBeGreaterThan(1);
+  for (let index = 1; index < count; index++) {
     await next.click();
-    await capture(canvas, `carousel-${index + 1}`, info);
+    await expect
+      .poll(() =>
+        slides.nth(index).evaluate((node) => {
+          const viewport = node.closest('[data-slot="carousel-content"]')!;
+          const edge = viewport.getBoundingClientRect().right;
+          return Math.abs(node.getBoundingClientRect().right - edge);
+        }),
+      )
+      .toBeLessThanOrEqual(1);
+    await capture(canvas, `carousel-${index}`, info);
   }
   await expect(next).toBeDisabled();
   await expect(canvas.getByRole("button", { name: /previous/i })).toBeEnabled();
