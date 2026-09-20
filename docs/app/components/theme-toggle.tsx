@@ -21,9 +21,6 @@ function applyTheme(theme: Theme) {
   root.classList.toggle("dark", theme === "dark");
   root.dataset.theme = theme;
   root.style.colorScheme = theme;
-  document
-    .querySelector('meta[name="theme-color"]')
-    ?.setAttribute("content", theme === "dark" ? defaultColor.darkBg : defaultColor.bg);
   window.localStorage.setItem(STORAGE_KEY, theme);
   window.dispatchEvent(new CustomEvent("neobrutal-ui:theme", { detail: theme }));
 }
@@ -46,18 +43,21 @@ export function ThemeToggle() {
   const useDarkTheme = theme === "light";
 
   return (
-    <button
-      className="icon-button"
-      type="button"
-      aria-label={useDarkTheme ? "Use dark theme" : "Use light theme"}
-      title={useDarkTheme ? "Dark theme" : "Light theme"}
-      onClick={toggleTheme}
-    >
-      {useDarkTheme ? (
-        <Moon aria-hidden="true" size={18} strokeWidth={2.3} />
-      ) : (
-        <Sun aria-hidden="true" size={18} strokeWidth={2.3} />
-      )}
-    </button>
+    <>
+      <meta name="theme-color" content={theme === "dark" ? defaultColor.darkBg : defaultColor.bg} />
+      <button
+        className="icon-button"
+        type="button"
+        aria-label={useDarkTheme ? "Use dark theme" : "Use light theme"}
+        title={useDarkTheme ? "Dark theme" : "Light theme"}
+        onClick={toggleTheme}
+      >
+        {useDarkTheme ? (
+          <Moon aria-hidden="true" size={18} strokeWidth={2.3} />
+        ) : (
+          <Sun aria-hidden="true" size={18} strokeWidth={2.3} />
+        )}
+      </button>
+    </>
   );
 }

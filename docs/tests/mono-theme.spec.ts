@@ -16,6 +16,7 @@ test("mono matches installation in both modes", async ({ page }, info) => {
   const alternate = initial === "light" ? "dark" : "light";
   await page.goto("/");
   const html = page.locator("html");
+  const chrome = page.locator('meta[name="theme-color"]');
   await expect(html).toHaveAttribute("data-hydrated", "true");
   await expect(html).toHaveAttribute("data-theme", initial);
 
@@ -29,13 +30,10 @@ test("mono matches installation in both modes", async ({ page }, info) => {
     for (const token of ["background", "main", "main-foreground", "chart-1", "chart-2"]) {
       await expect(html).toHaveCSS(`--${token}`, vars[token]);
     }
-    await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute(
-      "content",
-      vars.background,
-    );
+    await expect(chrome).toHaveCount(1);
+    await expect(chrome).toHaveAttribute("content", vars.background);
     const button = page.getByRole("button", { name: "Save workspace", exact: true });
-    const applied = await button.evaluate((node) => {
-      const style = getComputedStyle(node);
+    const expected = await button.evaluate((node) => {
       const probe = document.createElement("span");
       node.append(probe);
       probe.style.color = "var(--main)";
@@ -43,16 +41,11 @@ test("mono matches installation in both modes", async ({ page }, info) => {
       probe.style.color = "var(--main-foreground)";
       const foreground = getComputedStyle(probe).color;
       probe.remove();
-      return {
-        background: style.backgroundColor,
-        foreground: style.color,
-        expectedBackground: background,
-        expectedForeground: foreground,
-      };
+      return { background, foreground };
     });
-    expect(applied.background).toBe(applied.expectedBackground);
-    expect(applied.foreground).toBe(applied.expectedForeground);
-    expect(applied.foreground).not.toBe(applied.background);
+    await expect(button).toHaveCSS("background-color", expected.background);
+    await expect(button).toHaveCSS("color", expected.foreground);
+    expect(expected.foreground).not.toBe(expected.background);
     await info.attach(`mono-home-${mode}`, {
       body: await page.screenshot(),
       contentType: "image/png",
@@ -63,8 +56,6 @@ test("mono matches installation in both modes", async ({ page }, info) => {
   await expect(html).toHaveAttribute("data-hydrated", "true");
   await expect(html).toHaveAttribute("data-theme", alternate);
   await expect(html).toHaveCSS("--background", mono.cssVars[alternate].background);
-  await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute(
-    "content",
-    mono.cssVars[alternate].background,
-  );
+  await expect(chrome).toHaveCount(1);
+  await expect(chrome).toHaveAttribute("content", mono.cssVars[alternate].background);
 });
