@@ -47,7 +47,7 @@ export default defineConfig({
         default: {
           mdxOptions: {
             rehypeCodeOptions: {
-              themes: { light: "dark-plus", dark: "dark-plus" },
+              themes: { dark: "dark-plus" },
               defaultColor: false,
             },
           },

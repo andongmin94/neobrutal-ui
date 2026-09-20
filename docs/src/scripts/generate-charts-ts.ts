@@ -40,7 +40,7 @@ const entries = await Promise.all(
       .replaceAll("\r\n", "\n");
     const highlighted = await highlight(source, {
       lang: "tsx",
-      themes: { light: "dark-plus", dark: "dark-plus" },
+      themes: { dark: "dark-plus" },
       defaultColor: false,
       components: { pre: ({ children }) => children },
     });
