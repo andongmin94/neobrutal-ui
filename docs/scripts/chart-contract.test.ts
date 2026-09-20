@@ -28,10 +28,14 @@ test("all analytical recipes share one source across registry, gallery, and docs
     const source = fs.readFileSync(`../registry/src/components/ui/${name}.tsx`, "utf8");
     const item = JSON.parse(fs.readFileSync(`public/r/${name}.json`, "utf8"));
     const payload = JSON.parse(fs.readFileSync(`public/chart-source/${name}.json`, "utf8"));
-    assert.equal(payload.code, source);
+    assert.ok(payload.code === source, `${name}: source payload differs from the recipe`);
     assert.equal(typeof payload.highlightedCode, "string");
-    assert.match(payload.highlightedCode, /<code\b/);
-    assert.match(payload.highlightedCode, /--shiki-dark:/);
+    const prefix = payload.highlightedCode.slice(0, 400);
+    assert.ok(/<code\b/.test(payload.highlightedCode), `${name}: missing code element: ${prefix}`);
+    assert.ok(
+      /--shiki-dark:/.test(payload.highlightedCode),
+      `${name}: missing dark syntax variables: ${prefix}`,
+    );
     assert.ok(!("code" in chart), "gallery metadata must not embed source text");
     assert.equal(fs.readFileSync(`src/components/ui/${name}.tsx`, "utf8"), source);
     assert.equal(item.type, "registry:component");
