@@ -40,7 +40,23 @@ function cleanUrlPreview(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [cleanUrlPreview(), fumadocsMdx(), tailwindcss(), reactRouter()],
+  plugins: [
+    cleanUrlPreview(),
+    fumadocsMdx({
+      forcedConfig: {
+        default: {
+          mdxOptions: {
+            rehypeCodeOptions: {
+              themes: { light: "dark-plus", dark: "dark-plus" },
+              defaultColor: false,
+            },
+          },
+        },
+      },
+    }),
+    tailwindcss(),
+    reactRouter(),
+  ],
   resolve: {
     tsconfigPaths: true,
   },

@@ -5,6 +5,13 @@ import * as RechartsPrimitive from "recharts";
 import type { TooltipValueType } from "recharts";
 
 import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: "", dark: ".dark" } as const;
@@ -370,6 +377,7 @@ function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key:
 }
 
 export {
+  ChartSelect,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
@@ -377,3 +385,49 @@ export {
   ChartLegendContent,
   ChartStyle,
 };
+
+function ChartSelect({
+  label,
+  value,
+  onValueChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onValueChange: (value: string) => void;
+  options: { value: string; label: string }[];
+}) {
+  const id = React.useId();
+
+  return (
+    <div className="grid w-full min-w-0 gap-2 sm:w-auto sm:min-w-44 sm:max-w-72">
+      <label htmlFor={id} className="text-xs font-heading">
+        {label}
+      </label>
+      <Select value={value} onValueChange={onValueChange} items={options}>
+        <SelectTrigger
+          id={id}
+          className="h-11 min-w-0 bg-secondary-background font-heading text-foreground shadow-shadow data-[state=open]:translate-x-0.5 data-[state=open]:translate-y-0.5 data-[state=open]:shadow-none [&>svg]:box-content [&>svg]:border-l-2 [&>svg]:border-border [&>svg]:py-1 [&>svg]:pl-3 [&>svg]:opacity-100"
+        >
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent
+          align="start"
+          sideOffset={8}
+          collisionPadding={12}
+          className="max-h-[min(20rem,var(--available-height))] w-(--anchor-width) max-w-(--available-width) bg-secondary-background p-1 text-foreground shadow-shadow [&_[data-slot=select-scroll-up-button]]:bg-secondary-background [&_[data-slot=select-scroll-down-button]]:bg-secondary-background"
+        >
+          {options.map((option) => (
+            <SelectItem
+              key={option.value}
+              value={option.value}
+              className="min-h-10 cursor-pointer py-2 data-highlighted:border-foreground data-[state=checked]:bg-main data-[state=checked]:font-heading data-[state=checked]:text-main-foreground [&>span:first-child]:min-w-0 [&>span:first-child]:shrink [&>span:first-child]:whitespace-normal"
+            >
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}

@@ -15,8 +15,9 @@ function getDefaultColor(): ColorPalette {
 export const defaultColor = getDefaultColor();
 
 export function createThemeCssVars(color: ColorPalette) {
-  // Mono uses an ink-colored action in light mode, so its content must be light.
-  const lightMainForeground = color.name === "mono" ? color.bg : "oklch(0% 0 0)";
+  // Both Mono palettes use ink-colored actions in light mode.
+  const lightMainForeground =
+    color.name === "mono" || color.name === "mono-warm" ? color.bg : "oklch(0% 0 0)";
 
   return {
     light: {

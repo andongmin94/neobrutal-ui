@@ -6,6 +6,7 @@ import { CartesianGrid, Line, LineChart, ReferenceLine, XAxis, YAxis } from "rec
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartContainer,
+  ChartSelect,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
@@ -51,29 +52,25 @@ export default function ChartBuildDuration() {
       </CardHeader>
       <CardContent className="grid min-w-0 gap-6">
         <div className="flex flex-wrap gap-4">
-          <label className="grid gap-1 text-xs font-heading">
-            Build period
-            <select
-              value={range}
-              onChange={(event) => setRange(event.target.value)}
-              className="min-h-10 rounded-base border-2 border-border bg-secondary-background px-3 text-sm text-foreground"
-            >
-              <option value="6">All 6 builds</option>
-              <option value="3">Latest 3 builds</option>
-            </select>
-          </label>
-          <label className="grid gap-1 text-xs font-heading">
-            Visible build series
-            <select
-              value={series}
-              onChange={(event) => setSeries(event.target.value)}
-              className="min-h-10 rounded-base border-2 border-border bg-secondary-background px-3 text-sm text-foreground"
-            >
-              <option value="both">Both series</option>
-              <option value="cold">Cold only</option>
-              <option value="warm">Cached only</option>
-            </select>
-          </label>
+          <ChartSelect
+            label="Build period"
+            value={range}
+            onValueChange={setRange}
+            options={[
+              { value: "6", label: "All 6 builds" },
+              { value: "3", label: "Latest 3 builds" },
+            ]}
+          />
+          <ChartSelect
+            label="Visible build series"
+            value={series}
+            onValueChange={setSeries}
+            options={[
+              { value: "both", label: "Both series" },
+              { value: "cold", label: "Cold only" },
+              { value: "warm", label: "Cached only" },
+            ]}
+          />
         </div>
         <dl className="grid gap-4 border-y-2 border-border py-4 sm:grid-cols-3" aria-live="polite">
           {[

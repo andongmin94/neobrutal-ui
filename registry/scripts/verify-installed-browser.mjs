@@ -99,14 +99,14 @@ export async function verifyInstalledBrowser({ target, directory, scenario, root
               await assertThemeColor(button, palette, expect);
               const revenue = page.locator('[data-chart-recipe="revenue"]');
               await expect(revenue).toContainText("$74,300");
-              await revenue.getByLabel("Revenue period").selectOption("8");
+              await revenue.getByLabel("Revenue period").click();
+              await page.getByRole("option", { name: "All 8 weeks", exact: true }).click();
               await expect(revenue).toContainText("$132,800");
               await revenue.getByText("View revenue data", { exact: true }).click();
               await expect(revenue.locator("tbody tr")).toHaveCount(8);
               const latency = page.locator('[data-chart-recipe="latency"]');
-              await latency
-                .getByRole("combobox", { name: "Service", exact: true })
-                .selectOption("Search");
+              await latency.getByRole("combobox", { name: "Service", exact: true }).click();
+              await page.getByRole("option", { name: "Search", exact: true }).click();
               await expect(latency).toContainText("310 ms");
               const recordsPane = page.getByRole("region", { name: "Records", exact: true });
               await recordsPane.getByLabel("Filter email records").fill("ken99");

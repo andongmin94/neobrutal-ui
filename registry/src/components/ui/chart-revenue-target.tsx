@@ -6,6 +6,7 @@ import { Bar, CartesianGrid, ComposedChart, Line, XAxis, YAxis } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartContainer,
+  ChartSelect,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
@@ -52,17 +53,15 @@ export default function Component() {
       </CardHeader>
       <CardContent className="grid min-w-0 gap-6">
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <label className="grid gap-1 text-xs font-heading">
-            Revenue period
-            <select
-              value={range}
-              onChange={(event) => setRange(event.target.value)}
-              className="min-h-10 rounded-base border-2 border-border bg-secondary-background px-3 text-sm text-foreground"
-            >
-              <option value="4">Last 4 weeks</option>
-              <option value="8">All 8 weeks</option>
-            </select>
-          </label>
+          <ChartSelect
+            label="Revenue period"
+            value={range}
+            onValueChange={setRange}
+            options={[
+              { value: "4", label: "Last 4 weeks" },
+              { value: "8", label: "All 8 weeks" },
+            ]}
+          />
           <p className="text-xs leading-5 text-foreground/75">
             Bars: revenue / dashed line: target
           </p>

@@ -1,0 +1,168 @@
+import AxeBuilder from "@axe-core/playwright";
+import { expect, test } from "@playwright/test";
+
+test("chart selectors expose styled options, selection, and keyboard focus", async ({
+  page,
+}, info) => {
+  await page.goto("/docs/chart-release-activity");
+  const chart = page.locator('.component-preview [data-chart-recipe="activity"]');
+  const control = chart.getByRole("combobox", { name: "Activity measure", exact: true });
+  await expect(control).toBeVisible();
+  expect(await control.evaluate((node) => node.tagName)).toBe("BUTTON");
+  await control.click();
+  const popup = page.locator('[data-slot="select-content"]');
+  await expect(popup).toBeVisible();
+  const selected = popup.getByRole("option", { name: "Event counts", exact: true });
+  await expect(selected).toHaveAttribute("aria-selected", "true");
+  await expect(selected.locator("svg")).toBeVisible();
+  const bounds = await popup.boundingBox();
+  expect(bounds!.x).toBeGreaterThanOrEqual(0);
+  expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(page.viewportSize()!.width);
+  await info.attach("chart-select-open", {
+    body: await page.screenshot(),
+    contentType: "image/png",
+  });
+  await page.keyboard.press("End");
+  await page.keyboard.press("Enter");
+  await expect(control).toContainText("Share of each release");
+  await expect(control).toBeFocused();
+  await expect(popup).toBeHidden();
+  await expect(chart.locator("figure")).toContainText("100%");
+  await control.click();
+  await page.keyboard.press("Escape");
+  await expect(control).toBeFocused();
+  const result = await new AxeBuilder({ page })
+    .include(".component-preview")
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+    .analyze();
+  expect(result.violations).toEqual([]);
+});
+
+test("date picker stays anchored, uses a neutral surface, and restores focus", async ({
+  page,
+}, info) => {
+  await page.goto("/docs/date-picker");
+  const preview = page.locator(".component-preview").first();
+  const trigger = preview.getByRole("button", { name: "Project date", exact: true });
+  await expect(trigger).toBeVisible();
+  await trigger.evaluate((node) => {
+    window.scrollBy(0, node.getBoundingClientRect().top - 160);
+  });
+  await trigger.click();
+  const calendar = page.locator('[data-slot="popover-content"] [data-slot="calendar"]');
+  await expect(calendar).toBeVisible();
+  const anchor = (await trigger.boundingBox())!;
+  const bounds = (await calendar.boundingBox())!;
+  expect(bounds.y).toBeGreaterThanOrEqual(anchor.y + anchor.height);
+  expect(Math.abs(bounds.x - anchor.x)).toBeLessThanOrEqual(4);
+  expect(bounds.x + bounds.width).toBeLessThanOrEqual(page.viewportSize()!.width);
+  const expectedSurface = await calendar.evaluate((node) => {
+    const probe = document.createElement("span");
+    node.append(probe);
+    probe.style.color = "var(--secondary-background)";
+    const color = getComputedStyle(probe).color;
+    probe.remove();
+    return color;
+  });
+  await expect(calendar).toHaveCSS("background-color", expectedSurface);
+  await info.attach("date-picker-open", {
+    body: await page.screenshot(),
+    contentType: "image/png",
+  });
+  const caption = calendar.locator(".rdp-caption_label");
+  const initialMonth = await caption.textContent();
+  await calendar.getByRole("button", { name: /next month/i }).click();
+  await expect(caption).not.toHaveText(initialMonth!);
+  await calendar.getByRole("button", { name: /previous month/i }).click();
+  const day = calendar.locator("button[data-day]:not([disabled])").nth(10);
+  await day.focus();
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("Enter");
+  await expect(calendar).toBeHidden();
+  await expect(trigger).toBeFocused();
+  await expect(preview.locator("output")).toContainText("Selected:");
+  await preview.getByRole("button", { name: "Clear", exact: true }).click();
+  await expect(preview.locator("output")).toHaveText("No date selected");
+  await expect(trigger).toBeFocused();
+});
+
+test("warm mono is optional and never replaces the cool default", async ({ page }, info) => {
+  const response = await page.request.get("/r/theme-mono-warm.json");
+  expect(response.ok()).toBe(true);
+  const warm = await response.json();
+  expect(warm.cssVars.light.background).toBe("#f5f4f0");
+  expect(warm.cssVars.light.main).toBe("#292b29");
+  expect(warm.cssVars.light["main-foreground"]).toBe("#f5f4f0");
+  expect(warm.cssVars.dark.main).toBe("#e5e2d9");
+  const base = await (await page.request.get("/r/neobrutal-ui.json")).json();
+  expect(base.cssVars.light.background).toBe("#f4f5f7");
+  await page.goto("/styling");
+  const palette = page.getByLabel("Palette", { exact: true });
+  await expect(palette).toHaveValue("mono");
+  await palette.selectOption("mono-warm");
+  await expect(page.locator("[data-theme-preview] .theme-workbench__stage-label")).toContainText(
+    "mono-warm",
+  );
+  await info.attach("mono-warm-customizer", {
+    body: await page.screenshot(),
+    contentType: "image/png",
+  });
+  await page.getByRole("button", { name: "Reset defaults", exact: true }).click();
+  await expect(palette).toHaveValue("mono");
+});
+
+test("code previews and chart source use real Dark+ syntax colors", async ({ page }, info) => {
+  await page.goto("/docs/button");
+  const preview = page.locator(".component-preview").first();
+  await preview.getByRole("tab", { name: "Code", exact: true }).click();
+  const pre = preview.locator(".docs-code pre");
+  await expect(pre).toBeVisible();
+  await expect(pre).toHaveCSS("background-color", "rgb(30, 30, 30)");
+  const colors = await pre.locator("span").evaluateAll((nodes) =>
+    nodes.map((node) => getComputedStyle(node).color),
+  );
+  expect(colors).toContain("rgb(206, 145, 120)");
+  await info.attach("dark-plus-component-source", {
+    body: await preview.screenshot(),
+    contentType: "image/png",
+  });
+  await page.goto("/charts#area-chart");
+  const chart = page.locator('[data-chart-recipe="activity"]').locator("..");
+  await chart.getByRole("button", { name: "View source", exact: true }).click();
+  const source = page.getByRole("dialog").locator(".docs-code pre");
+  await expect(source.locator("code span").first()).toBeVisible();
+  await expect(source).toContainText("ChartSelect");
+  await expect(source).toHaveCSS("background-color", "rgb(30, 30, 30)");
+  await info.attach("dark-plus-chart-source", {
+    body: await page.screenshot(),
+    contentType: "image/png",
+  });
+});
+
+for (const [slug, slot] of [
+  ["select", "select-content"],
+  ["popover", "popover-content"],
+  ["combobox", "popover-content"],
+  ["dropdown-menu", "dropdown-menu-content"],
+]) {
+  test(`related popup remains visible and within the viewport: ${slug}`, async ({ page }, info) => {
+    await page.goto(`/docs/${slug}`);
+    const preview = page.locator(".component-preview").first();
+    const trigger = preview
+      .getByRole(slug === "select" || slug === "combobox" ? "combobox" : "button")
+      .first();
+    await trigger.click();
+    const popup = page.locator(`[data-slot="${slot}"]`).last();
+    await expect(popup).toBeVisible();
+    const bounds = (await popup.boundingBox())!;
+    expect(bounds.x).toBeGreaterThanOrEqual(-1);
+    expect(bounds.x + bounds.width).toBeLessThanOrEqual(page.viewportSize()!.width + 1);
+    await info.attach(`${slug}-open`, {
+      body: await page.screenshot(),
+      contentType: "image/png",
+    });
+    await page.keyboard.press("Escape");
+    await expect(popup).toBeHidden();
+    await expect(trigger).toBeFocused();
+  });
+}

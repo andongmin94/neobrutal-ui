@@ -9,8 +9,9 @@ test("allocation slices follow the clockwise reading order in the caption", asyn
   await expect(sectors).toHaveCount(4);
 
   for (const period of ["Current", "Next"]) {
-    await chart.getByLabel("Allocation period").selectOption(period);
-    await expect(chart.getByLabel("Allocation period")).toHaveValue(period);
+    await chart.getByLabel("Allocation period").click();
+    await page.getByRole("option", { name: period, exact: true }).click();
+    await expect(chart.getByLabel("Allocation period")).toContainText(period);
     await expect
       .poll(() =>
         sectors.first().evaluate((node) => {

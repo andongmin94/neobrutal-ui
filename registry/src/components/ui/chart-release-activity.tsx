@@ -6,6 +6,7 @@ import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartContainer,
+  ChartSelect,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
@@ -52,28 +53,24 @@ export default function ChartReleaseActivity() {
       </CardHeader>
       <CardContent className="grid min-w-0 gap-6">
         <div className="flex flex-wrap gap-4">
-          <label className="grid gap-1 text-xs font-heading">
-            Activity measure
-            <select
-              value={view}
-              onChange={(event) => setView(event.target.value)}
-              className="min-h-10 rounded-base border-2 border-border bg-secondary-background px-3 text-sm text-foreground"
-            >
-              <option value="count">Event counts</option>
-              <option value="share">Share of each release</option>
-            </select>
-          </label>
-          <label className="grid gap-1 text-xs font-heading">
-            Release period
-            <select
-              value={range}
-              onChange={(event) => setRange(event.target.value)}
-              className="min-h-10 rounded-base border-2 border-border bg-secondary-background px-3 text-sm text-foreground"
-            >
-              <option value="6">All 6 releases</option>
-              <option value="3">Latest 3 releases</option>
-            </select>
-          </label>
+          <ChartSelect
+            label="Activity measure"
+            value={view}
+            onValueChange={setView}
+            options={[
+              { value: "count", label: "Event counts" },
+              { value: "share", label: "Share of each release" },
+            ]}
+          />
+          <ChartSelect
+            label="Release period"
+            value={range}
+            onValueChange={setRange}
+            options={[
+              { value: "6", label: "All 6 releases" },
+              { value: "3", label: "Latest 3 releases" },
+            ]}
+          />
         </div>
         <dl className="grid gap-4 border-y-2 border-border py-4 sm:grid-cols-3" aria-live="polite">
           {[

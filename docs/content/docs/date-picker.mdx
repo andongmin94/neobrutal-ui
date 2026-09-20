@@ -6,7 +6,7 @@ shadcnDocsLink: https://daypicker.dev/docs/selection-modes
 
 Use Date Picker when a date field should open a calendar on demand. This is a composition recipe, not a standalone registry endpoint. It keeps selected-date and popup state in your application.
 
-<ComponentPreview component="date-picker">
+<ComponentPreview component="date-picker" wrapperClassName="[&_.react-host__mount]:min-h-[26rem] [&_.react-host__mount]:items-start!">
 <include cwd lang="tsx">
   ./src/examples/ui/date-picker.tsx
 </include>
@@ -41,10 +41,12 @@ export default function AppointmentDate() {
         <PopoverTrigger render={<Button id="appointment-date" variant="outline" />}>
           {date ? date.toLocaleDateString() : "Choose a date"}
         </PopoverTrigger>
-        <PopoverContent align="start" className="w-auto p-0">
+        <PopoverContent align="start" sideOffset={8} className="w-auto border-0! bg-transparent p-0 shadow-none">
           <Calendar
             mode="single"
             selected={date}
+            defaultMonth={date}
+            autoFocus
             onSelect={(next) => {
               setDate(next);
               setOpen(false);

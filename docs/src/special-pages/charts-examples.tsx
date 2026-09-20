@@ -169,11 +169,11 @@ function ChartComponent({ children, chart }: { children: ReactNode; chart: Chart
             </DialogDescription>
           </DialogHeader>
           <Pre
-            wrapperClassName="w-full max-w-full overflow-x-auto text-white"
+            className="shiki"
+            wrapperClassName="w-full max-w-full overflow-x-auto"
             __rawstring__={chart.code}
-          >
-            {chart.code}
-          </Pre>
+            dangerouslySetInnerHTML={{ __html: chart.highlightedCode }}
+          />
         </DialogContent>
       </Dialog>
     </div>

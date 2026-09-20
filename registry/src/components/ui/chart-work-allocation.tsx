@@ -6,6 +6,7 @@ import { Pie, PieChart } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartContainer,
+  ChartSelect,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
@@ -50,30 +51,18 @@ export default function ChartWorkAllocation() {
       </CardHeader>
       <CardContent className="grid min-w-0 gap-6">
         <div className="flex flex-wrap gap-4">
-          <label className="grid gap-1 text-xs font-heading">
-            Allocation period
-            <select
-              value={period}
-              onChange={(event) => setPeriod(event.target.value as keyof typeof periods)}
-              className="min-h-10 rounded-base border-2 border-border bg-secondary-background px-3 text-sm text-foreground"
-            >
-              {Object.keys(periods).map((name) => (
-                <option key={name}>{name}</option>
-              ))}
-            </select>
-          </label>
-          <label className="grid gap-1 text-xs font-heading">
-            Inspect workstream
-            <select
-              value={selected}
-              onChange={(event) => setSelected(event.target.value)}
-              className="min-h-10 rounded-base border-2 border-border bg-secondary-background px-3 text-sm text-foreground"
-            >
-              {workstreams.map((name) => (
-                <option key={name}>{name}</option>
-              ))}
-            </select>
-          </label>
+          <ChartSelect
+            label="Allocation period"
+            value={period}
+            onValueChange={(value) => setPeriod(value as keyof typeof periods)}
+            options={Object.keys(periods).map((value) => ({ value, label: value }))}
+          />
+          <ChartSelect
+            label="Inspect workstream"
+            value={selected}
+            onValueChange={setSelected}
+            options={workstreams.map((value) => ({ value, label: value }))}
+          />
         </div>
         <dl className="grid gap-4 border-y-2 border-border py-4 sm:grid-cols-3" aria-live="polite">
           {[

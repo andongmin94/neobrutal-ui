@@ -6,56 +6,56 @@ const recipes = [
     kind: "revenue",
     group: "examples",
     control: "Revenue period",
-    value: "8",
+    option: "All 8 weeks",
   },
   {
     name: "chart-signup-conversion",
     kind: "conversion",
     group: "examples",
     control: "Acquisition cohort",
-    value: "Sales-led",
+    option: "Sales-led",
   },
   {
     name: "chart-service-latency",
     kind: "latency",
     group: "examples",
     control: "Service",
-    value: "Search",
+    option: "Search",
   },
   {
     name: "chart-release-activity",
     kind: "activity",
     group: "area-chart",
     control: "Activity measure",
-    value: "share",
+    option: "Share of each release",
   },
   {
     name: "chart-delivery-capacity",
     kind: "capacity",
     group: "bar-chart",
     control: "Delivery view",
-    value: "variance",
+    option: "Signed variance",
   },
   {
     name: "chart-build-duration",
     kind: "builds",
     group: "line-chart",
     control: "Visible build series",
-    value: "warm",
+    option: "Cached only",
   },
   {
     name: "chart-work-allocation",
     kind: "allocation",
     group: "pie-chart",
     control: "Inspect workstream",
-    value: "Test",
+    option: "Test",
   },
   {
     name: "chart-install-diagnostics",
     kind: "diagnostics",
     group: "tooltip",
     control: "Duration unit",
-    value: "s",
+    option: "Seconds",
   },
 ];
 
@@ -74,8 +74,9 @@ for (const recipe of recipes) {
     const preview = page.locator(`.component-preview [data-chart-recipe="${recipe.kind}"]`);
     await expect(preview).toBeVisible();
     const control = preview.getByRole("combobox", { name: recipe.control, exact: true });
-    await control.selectOption(recipe.value);
-    await expect(control).toHaveValue(recipe.value);
+    await control.click();
+    await page.getByRole("option", { name: recipe.option, exact: true }).click();
+    await expect(control).toContainText(recipe.option);
     await expect(preview.locator(".recharts-surface")).toBeVisible();
 
     const response = await page.request.get(`/r/${recipe.name}.json`);

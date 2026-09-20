@@ -6,6 +6,7 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartContainer,
+  ChartSelect,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
@@ -42,18 +43,12 @@ export default function Component() {
         </CardDescription>
       </CardHeader>
       <CardContent className="grid min-w-0 gap-6">
-        <label className="grid justify-items-start gap-1 text-xs font-heading">
-          Acquisition cohort
-          <select
-            value={cohort}
-            onChange={(event) => setCohort(event.target.value as keyof typeof cohorts)}
-            className="min-h-10 rounded-base border-2 border-border bg-secondary-background px-3 text-sm text-foreground"
-          >
-            {Object.keys(cohorts).map((name) => (
-              <option key={name}>{name}</option>
-            ))}
-          </select>
-        </label>
+        <ChartSelect
+          label="Acquisition cohort"
+          value={cohort}
+          onValueChange={(value) => setCohort(value as keyof typeof cohorts)}
+          options={Object.keys(cohorts).map((value) => ({ value, label: value }))}
+        />
         <dl className="grid grid-cols-2 gap-4 border-y-2 border-border py-4" aria-live="polite">
           <div>
             <dt className="text-xs text-foreground/75">Visit to paid</dt>

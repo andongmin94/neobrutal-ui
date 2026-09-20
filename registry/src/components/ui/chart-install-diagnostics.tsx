@@ -6,6 +6,7 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartContainer,
+  ChartSelect,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
@@ -49,29 +50,21 @@ export default function ChartInstallDiagnostics() {
       </CardHeader>
       <CardContent className="grid min-w-0 gap-6">
         <div className="flex flex-wrap gap-4">
-          <label className="grid gap-1 text-xs font-heading">
-            Install environment
-            <select
-              value={profile}
-              onChange={(event) => setProfile(event.target.value as keyof typeof traces)}
-              className="min-h-10 rounded-base border-2 border-border bg-secondary-background px-3 text-sm text-foreground"
-            >
-              {Object.keys(traces).map((name) => (
-                <option key={name}>{name}</option>
-              ))}
-            </select>
-          </label>
-          <label className="grid gap-1 text-xs font-heading">
-            Duration unit
-            <select
-              value={unit}
-              onChange={(event) => setUnit(event.target.value)}
-              className="min-h-10 rounded-base border-2 border-border bg-secondary-background px-3 text-sm text-foreground"
-            >
-              <option value="ms">Milliseconds</option>
-              <option value="s">Seconds</option>
-            </select>
-          </label>
+          <ChartSelect
+            label="Install environment"
+            value={profile}
+            onValueChange={(value) => setProfile(value as keyof typeof traces)}
+            options={Object.keys(traces).map((value) => ({ value, label: value }))}
+          />
+          <ChartSelect
+            label="Duration unit"
+            value={unit}
+            onValueChange={setUnit}
+            options={[
+              { value: "ms", label: "Milliseconds" },
+              { value: "s", label: "Seconds" },
+            ]}
+          />
         </div>
         <dl className="grid gap-4 border-y-2 border-border py-4 sm:grid-cols-3" aria-live="polite">
           {[

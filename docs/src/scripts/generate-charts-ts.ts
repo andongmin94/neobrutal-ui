@@ -2,6 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { format } from "oxfmt";
+import { highlight } from "fumadocs-core/highlight";
+import { renderToStaticMarkup } from "react-dom/server";
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const sourceDirectory = path.resolve(scriptDirectory, "../components/ui");
@@ -27,17 +29,26 @@ if (!chartFiles.length || new Set(names).size !== names.length) {
 const imports = chartFiles.map(
   (file) => `import ${componentName(file)} from "@/components/ui/${path.basename(file, ".tsx")}";`,
 );
-const entries = chartFiles.map((file) => {
-  const source = fs.readFileSync(path.join(sourceDirectory, file), "utf8").replaceAll("\r\n", "\n");
-  return [
-    "  {",
-    `    component: ${componentName(file)},`,
-    `    code: ${JSON.stringify(source)},`,
-    `    name: "${componentName(file)}",`,
-    `    registryName: "${path.basename(file, ".tsx")}",`,
-    "  }",
-  ].join("\n");
-});
+const entries = await Promise.all(
+  chartFiles.map(async (file) => {
+    const source = fs.readFileSync(path.join(sourceDirectory, file), "utf8").replaceAll("\r\n", "\n");
+    const highlighted = await highlight(source, {
+      lang: "tsx",
+      themes: { light: "dark-plus", dark: "dark-plus" },
+      defaultColor: false,
+      components: { pre: ({ children }) => children },
+    });
+    return [
+      "  {",
+      `    component: ${componentName(file)},`,
+      `    code: ${JSON.stringify(source)},`,
+      `    highlightedCode: ${JSON.stringify(renderToStaticMarkup(highlighted))},`,
+      `    name: "${componentName(file)}",`,
+      `    registryName: "${path.basename(file, ".tsx")}",`,
+      "  }",
+    ].join("\n");
+  }),
+);
 
 const output = `// This file is auto-generated. Do not edit manually.
 
@@ -46,6 +57,7 @@ ${imports.join("\n")}
 export interface ChartExample {
   component: React.ComponentType;
   code: string;
+  highlightedCode: string;
   name: string;
   registryName: string;
 }

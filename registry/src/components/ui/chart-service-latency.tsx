@@ -6,6 +6,7 @@ import { CartesianGrid, Line, LineChart, ReferenceLine, XAxis, YAxis } from "rec
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartContainer,
+  ChartSelect,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
@@ -60,18 +61,12 @@ export default function Component() {
         </CardDescription>
       </CardHeader>
       <CardContent className="grid min-w-0 gap-6">
-        <label className="grid justify-items-start gap-1 text-xs font-heading">
-          Service
-          <select
-            value={service}
-            onChange={(event) => setService(event.target.value as keyof typeof samples)}
-            className="min-h-10 rounded-base border-2 border-border bg-secondary-background px-3 text-sm text-foreground"
-          >
-            {Object.keys(samples).map((name) => (
-              <option key={name}>{name}</option>
-            ))}
-          </select>
-        </label>
+        <ChartSelect
+          label="Service"
+          value={service}
+          onValueChange={(value) => setService(value as keyof typeof samples)}
+          options={Object.keys(samples).map((value) => ({ value, label: value }))}
+        />
         <dl className="grid grid-cols-2 gap-4 border-y-2 border-border py-4" aria-live="polite">
           <div>
             <dt className="text-xs text-foreground/75">Worst daily p95</dt>

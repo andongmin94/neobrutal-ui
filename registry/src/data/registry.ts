@@ -153,6 +153,7 @@ const UI = [
     categories: ["data-display", "data-visualization"],
     type: "registry:ui",
     dependencies: ["recharts"],
+    registryDependencies: ["select"],
     files: [
       {
         path: "src/components/ui/chart.tsx",

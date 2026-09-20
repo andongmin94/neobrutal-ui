@@ -6,6 +6,7 @@ import { Bar, BarChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from "recha
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartContainer,
+  ChartSelect,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
@@ -61,29 +62,21 @@ export default function ChartDeliveryCapacity() {
       </CardHeader>
       <CardContent className="grid min-w-0 gap-6">
         <div className="flex flex-wrap gap-4">
-          <label className="grid gap-1 text-xs font-heading">
-            Delivery team
-            <select
-              value={team}
-              onChange={(event) => setTeam(event.target.value as keyof typeof teams)}
-              className="min-h-10 rounded-base border-2 border-border bg-secondary-background px-3 text-sm text-foreground"
-            >
-              {Object.keys(teams).map((name) => (
-                <option key={name}>{name}</option>
-              ))}
-            </select>
-          </label>
-          <label className="grid gap-1 text-xs font-heading">
-            Delivery view
-            <select
-              value={view}
-              onChange={(event) => setView(event.target.value)}
-              className="min-h-10 rounded-base border-2 border-border bg-secondary-background px-3 text-sm text-foreground"
-            >
-              <option value="compare">Planned and delivered</option>
-              <option value="variance">Signed variance</option>
-            </select>
-          </label>
+          <ChartSelect
+            label="Delivery team"
+            value={team}
+            onValueChange={(value) => setTeam(value as keyof typeof teams)}
+            options={Object.keys(teams).map((value) => ({ value, label: value }))}
+          />
+          <ChartSelect
+            label="Delivery view"
+            value={view}
+            onValueChange={setView}
+            options={[
+              { value: "compare", label: "Planned and delivered" },
+              { value: "variance", label: "Signed variance" },
+            ]}
+          />
         </div>
         <dl className="grid gap-4 border-y-2 border-border py-4 sm:grid-cols-3" aria-live="polite">
           {[

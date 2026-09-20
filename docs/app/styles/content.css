@@ -110,8 +110,8 @@ ol.md-list {
   min-width: 0;
   border: 2px solid var(--border);
   border-radius: var(--radius-small);
-  background: #12151b;
-  color: #f1f5f9;
+  background: #1e1e1e;
+  color: #d4d4d4;
   overflow: hidden;
 }
 .docs-code pre {
@@ -119,10 +119,12 @@ ol.md-list {
   margin: 0;
   padding: 20px 72px 20px 20px;
   max-height: none;
+  background: #1e1e1e;
+  color: #d4d4d4;
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: thin;
-  scrollbar-color: #596273 #12151b;
+  scrollbar-color: #5a5a5a #1e1e1e;
   font-family: var(--font-mono);
   font-size: 13px;
   line-height: 1.7;
@@ -133,15 +135,15 @@ ol.md-list {
   height: 10px;
 }
 .docs-code pre::-webkit-scrollbar-track {
-  background: #12151b;
+  background: #1e1e1e;
 }
 .docs-code pre::-webkit-scrollbar-thumb {
-  border: 2px solid #12151b;
+  border: 2px solid #1e1e1e;
   border-radius: 999px;
-  background: #596273;
+  background: #5a5a5a;
 }
 .docs-code pre::-webkit-scrollbar-thumb:hover {
-  background: #7e8899;
+  background: #808080;
 }
 .docs-code pre > code {
   display: block;
@@ -150,7 +152,21 @@ ol.md-list {
 }
 .docs-code .shiki span {
   color: var(--shiki-dark);
-  background: transparent;
+}
+.docs-code .shiki .line.highlighted {
+  background: #ffffff0b;
+}
+.docs-code .shiki .line.diff.add {
+  background: #6a995526;
+  border-left: 2px solid #6a9955;
+}
+.docs-code .shiki .line.diff.remove {
+  background: #f4474726;
+  border-left: 2px solid #f44747;
+}
+.docs-code .shiki .highlighted-word {
+  background: #264f78;
+  border-radius: 2px;
 }
 .docs-code > .code-copy-button {
   position: absolute;
@@ -166,11 +182,11 @@ ol.md-list {
   width: 40px;
   height: 40px;
   padding: 0;
-  border: 2px solid #465064;
+  border: 2px solid #454545;
   border-radius: var(--radius-small);
-  background: #202631;
-  box-shadow: 3px 3px 0 #080a0e;
-  color: #f1f5f9;
+  background: #252526;
+  box-shadow: 3px 3px 0 #111111;
+  color: #d4d4d4;
   cursor: pointer;
   translate: 0 0;
   transition:
@@ -182,9 +198,9 @@ ol.md-list {
 }
 @media (hover: hover) {
   .code-copy-button:hover {
-    border-color: #7e8899;
-    background: #2b3340;
-    box-shadow: 1px 1px 0 #080a0e;
+    border-color: #808080;
+    background: #333333;
+    box-shadow: 1px 1px 0 #111111;
     translate: 2px 2px;
   }
 }
@@ -198,7 +214,7 @@ ol.md-list {
   color: var(--main-foreground);
 }
 .code-copy-button:focus-visible {
-  outline: 2px solid #f1f5f9;
+  outline: 2px solid #d4d4d4;
   outline-offset: 3px;
 }
 .component-preview__code .docs-code pre {
@@ -284,8 +300,8 @@ ol.md-list {
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
-  background: #12151b;
-  color: #f1f5f9;
+  background: #1e1e1e;
+  color: #d4d4d4;
 }
 .installation-tabs__command code {
   min-width: 0;
@@ -366,7 +382,7 @@ ol.md-list {
 
 .docs-code pre:focus-visible,
 .installation-tabs__command code:focus-visible {
-  outline: 2px solid #f1f5f9;
+  outline: 2px solid #d4d4d4;
   outline-offset: -4px;
 }
 
