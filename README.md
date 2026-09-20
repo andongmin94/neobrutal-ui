@@ -160,8 +160,7 @@ is a separate owner decision, not an automatic consequence of a successful build
 | `docs` | Documentation site and live previews |
 | `registry/directory-entry.json` | Proposed shadcn directory metadata |
 
-## License and attribution
+## License
 
-MIT. Derived from `ekmas/neobrutalism-components`.
-The original copyright and license notice is preserved in [LICENSE](LICENSE); retain it when
-redistributing derived code.
+[MIT](LICENSE). Keep the copyright and permission notices in `LICENSE` with redistributed
+copies or substantial portions of the source.

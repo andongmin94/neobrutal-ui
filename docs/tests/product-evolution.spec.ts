@@ -8,11 +8,20 @@ async function openReady(page: Page, route: string) {
   await expect(page.locator(".special-page-loading")).toHaveCount(0);
 }
 
-test("introduction keeps attribution out of product onboarding", async ({ page }) => {
-  await openReady(page, "/docs");
-  await expect(page.getByRole("heading", { name: "Project background" })).toHaveCount(0);
-  await page.goto("/docs/credits");
-  await expect(page.locator("main")).toContainText("ekmas");
+test("project pages describe the product and retain the license link", async ({ page }) => {
+  for (const route of ["/docs", "/docs/credits", "/docs/resources"]) {
+    await openReady(page, route);
+    await expect(page.getByRole("heading", { name: "Project background" })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "Upstream project" })).toHaveCount(0);
+    await expect(page.locator("main")).not.toContainText(/ekmas|Samuel Breznjak/);
+    if (route === "/docs/credits") {
+      await expect(page.getByRole("heading", { name: "Maintenance", exact: true })).toBeVisible();
+      await expect(page.getByRole("link", { name: "MIT License", exact: true })).toHaveAttribute(
+        "href",
+        "https://github.com/andongmin94/neobrutal-ui/blob/main/LICENSE",
+      );
+    }
+  }
 });
 
 test("CMS saves body edits, previews plain text, and restores the saved version", async ({

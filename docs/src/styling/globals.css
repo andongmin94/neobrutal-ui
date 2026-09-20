@@ -76,10 +76,6 @@ body {
   font-family: var(--site-font-body);
 }
 
-body:has([data-template-preview]) [data-site-navbar] {
-  display: none;
-}
-
 html:has([data-template-preview][data-capture="true"]) {
   scrollbar-width: none;
 }

@@ -4,7 +4,13 @@ const baseURL = process.env.DOCS_TEST_URL ?? "http://127.0.0.1:4173";
 
 export default defineConfig({
   testDir: "./tests",
-  testMatch: ["cross-browser.spec.ts", "form-composition.spec.ts", "search-recovery.spec.ts", "release-controls.spec.ts"],
+  testMatch: [
+    "cross-browser.spec.ts",
+    "form-composition.spec.ts",
+    "search-recovery.spec.ts",
+    "release-controls.spec.ts",
+    "template-navigation.spec.ts",
+  ],
   fullyParallel: true,
   workers: process.env.CI ? 2 : undefined,
   retries: 0,
