@@ -29,7 +29,10 @@ test("chart selectors expose styled options, selection, and keyboard focus", asy
   await expect(popup).toBeHidden();
   await expect(chart.locator("figure")).toContainText("100%");
   await control.click();
+  await expect(control).toHaveAttribute("aria-expanded", "true");
+  await expect(popup).toBeVisible();
   await page.keyboard.press("Escape");
+  await expect(popup).toBeHidden();
   await expect(control).toBeFocused();
   const result = await new AxeBuilder({ page })
     .include(".component-preview")
@@ -56,6 +59,8 @@ test("date picker stays anchored, uses a neutral surface, and restores focus", a
   expect(bounds.y).toBeGreaterThanOrEqual(anchor.y + anchor.height);
   expect(Math.abs(bounds.x - anchor.x)).toBeLessThanOrEqual(4);
   expect(bounds.x + bounds.width).toBeLessThanOrEqual(page.viewportSize()!.width);
+  const canvas = (await preview.locator(".component-preview__canvas").boundingBox())!;
+  expect(bounds.y + bounds.height + 4).toBeLessThanOrEqual(canvas.y + canvas.height);
   const expectedSurface = await calendar.evaluate((node) => {
     const probe = document.createElement("span");
     node.append(probe);

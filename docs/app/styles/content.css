@@ -217,6 +217,12 @@ ol.md-list {
   outline: 2px solid #d4d4d4;
   outline-offset: 3px;
 }
+/* Reserve room for the user-opened calendar without spacing the copied recipe. */
+.component-preview[data-component="date-picker"] .component-preview__canvas {
+  min-height: 30rem;
+  align-items: flex-start;
+}
+
 .component-preview__code .docs-code pre {
   max-height: 32.5rem;
   overflow: auto;
