@@ -211,11 +211,7 @@ function ChartSource({ name }: { name: string }) {
     );
   }
   if (!source) {
-    return (
-      <p role="status" className="py-6">
-        Loading source…
-      </p>
-    );
+    return <output className="block py-6">Loading source…</output>;
   }
 
   return (
