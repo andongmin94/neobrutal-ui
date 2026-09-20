@@ -18,12 +18,21 @@ const recipeNames = [
 test("all analytical recipes share one source across registry, gallery, and docs", () => {
   assert.deepEqual(charts.map((chart) => chart.registryName).sort(), [...recipeNames].sort());
   assert.ok(!fs.existsSync("src/examples/ui/chart"), "obsolete chart implementations remain");
+  assert.deepEqual(
+    fs.readdirSync("public/chart-source").sort(),
+    recipeNames.map((name) => `${name}.json`).sort(),
+  );
 
   for (const chart of charts) {
     const name = chart.registryName;
     const source = fs.readFileSync(`../registry/src/components/ui/${name}.tsx`, "utf8");
     const item = JSON.parse(fs.readFileSync(`public/r/${name}.json`, "utf8"));
-    assert.equal(chart.code, source);
+    const payload = JSON.parse(fs.readFileSync(`public/chart-source/${name}.json`, "utf8"));
+    assert.equal(payload.code, source);
+    assert.equal(typeof payload.highlightedCode, "string");
+    assert.match(payload.highlightedCode, /<code\b/);
+    assert.match(payload.highlightedCode, /--shiki-dark:/);
+    assert.ok(!("code" in chart), "gallery metadata must not embed source text");
     assert.equal(fs.readFileSync(`src/components/ui/${name}.tsx`, "utf8"), source);
     assert.equal(item.type, "registry:component");
     assert.equal(item.files.length, 1);
