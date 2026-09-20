@@ -13,8 +13,8 @@ export default defineConfig({
   use: {
     baseURL,
     browserName: "chromium",
-    trace: "retain-on-failure",
-    screenshot: "only-on-failure",
+    trace: { mode: "on", sources: false },
+    screenshot: "on",
   },
   projects: [
     {
