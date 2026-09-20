@@ -56,6 +56,7 @@ export function SearchLauncher() {
   const navigate = useNavigate();
   const location = useLocation();
   const input = useRef<HTMLInputElement>(null);
+  const [ready, setReady] = useState(false);
   const [open, setOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [retry, setRetry] = useState(0);
@@ -128,6 +129,7 @@ export function SearchLauncher() {
   }
 
   useEffect(() => {
+    setReady(true);
     function shortcut(event: globalThis.KeyboardEvent) {
       if (
         !event.isComposing &&
@@ -156,6 +158,7 @@ export function SearchLauncher() {
         className="search-launcher pressable"
         aria-label="Search documentation"
         title="Search documentation"
+        disabled={!ready}
       >
         <Search aria-hidden="true" size={16} strokeWidth={2.4} />
         <span>Search</span>

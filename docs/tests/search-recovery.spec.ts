@@ -47,3 +47,34 @@ test("composition Enter does not navigate; ordinary Enter does", async ({ page }
   await expect(page).toHaveURL(/\/docs\/button$/);
   await expect(dialog).toBeHidden();
 });
+
+test("search stays disabled before hydration and responds to its first enabled click", async ({
+  page,
+}) => {
+  let releaseScripts!: () => void;
+  const scriptsReady = new Promise<void>((resolve) => {
+    releaseScripts = resolve;
+  });
+  await page.route("**/*", async (route) => {
+    if (route.request().resourceType() === "script") await scriptsReady;
+    await route.continue();
+  });
+
+  const trigger = page.getByRole("button", { name: "Search documentation", exact: true });
+  try {
+    await page.goto("/", { waitUntil: "commit" });
+    await expect(trigger).toBeVisible();
+    await expect(trigger).toBeDisabled();
+    await expect(page.locator("html")).not.toHaveAttribute("data-hydrated", "true");
+  } finally {
+    releaseScripts();
+  }
+
+  await expect(trigger).toBeEnabled();
+  await trigger.click();
+  const dialog = page.getByRole("dialog", { name: "Search documentation", exact: true });
+  await expect(dialog.getByRole("combobox")).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(trigger).toBeFocused();
+});
