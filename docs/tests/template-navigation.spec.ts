@@ -99,3 +99,47 @@ for (const slug of ["blog", "portfolio", "cms", "links"]) {
     expect(errors).toEqual([]);
   });
 }
+
+test("reduced-motion navigation retains focus through repeated search and menu openings", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 900 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+
+  for (const path of ["/templates/blog", "/docs/button"]) {
+    await page.goto(path);
+    await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true");
+    const header = await expectNavbar(page);
+    const search = header.getByRole("button", { name: "Search documentation", exact: true });
+    const menu = header.locator(".mobile-menu-button");
+
+    for (let cycle = 0; cycle < 2; cycle += 1) {
+      await search.click();
+      const dialog = page.getByRole("dialog", { name: "Search documentation", exact: true });
+      await expect(dialog.getByRole("combobox")).toBeFocused();
+      await page.keyboard.press("Escape");
+      await expect(dialog).toBeHidden();
+      await expect(search).toBeFocused();
+
+      await menu.click();
+      const navigation = page.locator(".docs-sidebar.is-open");
+      const target = path.startsWith("/docs")
+        ? navigation.getByRole("searchbox", { name: "Filter components", exact: true })
+        : navigation.locator(".docs-nav a").first();
+      await expect(target).toBeFocused();
+      await expect(navigation).toHaveCSS("transition-duration", "0s");
+      await expect(navigation).toHaveCSS("transition-delay", "0s");
+      await expect(target).toHaveCSS("transition-duration", "0s");
+      await page.keyboard.press("Tab");
+      await expect
+        .poll(() => navigation.evaluate((node) => node.contains(document.activeElement)))
+        .toBe(true);
+      await page.keyboard.press("Escape");
+      await expect(navigation).toHaveCount(0);
+      await expect(page.locator(".docs-sidebar")).toBeHidden();
+      await expect(menu).toBeFocused();
+      await expect(header).not.toHaveAttribute("inert");
+      await expect(page.locator("#main-content")).not.toHaveAttribute("inert");
+    }
+  }
+});
