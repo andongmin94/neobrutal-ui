@@ -76,11 +76,9 @@ jobs:
       - name: Verify README setup and rendered existing-project integration
         run: npm run consumer:verify --prefix registry -- --integration
 
-      - name: Verify fresh consumers and every installable item independently
+      - name: Verify fresh aggregate consumers
         working-directory: registry
-        run: |
-          npm run consumer:verify
-          node scripts/verify-independent-items.mjs
+        run: npm run consumer:verify
 
       - name: Save installation verification evidence
         if: always()
@@ -89,9 +87,7 @@ jobs:
           name: installation-checks
           retention-days: 3
           if-no-files-found: ignore
-          path: |
-            docs/test-results/installed-consumers
-            docs/test-results/independent-items
+          path: docs/test-results/installed-consumers
 
       - name: Verify clean generation and unchanged sources
         run: |
@@ -148,9 +144,39 @@ jobs:
             ${{ runner.temp }}/formatting.diff
             ${{ runner.temp }}/formatted
 
+  verify-installations:
+    name: Independent installations (${{ matrix.shard }}/3)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: registry/package-lock.json
+      - name: Build registry installation inputs
+        run: |
+          npm ci --prefix registry
+          npm run build --prefix registry
+      - name: Verify independent items
+        run: node registry/scripts/verify-independent-items.mjs --shard=${{ matrix.shard }}/3
+      - name: Save independent installation evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: independent-installations-${{ matrix.shard }}
+          retention-days: 3
+          if-no-files-found: ignore
+          path: docs/test-results/independent-items
+
   verify-deployment:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: verify
+    needs: [verify, verify-installations]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:

@@ -3,19 +3,25 @@ import { spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { parseArgs } from "node:util";
 
 const root = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const { items } = JSON.parse(fs.readFileSync(path.join(root, "public/r/registry.json"), "utf8"));
-const queue = items.filter(
+const { values } = parseArgs({ options: { shard: { type: "string", default: "1/1" } } });
+assert.match(values.shard, /^[1-9]\d*\/[1-9]\d*$/, "Use --shard=index/count (1-based)");
+const [shard, shardCount] = values.shard.split("/").map(Number);
+assert.ok(Number.isSafeInteger(shardCount) && shard <= shardCount, "Invalid installation shard");
+const installable = items.filter(
   (item) => item.files?.length && !["registry:base", "registry:style"].includes(item.type),
 );
-assert.ok(queue.length > 0, "The independent installation matrix must not be empty");
+const queue = installable.filter((_, index) => index % shardCount === shard - 1);
+const expectedCount = queue.length;
+assert.ok(expectedCount > 0, "The independent installation matrix must not be empty");
 const output = path.join(root, "../docs/test-results/independent-items");
 fs.mkdirSync(output, { recursive: true });
 const records = [];
 
-// Each command creates and deletes its own fresh projects and node_modules.
-// Bounded parallelism avoids serially rebuilding the catalog for every small fix.
+// Shards partition the catalog; each command still uses fresh projects and node_modules.
 async function worker() {
   for (let item; (item = queue.shift());) {
     const targets = item.categories?.includes("template") ? ["next"] : ["next", "vite"];
@@ -51,6 +57,7 @@ async function worker() {
 }
 
 await Promise.all(Array.from({ length: 3 }, worker));
+assert.equal(records.length, expectedCount, "Every selected item must finish");
 assert.ok(
   records.every((record) => record.passed),
   "Independent installation failures; see independent-items/report.json",
