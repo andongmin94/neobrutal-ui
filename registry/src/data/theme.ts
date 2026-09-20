@@ -3,10 +3,10 @@ import colors from "@/data/colors";
 export type ColorPalette = (typeof colors)[number];
 
 function getDefaultColor(): ColorPalette {
-  const color = colors.find((color) => color.name === "yellow");
+  const color = colors.find((color) => color.name === "mono");
 
   if (!color) {
-    throw new Error("The default yellow color palette is missing.");
+    throw new Error("The default mono color palette is missing.");
   }
 
   return color;
@@ -15,6 +15,9 @@ function getDefaultColor(): ColorPalette {
 export const defaultColor = getDefaultColor();
 
 export function createThemeCssVars(color: ColorPalette) {
+  // Mono uses an ink-colored action in light mode, so its content must be light.
+  const lightMainForeground = color.name === "mono" ? color.bg : "oklch(0% 0 0)";
+
   return {
     light: {
       background: color.bg,
@@ -24,13 +27,13 @@ export function createThemeCssVars(color: ColorPalette) {
       popover: color.bg,
       "popover-foreground": "oklch(0% 0 0)",
       primary: color.main,
-      "primary-foreground": "oklch(0% 0 0)",
+      "primary-foreground": lightMainForeground,
       secondary: "oklch(23.93% 0 0)",
       "secondary-foreground": "oklch(100% 0 0)",
       muted: "oklch(23.93% 0 0)",
       "muted-foreground": "oklch(100% 0 0)",
       accent: color.main,
-      "accent-foreground": "oklch(0% 0 0)",
+      "accent-foreground": lightMainForeground,
       destructive: "oklch(63.68% 0.2078 25.33)",
       "destructive-foreground": "oklch(0% 0 0)",
       error: "oklch(44.4% 0.177 26.899)",
@@ -38,7 +41,7 @@ export function createThemeCssVars(color: ColorPalette) {
       input: "oklch(0% 0 0)",
       ring: "oklch(0% 0 0)",
       main: color.main,
-      "main-foreground": "oklch(0% 0 0)",
+      "main-foreground": lightMainForeground,
       "secondary-background": "oklch(100% 0 0)",
       overlay: "rgba(0, 0, 0, 0.8)",
       shadow: "var(--box-shadow-x) var(--box-shadow-y) 0px 0px var(--border)",
@@ -57,7 +60,7 @@ export function createThemeCssVars(color: ColorPalette) {
       sidebar: color.bg,
       "sidebar-foreground": "oklch(0% 0 0)",
       "sidebar-primary": color.main,
-      "sidebar-primary-foreground": "oklch(0% 0 0)",
+      "sidebar-primary-foreground": lightMainForeground,
       "sidebar-accent": "oklch(23.93% 0 0)",
       "sidebar-accent-foreground": "oklch(100% 0 0)",
       "sidebar-border": "oklch(0% 0 0)",

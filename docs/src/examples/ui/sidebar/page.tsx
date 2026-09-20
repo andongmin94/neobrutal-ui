@@ -7,12 +7,13 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import colors from "@/data/colors";
 
 import { AppSidebar } from "./_sidebar";
 
 const metrics = [
   { label: "Components", value: "49", detail: "Documented and installable" },
-  { label: "Themes", value: "17", detail: "Light and dark presets" },
+  { label: "Themes", value: String(colors.length), detail: "Light and dark presets" },
   { label: "Templates", value: "4", detail: "Ready for the App Router" },
 ];
 

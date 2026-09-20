@@ -114,7 +114,7 @@ test("customizer uses scoped tokens, full CSS export, and reversible defaults", 
   page,
 }) => {
   await page.goto("/styling");
-  await expect(page.getByLabel("Palette", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("Palette", { exact: true })).toHaveValue("mono");
   const shellBefore = await page
     .locator("html")
     .evaluate((node) => getComputedStyle(node).getPropertyValue("--main"));
@@ -139,6 +139,6 @@ test("customizer uses scoped tokens, full CSS export, and reversible defaults", 
     .click();
   expect(await page.evaluate(() => navigator.clipboard.readText())).toContain("--radius: 12px;");
   await page.getByRole("button", { name: "Reset defaults" }).click();
-  await expect(page.getByLabel("Palette", { exact: true })).toHaveValue("yellow");
+  await expect(page.getByLabel("Palette", { exact: true })).toHaveValue("mono");
   await expect(page.locator("[data-theme-preview]")).toHaveCSS("--radius", "5px");
 });

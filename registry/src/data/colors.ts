@@ -1,5 +1,24 @@
 const colors = [
   {
+    name: "mono",
+    main: "#292b29",
+    darkMain: "#e5e2d9",
+    bg: "#f5f4f0",
+    darkBg: "#181a19",
+
+    chart1: "#526e85",
+    chart2: "#687e62",
+    chart3: "#9a744c",
+    chart4: "#887196",
+    chart5: "#477c79",
+
+    darkChart1: "#9db8cc",
+    darkChart2: "#a3b997",
+    darkChart3: "#d3b083",
+    darkChart4: "#baa3c9",
+    darkChart5: "#8bbab5",
+  },
+  {
     name: "red",
     main: "oklch(67.28% 0.2147 24.22)",
     darkMain: "oklch(70.49% 0.1869 22.23)",

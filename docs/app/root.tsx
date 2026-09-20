@@ -10,6 +10,7 @@ import {
 import { ReactRouterProvider } from "fumadocs-core/framework/react-router";
 
 import type { Route } from "./+types/root";
+import { defaultColor } from "@/data/theme";
 import { BridgeToaster } from "~/components/toaster";
 import { SITE_NAME, SOCIAL_IMAGE_URL } from "~/lib/site";
 import NotFound from "~/routes/not-found";
@@ -25,6 +26,8 @@ const themeScript = `
   document.documentElement.classList.toggle("dark", theme === "dark");
   document.documentElement.dataset.theme = theme;
   document.documentElement.style.colorScheme = theme;
+  const colors = ${JSON.stringify({ light: defaultColor.bg, dark: defaultColor.darkBg })};
+  document.querySelector('meta[name="theme-color"]').setAttribute("content", colors[theme]);
 })();
 `;
 
@@ -48,7 +51,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#ffcc00" />
+        <meta name="theme-color" content={defaultColor.bg} suppressHydrationWarning />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content={SITE_NAME} />
         <meta property="og:image" content={SOCIAL_IMAGE_URL} />

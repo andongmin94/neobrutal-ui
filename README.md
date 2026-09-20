@@ -85,8 +85,10 @@ npx shadcn@latest add @neobrutal-ui/theme-red
 
 ## Themes, templates, and charts
 
-The shared base starts with the yellow theme.
-Install one named theme when you want to replace the project-wide light and dark colors.
+The shared base starts with **Mono**: warm off-white and ink in light mode, charcoal and
+soft ivory in dark mode. Muted blue, sage, and earth-toned chart colors keep data series distinct.
+The same palette is available as `theme-mono`; the colorful presets, including yellow, remain
+optional. Install one named theme to replace the project-wide light and dark colors.
 Page templates target the Next.js App Router; regular UI components support Next.js and Vite.
 
 The blog combines topic filters, search, and sorting. The portfolio includes expandable case

@@ -112,15 +112,15 @@ function readJson(filePath) {
 
 function checkThemeContract() {
   const base = items.get("neobrutal-ui");
-  const yellow = items.get("theme-yellow");
+  const mono = items.get("theme-mono");
   const themes = [...items.values()].filter((item) => item.type === "registry:style");
 
-  if (!base?.cssVars || !yellow?.cssVars || themes.length === 0) {
-    errors.push("theme: base and discoverable theme-yellow items are required");
+  if (!base?.cssVars || !mono?.cssVars || themes.length === 0) {
+    errors.push("theme: base and discoverable theme-mono items are required");
     return;
   }
-  if (stableJson(base.cssVars) !== stableJson(yellow.cssVars)) {
-    errors.push("theme: the base and theme-yellow must publish identical CSS variables");
+  if (stableJson(base.cssVars) !== stableJson(mono.cssVars)) {
+    errors.push("theme: the base and theme-mono must publish identical CSS variables");
   }
   for (const entry of fs.readdirSync(outputDirectory, { withFileTypes: true })) {
     if (entry.isDirectory()) errors.push(`registry output must be flat: ${entry.name}`);

@@ -6,9 +6,30 @@
     <title>neobrutal-ui registry</title>
     <style>
       :root {
-        color: #111;
-        background: #f6e85f;
+        --background: #f5f4f0;
+        --surface: #fff;
+        --foreground: #292b29;
+        --main: #292b29;
+        --main-foreground: #f5f4f0;
+        color-scheme: light;
+        color: var(--foreground);
+        background: var(--background);
         font-family: Arial, Helvetica, sans-serif;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --background: #181a19;
+          --surface: #1f1f1f;
+          --foreground: #e6e6e6;
+          --main: #e5e2d9;
+          --main-foreground: #181a19;
+          color-scheme: dark;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
       }
 
       body {
@@ -21,7 +42,7 @@
       main {
         width: min(760px, calc(100vw - 32px));
         border: 3px solid #111;
-        background: #fff;
+        background: var(--surface);
         box-shadow: 8px 8px 0 #111;
         padding: 28px;
       }
@@ -42,8 +63,8 @@
         display: inline-block;
         margin: 10px 10px 0 0;
         border: 2px solid #111;
-        color: #111;
-        background: #7df9ff;
+        color: var(--main-foreground);
+        background: var(--main);
         box-shadow: 4px 4px 0 #111;
         padding: 10px 14px;
         font-weight: 900;
@@ -64,8 +85,14 @@
       }
 
       a:focus-visible {
-        outline: 3px solid #111;
+        outline: 3px solid var(--foreground);
         outline-offset: 4px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        a {
+          transition: none;
+        }
       }
     </style>
   </head>
@@ -75,7 +102,7 @@
       <p>Modern neobrutalist registry items for shadcn/ui.</p>
       <a href="/r/registry.json">Registry</a>
       <a href="/r/button.json">Button</a>
-      <a href="/r/theme-yellow.json">Yellow Style</a>
+      <a href="/r/theme-mono.json">Mono Style</a>
     </main>
   </body>
 </html>

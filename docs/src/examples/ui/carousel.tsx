@@ -22,7 +22,7 @@ const slides = [
   },
   {
     eyebrow: "Theme",
-    title: "Yellow preset",
+    title: "Mono preset",
     detail: "Hard shadows, strong borders, and a complete light and dark token pair.",
     className: "bg-main text-main-foreground",
   },

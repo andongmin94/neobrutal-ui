@@ -1,5 +1,6 @@
 import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
+import { defaultColor } from "@/data/theme";
 
 type Theme = "light" | "dark";
 
@@ -20,6 +21,9 @@ function applyTheme(theme: Theme) {
   root.classList.toggle("dark", theme === "dark");
   root.dataset.theme = theme;
   root.style.colorScheme = theme;
+  document
+    .querySelector('meta[name="theme-color"]')
+    ?.setAttribute("content", theme === "dark" ? defaultColor.darkBg : defaultColor.bg);
   window.localStorage.setItem(STORAGE_KEY, theme);
   window.dispatchEvent(new CustomEvent("neobrutal-ui:theme", { detail: theme }));
 }

@@ -10,6 +10,7 @@ export default defineConfig({
     "search-recovery.spec.ts",
     "release-controls.spec.ts",
     "template-navigation.spec.ts",
+    "mono-theme.spec.ts",
   ],
   fullyParallel: true,
   workers: process.env.CI ? 2 : undefined,
