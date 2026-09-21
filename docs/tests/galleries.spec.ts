@@ -26,15 +26,19 @@ for (const group of series) {
       level: 2,
     });
     await expect(heading).toBeVisible();
-    const sources = section.getByRole("button", { name: "View source", exact: true });
-    await expect(sources).toHaveCount(group.count);
+    const examples = section.locator("[data-chart-example]");
+    await expect(examples).toHaveCount(group.count);
+    await expect(section.getByRole("button", { name: "View source", exact: true })).toHaveCount(
+      group.count,
+    );
     await expect(section.getByRole("link", { name: "Install recipe", exact: true })).toHaveCount(
       group.count,
     );
     for (let index = 0; index < group.count; index++) {
-      const button = sources.nth(index);
-      await button.scrollIntoViewIfNeeded();
-      await expect(button.locator("..").locator(".recharts-surface").first()).toBeVisible();
+      const example = examples.nth(index);
+      const button = example.getByRole("button", { name: "View source", exact: true });
+      await example.scrollIntoViewIfNeeded();
+      await expect(example.locator(".recharts-surface").first()).toBeVisible();
       await button.click();
       const dialog = page.getByRole("dialog");
       await expect(dialog).toBeVisible();

@@ -146,7 +146,10 @@ export default function Examples() {
 
 function ChartComponent({ children, chart }: { children: ReactNode; chart: ChartExample }) {
   return (
-    <div className="flex h-full min-w-0 flex-col [&>[data-slot=card]]:flex-1">
+    <div
+      data-chart-example={chart.registryName}
+      className="flex h-full min-w-0 flex-col [&>[data-slot=card]]:flex-1"
+    >
       {children}
       <div className="mt-4 grid grid-cols-2 gap-3">
         <a
