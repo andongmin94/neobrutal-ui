@@ -183,11 +183,11 @@ test("removed decorative collection is absent from sources and built catalogs", 
     );
 });
 
-
 test("published examples use fictional sample identities instead of maintainer profiles", () => {
   const examplesRoot = path.join(root, "docs/src/examples/ui");
-  const exampleFiles = readdirSync(examplesRoot, { recursive: true })
-    .filter((entry): entry is string => typeof entry === "string" && entry.endsWith(".tsx"));
+  const exampleFiles = readdirSync(examplesRoot, { recursive: true }).filter(
+    (entry): entry is string => typeof entry === "string" && entry.endsWith(".tsx"),
+  );
 
   for (const relative of exampleFiles) {
     assert.doesNotMatch(
