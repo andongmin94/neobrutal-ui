@@ -48,11 +48,11 @@ Then use the installed source normally:
 import { Button } from "@/components/ui/button";
 
 export default function Example() {
-  return <Button>Ship it</Button>;
+  return <Button>Click me</Button>;
 }
 ```
 
-## Short registry commands
+## Optional: shorter install commands
 
 Direct URLs always work. For namespaced commands, add this to the existing `registries` object in
 `components.json`:
