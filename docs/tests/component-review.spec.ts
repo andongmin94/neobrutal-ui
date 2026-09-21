@@ -128,13 +128,18 @@ test("breadcrumb overflow menu exposes its intermediate pages", async ({ page },
 test("scroll area reveals the last published activity", async ({ page }, info) => {
   const canvas = await openCanvas(page, "scroll-area");
   const viewport = canvas.locator('[data-slot="scroll-area-viewport"]');
+  // Lazy mounting changes the host height after the initial page scroll.
+  await viewport.scrollIntoViewIfNeeded();
+  await expect(viewport).toBeInViewport({ ratio: 1 });
   await viewport.evaluate((node) => {
     node.scrollTop = node.scrollHeight;
   });
   await expect
     .poll(() => viewport.evaluate((node) => node.scrollHeight - node.clientHeight - node.scrollTop))
     .toBeLessThanOrEqual(1);
-  await expect(viewport.getByText("Next.js App Router pages generated")).toBeInViewport();
+  await expect(viewport.getByText("Next.js App Router pages generated")).toBeInViewport({
+    ratio: 1,
+  });
   await capture(canvas, "scroll-area-last-activity", info);
 });
 
