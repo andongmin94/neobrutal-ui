@@ -140,7 +140,9 @@ test("scroll area reveals the last published activity", async ({ page }, info) =
 
 test("sidebar collapsed, mobile, disclosure and menu states work", async ({ page }, info) => {
   const canvas = await openCanvas(page, "sidebar");
-  const toggle = canvas.getByRole("button", { name: "Toggle Sidebar", exact: true });
+  const toggle = canvas.locator('button[data-sidebar="trigger"]');
+  await expect(toggle).toHaveCount(1);
+  await expect(toggle).toHaveAccessibleName("Toggle Sidebar");
   const mobile = Boolean(info.project.use.isMobile);
   const sidebar = mobile
     ? page.locator('[data-slot="sidebar"][data-mobile="true"]')
@@ -165,11 +167,22 @@ test("sidebar collapsed, mobile, disclosure and menu states work", async ({ page
   await sidebar.getByRole("button", { name: "Models", exact: true }).click();
   await expect(sidebar.getByRole("link", { name: "Genesis", exact: true })).toBeVisible();
   await capture(sidebar, "sidebar-models-and-team-selection", info);
-  await sidebar.locator('[data-slot="sidebar-menu-action"]').first().click();
+  const project = sidebar.locator('[data-sidebar="menu-item"]').filter({
+    has: page.getByRole("link", { name: "Design Engineering", exact: true }),
+  });
+  const projectAction = project.getByRole("button", { name: "More", exact: true });
+  await expect(projectAction).toHaveCount(1);
+  await projectAction.click();
   menu = page.getByRole("menu");
+  await expect(menu.getByRole("menuitem")).toHaveText([
+    "View Project",
+    "Share Project",
+    "Delete Project",
+  ]);
   await capture(menu, "sidebar-project-actions", info);
   await page.keyboard.press("Escape");
   await expect(menu).toBeHidden();
+  await expect(projectAction).toBeFocused();
   await sidebar.getByRole("button", { name: /hello@example.com/ }).click();
   await capture(menu, "sidebar-account-actions", info);
   await page.keyboard.press("Escape");
