@@ -7,23 +7,18 @@ import { SearchLauncher } from "./search-launcher";
 import { ThemeToggle } from "./theme-toggle";
 
 const GITHUB_REPOSITORY_URL = "https://github.com/andongmin94/neobrutal-ui";
-const GITHUB_REPOSITORY_API_URL = "https://api.github.com/repos/andongmin94/neobrutal-ui";
+const GITHUB_STARS_URL = "/api/github-stars";
 
 let githubStarsRequest: Promise<number | null> | undefined;
 
 function getGitHubStars() {
   if (typeof window === "undefined") return Promise.resolve(null);
-  if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-    return Promise.resolve(null);
-  }
 
-  githubStarsRequest ??= fetch(GITHUB_REPOSITORY_API_URL, {
-    headers: { Accept: "application/vnd.github+json" },
-  })
+  githubStarsRequest ??= fetch(GITHUB_STARS_URL)
     .then(async (response) => {
       if (!response.ok) return null;
-      const payload = (await response.json()) as { stargazers_count?: unknown };
-      return typeof payload.stargazers_count === "number" ? payload.stargazers_count : null;
+      const payload = (await response.json());
+      return typeof payload.count === "number" ? payload.count : null;
     })
     .catch(() => null);
 
