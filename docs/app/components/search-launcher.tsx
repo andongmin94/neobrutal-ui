@@ -69,8 +69,10 @@ export function SearchLauncher() {
         const { staticClient } = await import("fumadocs-core/search/client/orama-static");
         // The library caches index promises by URL, including a failed request.
         // Only an explicit retry gets a fresh key; normal queries reuse its index.
+        // Keep exact term matching so unrelated fuzzy hits do not mask the empty state.
         return staticClient({
           from: retry ? `/api/search?attempt=${retry}` : "/api/search",
+          search: { tolerance: 0 },
         }).search(value);
       },
     }),
