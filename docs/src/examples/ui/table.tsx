@@ -13,46 +13,49 @@ const invoices = [
   {
     invoice: "INV001",
     paymentStatus: "Paid",
-    totalAmount: "$250.00",
+    totalAmount: 250,
     paymentMethod: "Credit Card",
   },
   {
     invoice: "INV002",
     paymentStatus: "Pending",
-    totalAmount: "$150.00",
+    totalAmount: 150,
     paymentMethod: "PayPal",
   },
   {
     invoice: "INV003",
     paymentStatus: "Unpaid",
-    totalAmount: "$350.00",
+    totalAmount: 350,
     paymentMethod: "Bank Transfer",
   },
   {
     invoice: "INV004",
     paymentStatus: "Paid",
-    totalAmount: "$450.00",
+    totalAmount: 450,
     paymentMethod: "Credit Card",
   },
   {
     invoice: "INV005",
     paymentStatus: "Paid",
-    totalAmount: "$550.00",
+    totalAmount: 550,
     paymentMethod: "PayPal",
   },
   {
     invoice: "INV006",
     paymentStatus: "Pending",
-    totalAmount: "$200.00",
+    totalAmount: 200,
     paymentMethod: "Bank Transfer",
   },
   {
     invoice: "INV007",
     paymentStatus: "Unpaid",
-    totalAmount: "$300.00",
+    totalAmount: 300,
     paymentMethod: "Credit Card",
   },
 ];
+
+const currency = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+const total = invoices.reduce((sum, invoice) => sum + invoice.totalAmount, 0);
 
 export default function TableDemo() {
   return (
@@ -72,14 +75,14 @@ export default function TableDemo() {
             <TableCell className="font-base">{invoice.invoice}</TableCell>
             <TableCell>{invoice.paymentStatus}</TableCell>
             <TableCell>{invoice.paymentMethod}</TableCell>
-            <TableCell className="text-right">{invoice.totalAmount}</TableCell>
+            <TableCell className="text-right">{currency.format(invoice.totalAmount)}</TableCell>
           </TableRow>
         ))}
       </TableBody>
       <TableFooter>
         <TableRow>
           <TableCell colSpan={3}>Total</TableCell>
-          <TableCell className="text-right">$2,500.00</TableCell>
+          <TableCell className="text-right">{currency.format(total)}</TableCell>
         </TableRow>
       </TableFooter>
     </Table>

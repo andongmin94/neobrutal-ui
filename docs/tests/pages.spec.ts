@@ -36,7 +36,11 @@ for (const route of [...new Set(routes)].sort()) {
       await expect(host.locator(".react-host__mount > *").first()).toBeAttached();
       await expect(host.locator(".react-host__error")).toHaveCount(0);
       await info.attach(`preview-${index + 1}`, {
-        body: await preview.locator(".component-preview__canvas").screenshot(),
+        body: await preview.locator(".component-preview__canvas").screenshot({
+          animations: "disabled",
+          // Keep sticky page chrome out of scoped component evidence, without changing layout.
+          style: ".site-header, .site-header * { visibility: hidden !important; }",
+        }),
         contentType: "image/png",
       });
       await preview.getByRole("tab", { name: "Code", exact: true }).click();

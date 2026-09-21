@@ -1,4 +1,7 @@
+"use client";
+
 import { Copy, ExternalLink, FolderInput, Pin, Trash2 } from "lucide-react";
+import { useState } from "react";
 
 import {
   ContextMenu,
@@ -17,6 +20,9 @@ import {
 } from "@/components/ui/context-menu";
 
 export default function ContextMenuDemo() {
+  const [pinned, setPinned] = useState(true);
+  const [visibility, setVisibility] = useState("team");
+
   return (
     <ContextMenu>
       <ContextMenuTrigger
@@ -57,13 +63,16 @@ export default function ContextMenuDemo() {
           </ContextMenuSubContent>
         </ContextMenuSub>
         <ContextMenuSeparator />
-        <ContextMenuCheckboxItem checked>
+        <ContextMenuCheckboxItem
+          checked={pinned}
+          onCheckedChange={(checked) => setPinned(checked === true)}
+        >
           <Pin aria-hidden="true" />
           Pin to workspace
         </ContextMenuCheckboxItem>
         <ContextMenuSeparator />
         <ContextMenuLabel inset>Visibility</ContextMenuLabel>
-        <ContextMenuRadioGroup value="team">
+        <ContextMenuRadioGroup value={visibility} onValueChange={setVisibility}>
           <ContextMenuRadioItem value="private">Private</ContextMenuRadioItem>
           <ContextMenuRadioItem value="team">Team</ContextMenuRadioItem>
         </ContextMenuRadioGroup>
