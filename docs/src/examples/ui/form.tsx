@@ -46,7 +46,7 @@ export default function FormDemo() {
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="andongmin94" {...field} />
+                <Input placeholder="johndoe" {...field} />
               </FormControl>
               <FormDescription>This is your public display name.</FormDescription>
               <FormMessage />

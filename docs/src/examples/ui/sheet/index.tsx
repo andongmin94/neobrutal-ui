@@ -44,11 +44,11 @@ export default function SheetDemo() {
           >
             <div className="grid gap-3">
               <Label htmlFor="sheet-demo-name">Name</Label>
-              <Input id="sheet-demo-name" defaultValue="Andong Min" required />
+              <Input id="sheet-demo-name" defaultValue="John Doe" required />
             </div>
             <div className="grid gap-3">
               <Label htmlFor="sheet-demo-username">Username</Label>
-              <Input id="sheet-demo-username" defaultValue="@andongmin94" required />
+              <Input id="sheet-demo-username" defaultValue="@johndoe" required />
             </div>
           </form>
           <SheetFooter>

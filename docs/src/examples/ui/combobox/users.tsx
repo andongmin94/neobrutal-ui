@@ -4,7 +4,7 @@ import { CheckIcon, ChevronsUpDown, PlusCircleIcon } from "lucide-react";
 
 import * as React from "react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -22,15 +22,18 @@ import { cn } from "@/lib/utils";
 const users = [
   {
     id: "1",
-    username: "andongmin94",
+    username: "johndoe",
+    initials: "JD",
   },
   {
     id: "2",
-    username: "leerob",
+    username: "janedoe",
+    initials: "JD",
   },
   {
     id: "3",
-    username: "evilrabbit",
+    username: "alexsmith",
+    initials: "AS",
   },
 ] as const;
 
@@ -57,11 +60,7 @@ export default function UserCombobox() {
           {selectedUser ? (
             <div className="flex items-center gap-2">
               <Avatar className="size-5">
-                <AvatarImage
-                  src={`https://github.com/${selectedUser.username}.png`}
-                  alt={`@${selectedUser.username}`}
-                />
-                <AvatarFallback>{selectedUser.username[0]}</AvatarFallback>
+                <AvatarFallback>{selectedUser.initials}</AvatarFallback>
               </Avatar>
               {selectedUser.username}
             </div>
@@ -87,11 +86,7 @@ export default function UserCombobox() {
                   }}
                 >
                   <Avatar className="size-5">
-                    <AvatarImage
-                      src={`https://github.com/${user.username}.png`}
-                      alt={`@${user.username}`}
-                    />
-                    <AvatarFallback>{user.username[0]}</AvatarFallback>
+                    <AvatarFallback>{user.initials}</AvatarFallback>
                   </Avatar>
                   {user.username}
                   <CheckIcon

@@ -89,6 +89,50 @@
   gap: 9px;
 }
 
+.github-repo-button {
+  display: inline-flex;
+  height: 40px;
+  flex: none;
+  align-items: center;
+  overflow: hidden;
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-small);
+  background: var(--secondary-background);
+  color: var(--foreground);
+  text-decoration: none;
+}
+
+.github-repo-button > svg {
+  margin-inline: 9px;
+  flex: none;
+}
+
+.github-repo-button__stars {
+  display: inline-flex;
+  min-width: 34px;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 8px;
+  border-left: var(--border-width) solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.github-repo-button__stars svg {
+  fill: currentColor;
+}
+
+@media (hover: hover) {
+  .github-repo-button:hover {
+    background: var(--main);
+    color: var(--main-foreground);
+  }
+}
+
 .search-launcher {
   display: inline-flex;
   height: 40px;
@@ -737,7 +781,20 @@
   }
 
   .site-actions {
-    gap: 7px;
+    gap: 6px;
+  }
+
+  .github-repo-button > svg {
+    margin-inline: 8px;
+  }
+
+  .github-repo-button__stars {
+    min-width: 28px;
+    padding-inline: 6px;
+  }
+
+  .github-repo-button__stars svg {
+    display: none;
   }
 
   .search-launcher {

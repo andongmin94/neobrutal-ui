@@ -60,9 +60,9 @@ import {
 // This is sample data.
 const data = {
   user: {
-    name: "andongmin94",
+    name: "John Doe",
     email: "hello@example.com",
-    avatar: "https://github.com/andongmin94.png?size=40",
+    avatar: "/avatar-placeholder.svg",
   },
   teams: [
     {
@@ -347,8 +347,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   size="lg"
                 >
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={data.user.avatar} alt="@andongmin94" />
-                    <AvatarFallback>AM</AvatarFallback>
+                    <AvatarImage src={data.user.avatar} alt="John Doe" />
+                    <AvatarFallback>JD</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-heading">{data.user.name}</span>
@@ -366,8 +366,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <DropdownMenuLabel className="p-0 font-base">
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={data.user.avatar} alt="@andongmin94" />
-                      <AvatarFallback>AM</AvatarFallback>
+                      <AvatarImage src={data.user.avatar} alt="John Doe" />
+                      <AvatarFallback>JD</AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-heading">{data.user.name}</span>

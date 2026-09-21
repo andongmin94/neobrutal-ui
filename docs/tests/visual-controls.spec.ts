@@ -41,6 +41,24 @@ test("chart selectors expose styled options, selection, and keyboard focus", asy
   expect(result.violations).toEqual([]);
 });
 
+test("chart install and source actions share one compact row", async ({ page }, info) => {
+  await page.goto("/charts#area-chart");
+  const chart = page.locator('[data-chart-recipe="activity"]').locator("..");
+  const install = chart.getByRole("link", { name: "Install recipe", exact: true });
+  const source = chart.getByRole("button", { name: "View source", exact: true });
+  await expect(install).toBeVisible();
+  await expect(source).toBeVisible();
+  const installBox = (await install.boundingBox())!;
+  const sourceBox = (await source.boundingBox())!;
+  expect(Math.abs(installBox.y - sourceBox.y)).toBeLessThanOrEqual(1);
+  expect(Math.abs(installBox.height - sourceBox.height)).toBeLessThanOrEqual(1);
+  expect(sourceBox.x).toBeGreaterThan(installBox.x + installBox.width);
+  await info.attach("chart-actions-one-row", {
+    body: await chart.screenshot({ animations: "disabled" }),
+    contentType: "image/png",
+  });
+});
+
 test("date picker stays anchored, uses a neutral surface, and restores focus", async ({
   page,
 }, info) => {

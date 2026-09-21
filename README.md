@@ -1,22 +1,36 @@
 # neobrutal-ui
 
-**Bold by design. Clear in use.**
+**Source-first neobrutalist UI for React, distributed as a shadcn registry.**
 
-Neobrutalist React UI for building interfaces with clear actions, selection, and feedback.
-Raised buttons press down in stages; shared colors, borders, and shadows keep the pieces together.
-Install components, themes, and page templates with the shadcn CLI and edit the source in your project.
+[![Verify](https://github.com/andongmin94/neobrutal-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/andongmin94/neobrutal-ui/actions/workflows/ci.yml)
+[![GitHub stars](https://img.shields.io/github/stars/andongmin94/neobrutal-ui?style=flat-square)](https://github.com/andongmin94/neobrutal-ui/stargazers)
+[![MIT License](https://img.shields.io/badge/license-MIT-111111?style=flat-square)](LICENSE)
+
+Built with **React 19**, **Base UI**, and **Tailwind CSS v4**. Install the source with the shadcn CLI,
+then edit it as application code: no runtime package and no separate registry server.
 
 [Documentation](https://neobrutal-ui.andongmin.com/docs) ·
-[Installation](https://neobrutal-ui.andongmin.com/docs/installation) ·
-[Component directory](https://neobrutal-ui.andongmin.com) ·
-[Try the CMS demo](https://neobrutal-ui.andongmin.com/templates/cms)
+[Components](https://neobrutal-ui.andongmin.com) ·
+[Charts](https://neobrutal-ui.andongmin.com/charts) ·
+[Templates](https://neobrutal-ui.andongmin.com/templates) ·
+[Styling](https://neobrutal-ui.andongmin.com/styling)
 
-![neobrutal-ui component preview](docs/public/preview.png)
+## What is included
+
+| Surface | Current direction |
+| --- | --- |
+| Components | Editable controls and compositions with tactile borders, shadows, focus, selection, and feedback states |
+| Themes | Cool **Mono** by default, optional **Mono Warm**, plus color presets with light and dark modes |
+| Charts | 8 installable analytical recipes with controls, calculated summaries, tooltips, and exact data tables |
+| Templates | Blog, portfolio, local CMS, and link hub pages for the Next.js App Router |
+| Tooling | Direct registry URLs, optional `@neobrutal-ui/*` namespace, source previews, and isolated installation checks |
+
+The design goal is not decorative brutalism. Raised actions should feel pressable, selection should
+stay distinct from hover, keyboard focus should be obvious, and dense screens should still scan cleanly.
 
 ## Quick start
 
-Use React 19, Tailwind CSS v4, and an initialized shadcn project.
-Choose Base UI if `shadcn init` asks which component library to use.
+Start from a shadcn project using Base UI:
 
 ```bash
 npx shadcn@latest init
@@ -24,51 +38,24 @@ npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json
 npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json --overwrite
 ```
 
-The first-button command replaces the default button that `init` may have created.
-Commit an existing customized button before using `--overwrite`; it replaces the selected files.
-Subsequent installs do not need to overwrite your customizations.
+`neobrutal-ui.json` installs the shared base: theme variables, global styles, utilities, and core
+dependencies. The first Button install may replace the button created by `shadcn init`; commit an
+existing customized button before using `--overwrite`.
 
-Then render your first component:
+Then use the installed source normally:
 
 ```tsx
 import { Button } from "@/components/ui/button";
 
 export default function Example() {
-  return <Button>Click me</Button>;
+  return <Button>Ship it</Button>;
 }
 ```
 
-A button with a bold border and hard shadow means the setup worked.
-Browse the [component directory](https://neobrutal-ui.andongmin.com) to add more pieces.
+## Short registry commands
 
-## See the pieces working together
-
-Open the [CMS demo](https://neobrutal-ui.andongmin.com/templates/cms) to search, filter, select,
-and edit posts in one screen. Preview the content, save a local version, or discard changes.
-It demonstrates how the controls fit together, not a hosted CMS.
-Edits stay in memory for the current page view and reset on refresh. Connect your own data and
-save handler before using it in an application.
-
-Our [interaction rules](https://neobrutal-ui.andongmin.com/docs#interaction-rules) explain when
-to use raised actions, persistent selection, visible focus, and simple containers.
-
-## Adding neobrutal-ui to an existing project
-
-The shared base updates project-wide colors, borders, shadows, and global styles.
-Commit your current work first, then inspect the base before installing it:
-
-```bash
-npx shadcn@latest view https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json
-```
-
-Compositions follow your configured component and utility aliases. Adding a template or recipe
-does not reinstall the base theme. Page routes still target the Next.js App Router.
-
-## Optional: shorter install commands
-
-Direct URLs work without extra configuration.
-To use shorter commands such as `@neobrutal-ui/dialog`, add this entry to the existing
-`registries` object in `components.json`:
+Direct URLs always work. For namespaced commands, add this to the existing `registries` object in
+`components.json`:
 
 ```json
 {
@@ -78,32 +65,63 @@ To use shorter commands such as `@neobrutal-ui/dialog`, add this entry to the ex
 }
 ```
 
+Then install by name:
+
 ```bash
 npx shadcn@latest add @neobrutal-ui/dialog
-npx shadcn@latest add @neobrutal-ui/theme-red
+npx shadcn@latest add @neobrutal-ui/theme-mono-warm
+npx shadcn@latest add @neobrutal-ui/chart-release-activity
 ```
 
-## Themes, templates, and charts
+## Themes
 
-The shared base starts with **Mono**: cool white and graphite in light mode, cool charcoal and
-pale silver in dark mode. Muted blue, sage, and earth-toned chart colors keep data series distinct.
-The same palette is available as `theme-mono`; the colorful presets, including yellow, remain
-optional. Install one named theme to replace the project-wide light and dark colors.
-Page templates target the Next.js App Router; regular UI components support Next.js and Vite.
+**Mono** is the default: cool near-white and graphite in light mode, cool charcoal and pale silver
+in dark mode. Data visualization keeps restrained blue, sage, earth, and violet accents so charts
+remain readable without turning the interface colorful.
 
-The blog combines topic filters, search, and sorting. The portfolio includes expandable case
-studies. The CMS has a local editor with reading preview and save/discard controls. The link hub
-groups destinations by intent and includes an explicit contact action. Gallery thumbnails
-render the same current template components rather than separate screenshot assets.
+**Mono Warm** preserves the earlier milkier off-white / softer charcoal treatment as an optional
+preset. The remaining color themes are also optional and replace the same shared tokens.
 
-The [chart workbench](https://neobrutal-ui.andongmin.com/charts) includes eight independently
-installable recipes: revenue targets, signup conversion, response-time budgets, release activity,
-delivery capacity, paired build durations, work allocation, and sequential installation traces.
-Each pairs controls with calculated summaries and an exact data table. All chart data is illustrative.
+Open the [styling workbench](https://neobrutal-ui.andongmin.com/styling) to compare presets and
+export the corresponding theme.
+
+## Charts
+
+The [chart workbench](https://neobrutal-ui.andongmin.com/charts) currently ships eight independent
+recipes covering revenue targets, signup conversion, service latency, release activity, delivery
+capacity, build duration, work allocation, and install diagnostics.
+
+Each recipe is source-editable and keeps its controls, visual summary, explanatory copy, and exact
+data table together. Sample values are illustrative, not live telemetry.
+
+## Templates
+
+The template gallery contains four page-level compositions:
+
+- **Blog** — search, topic filters, sorting, article cards, and post pages.
+- **Portfolio** — project summaries and expandable case studies.
+- **CMS** — local search/filter/editor/preview flow with explicit save and discard feedback.
+- **Link hub** — grouped destinations and a clear contact action.
+
+Installed templates inherit the consumer project's theme tokens; gallery presets are documentation
+presentation only.
+
+## Existing projects
+
+The shared base changes project-wide colors, borders, shadows, and global styles. Inspect it before
+adding it to an established application:
+
+```bash
+npx shadcn@latest view https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json
+```
+
+Component and recipe installs respect configured aliases. Follow-up installs do not reinstall the
+base theme, and the verification suite checks that customized components and application CSS survive
+subsequent additions.
 
 ## Development
 
-Use Node.js 22.12 or newer within the Node 22 release line and npm. From the repository root:
+Use Node.js 22.12+ within the Node 22 release line and npm:
 
 ```bash
 npm ci --prefix registry
@@ -112,57 +130,43 @@ npm run build --prefix registry
 npm run dev --prefix docs
 ```
 
-`registry/src` is the source of truth. The registry build generates installation JSON and
-synchronizes components, templates, theme modules, theme CSS, and catalog descriptions into docs.
-Generated paths are ignored by Git: rebuild them instead of editing or committing copies.
-The documentation site uses React Router, Vite, and Fumadocs MDX. Preview modules are discovered
-from `docs/src/examples/ui`; `_`-prefixed files are helpers. Markdown styling uses explicit
-`md-*` classes so document typography cannot accidentally restyle live component previews.
+`registry/src` is the source of truth. Registry builds generate shadcn JSON and synchronize managed
+component/template/theme data into the docs app. Do not hand-edit generated copies.
 
-`format` writes fixes; `lint` only checks files. During implementation, format changed source
-and run its focused tests. Before publishing, execute the complete sequence in
-[Verify](.github/workflows/ci.yml), including schema/contracts, type and asset checks, all
-independent component installations, browser suites, and clean generation. The release scope
-and evidence limits are defined in [QUALITY.md](QUALITY.md); contributor rules are in
-[AGENTS.md](AGENTS.md).
-
-For the complete isolated installation matrix after building the registry:
+Useful verification commands:
 
 ```bash
+npm run lint --prefix registry
+npm run typecheck --prefix registry
+npm run lint --prefix docs
+npm run typecheck --prefix docs
+npm run test:browser --prefix docs
 node registry/scripts/verify-independent-items.mjs
 ```
 
-Every file-bearing item is installed into its own fresh project with only its declared
-dependencies and the explicit base. Components and recipes are checked in Next.js and Vite;
-page templates are checked in Next.js. The existing-project integration check separately tests
-custom aliases, selected themes, application CSS, and customized components without docs CSS:
-
-```bash
-npm run consumer:verify --prefix registry -- --integration
-```
-
-## Deployment
-
-Vercel uses `docs` as its root and `build/client` as output. `docs/vercel.json` installs both
-projects and builds the registry before the documentation. The generated registry is served
-from `/r`; no separate registry server or npm release is required. Set `REGISTRY_BASE_URL`
-before building only when hosting registry dependencies at another origin.
-
-The production Verify job checks the exact deployed commit, security headers, live catalog,
-representative fresh installs, and cross-browser behavior. Both jobs must pass for the final
-commit. Directory metadata is prepared in `registry/directory-entry.json`; official submission
-is a separate owner decision, not an automatic consequence of a successful build.
+The canonical release sequence is [.github/workflows/ci.yml](.github/workflows/ci.yml). It verifies
+registry contracts, builds, budgets, browser behavior, independent installs, existing-project
+integration, clean generation, the exact production commit, live registry endpoints, and deployed
+cross-browser smoke tests. Finite release gates and evidence limits are documented in
+[QUALITY.md](QUALITY.md).
 
 ## Repository layout
 
 | Path | Responsibility |
 | --- | --- |
-| `registry/src` | Component, template, token, and catalog sources |
-| `registry/scripts` | Build and installation checks |
-| `docs` | Documentation site and live previews |
-| `registry/directory-entry.json` | Proposed shadcn directory metadata |
+| `registry/src` | Installable components, recipes, templates, tokens, and catalog data |
+| `registry/scripts` | Registry generation and isolated consumer checks |
+| `docs/app` | Documentation shell and special pages |
+| `docs/src/examples` | Published interactive examples |
+| `docs/tests` | Browser, interaction, reflow, and release regressions |
+| `registry/directory-entry.json` | Prepared shadcn directory metadata |
+
+## Directory status
+
+The public registry is production-tested and the directory metadata is prepared. Submission to the
+official shadcn directory is an explicit maintainer action; passing CI does not submit automatically.
 
 ## License
 
-[MIT](LICENSE). Keep the copyright and permission notices in `LICENSE` with redistributed
-copies or substantial portions of the source.
+[MIT](LICENSE). Keep the copyright and permission notices in `LICENSE` with redistributed copies or
+substantial portions of the source.

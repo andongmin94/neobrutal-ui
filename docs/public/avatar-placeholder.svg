@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" role="img" aria-labelledby="title">
+  <title id="title">Generic profile illustration</title>
+  <rect width="80" height="80" fill="#d8dbe0"/>
+  <circle cx="40" cy="29" r="15" fill="#27282b"/>
+  <path d="M14 76c2-18 12-28 26-28s24 10 26 28" fill="#27282b"/>
+</svg>

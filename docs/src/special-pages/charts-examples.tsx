@@ -148,29 +148,31 @@ function ChartComponent({ children, chart }: { children: ReactNode; chart: Chart
   return (
     <div className="flex h-full min-w-0 flex-col [&>[data-slot=card]]:flex-1">
       {children}
-      <a
-        className={buttonVariants({ variant: "neutral", className: "mt-4 w-full" })}
-        href={`/docs/${chart.registryName}`}
-      >
-        Install recipe
-      </a>
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button className="mt-4 w-full" variant="outline">
-            <Code2 aria-hidden="true" />
-            View source
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="w-[calc(100%_-_2rem)] max-w-5xl">
-          <DialogHeader>
-            <DialogTitle>{chart.name}</DialogTitle>
-            <DialogDescription>
-              The same source delivered by the registry. Use Install recipe for setup and usage.
-            </DialogDescription>
-          </DialogHeader>
-          <ChartSource name={chart.registryName} />
-        </DialogContent>
-      </Dialog>
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <a
+          className={buttonVariants({ variant: "neutral", className: "w-full" })}
+          href={`/docs/${chart.registryName}`}
+        >
+          Install recipe
+        </a>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="w-full" variant="outline">
+              <Code2 aria-hidden="true" />
+              View source
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="w-[calc(100%_-_2rem)] max-w-5xl">
+            <DialogHeader>
+              <DialogTitle>{chart.name}</DialogTitle>
+              <DialogDescription>
+                The same source delivered by the registry. Use Install recipe for setup and usage.
+              </DialogDescription>
+            </DialogHeader>
+            <ChartSource name={chart.registryName} />
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }

@@ -1,9 +1,57 @@
-import { Menu, X as CloseIcon } from "lucide-react";
+import { Menu, Star, X as CloseIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router";
 
 import { isNavigationPathActive, PRIMARY_NAVIGATION_LINKS } from "~/lib/navigation";
 import { SearchLauncher } from "./search-launcher";
 import { ThemeToggle } from "./theme-toggle";
+
+const GITHUB_REPOSITORY_URL = "https://github.com/andongmin94/neobrutal-ui";
+const GITHUB_REPOSITORY_API_URL = "https://api.github.com/repos/andongmin94/neobrutal-ui";
+
+let githubStarsRequest: Promise<number | null> | undefined;
+
+function getGitHubStars() {
+  if (typeof window === "undefined") return Promise.resolve(null);
+  if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+    return Promise.resolve(null);
+  }
+
+  githubStarsRequest ??= fetch(GITHUB_REPOSITORY_API_URL, {
+    headers: { Accept: "application/vnd.github+json" },
+  })
+    .then(async (response) => {
+      if (!response.ok) return null;
+      const payload = (await response.json()) as { stargazers_count?: unknown };
+      return typeof payload.stargazers_count === "number" ? payload.stargazers_count : null;
+    })
+    .catch(() => null);
+
+  return githubStarsRequest;
+}
+
+function formatGitHubStars(value: number) {
+  return new Intl.NumberFormat("en-US", {
+    notation: "compact",
+    maximumFractionDigits: 1,
+  }).format(value);
+}
+
+function useGitHubStars() {
+  const [stars, setStars] = useState<number | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    void getGitHubStars().then((value) => {
+      if (active) setStars(value);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  return stars;
+}
 
 export function SiteHeader({
   menuLabel = "Toggle site navigation",
@@ -15,6 +63,11 @@ export function SiteHeader({
   onToggleMenu: () => void;
 }) {
   const location = useLocation();
+  const githubStars = useGitHubStars();
+  const githubLabel =
+    githubStars === null
+      ? "Open GitHub repository"
+      : `Open GitHub repository, ${new Intl.NumberFormat("en-US").format(githubStars)} stars`;
 
   return (
     <header className="site-header" data-site-navbar>
@@ -64,9 +117,9 @@ export function SiteHeader({
         <div className="site-actions">
           <SearchLauncher />
           <a
-            className="icon-button"
-            href="https://github.com/andongmin94/neobrutal-ui"
-            aria-label="Open GitHub repository"
+            className="github-repo-button pressable"
+            href={GITHUB_REPOSITORY_URL}
+            aria-label={githubLabel}
             rel="noreferrer"
             target="_blank"
             title="GitHub"
@@ -77,6 +130,10 @@ export function SiteHeader({
                 fill="currentColor"
               />
             </svg>
+            <span className="github-repo-button__stars" data-github-stars aria-hidden="true">
+              <Star size={13} strokeWidth={2.4} />
+              {githubStars === null ? "—" : formatGitHubStars(githubStars)}
+            </span>
           </a>
           <a
             className="icon-button"

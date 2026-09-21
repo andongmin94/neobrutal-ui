@@ -42,11 +42,11 @@ export default function TabsDemo() {
               <CardContent className="grid gap-6">
                 <div className="grid gap-3">
                   <Label htmlFor="tabs-demo-name">Name</Label>
-                  <Input id="tabs-demo-name" defaultValue="Andong Min" required />
+                  <Input id="tabs-demo-name" defaultValue="John Doe" required />
                 </div>
                 <div className="grid gap-3">
                   <Label htmlFor="tabs-demo-username">Username</Label>
-                  <Input id="tabs-demo-username" defaultValue="@andongmin94" required />
+                  <Input id="tabs-demo-username" defaultValue="@johndoe" required />
                 </div>
               </CardContent>
               <CardFooter>

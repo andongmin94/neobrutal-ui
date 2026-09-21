@@ -182,3 +182,25 @@ test("removed decorative collection is absent from sources and built catalogs", 
       relative,
     );
 });
+
+
+test("published examples use fictional sample identities instead of maintainer profiles", () => {
+  const examplesRoot = path.join(root, "docs/src/examples/ui");
+  const exampleFiles = readdirSync(examplesRoot, { recursive: true })
+    .filter((entry): entry is string => typeof entry === "string" && entry.endsWith(".tsx"));
+
+  for (const relative of exampleFiles) {
+    assert.doesNotMatch(
+      readFileSync(path.join(examplesRoot, relative), "utf8"),
+      /andongmin94|Andong Min|leerob|evilrabbit/,
+      relative,
+    );
+  }
+});
+
+test("site header keeps repository stars separate from the removed Stars collection", () => {
+  const header = source("docs/app/components/site-header.tsx");
+  assert.match(header, /api\.github\.com\/repos\/andongmin94\/neobrutal-ui/);
+  assert.match(header, /data-github-stars/);
+  assert.doesNotMatch(header, /href=["'{]\/stars/);
+});
