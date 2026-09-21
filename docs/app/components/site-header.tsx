@@ -1,6 +1,8 @@
+"use client";
+
+import { Link, usePathname } from "fumadocs-core/framework";
 import { Menu, Star, X as CloseIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router";
 
 import { isNavigationPathActive, PRIMARY_NAVIGATION_LINKS } from "~/lib/navigation";
 import { SearchLauncher } from "./search-launcher";
@@ -57,7 +59,7 @@ export function SiteHeader({
   menuOpen: boolean;
   onToggleMenu: () => void;
 }) {
-  const location = useLocation();
+  const pathname = usePathname();
   const githubStars = useGitHubStars();
   const githubLabel =
     githubStars === null
@@ -85,7 +87,7 @@ export function SiteHeader({
           )}
         </button>
 
-        <Link className="site-brand" to="/" aria-label="neobrutal-ui home">
+        <Link className="site-brand" href="/" aria-label="neobrutal-ui home">
           <span className="site-brand__mark" aria-hidden="true">
             N
           </span>
@@ -94,12 +96,12 @@ export function SiteHeader({
 
         <nav className="primary-nav" aria-label="Primary navigation">
           {PRIMARY_NAVIGATION_LINKS.map((link) => {
-            const active = isNavigationPathActive(location.pathname, link.href, true);
+            const active = isNavigationPathActive(pathname, link.href, true);
 
             return (
               <Link
                 key={link.href}
-                to={link.href}
+                href={link.href}
                 aria-current={active ? "page" : undefined}
                 className={active ? "is-active" : undefined}
               >

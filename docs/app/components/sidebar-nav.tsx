@@ -1,6 +1,8 @@
+"use client";
+
+import { Link, usePathname } from "fumadocs-core/framework";
 import { BookOpen, Box, Search, X } from "lucide-react";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Link, useLocation } from "react-router";
 
 import { COMPONENT_DIRECTORY_LINKS } from "@/data/component-directory";
 import { trapTabFocus } from "~/lib/focus";
@@ -52,7 +54,7 @@ export function SidebarNav({
   mode?: "docs" | "site";
   onClose: () => void;
 }) {
-  const location = useLocation();
+  const pathname = usePathname();
   const sidebar = useRef<HTMLElement>(null);
   const searchInput = useRef<HTMLInputElement>(null);
   const [componentQuery, setComponentQuery] = useState("");
@@ -66,7 +68,7 @@ export function SidebarNav({
   }, [componentQuery]);
 
   function isActive(href: string) {
-    return isNavigationPathActive(location.pathname, href);
+    return isNavigationPathActive(pathname, href);
   }
 
   const setBackgroundInert = useCallback(
@@ -161,7 +163,7 @@ export function SidebarNav({
   useEffect(() => {
     onClose();
     revealActiveLink();
-  }, [location.pathname, onClose, revealActiveLink]);
+  }, [pathname, onClose, revealActiveLink]);
 
   return (
     <>
@@ -212,7 +214,7 @@ export function SidebarNav({
                   return (
                     <Link
                       key={link.href}
-                      to={link.href}
+                      href={link.href}
                       aria-current={active ? "page" : undefined}
                       className={active ? "is-active" : undefined}
                     >
@@ -234,7 +236,7 @@ export function SidebarNav({
                   return (
                     <Link
                       key={link.href}
-                      to={link.href}
+                      href={link.href}
                       aria-current={active ? "page" : undefined}
                       className={active ? "is-active" : undefined}
                     >
@@ -255,7 +257,7 @@ export function SidebarNav({
                     return (
                       <Link
                         key={link.href}
-                        to={link.href}
+                        href={link.href}
                         aria-current={active ? "page" : undefined}
                         className={active ? "is-active" : undefined}
                       >
@@ -295,7 +297,7 @@ export function SidebarNav({
                     return (
                       <Link
                         key={link.href}
-                        to={link.href}
+                        href={link.href}
                         aria-current={active ? "page" : undefined}
                         className={active ? "is-active" : undefined}
                       >
@@ -316,7 +318,7 @@ export function SidebarNav({
                   return (
                     <Link
                       key={link.href}
-                      to={link.href}
+                      href={link.href}
                       aria-current={active ? "page" : undefined}
                       className={active ? "is-active" : undefined}
                     >

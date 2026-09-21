@@ -1,8 +1,10 @@
+"use client";
+
 import { Dialog } from "@base-ui/react/dialog";
+import { usePathname, useRouter } from "fumadocs-core/framework";
 import { useDocsSearch, type SearchClient } from "fumadocs-core/search/client";
 import { ArrowRight, Command, Search, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
-import { useLocation, useNavigate } from "react-router";
 
 import { COMPONENT_DIRECTORY_LINKS } from "@/data/component-directory";
 import TEMPLATES from "@/data/templates";
@@ -53,8 +55,8 @@ function plainText(value: string) {
 }
 
 export function SearchLauncher() {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
+  const pathname = usePathname();
   const input = useRef<HTMLInputElement>(null);
   const [ready, setReady] = useState(false);
   const [open, setOpen] = useState(false);
@@ -100,7 +102,7 @@ export function SearchLauncher() {
 
   function go(entry: SearchEntry) {
     setOpen(false);
-    navigate(entry.href);
+    void router.push(entry.href);
   }
 
   function onInputKeyDown(event: KeyboardEvent<HTMLInputElement>) {
@@ -150,7 +152,7 @@ export function SearchLauncher() {
       setSelectedIndex(0);
     }
   }, [open, setSearch]);
-  useEffect(() => setOpen(false), [location.pathname]);
+  useEffect(() => setOpen(false), [pathname]);
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>

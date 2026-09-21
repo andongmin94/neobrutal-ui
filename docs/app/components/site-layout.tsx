@@ -1,7 +1,9 @@
+"use client";
+
+import { usePathname } from "fumadocs-core/framework";
 import type { TOCItemType } from "fumadocs-core/toc";
 import { ExternalLink } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
-import { useLocation } from "react-router";
 
 import { COMPONENT_DIRECTORY_LINKS } from "@/data/component-directory";
 import { normalizePath } from "~/lib/navigation";
@@ -27,9 +29,9 @@ export function SiteLayout({
   title: string;
   toc?: TOCItemType[];
 }) {
-  const location = useLocation();
+  const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const normalizedPath = normalizePath(location.pathname);
+  const normalizedPath = normalizePath(pathname);
   const isDirectoryHome = normalizedPath === "/";
   const isDocsPage = normalizedPath === "/docs" || normalizedPath.startsWith("/docs/");
   const isComponentPage = componentPaths.has(normalizedPath);
@@ -47,7 +49,7 @@ export function SiteLayout({
     requestAnimationFrame(() => {
       document.querySelector<HTMLElement>("#main-content")?.focus({ preventScroll: true });
     });
-  }, [closeMobileMenu, location.pathname]);
+  }, [closeMobileMenu, pathname]);
 
   return (
     <div className="site-frame">
