@@ -105,7 +105,7 @@ const config = defineConfig({
   ),
   renderPage: ({ page }) => <PageLayout page={page} />,
   renderNotFound: () => <NotFound />,
-})
+});
 
 type SiteContext = typeof config.$context;
 
