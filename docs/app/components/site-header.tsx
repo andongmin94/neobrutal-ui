@@ -17,7 +17,7 @@ function getGitHubStars() {
   githubStarsRequest ??= fetch(GITHUB_STARS_URL)
     .then(async (response) => {
       if (!response.ok) return null;
-      const payload = (await response.json());
+      const payload = await response.json();
       return typeof payload.count === "number" ? payload.count : null;
     })
     .catch(() => null);

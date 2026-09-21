@@ -12,8 +12,7 @@ export async function loader() {
     if (!response.ok) return Response.json({ count: null });
 
     const payload = await response.json();
-    const count =
-      typeof payload.stargazers_count === "number" ? payload.stargazers_count : null;
+    const count = typeof payload.stargazers_count === "number" ? payload.stargazers_count : null;
 
     return Response.json({ count });
   } catch {
