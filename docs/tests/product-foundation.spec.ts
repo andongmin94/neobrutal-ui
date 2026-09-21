@@ -35,7 +35,7 @@ test("button focus follows ring and offset tokens", async ({ page }) => {
     .toContain("rgb(239, 243, 247)");
 });
 
-test("form errors preserve associations, focus, tokens, and recovery", async ({ page }) => {
+test("form errors preserve associations, focus, tokens, and recovery", async ({ page }, info) => {
   await openReady(page, "/docs/form");
   const preview = page.locator('.component-preview[data-component="form"]').first();
   const input = preview.getByRole("textbox", { name: "Username", exact: true });
@@ -54,6 +54,10 @@ test("form errors preserve associations, focus, tokens, and recovery", async ({ 
   expect(described.length).toBeGreaterThan(0);
   expect(described.every(({ found }) => found)).toBe(true);
   expect(described.map(({ id }) => id)).toContain(await error.getAttribute("id"));
+  await info.attach("form-error-default-theme", {
+    body: await preview.locator(".component-preview__canvas").screenshot(),
+    contentType: "image/png",
+  });
   await preview.locator(".component-preview__canvas").evaluate((node) => {
     (node as HTMLElement).style.setProperty("--error", "rgb(137, 24, 48)");
   });
@@ -63,6 +67,10 @@ test("form errors preserve associations, focus, tokens, and recovery", async ({ 
   await expect(input).toHaveAttribute("aria-invalid", "false");
   await expect(error).toHaveCount(0);
   await expect(preview.getByRole("status")).toContainText("Nothing was saved to a server");
+  await info.attach("form-error-recovered", {
+    body: await preview.locator(".component-preview__canvas").screenshot(),
+    contentType: "image/png",
+  });
 });
 
 // This is an automated contrast regression, not a full accessibility certification.

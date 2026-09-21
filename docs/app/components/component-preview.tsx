@@ -140,13 +140,17 @@ export function ComponentPreview({
   wrapperClassName?: string;
 }) {
   const [activeTab, setActiveTab] = useState<"code" | "preview">("preview");
+  const [interactive, setInteractive] = useState(false);
   const instanceId = useId();
   const normalizedComponent = toSlug(component);
   const isPrimaryPreview = !example;
   const previewLabel = `${component} ${example?.replaceAll("-", " ") ?? "primary"} preview`;
 
+  // Server-rendered tabs must not accept clicks before their handlers are attached.
+  useEffect(() => setInteractive(true), []);
+
   function handleTabKeyDown(event: KeyboardEvent<HTMLDivElement>) {
-    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    if (!interactive || !["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
 
     event.preventDefault();
     const nextTab = event.key === "Home" || event.key === "ArrowLeft" ? "preview" : "code";
@@ -186,6 +190,7 @@ export function ComponentPreview({
             type="button"
             role="tab"
             data-preview-tab="preview"
+            disabled={!interactive}
             aria-controls={`${instanceId}-preview-panel`}
             aria-selected={activeTab === "preview"}
             tabIndex={activeTab === "preview" ? 0 : -1}
@@ -198,6 +203,7 @@ export function ComponentPreview({
             type="button"
             role="tab"
             data-preview-tab="code"
+            disabled={!interactive}
             aria-controls={`${instanceId}-code-panel`}
             aria-selected={activeTab === "code"}
             tabIndex={activeTab === "code" ? 0 : -1}
