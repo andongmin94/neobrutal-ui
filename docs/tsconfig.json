@@ -1,12 +1,5 @@
 {
-  "include": [
-    "app/**/*",
-    "src/**/*",
-    "scripts/**/*",
-    ".react-router/types/**/*",
-    "react-router.config.ts",
-    "vite.config.ts"
-  ],
+  "include": ["app/**/*", "src/**/*", "scripts/**/*", "press.config.tsx", "vite.config.ts"],
   "compilerOptions": {
     "target": "esnext",
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
@@ -14,7 +7,6 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "rootDirs": [".", "./.react-router/types"],
     "paths": {
       "@/*": ["./src/*"],
       "~/*": ["./app/*"],

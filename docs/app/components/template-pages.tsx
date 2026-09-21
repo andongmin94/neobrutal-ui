@@ -1,5 +1,5 @@
 import { useState, type ComponentType } from "react";
-import { Link } from "react-router";
+import { Link } from "fumapress/client";
 
 import BlogPostTemplate from "@/components/templates/blog-post-template";
 import BlogTemplate from "@/components/templates/blog-template";
@@ -51,7 +51,7 @@ export function TemplatesPage() {
             <Link
               aria-label={`Open ${template.title} template`}
               className="template-preview-link absolute inset-0 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
-              to={`/templates/${template.slug}`}
+              href={`/templates/${template.slug}`}
             >
               <span className="sr-only">Open {template.title} template</span>
             </Link>
@@ -71,7 +71,7 @@ export function TemplatesPage() {
             <div className="mt-auto grid grid-cols-2 gap-3 pt-5">
               <Link
                 className="pressable border-2 border-border bg-main px-3 py-2 text-center font-heading text-main-foreground"
-                to={`/templates/${template.slug}`}
+                href={`/templates/${template.slug}`}
               >
                 Open
               </Link>

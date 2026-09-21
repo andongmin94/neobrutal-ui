@@ -1,7 +1,7 @@
 "use client";
 
 import { Dialog } from "@base-ui/react/dialog";
-import { usePathname, useRouter } from "fumadocs-core/framework";
+import { useRouter } from "fumapress/client";
 import { useDocsSearch, type SearchClient } from "fumadocs-core/search/client";
 import { ArrowRight, Command, Search, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
@@ -56,7 +56,7 @@ function plainText(value: string) {
 
 export function SearchLauncher() {
   const router = useRouter();
-  const pathname = usePathname();
+  const pathname = router.path;
   const input = useRef<HTMLInputElement>(null);
   const [ready, setReady] = useState(false);
   const [open, setOpen] = useState(false);

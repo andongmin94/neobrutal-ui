@@ -1,6 +1,5 @@
 node_modules
-build
-.react-router
+dist
 .source
 .env
 .env.*

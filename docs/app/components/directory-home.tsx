@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ArrowRight,
   Bell,
@@ -13,7 +15,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { Link, useSearchParams } from "react-router";
+import { Link, useRouter } from "fumapress/client";
 import { buttonVariants } from "@/components/ui/button-variants";
 import {
   COMPONENT_CATEGORIES,
@@ -47,7 +49,10 @@ const entries = COMPONENT_DIRECTORY_LINKS.map((link) => {
 });
 
 export function DirectoryHome() {
-  const [params, setParams] = useSearchParams();
+  const router = useRouter();
+  const params = new URLSearchParams(
+    router.query.startsWith("?") ? router.query.slice(1) : router.query,
+  );
   const searchInput = useRef<HTMLInputElement>(null);
   const query = params.get("q") ?? "";
   const category = COMPONENT_CATEGORIES.find((value) => value === params.get("category")) ?? "All";
@@ -59,15 +64,12 @@ export function DirectoryHome() {
         .includes(query.trim().toLowerCase()),
   );
   function setFilter(key: string, value: string) {
-    setParams(
-      (current) => {
-        const next = new URLSearchParams(current);
-        if (value && value !== "All") next.set(key, value);
-        else next.delete(key);
-        return next;
-      },
-      { replace: true, preventScrollReset: true },
-    );
+    const next = new URLSearchParams(params);
+    if (value && value !== "All") next.set(key, value);
+    else next.delete(key);
+
+    const query = next.toString();
+    void router.replace(query ? `${router.path}?${query}` : router.path, { scroll: false });
   }
   useEffect(() => {
     function shortcut(event: KeyboardEvent) {
@@ -103,7 +105,7 @@ export function DirectoryHome() {
               complete interface with shared styles and source you can edit.
             </p>
             <div className="directory-hero__actions">
-              <Link className={buttonVariants({ size: "lg" })} to="/docs/installation">
+              <Link className={buttonVariants({ size: "lg" })} href="/docs/installation">
                 Get started
                 <ArrowRight aria-hidden="true" />
               </Link>
@@ -174,7 +176,7 @@ export function DirectoryHome() {
             </p>
             <Link
               className={`${buttonVariants({ variant: "outline", size: "sm" })} directory-action-link`}
-              to="/templates"
+              href="/templates"
             >
               Explore complete templates <ArrowRight aria-hidden="true" size={14} />
             </Link>
@@ -184,7 +186,7 @@ export function DirectoryHome() {
               {filteredEntries.map((entry) => {
                 const Icon = categoryIcons[entry.category];
                 return (
-                  <Link key={entry.slug} className="directory-card pressable" to={entry.href}>
+                  <Link key={entry.slug} className="directory-card pressable" href={entry.href}>
                     <div className="directory-card__top">
                       <Icon aria-hidden="true" size={22} />
                       <span>{entry.installMode}</span>
@@ -209,7 +211,7 @@ export function DirectoryHome() {
               <button
                 className="pressable"
                 type="button"
-                onClick={() => setParams({}, { replace: true, preventScrollReset: true })}
+                onClick={() => void router.replace(router.path, { scroll: false })}
               >
                 Reset filters
               </button>

@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link } from "fumapress/client";
 
 export default function NotFound() {
   return (
@@ -7,7 +7,7 @@ export default function NotFound() {
         <span className="eyebrow">404 / Not found</span>
         <h1>This page is missing</h1>
         <p>The route does not match a document or component preview.</p>
-        <Link className="pressable" to="/">
+        <Link className="pressable" href="/">
           Return to the directory
         </Link>
       </div>

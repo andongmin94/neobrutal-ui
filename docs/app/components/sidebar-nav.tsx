@@ -1,6 +1,6 @@
 "use client";
 
-import { Link, usePathname } from "fumadocs-core/framework";
+import { Link, useRouter } from "fumapress/client";
 import { BookOpen, Box, Search, X } from "lucide-react";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
@@ -54,7 +54,7 @@ export function SidebarNav({
   mode?: "docs" | "site";
   onClose: () => void;
 }) {
-  const pathname = usePathname();
+  const { path: pathname } = useRouter();
   const sidebar = useRef<HTMLElement>(null);
   const searchInput = useRef<HTMLInputElement>(null);
   const [componentQuery, setComponentQuery] = useState("");

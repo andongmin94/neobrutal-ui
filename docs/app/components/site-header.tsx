@@ -1,6 +1,6 @@
 "use client";
 
-import { Link, usePathname } from "fumadocs-core/framework";
+import { Link, useRouter } from "fumapress/client";
 import { Menu, Star, X as CloseIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -59,7 +59,7 @@ export function SiteHeader({
   menuOpen: boolean;
   onToggleMenu: () => void;
 }) {
-  const pathname = usePathname();
+  const { path: pathname } = useRouter();
   const githubStars = useGitHubStars();
   const githubLabel =
     githubStars === null

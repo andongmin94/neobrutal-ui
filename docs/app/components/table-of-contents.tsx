@@ -1,7 +1,9 @@
+"use client";
+
 import type { TOCItemType } from "fumadocs-core/toc";
 import { List, MoveUp } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { useLocation } from "react-router";
+import { useRouter } from "fumapress/client";
 
 function scrollToHash(hash: string, focusTarget = false) {
   const target = document.getElementById(decodeURIComponent(hash.replace(/^#/, "")));
@@ -19,7 +21,7 @@ export function TableOfContents({
   toc?: TOCItemType[];
   variant?: "aside" | "inline";
 }) {
-  const location = useLocation();
+  const { path: pathname } = useRouter();
   const [activeId, setActiveId] = useState("");
   const headers = useMemo(() => toc.filter((item) => item.depth === 2 || item.depth === 3), [toc]);
 
@@ -45,7 +47,7 @@ export function TableOfContents({
 
     elements.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
-  }, [headers, location.pathname]);
+  }, [headers, pathname]);
 
   const links = (
     <>

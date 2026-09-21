@@ -1,6 +1,6 @@
 import type { MDXComponents } from "mdx/types";
 import { type ComponentProps, type HTMLAttributes } from "react";
-import { Link as RouterLink } from "react-router";
+import { Link as RouterLink } from "fumapress/client";
 import { Pre } from "@/components/docs/pre";
 import { ComponentPreview } from "./component-preview";
 import { Installation } from "./installation";
@@ -10,7 +10,7 @@ function MdxLink({ children, href = "", className, ...props }: ComponentProps<"a
   const classes = ["md-link", className].filter(Boolean).join(" ");
   if (href.startsWith("/") && !props.target) {
     return (
-      <RouterLink to={href} className={classes} {...props}>
+      <RouterLink href={href} className={classes} {...props}>
         {children}
       </RouterLink>
     );

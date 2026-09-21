@@ -1,0 +1,6 @@
+@import "../app/app.css";
+
+body[data-version="1.0"] {
+  display: block;
+  min-height: auto;
+}

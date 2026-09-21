@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "fumadocs-core/framework";
+import { useRouter } from "fumapress/client";
 import type { TOCItemType } from "fumadocs-core/toc";
 import { ExternalLink } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
@@ -29,7 +29,7 @@ export function SiteLayout({
   title: string;
   toc?: TOCItemType[];
 }) {
-  const pathname = usePathname();
+  const { path: pathname } = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const normalizedPath = normalizePath(pathname);
   const isDirectoryHome = normalizedPath === "/";

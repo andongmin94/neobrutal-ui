@@ -1,3 +1,5 @@
+"use client";
+
 import { lazy, Suspense, type ReactNode } from "react";
 
 import { ClientOnly } from "./client-only";

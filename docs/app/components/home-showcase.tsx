@@ -1,6 +1,6 @@
 import { Check, ArrowUpRight } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link } from "fumapress/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button-variants";
@@ -54,7 +54,7 @@ export function HomeShowcase() {
               </Button>
               <Link
                 className={`${buttonVariants({ variant: "outline", size: "sm" })} directory-action-link`}
-                to="/templates/cms"
+                href="/templates/cms"
               >
                 Try the CMS demo
                 <ArrowUpRight aria-hidden="true" size={16} />

@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
           cache-dependency-path: |
             registry/package-lock.json
@@ -110,7 +110,7 @@ jobs:
               if [ ! -x node_modules/.bin/oxfmt ]; then exit 0; fi
               paths=(src scripts tsconfig.json package.json .oxlintrc.json .oxfmtrc.json)
               if [ "$project" = docs ]; then
-                paths+=(app tests react-router.config.ts vite.config.ts)
+                paths+=(app tests press.config.tsx vite.config.ts)
               else
                 paths+=(tsconfig.consumer.json)
               fi
@@ -156,7 +156,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
           cache-dependency-path: registry/package-lock.json
       - name: Build registry installation inputs
@@ -183,7 +183,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
           cache-dependency-path: |
             registry/package-lock.json

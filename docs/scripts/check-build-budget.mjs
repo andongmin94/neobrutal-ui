@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const assetsDirectory = path.resolve("build", "client", "assets");
+const assetsDirectory = path.resolve("dist", "public", "assets");
 const kibibyte = 1024;
 const limits = {
   largestJavaScript: 700 * kibibyte,

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { test } from "node:test";
 
-const buildInfoPath = "build/client/build-info.json";
+const buildInfoPath = "dist/public/build-info.json";
 
 test("the documentation build identifies its exact source revision", () => {
   assert.ok(fs.existsSync(buildInfoPath), "run the documentation build before contract tests");

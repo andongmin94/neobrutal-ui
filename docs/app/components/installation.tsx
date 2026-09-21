@@ -1,3 +1,5 @@
+"use client";
+
 import { Info, SquareTerminal } from "lucide-react";
 import { useId, useState, type KeyboardEvent, type ReactNode } from "react";
 
