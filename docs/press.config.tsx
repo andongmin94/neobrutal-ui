@@ -1,9 +1,4 @@
-import {
-  defineConfig,
-  getPressContext,
-  type AppShape,
-  type PressPlugin,
-} from "fumapress";
+import { defineConfig, getPressContext, type AppShape, type PressPlugin } from "fumapress";
 import { fumadocsMdx } from "fumapress/adapters/mdx";
 import { metaSchema, pageSchema } from "fumapress/adapters/mdx/schema";
 import { createRootLayout } from "fumapress/layouts/root";
