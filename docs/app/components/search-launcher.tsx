@@ -59,17 +59,20 @@ function literalSearchTokens(value: string) {
     .normalize("NFKC")
     .toLowerCase()
     .split(/[^\p{L}\p{N}]+/u)
-    .filter(
-      (token) => token && (/\p{N}/u.test(token) || /[^\u0000-\u007f]/u.test(token)),
-    );
+    .filter((token) => {
+      if (!token) return false;
+
+      return [...token].some((character) => {
+        const codePoint = character.codePointAt(0) ?? 0;
+        return (character >= "0" && character <= "9") || codePoint > 0x7f;
+      });
+    });
 }
 
 function includesLiteralSearchTokens(entry: SearchEntry, tokens: string[]) {
   if (tokens.length === 0) return true;
 
-  const text = `${entry.label} ${entry.group} ${entry.terms ?? ""}`
-    .normalize("NFKC")
-    .toLowerCase();
+  const text = `${entry.label} ${entry.group} ${entry.terms ?? ""}`.normalize("NFKC").toLowerCase();
 
   return tokens.every((token) => text.includes(token));
 }
