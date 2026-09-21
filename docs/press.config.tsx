@@ -71,61 +71,7 @@ async function PageLayout({ page }: { page: AppShape["page"] }) {
   );
 }
 
-const githubStarsPlugin: PressPlugin = {
-  name: "site:github-stars",
-  createPages({ createApiIsomorphic }) {
-    createApiIsomorphic({
-      render: "static",
-      path: "/api/github-stars",
-      async handler() {
-        try {
-          const response = await fetch("https://api.github.com/repos/andongmin94/neobrutal-ui", {
-            headers: {
-              Accept: "application/vnd.github+json",
-              "User-Agent": "neobrutal-ui-build",
-            },
-          });
-
-          if (!response.ok) return Response.json({ count: null });
-
-          const payload = await response.json();
-          const count =
-            typeof payload.stargazers_count === "number" ? payload.stargazers_count : null;
-
-          return Response.json({ count });
-        } catch {
-          return Response.json({ count: null });
-        }
-      },
-    });
-  },
-};
-
-const metadataPlugin: PressPlugin = {
-  name: "site:metadata",
-  init() {
-    this.interceptPageMeta(({ page }) => {
-      const isHome = page.url === "/";
-      const title = isHome
-        ? `${SITE_NAME} - Component directory`
-        : `${page.data.title} - ${SITE_NAME}`;
-      const description = page.data.description ?? SITE_DESCRIPTION;
-
-      return (
-        <>
-          <title>{title}</title>
-          <meta name="description" content={description} />
-          <meta property="og:title" content={title} />
-          <meta property="og:description" content={description} />
-          <meta name="twitter:title" content={title} />
-          <meta name="twitter:description" content={description} />
-        </>
-      );
-    });
-  },
-};
-
-export default defineConfig({
+const config = defineConfig({
   content: docs.toFumadocsSource(),
   mode: "static",
   preset: false,
@@ -160,11 +106,74 @@ export default defineConfig({
   renderPage: ({ page }) => <PageLayout page={page} />,
   renderNotFound: () => <NotFound />,
 })
+
+type SiteContext = typeof config.$context;
+
+const githubStarsPlugin: PressPlugin<SiteContext> = {
+  name: "site:github-stars",
+  createPages({ createApiIsomorphic }) {
+    createApiIsomorphic({
+      render: "static",
+      path: "/api/github-stars",
+      async handler() {
+        try {
+          const response = await fetch("https://api.github.com/repos/andongmin94/neobrutal-ui", {
+            headers: {
+              Accept: "application/vnd.github+json",
+              "User-Agent": "neobrutal-ui-build",
+            },
+          });
+
+          if (!response.ok) return Response.json({ count: null });
+
+          const payload = await response.json();
+          const count =
+            typeof payload.stargazers_count === "number" ? payload.stargazers_count : null;
+
+          return Response.json({ count });
+        } catch {
+          return Response.json({ count: null });
+        }
+      },
+    });
+  },
+};
+
+const metadataPlugin: PressPlugin<SiteContext> = {
+  name: "site:metadata",
+  init() {
+    this.interceptPageMeta(({ page }) => {
+      const isHome = page.url === "/";
+      const title = isHome
+        ? `${SITE_NAME} - Component directory`
+        : `${page.data.title} - ${SITE_NAME}`;
+      const description = page.data.description ?? SITE_DESCRIPTION;
+
+      return (
+        <>
+          <title>{title}</title>
+          <meta name="description" content={description} />
+          <meta property="og:title" content={title} />
+          <meta property="og:description" content={description} />
+          <meta name="twitter:title" content={title} />
+          <meta name="twitter:description" content={description} />
+        </>
+      );
+    });
+  },
+};
+
+export default config
   .adapters(
-    fumadocsMdx({
+    fumadocsMdx<SiteContext>({
       getMdxComponents() {
         return getMDXComponents();
       },
     }),
   )
-  .plugins(oramaSearchPlugin(), sitemapPlugin(), githubStarsPlugin, metadataPlugin);
+  .plugins(
+    oramaSearchPlugin<SiteContext>(),
+    sitemapPlugin<SiteContext>(),
+    githubStarsPlugin,
+    metadataPlugin,
+  );
