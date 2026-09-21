@@ -54,6 +54,26 @@ function plainText(value: string) {
     .trim();
 }
 
+function literalSearchTokens(value: string) {
+  return value
+    .normalize("NFKC")
+    .toLowerCase()
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter(
+      (token) => token && (/\p{N}/u.test(token) || /[^\u0000-\u007f]/u.test(token)),
+    );
+}
+
+function includesLiteralSearchTokens(entry: SearchEntry, tokens: string[]) {
+  if (tokens.length === 0) return true;
+
+  const text = `${entry.label} ${entry.group} ${entry.terms ?? ""}`
+    .normalize("NFKC")
+    .toLowerCase();
+
+  return tokens.every((token) => text.includes(token));
+}
+
 export function SearchLauncher() {
   const router = useRouter();
   const pathname = router.path;
@@ -86,14 +106,18 @@ export function SearchLauncher() {
     const local = staticEntries.filter((entry) =>
       `${entry.label} ${entry.group} ${entry.terms ?? ""}`.toLowerCase().includes(normalized),
     );
+    const literals = literalSearchTokens(search);
     const indexed: SearchEntry[] =
       !query.error && !query.isLoading && query.data && query.data !== "empty"
-        ? query.data.slice(0, 24).map((result) => ({
-            group:
-              result.breadcrumbs?.map(plainText).filter(Boolean).join(" / ") || "Documentation",
-            href: result.url,
-            label: plainText(result.content) || "Untitled section",
-          }))
+        ? query.data
+            .slice(0, 24)
+            .map((result) => ({
+              group:
+                result.breadcrumbs?.map(plainText).filter(Boolean).join(" / ") || "Documentation",
+              href: result.url,
+              label: plainText(result.content) || "Untitled section",
+            }))
+            .filter((entry) => includesLiteralSearchTokens(entry, literals))
         : [];
     const unique = new Map<string, SearchEntry>();
     for (const entry of [...local, ...indexed])
