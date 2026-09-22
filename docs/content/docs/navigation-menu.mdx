@@ -65,9 +65,10 @@ export default function SiteNavigation() {
 | Prop / part | Purpose | Default |
 | --- | --- | --- |
 | `NavigationMenu.value` / `onValueChange` | Controlled expanded item | Uncontrolled |
+| `NavigationMenu.defaultValue` | Initially expanded item | `null` |
+| `NavigationMenu.delay` / `closeDelay` | Hover open and close delay | Base UI defaults |
 | `NavigationMenu.orientation` | Trigger keyboard navigation | `horizontal` |
-| `NavigationMenu.viewport` | Shared popup viewport | `true` |
-| `NavigationMenuItem.value` | Stable grouped-item identifier | Generated if omitted |
+| `NavigationMenuItem.value` | Stable grouped-item identifier when controlling state | Optional |
 | `NavigationMenuLink.href` / `render` | Native destination or router-link composition | Anchor |
 | `NavigationMenuLink.active` | Current destination styling and semantics | `false` |
 

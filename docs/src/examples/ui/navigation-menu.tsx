@@ -59,16 +59,14 @@ export default function NavigationMenuDemo() {
           <NavigationMenuContent>
             <ul className="grid w-[min(500px,calc(100vw-2rem))] gap-3 p-2 lg:grid-cols-[.75fr_1fr]">
               <li className="row-span-3">
-                <NavigationMenuLink asChild>
-                  <a
-                    className="flex h-full w-full select-none flex-col justify-end rounded-base p-6 no-underline outline-hidden"
-                    href="/docs/"
-                  >
-                    <div className="mb-2 mt-4 text-lg font-heading">neobrutal-ui</div>
-                    <p className="text-sm font-base leading-tight">
-                      Editable React components built with Base UI and Tailwind CSS.
-                    </p>
-                  </a>
+                <NavigationMenuLink
+                  className="flex h-full w-full select-none flex-col justify-end rounded-base p-6 no-underline outline-hidden"
+                  href="/docs/"
+                >
+                  <div className="mb-2 mt-4 text-lg font-heading">neobrutal-ui</div>
+                  <p className="text-sm font-base leading-tight">
+                    Editable React components built with Base UI and Tailwind CSS.
+                  </p>
                 </NavigationMenuLink>
               </li>
               <ListItem href="/docs/" title="Introduction">
@@ -108,17 +106,15 @@ export default function NavigationMenuDemo() {
 function ListItem({ className, title, children, ...props }: React.ComponentProps<"a">) {
   return (
     <li>
-      <NavigationMenuLink asChild>
-        <a
-          className={cn(
-            "hover:bg-accent block text-main-foreground select-none space-y-1 rounded-base border-2 border-transparent p-2 leading-none no-underline outline-hidden transition-colors hover:border-border sm:p-3",
-            className,
-          )}
-          {...props}
-        >
-          <div className="text-base font-heading leading-none">{title}</div>
-          <p className="font-base hidden text-sm leading-snug sm:line-clamp-2">{children}</p>
-        </a>
+      <NavigationMenuLink
+        className={cn(
+          "hover:bg-accent block text-main-foreground select-none space-y-1 rounded-base border-2 border-transparent p-2 leading-none no-underline outline-hidden transition-colors hover:border-border sm:p-3",
+          className,
+        )}
+        {...props}
+      >
+        <div className="text-base font-heading leading-none">{title}</div>
+        <p className="font-base hidden text-sm leading-snug sm:line-clamp-2">{children}</p>
       </NavigationMenuLink>
     </li>
   );

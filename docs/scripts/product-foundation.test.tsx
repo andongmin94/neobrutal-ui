@@ -248,6 +248,25 @@ test("menubar delegates open state and keyboard navigation to Base UI", () => {
   assert.match(menubarDoc, /Menubar\.loopFocus/);
 });
 
+test("navigation menu delegates state, motion, and popup layout to Base UI", () => {
+  const navigationSource = source("registry/src/components/ui/navigation-menu.tsx");
+  assert.doesNotMatch(
+    navigationSource,
+    /NavigationMenuAdapterContext|NavigationMenuIndicator|function NavigationMenuPositioner|--radix-navigation-menu|CustomEvent|MutationObserver|ResizeObserver|skipDelayDuration|delayDuration|forceMount|portalContainer|onInteractOutside|onPointerDownOutside|preventBaseUIHandler|data-state=|\basChild\b/,
+  );
+  assert.match(navigationSource, /NavigationMenuPrimitive\.Viewport/);
+  assert.match(navigationSource, /NavigationMenuPrimitive\.Positioner/);
+  assert.match(navigationSource, /NavigationMenuPrimitive\.Popup/);
+
+  assert.doesNotMatch(
+    source("docs/src/examples/ui/navigation-menu.tsx"),
+    /<NavigationMenuLink\s+asChild/,
+  );
+  const previewStates = source("docs/tests/preview-states.spec.ts");
+  assert.doesNotMatch(previewStates, /navigation-menu-content[^\n]*data-state/);
+  assert.match(previewStates, /navigation-menu-content[^\n]*data-open/);
+});
+
 test("error text is a separate theme token included in every palette export", () => {
   for (const color of colors) {
     const vars = createThemeCssVars(color);
