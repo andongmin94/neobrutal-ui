@@ -153,7 +153,7 @@ test("every directory card has a purpose-specific description", () => {
 });
 
 test("markdown typography never uses bare descendant element selectors", () => {
-  const css = fs.readFileSync("app/styles/content.css", "utf8");
+  const css = fs.readFileSync("src/site/styles/content.css", "utf8");
   assert.doesNotMatch(css, /\.docs-content\s+(?:h[1-6]|p|a|ol|ul|li|strong)\b/);
 });
 

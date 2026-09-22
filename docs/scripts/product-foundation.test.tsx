@@ -216,7 +216,7 @@ test("published examples use fictional sample identities instead of maintainer p
 });
 
 test("site header keeps repository stars separate from the removed Stars collection", () => {
-  const header = source("docs/app/components/site-header.tsx");
+  const header = source("docs/src/site/components/site-header.tsx");
   const starsRoute = source("docs/press.config.tsx");
   assert.match(header, /\/api\/github-stars/);
   assert.match(header, /data-github-stars/);

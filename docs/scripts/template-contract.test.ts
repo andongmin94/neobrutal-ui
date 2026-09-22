@@ -43,7 +43,7 @@ test("template cards are an exact presentation of the installable registry templ
 });
 
 test("template thumbnails render current templates rather than stale screenshot assets", () => {
-  const source = fs.readFileSync("app/components/template-pages.tsx", "utf8");
+  const source = fs.readFileSync("src/site/components/template-pages.tsx", "utf8");
   assert.match(source, /<TemplateThumbnail>[\s\S]*?<TemplateDetailPage slug=\{template\.slug\}/);
   assert.doesNotMatch(source, /template\.preview|<iframe/);
   assert.ok(!fs.existsSync("public/template-previews"));
