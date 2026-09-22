@@ -267,6 +267,27 @@ test("navigation menu delegates state, motion, and popup layout to Base UI", () 
   assert.match(previewStates, /navigation-menu-content[^\n]*data-open/);
 });
 
+test("drawer delegates swipe, snap points, and dismissal to Base UI", () => {
+  const drawerSource = source("registry/src/components/ui/drawer.tsx");
+  assert.doesNotMatch(
+    drawerSource,
+    /data-vaul|PointerDragState|CustomEvent|createPointer|preventBaseUIHandler|dragMetricsRef|scheduleRelease|handleOnly|dismissible|shouldScaleBackground|setBackgroundColorOnScale|snapToSequentialPoint\?:|\bdirection\?:|\basChild\b|forceMount|onOpenAutoFocus|onCloseAutoFocus|onInteractOutside|onPointerDownOutside|data-state=/,
+  );
+  assert.match(drawerSource, /DrawerPrimitive\.Viewport/);
+  assert.match(drawerSource, /DrawerPrimitive\.Popup/);
+  assert.match(drawerSource, /--drawer-swipe-movement-[xy]/);
+  assert.match(drawerSource, /--drawer-snap-point-offset/);
+
+  for (const relative of [
+    "docs/src/examples/ui/drawer/index.tsx",
+    "docs/src/examples/ui/drawer/scrollable-content.tsx",
+    "docs/content/docs/drawer.mdx",
+  ]) {
+    assert.doesNotMatch(source(relative), /Drawer(?:Trigger|Close)\s+asChild|<Drawer\s+direction=/, relative);
+  }
+  assert.match(source("docs/src/examples/ui/drawer/scrollable-content.tsx"), /swipeDirection="right"/);
+});
+
 test("error text is a separate theme token included in every palette export", () => {
   for (const color of colors) {
     const vars = createThemeCssVars(color);

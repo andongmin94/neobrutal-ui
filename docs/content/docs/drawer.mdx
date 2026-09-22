@@ -48,7 +48,7 @@ import {
 
 export default function TaskDrawer() {
   return (
-    <Drawer direction="bottom">
+    <Drawer swipeDirection="down">
       <DrawerTrigger render={<Button variant="outline" />}>Task details</DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
@@ -69,12 +69,13 @@ export default function TaskDrawer() {
 
 | Prop / part | Purpose | Default |
 | --- | --- | --- |
-| `Drawer.open` / `onOpenChange` | Controlled visibility | Uncontrolled |
-| `Drawer.direction` | `top`, `right`, `bottom`, or `left` | `bottom` |
-| `Drawer.dismissible` | Ordinary dismissal gestures | `true` |
+| `Drawer.open` / `onOpenChange` | Controlled visibility and close cancellation | Uncontrolled |
+| `Drawer.swipeDirection` | Swipe-to-dismiss edge: `up`, `right`, `down`, or `left` | `down` |
+| `Drawer.snapPoints` / `snapPoint` | Native snap positions and controlled active snap | — |
+| `Drawer.modal` | Focus, scroll, and outside-interaction behavior | `true` |
 | `DrawerTrigger.render` / `DrawerClose.render` | Button composition | Primitive elements |
 | `DrawerTitle` / `DrawerDescription` | Modal name and explanation | — |
-| `DrawerContent` | Panel and viewport | — |
+| `DrawerContent` | Styled Base UI viewport, popup, and content | — |
 
 ## Accessibility
 

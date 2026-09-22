@@ -21,9 +21,7 @@ export default function DrawerDemo() {
   return (
     <div className="grid justify-items-center gap-3">
       <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerTrigger asChild>
-          <Button>Open drawer</Button>
-        </DrawerTrigger>
+        <DrawerTrigger render={<Button />}>Open drawer</DrawerTrigger>
         <DrawerContent>
           <div className="mx-auto w-[300px]">
             <DrawerHeader>
@@ -41,14 +39,16 @@ export default function DrawerDemo() {
               >
                 Submit demo
               </Button>
-              <DrawerClose asChild>
-                <Button
-                  type="button"
-                  className="bg-secondary-background text-foreground"
-                  variant="noShadow"
-                >
-                  Cancel
-                </Button>
+              <DrawerClose
+                render={
+                  <Button
+                    type="button"
+                    className="bg-secondary-background text-foreground"
+                    variant="noShadow"
+                  />
+                }
+              >
+                Cancel
               </DrawerClose>
             </DrawerFooter>
           </div>

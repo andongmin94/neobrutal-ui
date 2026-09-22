@@ -18,7 +18,7 @@ const reviewNotes = [
 
 export default function DrawerWithScrollableContent() {
   return (
-    <Drawer direction="right">
+    <Drawer swipeDirection="right">
       <DrawerTrigger render={<Button />}>Scrollable Content</DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
