@@ -43,7 +43,7 @@ function NavigationMenuList({ className, ...props }: NavigationMenuPrimitive.Lis
   );
 }
 
-function NavigationMenuItem({ className, ...props }: NavigationMenuPrimitive.Item.Props<string>) {
+function NavigationMenuItem({ className, ...props }: NavigationMenuPrimitive.Item.Props) {
   return (
     <NavigationMenuPrimitive.Item
       data-slot="navigation-menu-item"

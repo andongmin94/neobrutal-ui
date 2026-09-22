@@ -11,10 +11,7 @@ function Accordion({ className, ...props }: AccordionPrimitive.Root.Props<string
       data-slot="accordion"
       {...props}
       className={(state) =>
-        cn(
-          "flex w-full flex-col",
-          typeof className === "function" ? className(state) : className,
-        )
+        cn("flex w-full flex-col", typeof className === "function" ? className(state) : className)
       }
     />
   );
@@ -35,11 +32,7 @@ function AccordionItem({ className, ...props }: AccordionPrimitive.Item.Props) {
   );
 }
 
-function AccordionTrigger({
-  className,
-  children,
-  ...props
-}: AccordionPrimitive.Trigger.Props) {
+function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.Trigger.Props) {
   return (
     <AccordionPrimitive.Header className="flex">
       <AccordionPrimitive.Trigger
@@ -63,11 +56,7 @@ function AccordionTrigger({
   );
 }
 
-function AccordionContent({
-  className,
-  children,
-  ...props
-}: AccordionPrimitive.Panel.Props) {
+function AccordionContent({ className, children, ...props }: AccordionPrimitive.Panel.Props) {
   return (
     <AccordionPrimitive.Panel
       data-slot="accordion-content"

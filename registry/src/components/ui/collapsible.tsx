@@ -9,9 +9,7 @@ function Collapsible({ className, ...props }: CollapsiblePrimitive.Root.Props) {
     <CollapsiblePrimitive.Root
       data-slot="collapsible"
       {...props}
-      className={(state) =>
-        cn(typeof className === "function" ? className(state) : className)
-      }
+      className={(state) => cn(typeof className === "function" ? className(state) : className)}
     />
   );
 }
@@ -20,10 +18,7 @@ function CollapsibleTrigger(props: CollapsiblePrimitive.Trigger.Props) {
   return <CollapsiblePrimitive.Trigger data-slot="collapsible-trigger" {...props} />;
 }
 
-function CollapsibleContent({
-  className,
-  ...props
-}: CollapsiblePrimitive.Panel.Props) {
+function CollapsibleContent({ className, ...props }: CollapsiblePrimitive.Panel.Props) {
   return (
     <CollapsiblePrimitive.Panel
       data-slot="collapsible-content"
