@@ -2,7 +2,6 @@
 
 import { NavigationMenu as NavigationMenuPrimitive } from "@base-ui/react/navigation-menu";
 import { ChevronDownIcon } from "lucide-react";
-import type * as React from "react";
 import { cva } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
@@ -29,10 +28,7 @@ function NavigationMenu({
   );
 }
 
-function NavigationMenuList({
-  className,
-  ...props
-}: NavigationMenuPrimitive.List.Props) {
+function NavigationMenuList({ className, ...props }: NavigationMenuPrimitive.List.Props) {
   return (
     <NavigationMenuPrimitive.List
       data-slot="navigation-menu-list"
@@ -47,10 +43,7 @@ function NavigationMenuList({
   );
 }
 
-function NavigationMenuItem({
-  className,
-  ...props
-}: NavigationMenuPrimitive.Item.Props<string>) {
+function NavigationMenuItem({ className, ...props }: NavigationMenuPrimitive.Item.Props<string>) {
   return (
     <NavigationMenuPrimitive.Item
       data-slot="navigation-menu-item"
@@ -94,10 +87,7 @@ function NavigationMenuTrigger({
   );
 }
 
-function NavigationMenuContent({
-  className,
-  ...props
-}: NavigationMenuPrimitive.Content.Props) {
+function NavigationMenuContent({ className, ...props }: NavigationMenuPrimitive.Content.Props) {
   return (
     <NavigationMenuPrimitive.Content
       data-slot="navigation-menu-content"
@@ -112,10 +102,7 @@ function NavigationMenuContent({
   );
 }
 
-function NavigationMenuViewport({
-  className,
-  ...props
-}: NavigationMenuPrimitive.Viewport.Props) {
+function NavigationMenuViewport({ className, ...props }: NavigationMenuPrimitive.Viewport.Props) {
   return (
     <NavigationMenuPrimitive.Portal>
       <NavigationMenuPrimitive.Positioner
@@ -144,10 +131,7 @@ function NavigationMenuViewport({
   );
 }
 
-function NavigationMenuLink({
-  className,
-  ...props
-}: NavigationMenuPrimitive.Link.Props) {
+function NavigationMenuLink({ className, ...props }: NavigationMenuPrimitive.Link.Props) {
   return (
     <NavigationMenuPrimitive.Link
       data-slot="navigation-menu-link"
