@@ -105,10 +105,7 @@ function PopoverDescription({ className, ...props }: PopoverPrimitive.Descriptio
     <PopoverPrimitive.Description
       data-slot="popover-description"
       className={(state) =>
-        cn(
-          "text-main-foreground",
-          typeof className === "function" ? className(state) : className,
-        )
+        cn("text-main-foreground", typeof className === "function" ? className(state) : className)
       }
       {...props}
     />

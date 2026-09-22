@@ -91,9 +91,7 @@ export default function TimezoneCombobox() {
       >
         {selectedTimezoneLabel ? (
           <div className="flex flex-col items-start gap-0.5">
-            <span className="text-main-foreground text-xs font-normal">
-              {selectedGroup?.label}
-            </span>
+            <span className="text-main-foreground text-xs font-normal">{selectedGroup?.label}</span>
             <span>{selectedTimezoneLabel}</span>
           </div>
         ) : (
