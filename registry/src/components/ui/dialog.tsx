@@ -100,9 +100,7 @@ function DialogFooter({
       {...props}
     >
       {children}
-      {showCloseButton && (
-        <DialogClose render={<Button variant="outline" />}>Close</DialogClose>
-      )}
+      {showCloseButton && <DialogClose render={<Button variant="outline" />}>Close</DialogClose>}
     </div>
   );
 }
@@ -128,7 +126,10 @@ function DialogDescription({ className, ...props }: DialogPrimitive.Description.
       data-slot="dialog-description"
       {...props}
       className={(state) =>
-        cn("text-sm font-base text-foreground", typeof className === "function" ? className(state) : className)
+        cn(
+          "text-sm font-base text-foreground",
+          typeof className === "function" ? className(state) : className,
+        )
       }
     />
   );

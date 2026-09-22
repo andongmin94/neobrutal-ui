@@ -104,7 +104,10 @@ function SheetTitle({ className, ...props }: SheetPrimitive.Title.Props) {
       data-slot="sheet-title"
       {...props}
       className={(state) =>
-        cn("font-heading text-foreground", typeof className === "function" ? className(state) : className)
+        cn(
+          "font-heading text-foreground",
+          typeof className === "function" ? className(state) : className,
+        )
       }
     />
   );
@@ -116,7 +119,10 @@ function SheetDescription({ className, ...props }: SheetPrimitive.Description.Pr
       data-slot="sheet-description"
       {...props}
       className={(state) =>
-        cn("text-sm font-base text-foreground", typeof className === "function" ? className(state) : className)
+        cn(
+          "text-sm font-base text-foreground",
+          typeof className === "function" ? className(state) : className,
+        )
       }
     />
   );
