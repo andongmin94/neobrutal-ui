@@ -121,7 +121,7 @@ subsequent additions.
 
 ## Development
 
-Use Node.js 22.12+ within the Node 22 release line and npm:
+Use Node.js 24+ and npm:
 
 ```bash
 npm ci --prefix registry
@@ -156,7 +156,7 @@ cross-browser smoke tests. Finite release gates and evidence limits are document
 | --- | --- |
 | `registry/src` | Installable components, recipes, templates, tokens, and catalog data |
 | `registry/scripts` | Registry generation and isolated consumer checks |
-| `docs/app` | Documentation shell and special pages |
+| `docs/src/site` | Fumapress documentation shell and site-specific UI |
 | `docs/src/examples` | Published interactive examples |
 | `docs/tests` | Browser, interaction, reflow, and release regressions |
 | `registry/directory-entry.json` | Prepared shadcn directory metadata |
