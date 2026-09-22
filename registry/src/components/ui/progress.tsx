@@ -8,12 +8,7 @@ type ProgressProps = Omit<ProgressPrimitive.Root.Props, "value"> & {
   value?: number | null;
 };
 
-function Progress({
-  children,
-  className,
-  value = null,
-  ...props
-}: ProgressProps) {
+function Progress({ children, className, value = null, ...props }: ProgressProps) {
   return (
     <ProgressPrimitive.Root
       data-slot="progress"
@@ -34,10 +29,7 @@ function Progress({
   );
 }
 
-function ProgressTrack({
-  className,
-  ...props
-}: ProgressPrimitive.Track.Props) {
+function ProgressTrack({ className, ...props }: ProgressPrimitive.Track.Props) {
   return (
     <ProgressPrimitive.Track
       data-slot="progress-track"
@@ -52,10 +44,7 @@ function ProgressTrack({
   );
 }
 
-function ProgressIndicator({
-  className,
-  ...props
-}: ProgressPrimitive.Indicator.Props) {
+function ProgressIndicator({ className, ...props }: ProgressPrimitive.Indicator.Props) {
   return (
     <ProgressPrimitive.Indicator
       data-slot="progress-indicator"
@@ -70,28 +59,19 @@ function ProgressIndicator({
   );
 }
 
-function ProgressLabel({
-  className,
-  ...props
-}: ProgressPrimitive.Label.Props) {
+function ProgressLabel({ className, ...props }: ProgressPrimitive.Label.Props) {
   return (
     <ProgressPrimitive.Label
       data-slot="progress-label"
       {...props}
       className={(state) =>
-        cn(
-          "text-sm font-heading",
-          typeof className === "function" ? className(state) : className,
-        )
+        cn("text-sm font-heading", typeof className === "function" ? className(state) : className)
       }
     />
   );
 }
 
-function ProgressValue({
-  className,
-  ...props
-}: ProgressPrimitive.Value.Props) {
+function ProgressValue({ className, ...props }: ProgressPrimitive.Value.Props) {
   return (
     <ProgressPrimitive.Value
       data-slot="progress-value"

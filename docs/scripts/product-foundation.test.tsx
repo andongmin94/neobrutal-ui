@@ -365,6 +365,21 @@ test("form and status primitives use Base UI native state without Radix adapters
   assert.match(source("docs/content/docs/checkbox.mdx"), /independent of `checked`/);
 });
 
+test("switch and avatar expose only native Base UI composition surfaces", () => {
+  const switchSource = source("registry/src/components/ui/switch.tsx");
+  assert.doesNotMatch(
+    switchSource,
+    /asChild|mergeProps|preventBaseUIHandler|getChildElement|renderWithAliases|data-state=/,
+  );
+  assert.match(switchSource, /data-checked/);
+  assert.match(switchSource, /data-size/);
+
+  const avatarSource = source("registry/src/components/ui/avatar.tsx");
+  assert.doesNotMatch(avatarSource, /asChild|getChildElement|delayMs/);
+  assert.match(avatarSource, /data-size/);
+  assert.match(avatarSource, /AvatarPrimitive\.Fallback/);
+});
+
 test("error text is a separate theme token included in every palette export", () => {
   for (const color of colors) {
     const vars = createThemeCssVars(color);

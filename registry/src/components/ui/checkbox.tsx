@@ -5,12 +5,7 @@ import { CheckIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-function Checkbox({
-  className,
-  nativeButton,
-  render,
-  ...props
-}: CheckboxPrimitive.Root.Props) {
+function Checkbox({ className, nativeButton, render, ...props }: CheckboxPrimitive.Root.Props) {
   const usesDefaultButton = render === undefined;
 
   return (
