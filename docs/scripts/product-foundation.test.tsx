@@ -324,6 +324,47 @@ test("accordion and collapsible use Base UI native disclosure state", () => {
   assert.match(sidebarExample, /render={<SidebarMenuItem \/>}/);
 });
 
+test("form and status primitives use Base UI native state without Radix adapters", () => {
+  const checkboxSource = source("registry/src/components/ui/checkbox.tsx");
+  assert.doesNotMatch(
+    checkboxSource,
+    /asChild|mergeProps|preventBaseUIHandler|forceMount|data-state=|CheckedState|uncontrolledChecked/,
+  );
+  assert.match(checkboxSource, /data-indeterminate/);
+  assert.match(checkboxSource, /nativeButton/);
+
+  const radioSource = source("registry/src/components/ui/radio-group.tsx");
+  assert.doesNotMatch(
+    radioSource,
+    /asChild|mergeProps|preventBaseUIHandler|forceMount|DirectionProvider|orientation|\bloop\b|data-state=/,
+  );
+  assert.match(radioSource, /RadioGroupPrimitive/);
+  assert.match(radioSource, /RadioPrimitive\.Indicator/);
+
+  const progressSource = source("registry/src/components/ui/progress.tsx");
+  assert.doesNotMatch(
+    progressSource,
+    /asChild|mergeProps|preventBaseUIHandler|getValueLabel|data-state=|data-max=|data-value=/,
+  );
+  assert.match(progressSource, /ProgressPrimitive\.Track/);
+  assert.match(progressSource, /ProgressPrimitive\.Indicator/);
+
+  const scrollSource = source("registry/src/components/ui/scroll-area.tsx");
+  assert.doesNotMatch(
+    scrollSource,
+    /asChild|mergeProps|preventBaseUIHandler|--radix-scroll-area|ScrollAreaContractContext|scrollHideDelay|\btype\?:|data-state=/,
+  );
+  assert.match(scrollSource, /data-hovering:opacity-100/);
+  assert.match(scrollSource, /data-scrolling:opacity-100/);
+
+  assert.doesNotMatch(
+    source("docs/content/docs/scroll-area.mdx"),
+    /ScrollArea\.type|ScrollArea\.scrollHideDelay/,
+  );
+  assert.doesNotMatch(source("docs/content/docs/radio-group.mdx"), /RadioGroup\.orientation/);
+  assert.match(source("docs/content/docs/checkbox.mdx"), /independent of `checked`/);
+});
+
 test("error text is a separate theme token included in every palette export", () => {
   for (const color of colors) {
     const vars = createThemeCssVars(color);

@@ -58,13 +58,13 @@ export default function ConsentField() {
 
 | Prop / part | Purpose | Default |
 | --- | --- | --- |
-| `checked` / `defaultChecked` | Boolean or `indeterminate` state | Unchecked |
-| `onCheckedChange` | New checked state and event details | — |
-| `indeterminate` | Explicit mixed state | Derived from checked value |
+| `checked` / `defaultChecked` | Boolean checked state | Unchecked |
+| `onCheckedChange` | New boolean checked state and event details | — |
+| `indeterminate` | Explicit mixed state, independent of `checked` | `false` |
 | `disabled` / `required` | Interaction and form constraints | `false` |
 | `name` / `value` / `form` | Form association through a hidden input | — |
 | `id` / `inputRef` | Label association and hidden input reference | — |
 
 ## Accessibility
 
-Associate a visible label with the checkbox. Space toggles the focused control. Use mixed state for partial selection, not as a third agreement option. Checked state does not submit or save anything on its own. When mapping checked values to a boolean, compare with `true` rather than coercing the string `indeterminate` to true.
+Associate a visible label with the checkbox. Space toggles the focused control. Use mixed state for partial selection, not as a third agreement option. Checked state does not submit or save anything on its own. Treat `indeterminate` as presentation for partial selection; `onCheckedChange` still reports a boolean checked state.

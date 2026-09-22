@@ -55,9 +55,9 @@ export default function ActivityList() {
 | Prop / part | Purpose | Default |
 | --- | --- | --- |
 | `ScrollArea.className` | Root bounds and layout | Unbounded unless styled |
-| `ScrollArea.type` | auto, always, hover, or scroll visibility | `hover` |
-| `ScrollArea.scrollHideDelay` | Transient scrollbar hide delay in milliseconds | `600` |
+| `ScrollArea.overflowEdgeThreshold` | Threshold for native overflow-edge state | `0` |
 | `ScrollBar.orientation` | Vertical or horizontal scrollbar | `vertical` |
+| `ScrollBar.keepMounted` | Keep a scrollbar mounted without overflow | `false` |
 | Children | Content inside the viewport | Required for useful scrolling |
 
 ## Accessibility
