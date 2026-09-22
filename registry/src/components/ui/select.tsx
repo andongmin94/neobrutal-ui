@@ -9,10 +9,7 @@ import { cn } from "@/lib/utils";
 
 type SelectProps = Omit<SelectPrimitive.Root.Props<string>, "onValueChange"> & {
   dir?: "ltr" | "rtl";
-  onValueChange?: (
-    value: string,
-    eventDetails: SelectPrimitive.Root.ChangeEventDetails,
-  ) => void;
+  onValueChange?: (value: string, eventDetails: SelectPrimitive.Root.ChangeEventDetails) => void;
 };
 
 type SelectContentProps = SelectPrimitive.Popup.Props &
@@ -52,10 +49,7 @@ function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
       data-slot="select-group"
       {...props}
       className={(state) =>
-        cn(
-          "scroll-my-1 p-1",
-          typeof className === "function" ? className(state) : className,
-        )
+        cn("scroll-my-1 p-1", typeof className === "function" ? className(state) : className)
       }
     />
   );
@@ -67,10 +61,7 @@ function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
       data-slot="select-value"
       {...props}
       className={(state) =>
-        cn(
-          "flex flex-1 text-left",
-          typeof className === "function" ? className(state) : className,
-        )
+        cn("flex flex-1 text-left", typeof className === "function" ? className(state) : className)
       }
     />
   );
