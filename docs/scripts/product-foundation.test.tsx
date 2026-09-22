@@ -225,6 +225,14 @@ test("dropdown menu uses Base UI native menu state and composition", () => {
   }
 });
 
+test("context menu uses Base UI native state and composition", () => {
+  const contextMenuSource = source("registry/src/components/ui/context-menu.tsx");
+  assert.doesNotMatch(
+    contextMenuSource,
+    /asChild|--radix-context-menu|CustomEvent|onOpenAutoFocus|onCloseAutoFocus|onInteractOutside|onPointerDownOutside|onFocusOutside|preventBaseUIHandler|data-state=/,
+  );
+});
+
 test("error text is a separate theme token included in every palette export", () => {
   for (const color of colors) {
     const vars = createThemeCssVars(color);
