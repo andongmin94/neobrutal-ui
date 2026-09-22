@@ -8,6 +8,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 *.tsbuildinfo
+/public/build-info.json
 
 /playwright-report/
 /playwright-report-cross/
