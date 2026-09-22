@@ -3,6 +3,7 @@ import { expect, test } from "@playwright/test";
 import colors from "../src/data/colors";
 import { createThemeCssVars } from "../src/data/theme";
 
+// Fields reuse their existing border; discrete controls use a compact no-offset focus ring.
 const focusControls = [
   { route: "input", control: 'input[data-slot="input"]:not(:disabled)', mode: "border" },
   { route: "textarea", control: "textarea:not(:disabled)", mode: "border" },
