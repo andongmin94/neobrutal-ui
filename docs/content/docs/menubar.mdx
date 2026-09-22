@@ -47,7 +47,7 @@ export default function FileMenu() {
   return (
     <div className="grid gap-3">
       <Menubar>
-        <MenubarMenu value="file">
+        <MenubarMenu>
           <MenubarTrigger>File</MenubarTrigger>
           <MenubarContent>
             <MenubarItem onClick={() => setMessage("Created a local draft.")}>
@@ -67,10 +67,10 @@ export default function FileMenu() {
 
 | Prop / part | Purpose | Default |
 | --- | --- | --- |
-| `Menubar.value` / `onValueChange` | Controlled open-menu identifier | Uncontrolled |
-| `Menubar.defaultValue` | Initial open menu | Empty string |
-| `Menubar.loop` | Wrap trigger keyboard navigation | `true` |
-| `MenubarMenu.value` | Stable identifier | Generated if omitted |
+| `Menubar.loopFocus` | Wrap trigger keyboard navigation | `true` |
+| `Menubar.modal` | Limit interaction to an open menu | `true` |
+| `Menubar.disabled` | Disable all menus in the bar | `false` |
+| `Menubar.orientation` | Trigger navigation axis | `horizontal` |
 | `MenubarContent.align` / `sideOffset` | Popup placement | `start` / `8` |
 | `MenubarCheckboxItem.checked` / `onCheckedChange` | Checked command state | Uncontrolled |
 

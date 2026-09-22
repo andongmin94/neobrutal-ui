@@ -233,6 +233,21 @@ test("context menu uses Base UI native state and composition", () => {
   );
 });
 
+test("menubar delegates open state and keyboard navigation to Base UI", () => {
+  const menubarSource = source("registry/src/components/ui/menubar.tsx");
+  assert.doesNotMatch(
+    menubarSource,
+    /MenubarValueContext|MenubarMenuContext|--radix-menubar|getAsChildElement|data-value=|defaultValue\?: string|onValueChange\?: \(value: string\)|\basChild\b/,
+  );
+
+  const menubarDoc = source("docs/content/docs/menubar.mdx");
+  assert.doesNotMatch(
+    menubarDoc,
+    /Menubar\.value|Menubar\.defaultValue|MenubarMenu\.value|Menubar\.loop\b/,
+  );
+  assert.match(menubarDoc, /Menubar\.loopFocus/);
+});
+
 test("error text is a separate theme token included in every palette export", () => {
   for (const color of colors) {
     const vars = createThemeCssVars(color);
