@@ -49,10 +49,7 @@ function MenubarPortal(props: React.ComponentProps<typeof DropdownMenuPortal>) {
   return <DropdownMenuPortal data-slot="menubar-portal" {...props} />;
 }
 
-function MenubarTrigger({
-  className,
-  ...props
-}: React.ComponentProps<typeof DropdownMenuTrigger>) {
+function MenubarTrigger({ className, ...props }: React.ComponentProps<typeof DropdownMenuTrigger>) {
   return (
     <DropdownMenuTrigger
       data-slot="menubar-trigger"
@@ -91,10 +88,7 @@ function MenubarContent({
   );
 }
 
-function MenubarItem({
-  className,
-  ...props
-}: React.ComponentProps<typeof DropdownMenuItem>) {
+function MenubarItem({ className, ...props }: React.ComponentProps<typeof DropdownMenuItem>) {
   return (
     <DropdownMenuItem
       data-slot="menubar-item"
@@ -149,10 +143,7 @@ function MenubarRadioItem({
   );
 }
 
-function MenubarLabel({
-  className,
-  ...props
-}: React.ComponentProps<typeof DropdownMenuLabel>) {
+function MenubarLabel({ className, ...props }: React.ComponentProps<typeof DropdownMenuLabel>) {
   return (
     <DropdownMenuLabel
       data-slot="menubar-label"
