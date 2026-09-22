@@ -1,10 +1,23 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "unicorn", "typescript", "oxc", "jsx-a11y"],
-  "ignorePatterns": ["node_modules/**", "src/components/ui/**", "src/components/templates/**"],
+  "plugins": [
+    "react",
+    "unicorn",
+    "typescript",
+    "oxc",
+    "jsx-a11y"
+  ],
+  "ignorePatterns": [
+    "node_modules/**",
+    "src/components/ui/**",
+    "src/components/templates/**"
+  ],
   "overrides": [
     {
-      "files": ["app/components/search-launcher.tsx", "src/examples/ui/combobox/**/*.tsx"],
+      "files": [
+        "src/site/components/search-launcher.tsx",
+        "src/examples/ui/combobox/**/*.tsx"
+      ],
       "rules": {
         "jsx-a11y/prefer-tag-over-role": "off"
       }
