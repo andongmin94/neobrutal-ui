@@ -74,7 +74,7 @@ for (const { component, triggerSelector, surfaceSelector } of [
   {
     component: "navigation-menu",
     triggerSelector: '[data-slot="navigation-menu-trigger"]',
-    surfaceSelector: '[data-slot="navigation-menu-content"][data-open]',
+    surfaceSelector: '[data-slot="navigation-menu-popup"][data-open]',
   },
   {
     component: "combobox",
