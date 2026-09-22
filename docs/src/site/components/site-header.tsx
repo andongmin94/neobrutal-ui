@@ -4,7 +4,7 @@ import { Link, useRouter } from "fumapress/client";
 import { Menu, Star, X as CloseIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { isNavigationPathActive, PRIMARY_NAVIGATION_LINKS } from "~/lib/navigation";
+import { isNavigationPathActive, PRIMARY_NAVIGATION_LINKS } from "@/site/lib/navigation";
 import { SearchLauncher } from "./search-launcher";
 import { ThemeToggle } from "./theme-toggle";
 

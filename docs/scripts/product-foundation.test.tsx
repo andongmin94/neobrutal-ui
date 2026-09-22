@@ -157,7 +157,7 @@ test("installable templates inherit tokens; gallery presets stay in docs", () =>
     );
     assert.match(original, /bg-background/);
   }
-  assert.match(source("docs/app/components/template-preview.tsx"), /data-template-preview/);
+  assert.match(source("docs/src/site/components/template-preview.tsx"), /data-template-preview/);
 });
 
 test("removed decorative collection is absent from sources and built catalogs", () => {
@@ -169,7 +169,7 @@ test("removed decorative collection is absent from sources and built catalogs", 
     "docs/src/scripts/generate-stars-ts.ts",
     "docs/content/stars.mdx",
     "docs/content/docs/stars.mdx",
-    "docs/app/components/stars-page.tsx",
+    "docs/src/site/components/stars-page.tsx",
   ])
     assert.equal(existsSync(path.join(root, relative)), false, relative);
 
@@ -186,12 +186,12 @@ test("removed decorative collection is absent from sources and built catalogs", 
     assert.ok(!readdirSync(path.join(root, relative)).some((name) => /^s\d+\.json$/.test(name)));
   }
   for (const relative of [
-    "docs/app/lib/navigation.ts",
-    "docs/app/components/sidebar-nav.tsx",
-    "docs/app/components/search-launcher.tsx",
-    "docs/app/components/site-layout.tsx",
-    "docs/app/components/special-page.tsx",
-    "docs/app/components/component-preview.tsx",
+    "docs/src/site/lib/navigation.ts",
+    "docs/src/site/components/sidebar-nav.tsx",
+    "docs/src/site/components/search-launcher.tsx",
+    "docs/src/site/components/site-layout.tsx",
+    "docs/src/site/components/special-page.tsx",
+    "docs/src/site/components/component-preview.tsx",
   ])
     assert.doesNotMatch(
       source(relative),

@@ -110,7 +110,7 @@ jobs:
               if [ ! -x node_modules/.bin/oxfmt ]; then exit 0; fi
               paths=(src scripts tsconfig.json package.json .oxlintrc.json .oxfmtrc.json)
               if [ "$project" = docs ]; then
-                paths+=(app tests press.config.tsx vite.config.ts)
+                paths+=(tests press.config.tsx vite.config.ts)
               else
                 paths+=(tsconfig.consumer.json)
               fi

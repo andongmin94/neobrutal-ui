@@ -8,7 +8,7 @@ import LinkHubTemplate from "@/components/templates/link-hub-template";
 import PortfolioTemplate from "@/components/templates/portfolio-template";
 import TEMPLATES from "@/data/templates";
 import { getBlogPost } from "@/lib/blog-posts";
-import { copyText } from "~/lib/clipboard";
+import { copyText } from "@/site/lib/clipboard";
 import { TemplatePreview } from "./template-preview";
 import { TemplateThumbnail } from "./template-thumbnail";
 

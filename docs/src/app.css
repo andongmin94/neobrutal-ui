@@ -1,12 +1,12 @@
 @import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 @import "./styling/globals.css";
-@import "../app/styles/tokens.css";
-@import "../app/styles/shell.css";
-@import "../app/styles/content.css";
-@import "../app/styles/code-dialog.css";
-@import "../app/styles/directory.css";
-@import "../app/styles/index.css";
-@import "../app/styles/components.css";
+@import "./site/styles/tokens.css";
+@import "./site/styles/shell.css";
+@import "./site/styles/content.css";
+@import "./site/styles/code-dialog.css";
+@import "./site/styles/directory.css";
+@import "./site/styles/index.css";
+@import "./site/styles/components.css";
 
 body[data-version="1.0"] {
   display: block;

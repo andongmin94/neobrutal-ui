@@ -26,6 +26,7 @@ test("Fumapress owns the docs runtime without React Router compatibility paths",
 
   for (const relative of [
     "react-router.config.ts",
+    "app",
     "app/root.tsx",
     "app/routes.ts",
     "app/routes",
@@ -38,6 +39,7 @@ test("Fumapress owns the docs runtime without React Router compatibility paths",
 
   assert.equal(existsSync(path.join(docsRoot, "press.config.tsx")), true);
   assert.equal(existsSync(path.join(docsRoot, "src/app.css")), true);
+  assert.equal(existsSync(path.join(docsRoot, "src/site")), true);
   assert.equal(packageLock.packages?.[""]?.dependencies?.isbot, undefined);
   assert.equal(packageLock.packages?.["node_modules/isbot"], undefined);
 });

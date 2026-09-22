@@ -5,8 +5,8 @@ import { BookOpen, Box, Search, X } from "lucide-react";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { COMPONENT_DIRECTORY_LINKS } from "@/data/component-directory";
-import { trapTabFocus } from "~/lib/focus";
-import { isNavigationPathActive, SITE_NAVIGATION_LINKS } from "~/lib/navigation";
+import { trapTabFocus } from "@/site/lib/focus";
+import { isNavigationPathActive, SITE_NAVIGATION_LINKS } from "@/site/lib/navigation";
 
 const documentGroups = [
   {

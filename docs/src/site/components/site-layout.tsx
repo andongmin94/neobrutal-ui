@@ -6,7 +6,7 @@ import { ExternalLink } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { COMPONENT_DIRECTORY_LINKS } from "@/data/component-directory";
-import { normalizePath } from "~/lib/navigation";
+import { normalizePath } from "@/site/lib/navigation";
 import { DirectoryHome } from "./directory-home";
 import { SidebarNav } from "./sidebar-nav";
 import { SiteFooter } from "./site-footer";

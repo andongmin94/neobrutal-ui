@@ -9,7 +9,7 @@ import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react"
 import { COMPONENT_DIRECTORY_LINKS } from "@/data/component-directory";
 import TEMPLATES from "@/data/templates";
 import { BLOG_POSTS } from "@/lib/blog-posts";
-import { PRIMARY_NAVIGATION_LINKS } from "~/lib/navigation";
+import { PRIMARY_NAVIGATION_LINKS } from "@/site/lib/navigation";
 
 type SearchEntry = { group: string; href: string; label: string; terms?: string };
 const resultListId = "docs-search-results";

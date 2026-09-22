@@ -7,12 +7,12 @@ import { sitemapPlugin } from "fumapress/plugins/sitemap";
 import { defineDocs } from "fumadocs-mdx/macro";
 import { z } from "zod";
 
-import { getMDXComponents } from "~/components/mdx-components";
-import { HydrationMarker } from "~/components/hydration-marker";
-import NotFound from "~/components/not-found";
-import { SiteLayout } from "~/components/site-layout";
-import { BridgeToaster } from "~/components/toaster";
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, SOCIAL_IMAGE_URL } from "~/lib/site";
+import { getMDXComponents } from "@/site/components/mdx-components";
+import { HydrationMarker } from "@/site/components/hydration-marker";
+import NotFound from "@/site/components/not-found";
+import { SiteLayout } from "@/site/components/site-layout";
+import { BridgeToaster } from "@/site/components/toaster";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, SOCIAL_IMAGE_URL } from "@/site/lib/site";
 
 const docs = defineDocs({
   dir: "content",
