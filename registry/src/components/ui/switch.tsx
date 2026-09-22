@@ -8,13 +8,7 @@ type SwitchProps = SwitchPrimitive.Root.Props & {
   size?: "sm" | "default";
 };
 
-function Switch({
-  className,
-  nativeButton,
-  render,
-  size = "default",
-  ...props
-}: SwitchProps) {
+function Switch({ className, nativeButton, render, size = "default", ...props }: SwitchProps) {
   const usesDefaultButton = render === undefined;
 
   return (
