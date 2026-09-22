@@ -104,7 +104,7 @@ test("server-rendered fields have unique labels and do not invent unregistered I
 });
 
 test("interactive focus stays semantic, compact, and keyboard-only", () => {
-  const classes = buttonVariants({ variant: "neutral" }).split(/\s+/);
+  // Pointer interaction must not add a second visual border around controls.\n  const classes = buttonVariants({ variant: "neutral" }).split(/\s+/);
   assert.ok(classes.includes("focus-visible:ring-ring"));
   assert.ok(classes.includes("focus-visible:ring-1"));
   assert.ok(classes.includes("bg-secondary-background"));
