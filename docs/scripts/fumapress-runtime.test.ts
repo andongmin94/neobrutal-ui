@@ -33,6 +33,7 @@ test("Fumapress owns the docs runtime without React Router compatibility paths",
     "app/lib/source.ts",
     "app/app.css",
     "vercel.json",
+    "src/data/theme.json",
   ]) {
     assert.equal(existsSync(path.join(docsRoot, relative)), false, relative);
   }
@@ -40,6 +41,10 @@ test("Fumapress owns the docs runtime without React Router compatibility paths",
   assert.equal(existsSync(path.join(docsRoot, "press.config.tsx")), true);
   assert.equal(existsSync(path.join(docsRoot, "src/app.css")), true);
   assert.equal(existsSync(path.join(docsRoot, "src/site")), true);
+
+  const globalsCss = readFileSync(path.join(docsRoot, "src/styling/globals.css"), "utf8");
+  assert.doesNotMatch(globalsCss, /@source\s+["']\.\.\/\.\.\/app["']/);
+
   assert.equal(packageLock.packages?.[""]?.dependencies?.isbot, undefined);
   assert.equal(packageLock.packages?.["node_modules/isbot"], undefined);
 });
