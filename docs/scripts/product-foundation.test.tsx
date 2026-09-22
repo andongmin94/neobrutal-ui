@@ -151,10 +151,11 @@ test("popover uses Base UI native composition without legacy Radix adapters", ()
   }
 });
 
-test("dialog and sheet use Base UI native composition without legacy adapters", () => {
+test("dialog family uses Base UI native composition without legacy adapters", () => {
   for (const relative of [
     "registry/src/components/ui/dialog.tsx",
     "registry/src/components/ui/sheet.tsx",
+    "registry/src/components/ui/alert-dialog.tsx",
   ]) {
     const componentSource = source(relative);
     assert.doesNotMatch(
@@ -168,8 +169,14 @@ test("dialog and sheet use Base UI native composition without legacy adapters", 
     source("docs/src/special-pages/charts-examples.tsx"),
     /<DialogTrigger\s+asChild/,
   );
-  const sheetExample = source("docs/src/examples/ui/sheet/index.tsx");
-  assert.doesNotMatch(sheetExample, /<Sheet(?:Trigger|Close)\s+asChild/);
+  assert.doesNotMatch(
+    source("docs/src/examples/ui/sheet/index.tsx"),
+    /<Sheet(?:Trigger|Close)\s+asChild/,
+  );
+  assert.doesNotMatch(
+    source("docs/src/examples/ui/alert-dialog.tsx"),
+    /<AlertDialogTrigger\s+asChild/,
+  );
 });
 
 test("error text is a separate theme token included in every palette export", () => {

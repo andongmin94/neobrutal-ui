@@ -21,8 +21,8 @@ export default function AlertDialogDemo() {
   return (
     <div className="grid justify-items-center gap-3">
       <AlertDialog>
-        <AlertDialogTrigger asChild>
-          <Button variant="outline">Archive release candidate</Button>
+        <AlertDialogTrigger render={<Button variant="outline" />}>
+          Archive release candidate
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
