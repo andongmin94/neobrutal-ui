@@ -175,7 +175,10 @@ function Sidebar({
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
-          className={cn("w-(--sidebar-width) bg-secondary-background p-0 text-foreground", className)}
+          className={cn(
+            "w-(--sidebar-width) bg-secondary-background p-0 text-foreground",
+            className,
+          )}
           style={
             {
               "--sidebar-width": SIDEBAR_WIDTH_MOBILE,

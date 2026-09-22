@@ -390,10 +390,7 @@ test("sidebar keeps only documented composition surfaces and application-owned p
   assert.match(sidebarSource, /aria-expanded={isMobile \? openMobile : open}/);
 
   const sidebarExample = source("docs/src/examples/ui/sidebar/_sidebar.tsx");
-  assert.doesNotMatch(
-    sidebarExample,
-    /<SidebarMenu(?:Sub)?Button\s+asChild/,
-  );
+  assert.doesNotMatch(sidebarExample, /<SidebarMenu(?:Sub)?Button\s+asChild/);
   assert.match(sidebarExample, /SidebarMenuButton render={<a href={item\.url} \/>}/);
   assert.match(sidebarExample, /SidebarMenuSubButton render={<a href={subItem\.url} \/>}/);
 
