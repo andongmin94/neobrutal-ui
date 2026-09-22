@@ -20,11 +20,7 @@ type TooltipContentProps = TooltipPrimitive.Popup.Props &
     | "sticky"
   >;
 
-function TooltipProvider({
-  delay = 0,
-  timeout = 300,
-  ...props
-}: TooltipPrimitive.Provider.Props) {
+function TooltipProvider({ delay = 0, timeout = 300, ...props }: TooltipPrimitive.Provider.Props) {
   return <TooltipPrimitive.Provider delay={delay} timeout={timeout} {...props} />;
 }
 

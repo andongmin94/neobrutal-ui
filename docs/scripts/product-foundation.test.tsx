@@ -192,10 +192,7 @@ test("tooltip and hover card use Base UI native overlay composition", () => {
     /asChild|--radix-hover-card|openDelay|CustomEvent|forceMount|MutationObserver|tabIndex\s*=\s*-1|data-state=/,
   );
 
-  assert.doesNotMatch(
-    source("docs/src/examples/ui/tooltip.tsx"),
-    /<TooltipTrigger\s+asChild/,
-  );
+  assert.doesNotMatch(source("docs/src/examples/ui/tooltip.tsx"), /<TooltipTrigger\s+asChild/);
 });
 
 test("error text is a separate theme token included in every palette export", () => {
