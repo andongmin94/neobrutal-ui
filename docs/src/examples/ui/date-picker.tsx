@@ -21,18 +21,20 @@ export default function DatePickerDemo() {
           Project date
         </label>
         <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              id={id}
-              ref={trigger}
-              variant="neutral"
-              aria-describedby={`${id}-hint`}
-              className="w-full justify-start text-left font-base"
-            >
+          <PopoverTrigger
+            render={
+              <Button
+                id={id}
+                ref={trigger}
+                variant="neutral"
+                aria-describedby={`${id}-hint`}
+                className="w-full justify-start text-left font-base"
+              />
+            }
+          >
               <CalendarIcon aria-hidden="true" />
               <span className="flex-1">{date ? format(date, "PPP") : "Pick a date"}</span>
               <ChevronDown aria-hidden="true" />
-            </Button>
           </PopoverTrigger>
           <PopoverContent
             align="start"

@@ -75,17 +75,20 @@ export default function TimezoneCombobox() {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        {/* A button-backed select-only combobox follows the ARIA combobox pattern. */}
-        <Button
-          variant="noShadow"
-          role="combobox"
-          aria-haspopup="listbox"
-          aria-label="Select a timezone"
-          aria-expanded={open}
-          aria-controls={open ? contentId : undefined}
-          className="h-12 w-full justify-between px-2.5 md:max-w-[200px]"
-        >
+      {/* A button-backed select-only combobox follows the ARIA combobox pattern. */}
+      <PopoverTrigger
+        render={
+          <Button
+            variant="noShadow"
+            role="combobox"
+            aria-haspopup="listbox"
+            aria-label="Select a timezone"
+            aria-expanded={open}
+            aria-controls={open ? contentId : undefined}
+            className="h-12 w-full justify-between px-2.5 md:max-w-[200px]"
+          />
+        }
+      >
           {selectedTimezoneLabel ? (
             <div className="flex flex-col items-start gap-0.5">
               <span className="text-main-foreground text-xs font-normal">
@@ -97,7 +100,6 @@ export default function TimezoneCombobox() {
             "Select timezone"
           )}
           <ChevronDownIcon />
-        </Button>
       </PopoverTrigger>
       <PopoverContent id={contentId} className="p-0 border-0" align="start">
         <Command className="**:data-[slot=command-input-wrapper]:h-11">

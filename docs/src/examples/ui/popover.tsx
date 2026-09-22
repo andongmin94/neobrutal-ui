@@ -14,9 +14,7 @@ const checks = ["Registry schema valid", "Next.js consumer built", "Vite consume
 export default function PopoverDemo() {
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="noShadow">View release status</Button>
-      </PopoverTrigger>
+      <PopoverTrigger render={<Button variant="noShadow" />}>View release status</PopoverTrigger>
       <PopoverContent className="w-[min(22rem,calc(100vw-2rem))]">
         <div className="flex items-start justify-between gap-4">
           <div>

@@ -47,22 +47,24 @@ export default function ComboboxWithCheckbox() {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        {/* A button-backed multi-select combobox follows the ARIA combobox pattern. */}
-        <Button
-          variant="noShadow"
-          role="combobox"
-          aria-haspopup="listbox"
-          aria-label="Select frameworks"
-          aria-expanded={open}
-          aria-controls={open ? contentId : undefined}
-          className="w-fit min-w-[280px] justify-between"
-        >
+      {/* A button-backed multi-select combobox follows the ARIA combobox pattern. */}
+      <PopoverTrigger
+        render={
+          <Button
+            variant="noShadow"
+            role="combobox"
+            aria-haspopup="listbox"
+            aria-label="Select frameworks"
+            aria-expanded={open}
+            aria-controls={open ? contentId : undefined}
+            className="w-fit min-w-[280px] justify-between"
+          />
+        }
+      >
           {selectedFrameworks.length > 0
             ? selectedFrameworks.map((framework) => framework.label).join(", ")
             : "Select frameworks (multi-select)..."}
           <ChevronsUpDown className="text-muted-foreground" />
-        </Button>
       </PopoverTrigger>
       <PopoverContent id={contentId} className="w-[300px] p-0 border-0" align="start">
         <Command className="**:data-[slot=command-input-wrapper]:h-11">

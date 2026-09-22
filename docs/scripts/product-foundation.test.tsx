@@ -132,6 +132,25 @@ test("interactive focus stays semantic, compact, and keyboard-only", () => {
   assert.doesNotMatch(source("docs/src/examples/ui/button/index.tsx"), /"secondary"/);
 });
 
+test("popover uses Base UI native composition without legacy Radix adapters", () => {
+  const popoverSource = source("registry/src/components/ui/popover.tsx");
+  assert.doesNotMatch(
+    popoverSource,
+    /asChild|--radix-popover|onOpenAutoFocus|onCloseAutoFocus|onInteractOutside|forceMount/,
+  );
+
+  for (const relative of [
+    "docs/src/examples/ui/popover.tsx",
+    "docs/src/examples/ui/date-picker.tsx",
+    "docs/src/examples/ui/combobox/index.tsx",
+    "docs/src/examples/ui/combobox/users.tsx",
+    "docs/src/examples/ui/combobox/timezones.tsx",
+    "docs/src/examples/ui/combobox/multiselect.tsx",
+  ]) {
+    assert.doesNotMatch(source(relative), /<PopoverTrigger\s+asChild/, relative);
+  }
+});
+
 test("error text is a separate theme token included in every palette export", () => {
   for (const color of colors) {
     const vars = createThemeCssVars(color);

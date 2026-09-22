@@ -47,22 +47,24 @@ export default function FrameworkCombobox() {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        {/* A button-backed select-only combobox follows the ARIA combobox pattern. */}
-        <Button
-          variant="noShadow"
-          role="combobox"
-          aria-haspopup="listbox"
-          aria-label="Select a framework"
-          aria-expanded={open}
-          aria-controls={open ? contentId : undefined}
-          className="w-full justify-between md:max-w-[200px]"
-        >
+      {/* A button-backed select-only combobox follows the ARIA combobox pattern. */}
+      <PopoverTrigger
+        render={
+          <Button
+            variant="noShadow"
+            role="combobox"
+            aria-haspopup="listbox"
+            aria-label="Select a framework"
+            aria-expanded={open}
+            aria-controls={open ? contentId : undefined}
+            className="w-full justify-between md:max-w-[200px]"
+          />
+        }
+      >
           {value
             ? frameworks.find((framework) => framework.value === value)?.label
             : "Select framework..."}
           <ChevronsUpDown />
-        </Button>
       </PopoverTrigger>
       <PopoverContent id={contentId} className="w-(--anchor-width) border-0 p-0">
         <Command className="**:data-[slot=command-input-wrapper]:h-11">
