@@ -50,7 +50,7 @@ export function TemplatesPage() {
             </TemplateThumbnail>
             <Link
               aria-label={`Open ${template.title} template`}
-              className="template-preview-link absolute inset-0 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+              className="template-preview-link absolute inset-0 outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-inset"
               href={`/templates/${template.slug}`}
             >
               <span className="sr-only">Open {template.title} template</span>

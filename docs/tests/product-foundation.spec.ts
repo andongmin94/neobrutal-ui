@@ -11,7 +11,7 @@ async function openReady(page: Page, route: string) {
   await page.evaluate(() => document.fonts.ready);
 }
 
-test("button focus follows ring and offset tokens", async ({ page }) => {
+test("button keyboard focus uses the theme ring without an offset halo", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await openReady(page, "/docs/button");
   const preview = page.locator('.component-preview[data-component="button"]').first();
@@ -32,7 +32,7 @@ test("button focus follows ring and offset tokens", async ({ page }) => {
     .toContain("rgb(31, 83, 127)");
   await expect
     .poll(() => button.evaluate((node) => getComputedStyle(node).boxShadow))
-    .toContain("rgb(239, 243, 247)");
+    .not.toContain("rgb(239, 243, 247)");
 });
 
 test("form errors preserve associations, focus, tokens, and recovery", async ({ page }, info) => {

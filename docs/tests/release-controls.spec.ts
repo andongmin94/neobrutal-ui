@@ -4,25 +4,31 @@ import colors from "../src/data/colors";
 import { createThemeCssVars } from "../src/data/theme";
 
 const focusControls = [
-  { route: "input", control: 'input[data-slot="input"]:not(:disabled)' },
-  { route: "textarea", control: "textarea:not(:disabled)" },
-  { route: "checkbox", control: '[data-slot="checkbox"]' },
-  { route: "radio-group", control: '[data-slot="radio-group-item"]' },
-  { route: "switch", control: '[data-slot="switch"]' },
-  { route: "select", control: '[data-slot="select-trigger"]' },
-  { route: "tabs", control: '[data-slot="tabs-trigger"]' },
-  { route: "calendar", control: 'button[data-day][tabindex="0"]' },
-  { route: "resizable", control: '[data-slot="resizable-handle"]' },
+  { route: "input", control: 'input[data-slot="input"]:not(:disabled)', mode: "border" },
+  { route: "textarea", control: "textarea:not(:disabled)", mode: "border" },
+  { route: "checkbox", control: '[data-slot="checkbox"]', mode: "ring" },
+  { route: "radio-group", control: '[data-slot="radio-group-item"]', mode: "ring" },
+  { route: "switch", control: '[data-slot="switch"]', mode: "ring" },
+  { route: "select", control: '[data-slot="select-trigger"]', mode: "border" },
+  { route: "tabs", control: '[data-slot="tabs-trigger"]', mode: "ring" },
+  { route: "calendar", control: 'button[data-day][tabindex="0"]', mode: "ring" },
+  { route: "resizable", control: '[data-slot="resizable-handle"]', mode: "ring" },
   {
     route: "input-group",
     control: 'input[data-slot="input-group-control"]',
-    ring: '[data-slot="input-group"]',
+    indicator: '[data-slot="input-group"]',
+    mode: "border",
   },
-  { route: "slider", control: 'input[type="range"]', ring: '[data-slot="slider-thumb"]' },
+  {
+    route: "slider",
+    control: 'input[type="range"]',
+    indicator: '[data-slot="slider-thumb"]',
+    mode: "ring",
+  },
 ] as const;
 
 for (const item of focusControls) {
-  test(`${item.route}: keyboard focus follows the consuming theme`, async ({ page }) => {
+  test(`${item.route}: keyboard focus stays compact and follows the consuming theme`, async ({ page }) => {
     await page.goto(`/docs/${item.route}`);
     const preview = page.locator(`.component-preview[data-component="${item.route}"]`).first();
     await preview.scrollIntoViewIfNeeded();
@@ -35,13 +41,22 @@ for (const item of focusControls) {
     await page.keyboard.press("Tab");
     await control.focus();
     await expect(control).toBeFocused();
-    const ring = "ring" in item ? preview.locator(item.ring).first() : control;
+    const indicator = "indicator" in item ? preview.locator(item.indicator).first() : control;
+
+    if (item.mode === "border") {
+      await expect(indicator).toHaveCSS("border-color", "rgb(31, 83, 127)");
+      await expect
+        .poll(() => indicator.evaluate((node) => getComputedStyle(node).boxShadow))
+        .not.toContain("rgb(31, 83, 127)");
+    } else {
+      await expect
+        .poll(() => indicator.evaluate((node) => getComputedStyle(node).boxShadow))
+        .toContain("rgb(31, 83, 127)");
+    }
+
     await expect
-      .poll(() => ring.evaluate((node) => getComputedStyle(node).boxShadow))
-      .toContain("rgb(31, 83, 127)");
-    await expect
-      .poll(() => ring.evaluate((node) => getComputedStyle(node).boxShadow))
-      .toContain("rgb(239, 243, 247)");
+      .poll(() => indicator.evaluate((node) => getComputedStyle(node).boxShadow))
+      .not.toContain("rgb(239, 243, 247)");
   });
 }
 

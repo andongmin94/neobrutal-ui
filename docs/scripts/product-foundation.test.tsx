@@ -114,10 +114,19 @@ test("interactive focus stays semantic, compact, and keyboard-only", () => {
   assert.ok(
     !classes.some((value) => value.startsWith("focus-visible:not-data-disabled:translate-")),
   );
+  for (const relative of [
+    "registry/src/components/ui/input.tsx",
+    "registry/src/components/ui/textarea.tsx",
+    "registry/src/components/ui/select.tsx",
+    "registry/src/components/ui/input-group.tsx",
+  ]) {
+    const fieldSource = source(relative);
+    assert.match(fieldSource, /focus-visible.*border-ring|focus-visible\]:border-ring/);
+    assert.doesNotMatch(fieldSource, /focus-visible:ring-[1-9]|focus-visible\]:ring-[1-9]/);
+    assert.doesNotMatch(fieldSource, /ring-offset/);
+  }
   const selectSource = source("registry/src/components/ui/select.tsx");
   assert.doesNotMatch(selectSource, /\bfocus:ring-/);
-  assert.match(selectSource, /focus-visible:ring-1/);
-  assert.doesNotMatch(selectSource, /focus-visible:ring-offset-/);
   assert.doesNotMatch(source("registry/src/components/ui/button-variants.ts"), /\bsecondary\s*:/);
   assert.doesNotMatch(source("docs/content/docs/button.mdx"), /`secondary`/);
   assert.doesNotMatch(source("docs/src/examples/ui/button/index.tsx"), /"secondary"/);

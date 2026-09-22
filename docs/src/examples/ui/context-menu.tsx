@@ -28,7 +28,7 @@ export default function ContextMenuDemo() {
       <ContextMenuTrigger
         render={<button type="button" aria-label="Open component card context menu" />}
         aria-haspopup="menu"
-        className="flex min-h-44 w-full max-w-sm flex-col items-start justify-between rounded-base border-2 border-border bg-secondary-background p-5 text-left shadow-shadow focus-visible:outline-2 focus-visible:outline-offset-4"
+        className="flex min-h-44 w-full max-w-sm flex-col items-start justify-between rounded-base border-2 border-border bg-secondary-background p-5 text-left shadow-shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
       >
         <span className="rounded-base border-2 border-border bg-main px-2 py-1 text-xs font-heading uppercase tracking-wide text-main-foreground">
           Component
