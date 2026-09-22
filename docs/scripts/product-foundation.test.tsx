@@ -380,6 +380,35 @@ test("switch and avatar expose only native Base UI composition surfaces", () => 
   assert.match(avatarSource, /AvatarPrimitive\.Fallback/);
 });
 
+test("sidebar keeps only documented composition surfaces and application-owned persistence", () => {
+  const sidebarSource = source("registry/src/components/ui/sidebar.tsx");
+  assert.doesNotMatch(
+    sidebarSource,
+    /\basChild\b|SIDEBAR_COOKIE|document\.cookie|SidebarInput|SidebarSeparator|SidebarGroupAction|SidebarMenuBadge|SidebarMenuSkeleton/,
+  );
+  assert.match(sidebarSource, /showCloseButton={false}/);
+  assert.match(sidebarSource, /aria-expanded={isMobile \? openMobile : open}/);
+
+  const sidebarExample = source("docs/src/examples/ui/sidebar/_sidebar.tsx");
+  assert.doesNotMatch(
+    sidebarExample,
+    /<SidebarMenu(?:Sub)?Button\s+asChild/,
+  );
+  assert.match(sidebarExample, /SidebarMenuButton render={<a href={item\.url} \/>}/);
+  assert.match(sidebarExample, /SidebarMenuSubButton render={<a href={subItem\.url} \/>}/);
+
+  const sidebarDocs = source("docs/content/docs/sidebar.mdx");
+  assert.doesNotMatch(sidebarDocs, /\[Input\]|\[Skeleton\]|\[Separator\]|sidebar cookie/);
+  assert.match(sidebarDocs, /component does not write cookies/);
+
+  const registrySource = source("registry/src/data/registry.ts");
+  const sidebarEntry = registrySource.slice(
+    registrySource.indexOf('name: "sidebar"'),
+    registrySource.indexOf('name: "skeleton"'),
+  );
+  assert.doesNotMatch(sidebarEntry, /"input"|"skeleton"|"separator"/);
+});
+
 test("error text is a separate theme token included in every palette export", () => {
   for (const color of colors) {
     const vars = createThemeCssVars(color);

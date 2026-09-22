@@ -22,7 +22,7 @@ Complete the [base setup](/docs/installation). The CLI installs both files and d
 npm install @base-ui/react@^1.8.0
 ```
 
-Also install [Avatar](/docs/avatar), [Collapsible](/docs/collapsible), [Dropdown Menu](/docs/dropdown-menu), [Button](/docs/button), [Input](/docs/input), [Sheet](/docs/sheet), [Skeleton](/docs/skeleton), [Tooltip](/docs/tooltip), and [Separator](/docs/separator).
+Also install [Avatar](/docs/avatar), [Collapsible](/docs/collapsible), [Dropdown Menu](/docs/dropdown-menu), [Button](/docs/button), [Sheet](/docs/sheet), and [Tooltip](/docs/tooltip).
 
 Create **`components/ui/sidebar.tsx`**:
 
@@ -102,4 +102,4 @@ export default function ApplicationLayout() {
 
 ## Accessibility
 
-Name navigation regions and give links destinations and readable labels. Collapsed icon-only items still need names. The mobile version behaves as a modal sheet; check focus and scroll at both sizes. Persistence requires the application to read the sidebar cookie and supply initial state.
+Name navigation regions and give links destinations and readable labels. Collapsed icon-only items still need names. The mobile version behaves as a modal sheet; check focus and scroll at both sizes. Persistence is application-owned. Initialize `defaultOpen` or control `open` / `onOpenChange` from your own storage; the component does not write cookies.

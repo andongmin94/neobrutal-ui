@@ -532,17 +532,7 @@ const UI = [
     description: "A responsive, collapsible application sidebar with navigation primitives.",
     categories: ["layout", "navigation"],
     type: "registry:ui",
-    registryDependencies: [
-      "avatar",
-      "collapsible",
-      "dropdown-menu",
-      "button",
-      "input",
-      "sheet",
-      "skeleton",
-      "tooltip",
-      "separator",
-    ],
+    registryDependencies: ["avatar", "collapsible", "dropdown-menu", "button", "sheet", "tooltip"],
     files: [
       { path: "src/components/ui/sidebar.tsx", type: "registry:ui" },
       { path: "src/hooks/use-mobile.ts", type: "registry:hook" },
