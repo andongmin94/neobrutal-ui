@@ -195,6 +195,18 @@ test("tooltip and hover card use Base UI native overlay composition", () => {
   assert.doesNotMatch(source("docs/src/examples/ui/tooltip.tsx"), /<TooltipTrigger\s+asChild/);
 });
 
+test("select uses Base UI native state and composition", () => {
+  const selectSource = source("registry/src/components/ui/select.tsx");
+  assert.doesNotMatch(
+    selectSource,
+    /asChild|--radix-select|CustomEvent|forceMount|onCloseAutoFocus|onPointerDownOutside|onEscapeKeyDown|createPortal|data-state=/,
+  );
+  const chartSource = source("registry/src/components/ui/chart.tsx");
+  assert.doesNotMatch(chartSource, /data-\[state=(?:open|checked)\]/);
+  assert.match(chartSource, /data-popup-open:/);
+  assert.match(chartSource, /data-selected:/);
+});
+
 test("error text is a separate theme token included in every palette export", () => {
   for (const color of colors) {
     const vars = createThemeCssVars(color);

@@ -407,7 +407,7 @@ function ChartSelect({
       <Select value={value} onValueChange={onValueChange} items={options}>
         <SelectTrigger
           id={id}
-          className="h-11 min-w-0 bg-secondary-background font-heading text-foreground shadow-shadow data-[state=open]:translate-x-0.5 data-[state=open]:translate-y-0.5 data-[state=open]:shadow-none [&>svg]:box-content [&>svg]:border-l-2 [&>svg]:border-border [&>svg]:py-1 [&>svg]:pl-3 [&>svg]:opacity-100"
+          className="h-11 min-w-0 bg-secondary-background font-heading text-foreground shadow-shadow data-popup-open:translate-x-0.5 data-popup-open:translate-y-0.5 data-popup-open:shadow-none [&>svg]:box-content [&>svg]:border-l-2 [&>svg]:border-border [&>svg]:py-1 [&>svg]:pl-3 [&>svg]:opacity-100"
         >
           <SelectValue />
         </SelectTrigger>
@@ -421,7 +421,7 @@ function ChartSelect({
             <SelectItem
               key={option.value}
               value={option.value}
-              className="min-h-10 cursor-pointer py-2 data-highlighted:border-foreground data-[state=checked]:bg-main data-[state=checked]:font-heading data-[state=checked]:text-main-foreground [&>span:first-child]:min-w-0 [&>span:first-child]:shrink [&>span:first-child]:whitespace-normal"
+              className="min-h-10 cursor-pointer py-2 data-highlighted:border-foreground data-selected:bg-main data-selected:font-heading data-selected:text-main-foreground [&>span:first-child]:min-w-0 [&>span:first-child]:shrink [&>span:first-child]:whitespace-normal"
             >
               {option.label}
             </SelectItem>
