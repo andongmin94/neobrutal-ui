@@ -151,6 +151,27 @@ test("popover uses Base UI native composition without legacy Radix adapters", ()
   }
 });
 
+test("dialog and sheet use Base UI native composition without legacy adapters", () => {
+  for (const relative of [
+    "registry/src/components/ui/dialog.tsx",
+    "registry/src/components/ui/sheet.tsx",
+  ]) {
+    const componentSource = source(relative);
+    assert.doesNotMatch(
+      componentSource,
+      /asChild|onOpenAutoFocus|onCloseAutoFocus|onInteractOutside|onPointerDownOutside|forceMount|preventBaseUIHandler|dismissableLayer|data-state=/,
+      relative,
+    );
+  }
+
+  assert.doesNotMatch(
+    source("docs/src/special-pages/charts-examples.tsx"),
+    /<DialogTrigger\s+asChild/,
+  );
+  const sheetExample = source("docs/src/examples/ui/sheet/index.tsx");
+  assert.doesNotMatch(sheetExample, /<Sheet(?:Trigger|Close)\s+asChild/);
+});
+
 test("error text is a separate theme token included in every palette export", () => {
   for (const color of colors) {
     const vars = createThemeCssVars(color);

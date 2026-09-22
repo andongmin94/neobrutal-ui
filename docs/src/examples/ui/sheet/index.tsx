@@ -23,9 +23,7 @@ export default function SheetDemo() {
   return (
     <div className="grid justify-items-center gap-3">
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetTrigger asChild>
-          <Button>Open sheet</Button>
-        </SheetTrigger>
+        <SheetTrigger render={<Button />}>Open sheet</SheetTrigger>
         <SheetContent>
           <SheetHeader>
             <SheetTitle>Edit profile</SheetTitle>
@@ -55,11 +53,7 @@ export default function SheetDemo() {
             <Button form="sheet-profile-form" type="submit">
               Save changes
             </Button>
-            <SheetClose asChild>
-              <Button type="button" variant="neutral">
-                Close
-              </Button>
-            </SheetClose>
+            <SheetClose render={<Button type="button" variant="neutral" />}>Close</SheetClose>
           </SheetFooter>
         </SheetContent>
       </Sheet>

@@ -159,11 +159,9 @@ function ChartComponent({ children, chart }: { children: ReactNode; chart: Chart
           Install recipe
         </a>
         <Dialog>
-          <DialogTrigger asChild>
-            <Button className="w-full" variant="outline">
-              <Code2 aria-hidden="true" />
-              View source
-            </Button>
+          <DialogTrigger render={<Button className="w-full" variant="outline" />}>
+            <Code2 aria-hidden="true" />
+            View source
           </DialogTrigger>
           <DialogContent className="w-[calc(100%_-_2rem)] max-w-5xl">
             <DialogHeader>
