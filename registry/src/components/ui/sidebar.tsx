@@ -392,7 +392,7 @@ function SidebarGroupLabel({
     props: mergeProps<"div">(
       {
         className: cn(
-          "flex h-8 shrink-0 items-center rounded-base px-2 text-sm font-heading text-foreground ring-ring outline-hidden transition-[margin,opacity] duration-200 ease-linear group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0 focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+          "flex h-8 shrink-0 items-center rounded-base px-2 text-sm font-heading text-foreground ring-ring outline-hidden transition-[margin,opacity] duration-200 ease-linear group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0 focus-visible:ring-1 [&>svg]:size-4 [&>svg]:shrink-0",
           className,
         ),
         children: asChild ? undefined : children,
@@ -423,7 +423,7 @@ function SidebarGroupAction({
     props: mergeProps<"button">(
       {
         className: cn(
-          "absolute top-3.5 right-3 flex aspect-square w-5 items-center justify-center rounded-base p-0 outline-hidden transition-transform group-data-[collapsible=icon]:hidden after:absolute after:-inset-2 focus-visible:ring-2 md:after:hidden [&>svg]:size-4 [&>svg]:shrink-0",
+          "absolute top-3.5 right-3 flex aspect-square w-5 items-center justify-center rounded-base p-0 outline-hidden transition-transform group-data-[collapsible=icon]:hidden after:absolute after:-inset-2 focus-visible:ring-1 md:after:hidden [&>svg]:size-4 [&>svg]:shrink-0",
           className,
         ),
         children: asChild ? undefined : children,
@@ -472,7 +472,7 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button group/menu-button flex w-full items-center gap-2 overflow-hidden rounded-base p-2 text-left text-sm ring-ring outline-2 outline-transparent transition-[width,height,padding] group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! hover:bg-main hover:text-main-foreground hover:outline-border focus-visible:bg-main focus-visible:text-main-foreground focus-visible:outline-border active:bg-main active:text-main-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-open:hover:bg-main data-open:hover:text-main-foreground data-active:bg-main data-active:font-heading data-active:text-main-foreground data-active:outline-border [&_svg]:size-4 [&_svg]:shrink-0 [&>span:last-child]:truncate",
+  "peer/menu-button group/menu-button flex w-full items-center gap-2 overflow-hidden rounded-base p-2 text-left text-sm ring-ring outline-1 outline-transparent transition-[width,height,padding] group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! hover:bg-main hover:text-main-foreground hover:outline-border focus-visible:bg-main focus-visible:text-main-foreground focus-visible:outline-border active:bg-main active:text-main-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-open:hover:bg-main data-open:hover:text-main-foreground data-active:bg-main data-active:font-heading data-active:text-main-foreground data-active:outline-border [&_svg]:size-4 [&_svg]:shrink-0 [&>span:last-child]:truncate",
   {
     variants: {
       variant: {
@@ -576,7 +576,7 @@ function SidebarMenuAction({
     props: mergeProps<"button">(
       {
         className: cn(
-          "absolute top-1.5 right-1 flex aspect-square w-6 items-center justify-center rounded-base p-0 text-main-foreground outline-2 outline-transparent transition-transform group-data-[collapsible=icon]:hidden peer-data-[size=default]/menu-button:top-1.5 peer-data-[size=lg]/menu-button:top-2.5 peer-data-[size=sm]/menu-button:top-1 after:absolute after:-inset-2 hover:bg-main hover:text-main-foreground hover:outline-border focus-visible:ring-2 md:after:hidden [&>svg]:size-4 [&>svg]:shrink-0 [&_svg]:text-foreground hover:[&_svg]:text-main-foreground",
+          "absolute top-1.5 right-1 flex aspect-square w-6 items-center justify-center rounded-base p-0 text-main-foreground outline-1 outline-transparent transition-transform group-data-[collapsible=icon]:hidden peer-data-[size=default]/menu-button:top-1.5 peer-data-[size=lg]/menu-button:top-2.5 peer-data-[size=sm]/menu-button:top-1 after:absolute after:-inset-2 hover:bg-main hover:text-main-foreground hover:outline-border focus-visible:ring-1 md:after:hidden [&>svg]:size-4 [&>svg]:shrink-0 [&_svg]:text-foreground hover:[&_svg]:text-main-foreground",
           showOnHover &&
             "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 peer-data-active/menu-button:text-main-foreground aria-expanded:opacity-100 md:opacity-0",
           className,
@@ -685,7 +685,7 @@ function SidebarMenuSubButton({
     props: mergeProps<"a">(
       {
         className: cn(
-          "flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-base px-2 text-foreground outline-2 outline-transparent group-data-[collapsible=icon]:hidden hover:bg-main hover:text-main-foreground hover:outline-border focus-visible:ring-2 active:bg-main disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[size=md]:text-sm data-[size=sm]:text-xs data-active:bg-main data-active:outline-border [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-main-foreground",
+          "flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-base px-2 text-foreground outline-1 outline-transparent group-data-[collapsible=icon]:hidden hover:bg-main hover:text-main-foreground hover:outline-border focus-visible:ring-1 active:bg-main disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[size=md]:text-sm data-[size=sm]:text-xs data-active:bg-main data-active:outline-border [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-main-foreground",
           className,
         ),
         children: buttonChildren,

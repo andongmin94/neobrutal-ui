@@ -156,7 +156,7 @@ function ScrollArea({
     <>
       <ScrollAreaPrimitive.Viewport
         data-slot="scroll-area-viewport"
-        className="h-full w-full rounded-[inherit] font-base transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1"
+        className="h-full w-full rounded-[inherit] font-base transition-[color,box-shadow] outline-none focus-visible:ring-1 focus-visible:ring-ring"
         onScroll={() => {
           setScrolling(true);
           if (scrollTimeoutRef.current !== null) clearTimeout(scrollTimeoutRef.current);

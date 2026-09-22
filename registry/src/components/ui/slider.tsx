@@ -53,7 +53,7 @@ function Slider({
             data-slot="slider-thumb"
             index={index}
             aria-label={getAriaLabel?.(index)}
-            className="relative block size-5 shrink-0 rounded-full border-2 border-border bg-white ring-offset-background transition-colors select-none after:absolute after:-inset-2 has-focus-visible:outline-none has-focus-visible:ring-2 has-focus-visible:ring-ring has-focus-visible:ring-offset-2 data-disabled:pointer-events-none data-disabled:opacity-50"
+            className="relative block size-5 shrink-0 rounded-full border-2 border-border bg-white transition-colors select-none after:absolute after:-inset-2 has-focus-visible:outline-none has-focus-visible:ring-1 has-focus-visible:ring-ring data-disabled:pointer-events-none data-disabled:opacity-50"
           />
         ))}
       </SliderPrimitive.Control>

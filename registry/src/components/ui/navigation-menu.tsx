@@ -793,7 +793,7 @@ function NavigationMenuLink({
       closeOnClick={closeOnClick}
       render={renderElement}
       className={cn(
-        "block space-y-1 rounded-base p-2 leading-none no-underline transition-colors outline-none select-none focus-visible:ring-4 focus-visible:outline-1 [&_svg:not([class*='size-'])]:size-4",
+        "block space-y-1 rounded-base p-2 leading-none no-underline transition-colors outline-none select-none focus-visible:ring-1 focus-visible:outline-none [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       onClick={(event) => {

@@ -103,13 +103,18 @@ test("server-rendered fields have unique labels and do not invent unregistered I
   assert.ok(!html.includes("undefined-form-"));
 });
 
-test("buttons use semantic focus tokens and one neutral raised variant", () => {
+test("interactive focus stays semantic, compact, and keyboard-only", () => {
   const classes = buttonVariants({ variant: "neutral" }).split(/\s+/);
   assert.ok(classes.includes("focus-visible:ring-ring"));
-  assert.ok(classes.includes("ring-offset-background"));
+  assert.ok(classes.includes("focus-visible:ring-1"));
   assert.ok(classes.includes("bg-secondary-background"));
+  assert.ok(!classes.some((value) => value.includes("ring-offset")));
   assert.ok(!classes.includes("focus-visible:ring-black"));
-  assert.ok(!classes.includes("ring-offset-white"));
+  assert.ok(!classes.some((value) => value.startsWith("focus-visible:not-data-disabled:translate-")));
+  const selectSource = source("registry/src/components/ui/select.tsx");
+  assert.doesNotMatch(selectSource, /\bfocus:ring-/);
+  assert.match(selectSource, /focus-visible:ring-1/);
+  assert.doesNotMatch(selectSource, /focus-visible:ring-offset-/);
   assert.doesNotMatch(source("registry/src/components/ui/button-variants.ts"), /\bsecondary\s*:/);
   assert.doesNotMatch(source("docs/content/docs/button.mdx"), /`secondary`/);
   assert.doesNotMatch(source("docs/src/examples/ui/button/index.tsx"), /"secondary"/);
