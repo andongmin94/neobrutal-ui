@@ -3,7 +3,6 @@
   "framework": null,
   "installCommand": "npm ci && npm ci --prefix ../registry",
   "buildCommand": "npm run build --prefix ../registry && npm run build",
-  "outputDirectory": "dist/public",
   "cleanUrls": true,
   "headers": [
     {
