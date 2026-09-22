@@ -110,7 +110,9 @@ test("interactive focus stays semantic, compact, and keyboard-only", () => {
   assert.ok(classes.includes("bg-secondary-background"));
   assert.ok(!classes.some((value) => value.includes("ring-offset")));
   assert.ok(!classes.includes("focus-visible:ring-black"));
-  assert.ok(!classes.some((value) => value.startsWith("focus-visible:not-data-disabled:translate-")));
+  assert.ok(
+    !classes.some((value) => value.startsWith("focus-visible:not-data-disabled:translate-")),
+  );
   const selectSource = source("registry/src/components/ui/select.tsx");
   assert.doesNotMatch(selectSource, /\bfocus:ring-/);
   assert.match(selectSource, /focus-visible:ring-1/);
