@@ -44,7 +44,7 @@ test("beginner-facing copy avoids project-internal ownership jargon", () => {
     "../README.md",
     "src/data/charts.ts",
     ...collectFiles("content", new Set([".mdx"])),
-    ...collectFiles("app", new Set([".ts", ".tsx"])),
+    ...collectFiles("src/site", new Set([".ts", ".tsx"])),
     ...collectFiles("src/examples", new Set([".ts", ".tsx"])),
     ...collectFiles("src/special-pages", new Set([".ts", ".tsx"])),
   ];
