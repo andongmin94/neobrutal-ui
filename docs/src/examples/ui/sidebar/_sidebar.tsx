@@ -201,20 +201,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
-              <DropdownMenuTrigger className="focus-visible:ring-0" asChild>
-                <SidebarMenuButton
-                  size="lg"
-                  className="data-open:bg-main data-open:text-main-foreground data-open:outline-2 data-open:outline-border data-popup-open:bg-main data-popup-open:text-main-foreground data-popup-open:outline-2 data-popup-open:outline-border"
-                >
-                  <div className="flex aspect-square size-8 items-center justify-center rounded-base">
-                    <activeTeam.logo className="size-4" />
-                  </div>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-heading">{activeTeam.name}</span>
-                    <span className="truncate font-base text-xs">{activeTeam.plan}</span>
-                  </div>
-                  <ChevronsUpDown className="ml-auto" />
-                </SidebarMenuButton>
+              <DropdownMenuTrigger
+                className="focus-visible:ring-0"
+                render={
+                  <SidebarMenuButton
+                    size="lg"
+                    className="data-open:bg-main data-open:text-main-foreground data-open:outline-2 data-open:outline-border data-popup-open:bg-main data-popup-open:text-main-foreground data-popup-open:outline-2 data-popup-open:outline-border"
+                  />
+                }
+              >
+                <div className="flex aspect-square size-8 items-center justify-center rounded-base">
+                  <activeTeam.logo className="size-4" />
+                </div>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-heading">{activeTeam.name}</span>
+                  <span className="truncate font-base text-xs">{activeTeam.plan}</span>
+                </div>
+                <ChevronsUpDown className="ml-auto" />
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 className="w-(--anchor-width) min-w-56 rounded-base"
