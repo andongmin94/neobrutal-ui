@@ -28,9 +28,9 @@ const focusControls = [
 ] as const;
 
 for (const item of focusControls) {
-  test(
-    `${item.route}: keyboard focus stays compact and follows the consuming theme`,
-    async ({ page }) => {
+  test(`${item.route}: keyboard focus stays compact and follows the consuming theme`, async ({
+    page,
+  }) => {
     await page.goto(`/docs/${item.route}`);
     const preview = page.locator(`.component-preview[data-component="${item.route}"]`).first();
     await preview.scrollIntoViewIfNeeded();
@@ -56,11 +56,10 @@ for (const item of focusControls) {
         .toContain("rgb(31, 83, 127)");
     }
 
-      await expect
-        .poll(() => indicator.evaluate((node) => getComputedStyle(node).boxShadow))
-        .not.toContain("rgb(239, 243, 247)");
-    },
-  );
+    await expect
+      .poll(() => indicator.evaluate((node) => getComputedStyle(node).boxShadow))
+      .not.toContain("rgb(239, 243, 247)");
+  });
 }
 
 test("every public button variant remains readable in every palette", async ({ page }) => {
