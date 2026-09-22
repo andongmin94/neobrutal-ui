@@ -61,10 +61,10 @@ export default function FrameworkCombobox() {
           />
         }
       >
-          {value
-            ? frameworks.find((framework) => framework.value === value)?.label
-            : "Select framework..."}
-          <ChevronsUpDown />
+        {value
+          ? frameworks.find((framework) => framework.value === value)?.label
+          : "Select framework..."}
+        <ChevronsUpDown />
       </PopoverTrigger>
       <PopoverContent id={contentId} className="w-(--anchor-width) border-0 p-0">
         <Command className="**:data-[slot=command-input-wrapper]:h-11">

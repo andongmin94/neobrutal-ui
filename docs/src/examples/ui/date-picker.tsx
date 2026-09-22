@@ -32,9 +32,9 @@ export default function DatePickerDemo() {
               />
             }
           >
-              <CalendarIcon aria-hidden="true" />
-              <span className="flex-1">{date ? format(date, "PPP") : "Pick a date"}</span>
-              <ChevronDown aria-hidden="true" />
+            <CalendarIcon aria-hidden="true" />
+            <span className="flex-1">{date ? format(date, "PPP") : "Pick a date"}</span>
+            <ChevronDown aria-hidden="true" />
           </PopoverTrigger>
           <PopoverContent
             align="start"

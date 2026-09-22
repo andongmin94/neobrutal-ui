@@ -60,17 +60,17 @@ export default function UserCombobox() {
           />
         }
       >
-          {selectedUser ? (
-            <div className="flex items-center gap-2">
-              <Avatar className="size-5">
-                <AvatarFallback>{selectedUser.initials}</AvatarFallback>
-              </Avatar>
-              {selectedUser.username}
-            </div>
-          ) : (
-            "Select user..."
-          )}
-          <ChevronsUpDown className="text-muted-foreground" />
+        {selectedUser ? (
+          <div className="flex items-center gap-2">
+            <Avatar className="size-5">
+              <AvatarFallback>{selectedUser.initials}</AvatarFallback>
+            </Avatar>
+            {selectedUser.username}
+          </div>
+        ) : (
+          "Select user..."
+        )}
+        <ChevronsUpDown className="text-muted-foreground" />
       </PopoverTrigger>
       <PopoverContent id={contentId} className="w-(--anchor-width) border-0 p-0">
         <Command className="**:data-[slot=command-input-wrapper]:h-11">
