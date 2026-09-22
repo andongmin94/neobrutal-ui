@@ -36,11 +36,7 @@ function DrawerOverlay({ className, ...props }: DrawerPrimitive.Backdrop.Props) 
   );
 }
 
-function DrawerContent({
-  className,
-  children,
-  ...props
-}: DrawerPrimitive.Popup.Props) {
+function DrawerContent({ className, children, ...props }: DrawerPrimitive.Popup.Props) {
   return (
     <DrawerPortal>
       <DrawerOverlay />

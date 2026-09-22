@@ -283,9 +283,16 @@ test("drawer delegates swipe, snap points, and dismissal to Base UI", () => {
     "docs/src/examples/ui/drawer/scrollable-content.tsx",
     "docs/content/docs/drawer.mdx",
   ]) {
-    assert.doesNotMatch(source(relative), /Drawer(?:Trigger|Close)\s+asChild|<Drawer\s+direction=/, relative);
+    assert.doesNotMatch(
+      source(relative),
+      /Drawer(?:Trigger|Close)\s+asChild|<Drawer\s+direction=/,
+      relative,
+    );
   }
-  assert.match(source("docs/src/examples/ui/drawer/scrollable-content.tsx"), /swipeDirection="right"/);
+  assert.match(
+    source("docs/src/examples/ui/drawer/scrollable-content.tsx"),
+    /swipeDirection="right"/,
+  );
 });
 
 test("error text is a separate theme token included in every palette export", () => {
