@@ -278,9 +278,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <SidebarMenuSub>
                     {item.items?.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
-                        <SidebarMenuSubButton render={<a href={subItem.url} />}>
-                          <span>{subItem.title}</span>
-                        </SidebarMenuSubButton>
+                        <SidebarMenuSubButton
+                          render={
+                            <a href={subItem.url}>
+                              <span>{subItem.title}</span>
+                            </a>
+                          }
+                        />
                       </SidebarMenuSubItem>
                     ))}
                   </SidebarMenuSub>
@@ -294,10 +298,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             {data.projects.map((item) => (
               <SidebarMenuItem key={item.name}>
-                <SidebarMenuButton render={<a href={item.url} />}>
-                  <item.icon />
-                  <span>{item.name}</span>
-                </SidebarMenuButton>
+                <SidebarMenuButton
+                  render={
+                    <a href={item.url}>
+                      <item.icon />
+                      <span>{item.name}</span>
+                    </a>
+                  }
+                />
                 <DropdownMenu>
                   <DropdownMenuTrigger render={<SidebarMenuAction />}>
                     <MoreHorizontal className="group-hover/menu-item:text-main-foreground" />

@@ -391,8 +391,8 @@ test("sidebar keeps only documented composition surfaces and application-owned p
 
   const sidebarExample = source("docs/src/examples/ui/sidebar/_sidebar.tsx");
   assert.doesNotMatch(sidebarExample, /<SidebarMenu(?:Sub)?Button\s+asChild/);
-  assert.match(sidebarExample, /SidebarMenuButton render={<a href={item\.url} \/>}/);
-  assert.match(sidebarExample, /SidebarMenuSubButton render={<a href={subItem\.url} \/>}/);
+  assert.match(sidebarExample, /<a href={item\.url}>/);
+  assert.match(sidebarExample, /<a href={subItem\.url}>/);
 
   const sidebarDocs = source("docs/content/docs/sidebar.mdx");
   assert.doesNotMatch(sidebarDocs, /\[Input\]|\[Skeleton\]|\[Separator\]|sidebar cookie/);
