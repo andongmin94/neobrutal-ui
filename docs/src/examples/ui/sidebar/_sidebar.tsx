@@ -300,11 +300,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   </a>
                 </SidebarMenuButton>
                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <SidebarMenuAction>
-                      <MoreHorizontal className="group-hover/menu-item:text-main-foreground" />
-                      <span className="sr-only">More</span>
-                    </SidebarMenuAction>
+                  <DropdownMenuTrigger render={<SidebarMenuAction />}>
+                    <MoreHorizontal className="group-hover/menu-item:text-main-foreground" />
+                    <span className="sr-only">More</span>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     className="w-48"
@@ -341,21 +339,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton
-                  className="group-data-[state=collapsed]:hover:outline-0 group-data-[state=collapsed]:hover:bg-transparent overflow-visible"
-                  size="lg"
-                >
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={data.user.avatar} alt="John Doe" />
-                    <AvatarFallback>JD</AvatarFallback>
-                  </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-heading">{data.user.name}</span>
-                    <span className="truncate text-xs">{data.user.email}</span>
-                  </div>
-                  <ChevronsUpDown className="ml-auto size-4" />
-                </SidebarMenuButton>
+              <DropdownMenuTrigger
+                render={
+                  <SidebarMenuButton
+                    className="group-data-[state=collapsed]:hover:outline-0 group-data-[state=collapsed]:hover:bg-transparent overflow-visible"
+                    size="lg"
+                  />
+                }
+              >
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={data.user.avatar} alt="John Doe" />
+                  <AvatarFallback>JD</AvatarFallback>
+                </Avatar>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-heading">{data.user.name}</span>
+                  <span className="truncate text-xs">{data.user.email}</span>
+                </div>
+                <ChevronsUpDown className="ml-auto size-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 className="w-(--anchor-width) min-w-56"

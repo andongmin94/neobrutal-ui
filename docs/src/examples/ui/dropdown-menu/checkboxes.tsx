@@ -23,9 +23,7 @@ export default function DropdownMenuCheckboxes() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="noShadow">Checkboxes</Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger render={<Button variant="noShadow" />}>Checkboxes</DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-56">
         <DropdownMenuGroup>
           <DropdownMenuLabel>Account</DropdownMenuLabel>

@@ -207,6 +207,24 @@ test("select uses Base UI native state and composition", () => {
   assert.match(chartSource, /data-selected:/);
 });
 
+test("dropdown menu uses Base UI native menu state and composition", () => {
+  const menuSource = source("registry/src/components/ui/dropdown-menu.tsx");
+  assert.doesNotMatch(
+    menuSource,
+    /asChild|--radix-dropdown-menu|CustomEvent|onOpenAutoFocus|onCloseAutoFocus|onInteractOutside|onPointerDownOutside|onFocusOutside|preventBaseUIHandler|data-state=/,
+  );
+
+  for (const relative of [
+    "docs/src/examples/ui/dropdown-menu/index.tsx",
+    "docs/src/examples/ui/dropdown-menu/radio.tsx",
+    "docs/src/examples/ui/dropdown-menu/checkboxes.tsx",
+    "docs/src/examples/ui/sidebar/_sidebar.tsx",
+    "registry/src/components/ui/data-table.tsx",
+  ]) {
+    assert.doesNotMatch(source(relative), /<DropdownMenuTrigger\s+asChild/, relative);
+  }
+});
+
 test("error text is a separate theme token included in every palette export", () => {
   for (const color of colors) {
     const vars = createThemeCssVars(color);

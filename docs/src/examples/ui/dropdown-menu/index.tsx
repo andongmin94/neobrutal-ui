@@ -19,8 +19,8 @@ import {
 export default function DropdownMenuDemo() {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="noShadow">Registry actions</Button>
+      <DropdownMenuTrigger render={<Button variant="noShadow" />}>
+        Registry actions
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-64">
         <DropdownMenuLabel>neobrutal-ui</DropdownMenuLabel>

@@ -92,16 +92,18 @@ function PaymentActions({ payment }: { payment: Payment }) {
   return (
     <div>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="noShadow"
-            className="size-8 p-0"
-            disabled={copy === "pending"}
-            aria-busy={copy === "pending" || undefined}
-          >
-            <span className="sr-only">Open menu</span>
-            <MoreHorizontal />
-          </Button>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              variant="noShadow"
+              className="size-8 p-0"
+              disabled={copy === "pending"}
+              aria-busy={copy === "pending" || undefined}
+            />
+          }
+        >
+          <span className="sr-only">Open menu</span>
+          <MoreHorizontal />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
@@ -228,10 +230,10 @@ export default function DataTableDemo() {
           className="max-w-sm"
         />
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="noShadow" className="self-start sm:ml-auto sm:self-auto">
-              Columns <ChevronDown />
-            </Button>
+          <DropdownMenuTrigger
+            render={<Button variant="noShadow" className="self-start sm:ml-auto sm:self-auto" />}
+          >
+            Columns <ChevronDown />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             {table
