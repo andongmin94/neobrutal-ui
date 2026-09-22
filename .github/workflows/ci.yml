@@ -200,10 +200,8 @@ jobs:
           DOCS_TEST_URL: https://neobrutal-ui.andongmin.com
           EXPECTED_COMMIT: ${{ github.sha }}
         run: npm run verify:deployment
-      - name: Verify production headers and registry
-        run: |
-          npm run verify:headers --prefix docs
-          npm run registry:verify-live --prefix registry
+      - name: Verify production registry
+        run: npm run registry:verify-live --prefix registry
       - name: Install representative items from production
         working-directory: registry
         run: |

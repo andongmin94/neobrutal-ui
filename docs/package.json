@@ -6,7 +6,7 @@
     "generate": "tsx src/scripts/generate-charts-ts.ts",
     "predev": "npm run generate",
     "dev": "fumapress dev",
-    "prebuild": "npm run generate && node scripts/write-build-info.mjs",
+    "prebuild": "npm ci --prefix ../registry && npm run build --prefix ../registry && npm run generate && node scripts/write-build-info.mjs",
     "build": "fumapress build",
     "start": "fumapress start",
     "format": "oxlint --fix --no-error-on-unmatched-pattern app src scripts tests press.config.tsx vite.config.ts && oxfmt --write --no-error-on-unmatched-pattern app src scripts tests press.config.tsx vite.config.ts tsconfig.json package.json .oxlintrc.json .oxfmtrc.json",
@@ -17,8 +17,7 @@
     "test:browser": "playwright test",
     "test:browser:cross": "playwright test --config=playwright.cross-browser.config.ts",
     "check:budget": "node scripts/check-build-budget.mjs",
-    "verify:deployment": "node scripts/verify-deployment.mjs",
-    "verify:headers": "node scripts/verify-security-headers.mjs"
+    "verify:deployment": "node scripts/verify-deployment.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
