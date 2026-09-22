@@ -272,7 +272,10 @@ function DropdownMenuSeparator({ className, ...props }: MenuPrimitive.Separator.
       data-slot="dropdown-menu-separator"
       {...props}
       className={(state) =>
-        cn("-mx-1 my-1 h-0.5 bg-border", typeof className === "function" ? className(state) : className)
+        cn(
+          "-mx-1 my-1 h-0.5 bg-border",
+          typeof className === "function" ? className(state) : className,
+        )
       }
     />
   );
