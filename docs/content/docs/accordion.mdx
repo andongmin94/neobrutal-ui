@@ -29,8 +29,6 @@ Create **`components/ui/accordion.tsx`**:
 </include>
 </Installation>
 
-This wrapper uses `type="single"` with a string value or `type="multiple"` with an array. Do not copy Base UI Root examples that pass `multiple` directly to this wrapper.
-
 ## Usage
 
 ```tsx
@@ -43,7 +41,7 @@ import {
 
 export default function HelpSections() {
   return (
-    <Accordion type="single" collapsible className="w-full">
+    <Accordion className="w-full">
       <AccordionItem value="source">
         <AccordionTrigger>Can I edit the source?</AccordionTrigger>
         <AccordionContent>Yes. Installed files belong to your application.</AccordionContent>
@@ -61,14 +59,14 @@ export default function HelpSections() {
 
 | Prop / part | Purpose | Default |
 | --- | --- | --- |
-| `Accordion.type` | `single` or `multiple`; determines the value shape | Required |
-| `value` / `defaultValue` | String in single mode; string array in multiple mode | Uncontrolled |
-| `onValueChange` | Receives the new value and event details | — |
-| `collapsible` | Allows the open single item to close | `false` |
-| `orientation` / `dir` | Keyboard and text direction | `vertical` / inherited |
+| `value` / `defaultValue` | Controlled or initial open item values | Uncontrolled |
+| `onValueChange` | Receives the next open item values and event details | — |
+| `multiple` | Allow more than one item to stay open | `false` |
+| `loopFocus` | Wrap keyboard focus between triggers | `true` |
+| `orientation` | Keyboard navigation axis | `vertical` |
 | `AccordionItem.disabled` | Disables the section | `false` |
 | `AccordionContent.keepMounted` | Retains closed panel DOM | `false` |
 
 ## Accessibility
 
-Write the section name in `AccordionTrigger`; it is a button inside a heading. Enter and Space toggle an item. Arrow keys move between triggers; Home and End reach the first and last enabled triggers. Do not nest another button or link inside the trigger. In controlled single mode, handle an empty string when the last item closes.
+Write the section name in `AccordionTrigger`; it is a button inside a heading. Enter and Space toggle an item. Arrow keys move between triggers; Home and End reach the first and last enabled triggers. Do not nest another button or link inside the trigger. In controlled mode, treat the value as the array of currently open item values.

@@ -27,7 +27,7 @@ const questions = [
 
 export default function AccordionDemo() {
   return (
-    <Accordion type="single" collapsible className="w-full max-w-xl">
+    <Accordion className="w-full max-w-xl">
       {questions.map((item) => (
         <AccordionItem key={item.value} value={item.value}>
           <AccordionTrigger>{item.question}</AccordionTrigger>

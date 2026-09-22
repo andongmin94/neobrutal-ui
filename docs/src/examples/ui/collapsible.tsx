@@ -18,14 +18,16 @@ export default function CollapsibleDemo() {
           <h3 className="font-heading">Release checklist</h3>
           <p className="mt-1 text-sm">1 complete · 2 {isOpen ? "shown" : "hidden"}</p>
         </div>
-        <CollapsibleTrigger asChild>
-          <Button
-            variant="neutral"
-            size="icon-sm"
-            aria-label={isOpen ? "Hide remaining release tasks" : "Show remaining release tasks"}
-          >
-            <ChevronsUpDown aria-hidden="true" />
-          </Button>
+        <CollapsibleTrigger
+          render={
+            <Button
+              variant="neutral"
+              size="icon-sm"
+              aria-label={isOpen ? "Hide remaining release tasks" : "Show remaining release tasks"}
+            />
+          }
+        >
+          <ChevronsUpDown aria-hidden="true" />
         </CollapsibleTrigger>
       </div>
       <div className="flex items-center gap-3 rounded-base border-2 border-border bg-secondary-background px-4 py-3 text-sm">

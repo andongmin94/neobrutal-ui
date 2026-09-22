@@ -295,6 +295,35 @@ test("drawer delegates swipe, snap points, and dismissal to Base UI", () => {
   );
 });
 
+test("accordion and collapsible use Base UI native disclosure state", () => {
+  const accordionSource = source("registry/src/components/ui/accordion.tsx");
+  assert.doesNotMatch(
+    accordionSource,
+    /asChild|--radix-accordion|preventBaseUIHandler|mergeProps|type: "single"|type: "multiple"|collapsible\?:|data-state=/,
+  );
+  assert.match(accordionSource, /AccordionPrimitive\.Root/);
+  assert.match(accordionSource, /--accordion-panel-height/);
+
+  const collapsibleSource = source("registry/src/components/ui/collapsible.tsx");
+  assert.doesNotMatch(
+    collapsibleSource,
+    /asChild|--radix-collapsible|preventBaseUIHandler|mergeProps|forceMount|data-state=/,
+  );
+  assert.match(collapsibleSource, /--collapsible-panel-height/);
+
+  assert.doesNotMatch(
+    source("docs/src/examples/ui/accordion.tsx"),
+    /<Accordion[^>]+(?:type=|collapsible)/,
+  );
+  assert.doesNotMatch(
+    source("docs/src/examples/ui/collapsible.tsx"),
+    /<CollapsibleTrigger\s+asChild/,
+  );
+  const sidebarExample = source("docs/src/examples/ui/sidebar/_sidebar.tsx");
+  assert.doesNotMatch(sidebarExample, /<Collapsible(?:Trigger)?\s+[^>]*asChild/);
+  assert.match(sidebarExample, /render={<SidebarMenuItem \/>}/);
+});
+
 test("error text is a separate theme token included in every palette export", () => {
   for (const color of colors) {
     const vars = createThemeCssVars(color);
