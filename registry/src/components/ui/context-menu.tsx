@@ -177,10 +177,7 @@ function ContextMenuSubTrigger({
   );
 }
 
-function ContextMenuSubContent({
-  className,
-  ...props
-}: ContextMenuContentProps) {
+function ContextMenuSubContent({ className, ...props }: ContextMenuContentProps) {
   return (
     <ContextMenuContent
       data-slot="context-menu-sub-content"
