@@ -7,10 +7,12 @@ export default function TooltipDemo() {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger asChild>
-          <Button variant="noShadow" size="icon" aria-label="Registry verification status">
-            <ShieldCheck aria-hidden="true" />
-          </Button>
+        <TooltipTrigger
+          render={
+            <Button variant="noShadow" size="icon" aria-label="Registry verification status" />
+          }
+        >
+          <ShieldCheck aria-hidden="true" />
         </TooltipTrigger>
         <TooltipContent>
           <p>Verified in fresh Next.js and Vite projects.</p>

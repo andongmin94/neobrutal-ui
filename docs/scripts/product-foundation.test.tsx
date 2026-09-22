@@ -179,6 +179,25 @@ test("dialog family uses Base UI native composition without legacy adapters", ()
   );
 });
 
+test("tooltip and hover card use Base UI native overlay composition", () => {
+  const tooltipSource = source("registry/src/components/ui/tooltip.tsx");
+  assert.doesNotMatch(
+    tooltipSource,
+    /asChild|--radix-tooltip|delayDuration|disableHoverableContent|skipDelayDuration|CustomEvent|forceMount|portalContainer|data-state=/,
+  );
+
+  const hoverCardSource = source("registry/src/components/ui/hover-card.tsx");
+  assert.doesNotMatch(
+    hoverCardSource,
+    /asChild|--radix-hover-card|openDelay|CustomEvent|forceMount|MutationObserver|tabIndex\s*=\s*-1|data-state=/,
+  );
+
+  assert.doesNotMatch(
+    source("docs/src/examples/ui/tooltip.tsx"),
+    /<TooltipTrigger\s+asChild/,
+  );
+});
+
 test("error text is a separate theme token included in every palette export", () => {
   for (const color of colors) {
     const vars = createThemeCssVars(color);
