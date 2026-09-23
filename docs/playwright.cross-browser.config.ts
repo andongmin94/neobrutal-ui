@@ -6,6 +6,7 @@ export default defineConfig({
   testDir: "./tests",
   testMatch: [
     "cross-browser.spec.ts",
+    "dialog-viewport.spec.ts",
     "form-composition.spec.ts",
     "search-recovery.spec.ts",
     "release-controls.spec.ts",

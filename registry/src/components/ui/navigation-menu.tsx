@@ -17,7 +17,7 @@ function NavigationMenu({
       {...props}
       className={(state) =>
         cn(
-          "group/navigation-menu relative z-10 flex max-w-max flex-1 items-center justify-center rounded-base border-2 border-border bg-main p-1 font-heading",
+          "group/navigation-menu relative z-10 flex max-w-max flex-1 items-center justify-center rounded-base border-2 border-border bg-main p-1 font-heading text-main-foreground",
           typeof className === "function" ? className(state) : className,
         )
       }
@@ -56,7 +56,7 @@ function NavigationMenuItem({ className, ...props }: NavigationMenuPrimitive.Ite
 }
 
 const navigationMenuTriggerStyle = cva(
-  "group/navigation-menu-trigger inline-flex h-10 w-max items-center justify-center rounded-base bg-main px-4 py-2 text-sm font-heading text-main-foreground transition-colors outline-none focus:outline-none disabled:pointer-events-none disabled:opacity-50",
+  "group/navigation-menu-trigger inline-flex h-10 w-max items-center justify-center rounded-base bg-main px-4 py-2 text-sm font-heading text-main-foreground transition-colors outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-4 focus-visible:outline-main-foreground disabled:pointer-events-none disabled:opacity-50",
 );
 
 function NavigationMenuTrigger({
@@ -94,7 +94,7 @@ function NavigationMenuContent({ className, ...props }: NavigationMenuPrimitive.
       {...props}
       className={(state) =>
         cn(
-          "h-full w-auto p-2 pr-2.5 transition-[opacity,transform,translate] duration-[0.35s] ease-[cubic-bezier(0.22,1,0.36,1)] data-[activation-direction=down]:data-ending-style:-translate-y-1/2 data-[activation-direction=down]:data-starting-style:translate-y-1/2 data-[activation-direction=left]:data-ending-style:translate-x-1/2 data-[activation-direction=left]:data-starting-style:-translate-x-1/2 data-[activation-direction=right]:data-ending-style:-translate-x-1/2 data-[activation-direction=right]:data-starting-style:translate-x-1/2 data-[activation-direction=up]:data-ending-style:translate-y-1/2 data-[activation-direction=up]:data-starting-style:-translate-y-1/2 data-ending-style:opacity-0 data-starting-style:opacity-0 **:data-[slot=navigation-menu-link]:focus:ring-0 **:data-[slot=navigation-menu-link]:focus:outline-none",
+          "h-full w-auto p-2 pr-2.5 transition-[opacity,transform,translate] duration-[0.35s] ease-[cubic-bezier(0.22,1,0.36,1)] data-[activation-direction=down]:data-ending-style:-translate-y-1/2 data-[activation-direction=down]:data-starting-style:translate-y-1/2 data-[activation-direction=left]:data-ending-style:translate-x-1/2 data-[activation-direction=left]:data-starting-style:-translate-x-1/2 data-[activation-direction=right]:data-ending-style:-translate-x-1/2 data-[activation-direction=right]:data-starting-style:translate-x-1/2 data-[activation-direction=up]:data-ending-style:translate-y-1/2 data-[activation-direction=up]:data-starting-style:-translate-y-1/2 data-ending-style:opacity-0 data-starting-style:opacity-0",
           typeof className === "function" ? className(state) : className,
         )
       }
@@ -138,7 +138,7 @@ function NavigationMenuLink({ className, ...props }: NavigationMenuPrimitive.Lin
       {...props}
       className={(state) =>
         cn(
-          "block space-y-1 rounded-base p-2 leading-none no-underline transition-colors outline-none select-none focus-visible:ring-1 focus-visible:outline-none [&_svg:not([class*='size-'])]:size-4",
+          "block space-y-1 rounded-base p-2 leading-none no-underline transition-colors outline-none select-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-4 focus-visible:outline-main-foreground [&_svg:not([class*='size-'])]:size-4",
           typeof className === "function" ? className(state) : className,
         )
       }

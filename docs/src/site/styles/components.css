@@ -150,8 +150,7 @@
   min-width: 0;
 }
 
-.react-host[data-react-host="component"] .react-host__mount,
-.react-host[data-react-host="star"] .react-host__mount {
+.react-host[data-react-host="component"] .react-host__mount {
   display: flex;
   align-items: center;
   justify-content: safe center;

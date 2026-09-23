@@ -20,14 +20,14 @@ export default function DialogWithStickyFooter() {
   return (
     <Dialog>
       <DialogTrigger render={<Button />}>Sticky Footer</DialogTrigger>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader>
+      <DialogContent className="flex flex-col overflow-hidden sm:max-w-lg">
+        <DialogHeader className="shrink-0">
           <DialogTitle>Review checklist</DialogTitle>
           <DialogDescription>
             Scroll through the notes while the close action remains available.
           </DialogDescription>
         </DialogHeader>
-        <div className="-mx-6 max-h-[500px] overflow-y-auto px-6 text-sm">
+        <div className="-mx-6 min-h-0 max-h-[500px] overflow-y-auto px-6 text-sm">
           <h4 className="mb-4 text-lg leading-none font-medium">Project review notes</h4>
           {Array.from({ length: 9 }, (_, index) => (
             <p key={index} className="mb-4 leading-normal">
@@ -35,7 +35,7 @@ export default function DialogWithStickyFooter() {
             </p>
           ))}
         </div>
-        <DialogFooter>
+        <DialogFooter className="shrink-0">
           <DialogClose render={<Button />}>Close review</DialogClose>
         </DialogFooter>
       </DialogContent>

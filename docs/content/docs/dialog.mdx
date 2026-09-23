@@ -74,6 +74,9 @@ export default function WorkspaceDialog() {
 
 Keep a meaningful title and description. Tab and Shift+Tab stay in the modal; Escape closes a dismissible dialog. Verify that focus returns to its trigger. Do not remove the close control without providing another clear dismissal action. For longer tasks, keep actions reachable while the content scrolls.
 
+DialogContent limits its height to the dynamic viewport minus 2rem and scrolls overflowing content by default.
+For a fixed header or footer, use the flex-column examples below: keep those sections `shrink-0` and put `min-h-0 overflow-y-auto` on the body.
+
 ## Examples
 
 ### Scrollable content

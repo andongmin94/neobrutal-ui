@@ -18,14 +18,14 @@ export default function DialogWithScrollableContent() {
   return (
     <Dialog>
       <DialogTrigger render={<Button />}>Scrollable Content</DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
+      <DialogContent className="flex flex-col overflow-hidden sm:max-w-[425px]">
+        <DialogHeader className="shrink-0">
           <DialogTitle>Project review notes</DialogTitle>
           <DialogDescription>
             Check how long-form content scrolls inside the modal surface.
           </DialogDescription>
         </DialogHeader>
-        <div className="-mx-6 max-h-[500px] overflow-y-auto px-6 text-sm">
+        <div className="-mx-6 min-h-0 max-h-[500px] overflow-y-auto px-6 text-sm">
           {Array.from({ length: 9 }, (_, index) => (
             <p key={index} className="mb-4 leading-normal">
               {reviewNotes[index % reviewNotes.length]}

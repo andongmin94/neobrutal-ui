@@ -181,7 +181,9 @@ async function verifyTarget(target, fixtureDirectory, scenario) {
     if (scenario === "readme") return item.name === "button";
     if (scenario === "existing") {
       return (
-        ["button", "data-table"].includes(item.name) ||
+        ["button", "data-table", "navigation-menu", "dialog", "sheet", "popover"].includes(
+          item.name,
+        ) ||
         (item.name.startsWith("chart-") && item.categories?.includes("recipe")) ||
         (target === "next" && item.categories?.includes("template"))
       );
@@ -252,18 +254,34 @@ async function verifyTarget(target, fixtureDirectory, scenario) {
 }
 
 function writeBrowserEntry(target, directory, aliases, scenario, items) {
+  if (scenario === "existing") {
+    const fixture = fs.readFileSync(
+      path.join(root, "scripts/fixtures/interaction-preview.tsx"),
+      "utf8",
+    );
+    writeFile(
+      path.join(directory, "src/interaction-preview.tsx"),
+      fixture.replaceAll("@/components/ui", aliases.ui),
+    );
+  }
   const charts =
     scenario === "existing" ? items.filter((item) => item.name.startsWith("chart-")) : [];
   const source = [
     '"use client";',
     `import { Button } from "${aliases.ui}/button";`,
-    ...(scenario === "existing" ? [`import DataTable from "${aliases.ui}/data-table";`] : []),
+    ...(scenario === "existing"
+      ? [
+          `import DataTable from "${aliases.ui}/data-table";`,
+          'import InteractionPreview from "@/interaction-preview";',
+        ]
+      : []),
     ...charts.map((item, index) => `import Chart${index} from "${aliases.ui}/${item.name}";`),
     "export default function Page() {",
     '  return <main className="mx-auto grid w-full max-w-5xl grid-cols-1 gap-8 p-6">',
     '    <h1 className="text-2xl font-heading">Installed consumer</h1>',
     "    <Button>Click me</Button>",
     '    <p className="consumer-sentinel">Existing application styles</p>',
+    ...(scenario === "existing" ? ["    <InteractionPreview />"] : []),
     ...charts.map(
       (item, index) => `    <section aria-label="${item.name}"><Chart${index} /></section>`,
     ),

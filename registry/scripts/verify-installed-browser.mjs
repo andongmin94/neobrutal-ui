@@ -6,6 +6,8 @@ import { createRequire } from "node:module";
 import path from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 
+import { verifyInstalledInteractions } from "./verify-installed-interactions.mjs";
+
 export async function verifyInstalledBrowser({ target, directory, scenario, root }) {
   const requireDocs = createRequire(path.join(root, "../docs/package.json"));
   const { chromium, firefox, webkit, expect } = requireDocs("@playwright/test");
@@ -97,6 +99,8 @@ export async function verifyInstalledBrowser({ target, directory, scenario, root
                 return item.cssVars[theme].main;
               });
               await assertThemeColor(button, palette, expect);
+              await verifyInstalledInteractions({ page, expect, reportDirectory, engine, theme });
+              records.push({ engine, width, theme, route: "/#interactions", passed: true });
               const revenue = page.locator('[data-chart-recipe="revenue"]');
               await expect(revenue).toContainText("$74,300");
               await revenue.getByLabel("Revenue period").click();
