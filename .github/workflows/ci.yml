@@ -26,12 +26,10 @@ jobs:
           cache-dependency-path: |
             registry/package-lock.json
             docs/package-lock.json
-
       - name: Install verification dependencies
         run: |
           npm ci --prefix registry
           npm ci --prefix docs
-
       - name: Verify registry
         working-directory: registry
         run: |
@@ -41,7 +39,6 @@ jobs:
           npm run build
           npm run registry:validate
           npm run registry:check
-
       - name: Verify docs, budgets, and shared contracts
         working-directory: docs
         run: |
@@ -51,15 +48,11 @@ jobs:
           npm run build
           npm run check:budget
           npm test
-
       - name: Install browser engines
         working-directory: docs
         run: npx playwright install --with-deps chromium firefox webkit
-
       - name: Verify README setup and rendered existing-project integration
         run: npm run consumer:verify --prefix registry -- --integration
-
-      # Playwright clears docs/test-results at the start of the next browser run.
       - name: Save installation verification evidence
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -68,28 +61,9 @@ jobs:
           retention-days: 3
           if-no-files-found: error
           path: docs/test-results/installed-consumers
-
-      - name: Verify docs in Chromium
-        working-directory: docs
-        run: npm run test:browser
-
-      - name: Save documentation review evidence
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: docs-review
-          retention-days: 14
-          if-no-files-found: ignore
-          path: docs/playwright-report
-
-      - name: Verify representative Firefox, WebKit, and reflow behavior
-        working-directory: docs
-        run: npm run test:browser:cross
-
       - name: Verify fresh aggregate consumers
         working-directory: registry
         run: npm run consumer:verify
-
       - name: Verify clean generation and unchanged sources
         run: |
           node registry/scripts/verify-generated.mjs
@@ -100,9 +74,9 @@ jobs:
             git status --short
             exit 1
           fi
-
       - name: Capture formatting diagnostics without modifying sources
-        if: failure()
+        if: ${{ failure() }}
+        shell: bash
         continue-on-error: true
         run: |
           for project in registry docs; do
@@ -125,18 +99,14 @@ jobs:
               done < "$RUNNER_TEMP/$project-format-files.txt"
             )
           done
-
       - name: Save failed verification reports
-        if: failure()
+        if: ${{ failure() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: docs-browser-checks
           retention-days: 3
-          if-no-files-found: ignore
           path: |
             docs/test-results
-            docs/playwright-report
-            docs/playwright-report-cross
             registry/registry.json
             registry/public/r
             docs/src/data/component-descriptions.json
@@ -144,6 +114,62 @@ jobs:
             ${{ runner.temp }}/generated-files.diff
             ${{ runner.temp }}/formatting.diff
             ${{ runner.temp }}/formatted
+
+  verify-browsers:
+    name: Documentation (${{ matrix.project }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: desktop-light
+            script: test:browser
+            browser: chromium
+            report: playwright-report
+          - project: mobile-dark
+            script: test:browser
+            browser: chromium
+            report: playwright-report
+          - project: chromium-reflow
+            script: test:browser:cross
+            browser: chromium
+            report: playwright-report-cross
+          - project: firefox-desktop
+            script: test:browser:cross
+            browser: firefox
+            report: playwright-report-cross
+          - project: webkit-mobile
+            script: test:browser:cross
+            browser: webkit
+            report: playwright-report-cross
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            registry/package-lock.json
+            docs/package-lock.json
+      - name: Build documentation and synchronized registry sources
+        run: |
+          npm ci --prefix docs
+          npm run build --prefix docs
+      - name: Install browser engine
+        working-directory: docs
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+      - name: Verify documentation project
+        working-directory: docs
+        run: npm run ${{ matrix.script }} -- --project=${{ matrix.project }}
+      - name: Save documentation review evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: docs-review-${{ matrix.project }}
+          retention-days: 14
+          if-no-files-found: error
+          path: docs/${{ matrix.report }}
 
   verify-installations:
     name: Independent installations (${{ matrix.shard }}/3)
@@ -176,10 +202,13 @@ jobs:
           path: docs/test-results/independent-items
 
   verify-deployment:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [verify, verify-installations]
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    needs:
+      - verify
+      - verify-installations
+      - verify-browsers
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
@@ -208,21 +237,50 @@ jobs:
         run: |
           npm run consumer:verify -- vite --item=dialog --registry-url=https://neobrutal-ui.andongmin.com/r
           npm run consumer:verify -- next --item=blog-template --registry-url=https://neobrutal-ui.andongmin.com/r
-      - name: Install browser engines
+
+  verify-deployed-browsers:
+    name: Deployed documentation (${{ matrix.project }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: verify-deployment
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: chromium-reflow
+            browser: chromium
+          - project: firefox-desktop
+            browser: firefox
+          - project: webkit-mobile
+            browser: webkit
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            registry/package-lock.json
+            docs/package-lock.json
+      - name: Build synchronized registry verification inputs
+        run: |
+          npm ci --prefix registry
+          npm ci --prefix docs
+          npm run build --prefix registry
+      - name: Install browser engine
         working-directory: docs
-        run: npx playwright install --with-deps chromium firefox webkit
-      - name: Smoke-test the deployed docs across browser engines
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+      - name: Verify deployed documentation project
         working-directory: docs
         env:
           DOCS_TEST_URL: https://neobrutal-ui.andongmin.com
-        run: npm run test:browser:cross
-      - name: Save failed production browser reports
-        if: failure()
+        run: npm run test:browser:cross -- --project=${{ matrix.project }}
+      - name: Save deployed documentation review evidence
+        if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: docs-production-browser-checks
-          retention-days: 3
-          if-no-files-found: ignore
-          path: |
-            docs/test-results
-            docs/playwright-report-cross
+          name: deployed-docs-review-${{ matrix.project }}
+          retention-days: 14
+          if-no-files-found: error
+          path: docs/playwright-report-cross
