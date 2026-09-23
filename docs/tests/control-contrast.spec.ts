@@ -52,7 +52,11 @@ for (const mode of ["light", "dark"] as const) {
       await expectContrast(triggers.nth(1), "inset-outline", `${color.name}/${mode}: View focus`);
       await triggers.nth(1).press("ArrowLeft");
       await expect(triggers.first()).toBeFocused();
-      await expectContrast(triggers.first(), "inset-outline", `${color.name}/${mode}: Project focus`);
+      await expectContrast(
+        triggers.first(),
+        "inset-outline",
+        `${color.name}/${mode}: Project focus`,
+      );
       await captureMono(preview, color.name, mode, "keyboard-focus");
     }
   });
@@ -108,11 +112,19 @@ for (const mode of ["light", "dark"] as const) {
               await expect(sub).toHaveAttribute("data-popup-open", "");
               const child = page.locator(`[data-slot="${component}-sub-content"]:visible`).first();
               await expect(child).toBeVisible();
-              await expectContrast(sub, "inset-outline", `${color.name}/${mode}: open ${component} submenu`);
+              await expectContrast(
+                sub,
+                "inset-outline",
+                `${color.name}/${mode}: open ${component} submenu`,
+              );
               await child.press("Home");
               const first = child.getByRole("menuitem").first();
               await expect(first).toHaveAttribute("data-highlighted", "");
-              await expectContrast(first, "inset-outline", `${color.name}/${mode}: ${component} child`);
+              await expectContrast(
+                first,
+                "inset-outline",
+                `${color.name}/${mode}: ${component} child`,
+              );
               await captureMono(child, color.name, mode, "submenu");
               await page.keyboard.press("Escape");
               await expect(child).toBeHidden();
