@@ -7,7 +7,7 @@ import path from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 
 import { verifyInstalledInteractions } from "./verify-installed-interactions.mjs";
-import { verifyServerInputGroup } from "./verify-server-input-group.mjs";
+import { verifyServerCalendar, verifyServerInputGroup } from "./verify-server-components.mjs";
 
 export async function verifyInstalledBrowser({ target, directory, scenario, root }) {
   const requireDocs = createRequire(path.join(root, "../docs/package.json"));
@@ -139,15 +139,20 @@ export async function verifyInstalledBrowser({ target, directory, scenario, root
             records.push({ engine, width, theme, route: "/", passed: true });
 
             if (scenario === "existing" && target === "next") {
-              await verifyServerInputGroup({ page, origin, expect });
-              await assertPage(page, expect, AxeBuilder, errors, width);
-              await page.screenshot({
-                path: path.join(
-                  reportDirectory,
-                  `${engine}-${width}-${theme}-server-input-group.png`,
-                ),
-              });
-              records.push({ engine, width, theme, route: "/server-input-group", passed: true });
+              for (const [route, verify] of [
+                ["/server-input-group", verifyServerInputGroup],
+                ["/server-calendar", verifyServerCalendar],
+              ]) {
+                await verify({ page, origin, expect });
+                await assertPage(page, expect, AxeBuilder, errors, width);
+                await page.screenshot({
+                  path: path.join(
+                    reportDirectory,
+                    `${engine}-${width}-${theme}-${route.slice(1)}.png`,
+                  ),
+                });
+                records.push({ engine, width, theme, route, passed: true });
+              }
               for (const route of ["/blog", "/portfolio", "/cms", "/links"]) {
                 await page.goto(`${origin}${route}`);
                 await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
