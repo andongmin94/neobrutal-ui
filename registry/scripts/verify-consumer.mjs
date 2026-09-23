@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 
 import { run } from "./consumer-command.mjs";
+import { writeServerInputGroupPage } from "./verify-server-input-group.mjs";
 
 const root = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const outputDirectory = path.join(root, "public", "r");
@@ -184,6 +185,7 @@ async function verifyTarget(target, fixtureDirectory, scenario) {
         ["button", "data-table", "navigation-menu", "dialog", "sheet", "popover"].includes(
           item.name,
         ) ||
+        (target === "next" && item.name === "input-group") ||
         (item.name.startsWith("chart-") && item.categories?.includes("recipe")) ||
         (target === "next" && item.categories?.includes("template"))
       );
@@ -243,6 +245,9 @@ async function verifyTarget(target, fixtureDirectory, scenario) {
       scenario,
       installableItems,
     );
+  }
+  if (target === "next" && installableItems.some((item) => item.name === "input-group")) {
+    writeServerInputGroupPage(fixtureDirectory, readJson(configPath).aliases);
   }
   console.log(`Building the fresh ${target}/${scenario} consumer...`);
   await run(npmExecutable(), ["run", "build"], fixtureDirectory, { NEXT_TELEMETRY_DISABLED: "1" });

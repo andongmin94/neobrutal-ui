@@ -6,6 +6,8 @@ shadcnDocsLink: https://ui.shadcn.com/docs/components/input-group
 
 Use Input Group to keep a field and its supporting controls together. The root is a layout container, not an input or form. Use InputGroupInput or InputGroupTextarea for the actual value.
 
+The component module owns its client boundary, so a Next.js App Router page can import these parts while remaining a Server Component. Put your own state and event callbacks in a Client Component. Clicking a non-button addon focuses its input or textarea.
+
 <ComponentPreview component="input-group">
 <include cwd lang="tsx">
   ./src/examples/ui/input-group.tsx
