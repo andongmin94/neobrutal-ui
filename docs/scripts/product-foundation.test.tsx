@@ -182,7 +182,7 @@ test("dialog family uses Base UI native composition without legacy adapters", ()
 test("tooltip popup exposes tooltip semantics and sheet content stacks above its backdrop", () => {
   assert.match(source("registry/src/components/ui/tooltip.tsx"), /role="tooltip"/);
   const sheetSource = source("registry/src/components/ui/sheet.tsx");
-  assert.match(sheetSource, /sheet-overlay"[\s\S]*?z-40/);
+  assert.match(sheetSource, /sheet-overlay"[\s\S]*?pointer-events-none[\s\S]*?z-40/);
   assert.match(sheetSource, /sheet-content"[\s\S]*?fixed z-50/);
 });
 
@@ -264,6 +264,8 @@ test("navigation menu delegates state, motion, and popup layout to Base UI", () 
   assert.match(navigationSource, /NavigationMenuPrimitive\.Viewport/);
   assert.match(navigationSource, /NavigationMenuPrimitive\.Positioner/);
   assert.match(navigationSource, /NavigationMenuPrimitive\.Popup/);
+  assert.match(navigationSource, /h-\(--positioner-height\) w-\(--positioner-width\)/);
+  assert.match(navigationSource, /navigation-menu-viewport[\s\S]*?h-full w-full overflow-hidden/);
 
   assert.doesNotMatch(
     source("docs/src/examples/ui/navigation-menu.tsx"),

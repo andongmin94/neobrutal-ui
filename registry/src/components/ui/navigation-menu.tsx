@@ -109,7 +109,7 @@ function NavigationMenuViewport({ className, ...props }: NavigationMenuPrimitive
         side="bottom"
         sideOffset={8}
         align="start"
-        className="isolate z-50 max-w-(--available-width)"
+        className="isolate z-50 h-(--positioner-height) w-(--positioner-width) max-w-(--available-width)"
       >
         <NavigationMenuPrimitive.Popup
           data-slot="navigation-menu-popup"
@@ -120,7 +120,7 @@ function NavigationMenuViewport({ className, ...props }: NavigationMenuPrimitive
             {...props}
             className={(state) =>
               cn(
-                "relative h-(--popup-height) w-(--popup-width)",
+                "relative h-full w-full overflow-hidden",
                 typeof className === "function" ? className(state) : className,
               )
             }
