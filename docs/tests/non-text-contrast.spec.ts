@@ -71,9 +71,7 @@ async function indicatorContrast(locator: Locator, indicator: Indicator) {
     };
     const ink = rgba(inkColors[kind]);
     const surfaces =
-      kind === "color"
-        ? [background(node)]
-        : [background(node), background(node.parentElement)];
+      kind === "color" ? [background(node)] : [background(node), background(node.parentElement)];
     return Math.min(
       ...surfaces.map((surface) => {
         const a = luminance(composite(ink, surface));
