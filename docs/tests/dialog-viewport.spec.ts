@@ -15,10 +15,18 @@ for (const viewport of [
       { triggerName: "Scrollable Content", title: "Project review notes", sticky: false },
       { triggerName: "Sticky Footer", title: "Review checklist", sticky: true },
     ]) {
-      const trigger = page.locator(".component-preview").getByRole("button", {
-        name: triggerName,
-        exact: true,
+      const preview = page.locator('.component-preview[data-component="dialog"]').filter({
+        has: page.getByRole("tablist", {
+          name: `dialog ${triggerName.toLowerCase()} preview`,
+          exact: true,
+        }),
       });
+      const host = preview.locator('[data-react-host="component"]');
+      await host.scrollIntoViewIfNeeded();
+      await expect(host).not.toHaveAttribute("aria-busy", "true");
+      await expect(host.locator(".react-host__mount > *").first()).toBeAttached();
+      await expect(host.locator(".react-host__error")).toHaveCount(0);
+      const trigger = preview.getByRole("button", { name: triggerName, exact: true });
       await trigger.click();
       const dialog = page.getByRole("dialog", { name: title, exact: true });
       await expect(dialog).toBeVisible();
