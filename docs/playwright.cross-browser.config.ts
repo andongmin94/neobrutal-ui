@@ -7,6 +7,7 @@ export default defineConfig({
   testMatch: [
     "cross-browser.spec.ts",
     "control-contrast.spec.ts",
+    "compound-input-contrast.spec.ts",
     "dialog-viewport.spec.ts",
     "form-composition.spec.ts",
     "search-recovery.spec.ts",
