@@ -3,7 +3,7 @@ import colors from "../src/data/colors";
 import { createThemeCssVars } from "../src/data/theme";
 
 type Mode = "light" | "dark";
-type Indicator = "border" | "outline" | "color";
+type Indicator = "border" | "outline" | "inset-outline" | "color";
 
 async function applyPalette(page: Page, color: (typeof colors)[number], mode: Mode) {
   const theme = createThemeCssVars(color);
@@ -67,11 +67,14 @@ async function indicatorContrast(locator: Locator, indicator: Indicator) {
     const inkColors = {
       border: style.borderTopColor,
       outline: style.outlineColor,
+      "inset-outline": style.outlineColor,
       color: style.color,
     };
     const ink = rgba(inkColors[kind]);
     const surfaces =
-      kind === "color" ? [background(node)] : [background(node), background(node.parentElement)];
+      kind === "border" || kind === "outline"
+        ? [background(node), background(node.parentElement)]
+        : [background(node)];
     return Math.min(
       ...surfaces.map((surface) => {
         const a = luminance(composite(ink, surface));
@@ -84,9 +87,13 @@ async function indicatorContrast(locator: Locator, indicator: Indicator) {
 
 async function expectContrast(locator: Locator, indicator: Indicator, label: string) {
   await expect(locator).toBeVisible();
-  if (indicator === "outline") {
+  if (indicator === "outline" || indicator === "inset-outline") {
     await expect(locator).toHaveCSS("outline-style", "solid");
     await expect(locator).toHaveCSS("outline-width", "2px");
+    if (indicator === "inset-outline") {
+      // The entire 2px stroke is inside the row, away from its outer boundary.
+      await expect(locator).toHaveCSS("outline-offset", "-4px");
+    }
   } else if (indicator === "border") {
     await expect(locator).toHaveCSS("border-top-style", "solid");
     await expect(locator).toHaveCSS("border-top-width", "2px");
@@ -107,9 +114,9 @@ async function expectContrast(locator: Locator, indicator: Indicator, label: str
   });
 }
 
-async function captureMono(surface: Locator, color: string, mode: Mode) {
+async function captureMono(surface: Locator, color: string, mode: Mode, state = "") {
   if (color !== "mono") return;
-  await test.info().attach(`mono-${mode}`, {
+  await test.info().attach(`mono-${mode}${state ? `-${state}` : ""}`, {
     body: await surface.screenshot({ animations: "disabled" }),
     contentType: "image/png",
   });
@@ -168,32 +175,52 @@ for (const mode of ["light", "dark"] as const) {
     await expect(trigger).toBeFocused();
   });
 
-  test(`select keyboard position contrasts in every ${mode} palette`, async ({ page }) => {
-    await page.goto("/docs/chart-release-activity");
-    await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true");
-    const chart = page.locator('.component-preview [data-chart-recipe="activity"]');
-    const trigger = chart.getByRole("combobox", { name: "Activity measure", exact: true });
-    await trigger.click();
-    const popup = page.locator('[data-slot="select-content"]');
-    const items = popup.getByRole("option");
-    await expect(popup).toBeVisible();
-    await page.mouse.move(0, 0);
-    for (const color of colors) {
-      await applyPalette(page, color, mode);
-      await page.keyboard.press("Home");
-      await expect(items.first()).toHaveAttribute("data-highlighted", "");
-      await expectContrast(items.first(), "border", `${color.name}/${mode}: first option`);
-      await page.keyboard.press("End");
-      await expect(items.last()).toHaveAttribute("data-highlighted", "");
-      await expect(items.first()).not.toHaveAttribute("data-highlighted", "");
-      await expectContrast(items.last(), "border", `${color.name}/${mode}: last option`);
-      await captureMono(popup, color.name, mode);
-    }
-    await page.keyboard.press("Enter");
-    await expect(trigger).toContainText("Share of each release");
-    await expect(popup).toBeHidden();
-    await expect(trigger).toBeFocused();
-  });
+  for (const { name, route, label, result, indicator } of [
+    {
+      name: "select",
+      route: "/docs/select",
+      label: "Publication status",
+      result: "Published",
+      indicator: "border",
+    },
+    {
+      name: "chart-select",
+      route: "/docs/chart-release-activity",
+      label: "Activity measure",
+      result: "Share of each release",
+      indicator: "inset-outline",
+    },
+  ] as const) {
+    test(`${name} keyboard position contrasts in every ${mode} palette`, async ({ page }) => {
+      await page.goto(route);
+      await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true");
+      const preview = page.locator(".component-preview").first();
+      const trigger = preview.getByRole("combobox", { name: label, exact: true });
+      await trigger.click();
+      const popup = page.locator('[data-slot="select-content"]');
+      const items = popup.getByRole("option");
+      await expect(popup).toBeVisible();
+      await expect(items.first()).toHaveAttribute("aria-selected", "true");
+      await page.mouse.move(0, 0);
+      for (const color of colors) {
+        await applyPalette(page, color, mode);
+        await page.keyboard.press("Home");
+        await expect(items.first()).toHaveAttribute("data-highlighted", "");
+        await expectContrast(items.first(), indicator, `${color.name}/${mode}: selected option`);
+        await captureMono(popup, color.name, mode, "selected-option");
+        await page.keyboard.press("End");
+        await expect(items.last()).toHaveAttribute("data-highlighted", "");
+        await expect(items.first()).not.toHaveAttribute("data-highlighted", "");
+        await expect(items.last()).toHaveAttribute("aria-selected", "false");
+        await expectContrast(items.last(), indicator, `${color.name}/${mode}: unselected option`);
+        await captureMono(popup, color.name, mode, "unselected-option");
+      }
+      await page.keyboard.press("Enter");
+      await expect(trigger).toContainText(result);
+      await expect(popup).toBeHidden();
+      await expect(trigger).toBeFocused();
+    });
+  }
 
   test(`multi-select marks and keyboard position contrast in every ${mode} palette`, async ({
     page,

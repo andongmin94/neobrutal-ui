@@ -421,7 +421,7 @@ function ChartSelect({
             <SelectItem
               key={option.value}
               value={option.value}
-              className="min-h-10 cursor-pointer py-2 data-highlighted:border-foreground data-selected:bg-main data-selected:font-heading data-selected:text-main-foreground [&>span:first-child]:min-w-0 [&>span:first-child]:shrink [&>span:first-child]:whitespace-normal"
+              className="min-h-10 cursor-pointer py-2 data-highlighted:border-transparent data-highlighted:outline-2 data-highlighted:outline-solid data-highlighted:-outline-offset-4 data-highlighted:outline-foreground data-selected:data-highlighted:outline-main-foreground data-selected:bg-main data-selected:font-heading data-selected:text-main-foreground [&>span:first-child]:min-w-0 [&>span:first-child]:shrink [&>span:first-child]:whitespace-normal"
             >
               {option.label}
             </SelectItem>
