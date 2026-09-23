@@ -9,6 +9,7 @@ export default defineConfig({
     "dialog-viewport.spec.ts",
     "form-composition.spec.ts",
     "search-recovery.spec.ts",
+    "sidebar-layering.spec.ts",
     "release-controls.spec.ts",
     "template-navigation.spec.ts",
     "mono-theme.spec.ts",
