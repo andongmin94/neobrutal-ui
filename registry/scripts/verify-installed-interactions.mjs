@@ -40,6 +40,11 @@ export async function verifyInstalledInteractions({
   await expectKeyboardFocus(start, expect);
   await capture(start, "navigation-trigger-focus");
   await start.press("ArrowDown");
+  await expect(first).toBeVisible();
+  await expect(start).toHaveAttribute("aria-expanded", "true");
+  // Base UI retains trigger focus on open; Tab enters the portalled links.
+  await expectKeyboardFocus(start, expect);
+  await start.press("Tab");
   await expectKeyboardFocus(first, expect);
   await first.press("Tab");
   await expectKeyboardFocus(second, expect);

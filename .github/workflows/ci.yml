@@ -56,6 +56,9 @@ jobs:
         working-directory: docs
         run: npx playwright install --with-deps chromium firefox webkit
 
+      - name: Verify README setup and rendered existing-project integration
+        run: npm run consumer:verify --prefix registry -- --integration
+
       - name: Verify docs in Chromium
         working-directory: docs
         run: npm run test:browser
@@ -72,9 +75,6 @@ jobs:
       - name: Verify representative Firefox, WebKit, and reflow behavior
         working-directory: docs
         run: npm run test:browser:cross
-
-      - name: Verify README setup and rendered existing-project integration
-        run: npm run consumer:verify --prefix registry -- --integration
 
       - name: Verify fresh aggregate consumers
         working-directory: registry
