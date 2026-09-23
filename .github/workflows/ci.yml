@@ -59,6 +59,16 @@ jobs:
       - name: Verify README setup and rendered existing-project integration
         run: npm run consumer:verify --prefix registry -- --integration
 
+      # Playwright clears docs/test-results at the start of the next browser run.
+      - name: Save installation verification evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: installation-checks
+          retention-days: 3
+          if-no-files-found: error
+          path: docs/test-results/installed-consumers
+
       - name: Verify docs in Chromium
         working-directory: docs
         run: npm run test:browser
@@ -79,15 +89,6 @@ jobs:
       - name: Verify fresh aggregate consumers
         working-directory: registry
         run: npm run consumer:verify
-
-      - name: Save installation verification evidence
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: installation-checks
-          retention-days: 3
-          if-no-files-found: ignore
-          path: docs/test-results/installed-consumers
 
       - name: Verify clean generation and unchanged sources
         run: |
