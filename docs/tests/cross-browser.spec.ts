@@ -31,6 +31,12 @@ async function expectHealthyLayout(page: Page, route: string) {
   await expect(page.locator("main").first()).toBeVisible();
   await expectHydrated(page);
   await expect(page.locator(".special-page-loading")).toHaveCount(0);
+  const preview = page.locator(".component-preview--primary [data-react-host]");
+  for (const host of await preview.all()) {
+    await host.scrollIntoViewIfNeeded();
+    await expect(host).not.toHaveAttribute("aria-busy", "true");
+    await expect(host.locator(".react-host__mount > *").first()).toBeAttached();
+  }
   await expect(page.locator(".react-host__error")).toHaveCount(0);
   await page.evaluate(() => document.fonts.ready);
 
@@ -55,13 +61,16 @@ async function expectHealthyLayout(page: Page, route: string) {
   expect(layout.brokenLocalImages, `${route}: broken local images`).toEqual([]);
 }
 
-test("representative routes render without runtime or layout failures", async ({ page }) => {
-  const errors = collectRuntimeErrors(page);
-
-  for (const route of representativeRoutes) await expectHealthyLayout(page, route);
-
-  expect(errors).toEqual([]);
-});
+// These are independent document checks, not a client-side navigation journey.
+// Each route owns a page so an outgoing preview load cannot restart its old URL
+// during the next hard navigation in Firefox.
+for (const route of representativeRoutes) {
+  test(`representative route loads: ${route}`, async ({ page }) => {
+    const errors = collectRuntimeErrors(page);
+    await expectHealthyLayout(page, route);
+    expect(errors).toEqual([]);
+  });
+}
 
 test("dialog initial focus and focus return work across browser engines", async ({ page }) => {
   await page.goto("/docs/dialog");
