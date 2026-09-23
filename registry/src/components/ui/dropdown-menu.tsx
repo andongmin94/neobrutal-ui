@@ -128,7 +128,7 @@ function DropdownMenuItem({
       {...props}
       className={(state) =>
         cn(
-          "group/dropdown-menu-item relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent bg-main px-2 py-1.5 text-sm font-base outline-hidden transition-colors select-none data-highlighted:border-border data-inset:pl-8 data-[variant=destructive]:bg-destructive data-[variant=destructive]:text-destructive-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+          "group/dropdown-menu-item relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent bg-main px-2 py-1.5 text-sm font-base outline-none transition-colors select-none data-highlighted:outline-2 data-highlighted:outline-solid data-highlighted:-outline-offset-4 data-highlighted:outline-current data-inset:pl-8 data-[variant=destructive]:bg-destructive data-[variant=destructive]:text-destructive-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
           typeof className === "function" ? className(state) : className,
         )
       }
@@ -155,7 +155,7 @@ function DropdownMenuSubTrigger({
       {...props}
       className={(state) =>
         cn(
-          "flex cursor-default items-center gap-2 rounded-base border-2 border-transparent bg-main px-2 py-1.5 text-sm font-base outline-hidden select-none data-highlighted:border-border data-inset:pl-8 data-popup-open:border-border [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+          "flex cursor-default items-center gap-2 rounded-base border-2 border-transparent bg-main px-2 py-1.5 text-sm font-base outline-none select-none data-highlighted:outline-2 data-highlighted:outline-solid data-highlighted:-outline-offset-4 data-highlighted:outline-current data-inset:pl-8 data-popup-open:outline-2 data-popup-open:outline-solid data-popup-open:-outline-offset-4 data-popup-open:outline-current [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
           typeof className === "function" ? className(state) : className,
         )
       }
@@ -209,7 +209,7 @@ function DropdownMenuCheckboxItem({
       {...props}
       className={(state) =>
         cn(
-          "relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent py-1.5 pr-2 pl-8 text-sm font-base outline-hidden transition-colors select-none data-highlighted:border-border data-inset:pl-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+          "relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent py-1.5 pr-2 pl-8 text-sm font-base outline-none transition-colors select-none data-highlighted:outline-2 data-highlighted:outline-solid data-highlighted:-outline-offset-4 data-highlighted:outline-current data-inset:pl-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
           typeof className === "function" ? className(state) : className,
         )
       }
@@ -248,7 +248,7 @@ function DropdownMenuRadioItem({
       {...props}
       className={(state) =>
         cn(
-          "relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent py-1.5 pr-2 pl-8 text-sm font-base outline-hidden transition-colors select-none data-highlighted:border-border data-inset:pl-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+          "relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent py-1.5 pr-2 pl-8 text-sm font-base outline-none transition-colors select-none data-highlighted:outline-2 data-highlighted:outline-solid data-highlighted:-outline-offset-4 data-highlighted:outline-current data-inset:pl-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
           typeof className === "function" ? className(state) : className,
         )
       }

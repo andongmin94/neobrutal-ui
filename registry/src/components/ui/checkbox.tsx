@@ -1,7 +1,7 @@
 "use client";
 
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox";
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, MinusIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -24,9 +24,16 @@ function Checkbox({ className, nativeButton, render, ...props }: CheckboxPrimiti
       <CheckboxPrimitive.Indicator
         data-slot="checkbox-indicator"
         className="grid place-content-center text-current transition-none [&>svg]:size-3.5"
-      >
-        <CheckIcon />
-      </CheckboxPrimitive.Indicator>
+        render={(indicatorProps, state) => (
+          <span {...indicatorProps}>
+            {state.indeterminate ? (
+              <MinusIcon data-slot="checkbox-mixed-mark" aria-hidden="true" />
+            ) : (
+              <CheckIcon data-slot="checkbox-checked-mark" aria-hidden="true" />
+            )}
+          </span>
+        )}
+      />
     </CheckboxPrimitive.Root>
   );
 }

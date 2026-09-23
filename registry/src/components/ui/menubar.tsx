@@ -56,7 +56,7 @@ function MenubarTrigger({ className, ...props }: React.ComponentProps<typeof Dro
       {...props}
       className={(state) =>
         cn(
-          "flex cursor-default items-center rounded-base border-2 border-transparent px-3 py-1.5 text-sm font-heading text-main-foreground outline-hidden select-none hover:border-border aria-expanded:border-border data-popup-open:border-border",
+          "flex cursor-default items-center rounded-base border-2 border-transparent px-3 py-1.5 text-sm font-heading text-main-foreground outline-none select-none hover:border-current focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-4 focus-visible:outline-current data-popup-open:outline-2 data-popup-open:outline-solid data-popup-open:-outline-offset-4 data-popup-open:outline-current",
           typeof className === "function" ? className(state) : className,
         )
       }
@@ -95,7 +95,7 @@ function MenubarItem({ className, ...props }: React.ComponentProps<typeof Dropdo
       {...props}
       className={(state) =>
         cn(
-          "group/menubar-item gap-2 rounded-base border-2 border-transparent px-2 py-1.5 text-sm font-base data-highlighted:border-border data-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4",
+          "group/menubar-item gap-2 rounded-base border-2 border-transparent px-2 py-1.5 text-sm font-base data-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4",
           typeof className === "function" ? className(state) : className,
         )
       }
@@ -113,7 +113,7 @@ function MenubarCheckboxItem({
       {...props}
       className={(state) =>
         cn(
-          "relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent py-1.5 pr-2 pl-8 text-sm font-base outline-hidden transition-colors select-none data-highlighted:border-border data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+          "relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent py-1.5 pr-2 pl-8 text-sm font-base transition-colors select-none data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
           typeof className === "function" ? className(state) : className,
         )
       }
@@ -135,7 +135,7 @@ function MenubarRadioItem({
       {...props}
       className={(state) =>
         cn(
-          "relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent py-1.5 pr-2 pl-8 text-sm font-base outline-hidden transition-colors select-none data-highlighted:border-border data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+          "relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent py-1.5 pr-2 pl-8 text-sm font-base transition-colors select-none data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
           typeof className === "function" ? className(state) : className,
         )
       }
@@ -198,7 +198,7 @@ function MenubarSubTrigger({
       {...props}
       className={(state) =>
         cn(
-          "gap-2 rounded-base border-2 border-transparent px-2 py-1.5 text-sm font-base data-highlighted:border-border data-popup-open:border-border [&_svg:not([class*='size-'])]:size-4",
+          "gap-2 rounded-base border-2 border-transparent px-2 py-1.5 text-sm font-base [&_svg:not([class*='size-'])]:size-4",
           typeof className === "function" ? className(state) : className,
         )
       }

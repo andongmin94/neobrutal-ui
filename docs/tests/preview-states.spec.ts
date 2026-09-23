@@ -79,7 +79,7 @@ for (const { component, triggerSelector, surfaceSelector } of [
   {
     component: "combobox",
     triggerSelector: "button[aria-haspopup]",
-    surfaceSelector: '[data-slot="popover-content"]',
+    surfaceSelector: ':is([data-slot="popover-content"], [data-slot="combobox-popup"])',
   },
   {
     component: "select",

@@ -1,102 +1,64 @@
 "use client";
 
+import { Combobox } from "@base-ui/react/combobox";
 import { CheckIcon, ChevronsUpDown } from "lucide-react";
 
-import * as React from "react";
-
 import { Button } from "@/components/ui/button";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-];
-
-type Framework = (typeof frameworks)[number];
+const frameworks = ["Next.js", "SvelteKit", "Nuxt.js", "Remix", "Astro"];
 
 export default function ComboboxWithCheckbox() {
-  const [open, setOpen] = React.useState(false);
-  const [selectedFrameworks, setSelectedFrameworks] = React.useState<Framework[]>([]);
-  const contentId = React.useId();
-
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      {/* A button-backed multi-select combobox follows the ARIA combobox pattern. */}
-      <PopoverTrigger
-        render={
-          <Button
-            variant="noShadow"
-            role="combobox"
-            aria-haspopup="listbox"
-            aria-label="Select frameworks"
-            aria-expanded={open}
-            aria-controls={open ? contentId : undefined}
-            className="w-fit min-w-[280px] justify-between"
-          />
-        }
+    <Combobox.Root items={frameworks} multiple autoHighlight>
+      <Combobox.Trigger
+        aria-label="Select frameworks"
+        render={<Button variant="noShadow" className="w-full max-w-[300px] justify-between" />}
       >
-        {selectedFrameworks.length > 0
-          ? selectedFrameworks.map((framework) => framework.label).join(", ")
-          : "Select frameworks (multi-select)..."}
-        <ChevronsUpDown className="text-muted-foreground" />
-      </PopoverTrigger>
-      <PopoverContent id={contentId} className="w-[300px] p-0 border-0" align="start">
-        <Command className="**:data-[slot=command-input-wrapper]:h-11">
-          <CommandInput placeholder="Search framework..." />
-          <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
-            <CommandGroup className="p-2 [&_[cmdk-group-items]]:flex [&_[cmdk-group-items]]:flex-col [&_[cmdk-group-items]]:gap-1">
-              {frameworks.map((framework) => (
-                <CommandItem
-                  key={framework.value}
-                  value={framework.value}
-                  onSelect={(currentValue) => {
-                    setSelectedFrameworks(
-                      selectedFrameworks.some((f) => f.value === currentValue)
-                        ? selectedFrameworks.filter((f) => f.value !== currentValue)
-                        : [...selectedFrameworks, framework],
-                    );
-                  }}
+        <span className="min-w-0 truncate">
+          <Combobox.Value>
+            {(values: string[]) => values.join(", ") || "Select frameworks (multi-select)..."}
+          </Combobox.Value>
+        </span>
+        <ChevronsUpDown aria-hidden="true" />
+      </Combobox.Trigger>
+      <Combobox.Portal>
+        <Combobox.Positioner align="start" sideOffset={4} className="isolate z-50">
+          <Combobox.Popup
+            data-slot="combobox-popup"
+            aria-label="Choose frameworks"
+            className="max-h-(--available-height) w-[300px] max-w-(--available-width) overflow-y-auto rounded-base border-2 border-border bg-main text-main-foreground outline-none"
+          >
+            <Combobox.Input
+              aria-label="Search frameworks"
+              placeholder="Search framework..."
+              className="h-11 w-full border-0 border-b-2 border-main-foreground bg-transparent px-3 text-sm font-base text-main-foreground outline-none placeholder:text-main-foreground/70"
+            />
+            <Combobox.Empty className="py-6 text-center text-sm">
+              No framework found.
+            </Combobox.Empty>
+            <Combobox.List aria-label="Frameworks" className="grid gap-1 p-2 empty:p-0">
+              {(framework: string) => (
+                <Combobox.Item
+                  key={framework}
+                  value={framework}
+                  className="relative flex cursor-default items-center gap-2 rounded-base px-2 py-2 text-sm font-base outline-none select-none data-highlighted:outline-2 data-highlighted:outline-solid data-highlighted:-outline-offset-4 data-highlighted:outline-current"
                 >
-                  <div
-                    className="border-main-foreground pointer-events-none size-5 shrink-0 rounded-base border-2 transition-all select-none *:[svg]:opacity-0 data-[selected=true]:*:[svg]:opacity-100"
-                    data-selected={selectedFrameworks.some((f) => f.value === framework.value)}
+                  <span
+                    data-slot="combobox-selection-mark"
+                    aria-hidden="true"
+                    className="grid size-5 shrink-0 place-content-center rounded-base border-2 border-current"
                   >
-                    <CheckIcon className="size-4 text-current" />
-                  </div>
-                  {framework.label}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+                    <Combobox.ItemIndicator>
+                      <CheckIcon className="size-4" />
+                    </Combobox.ItemIndicator>
+                  </span>
+                  {framework}
+                </Combobox.Item>
+              )}
+            </Combobox.List>
+          </Combobox.Popup>
+        </Combobox.Positioner>
+      </Combobox.Portal>
+    </Combobox.Root>
   );
 }

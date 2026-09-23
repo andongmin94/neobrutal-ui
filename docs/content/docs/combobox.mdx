@@ -1,10 +1,12 @@
 ---
 title: Combobox
-description: "A searchable selection recipe composed from Popover and Command."
-shadcnDocsLink: https://ui.shadcn.com/docs/components/combobox
+description: "Searchable single- and multiple-selection recipes."
+shadcnDocsLink: https://base-ui.com/react/components/combobox
 ---
 
-Use this recipe when users need to search a list before selecting one option. It combines existing components rather than exposing a standalone Combobox registry endpoint. Adapt the options and selection state to your application.
+Use these recipes when users need to search a list before selecting options.
+The single-selection examples compose Popover and Command; the multiple-selection example uses Base UI Combobox so selected values remain distinct from the current keyboard position.
+These are editable recipes, not a standalone Combobox registry endpoint.
 
 <ComponentPreview component="combobox">
 <include cwd lang="tsx">
@@ -19,6 +21,9 @@ Complete the [base setup](/docs/installation), then install [Button](/docs/butto
 ```bash
 npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json https://neobrutal-ui.andongmin.com/r/popover.json https://neobrutal-ui.andongmin.com/r/command.json
 ```
+
+The multiple-selection example only needs Button and `@base-ui/react`, which the shared base already installs.
+It does not use Command or Popover.
 
 ## Usage
 
@@ -87,7 +92,10 @@ export default function FrameworkPicker() {
 
 ## Accessibility
 
-Name the selection control and search field. Keep the current selection visible in the trigger. Verify keyboard opening, list navigation, selection, dismissal, and focus return. Do not use a searchable popup for unrestricted free-text entry; this recipe selects from a predefined list. For server search, add loading and error states and disable client filtering when the server owns results.
+Name the selection control and search field. Keep the current selection visible in the trigger. Verify keyboard opening, list navigation, selection, dismissal, and focus return. Do not use a searchable popup for unrestricted free-text entry; these recipes select from predefined options. For server search, add loading and error states and disable client filtering when the server owns results.
+
+For multiple selection, use `Combobox.Root` with `multiple` and optionally control its array-valued `value` and `onValueChange`.
+Base UI manages listbox selection, the active descendant, filtering and focus; do not replace these with Command's single current-item state.
 
 ## Examples
 
@@ -108,6 +116,9 @@ Name the selection control and search field. Keep the current selection visible 
 </ComponentPreview>
 
 ### Multiselect
+
+Select more than one framework, move to an unselected option, and search without losing the existing selections.
+The trigger summarizes the selection; reopening the popup preserves it.
 
 <ComponentPreview component="combobox" example="multiselect">
 <include cwd lang="tsx">
