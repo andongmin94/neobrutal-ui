@@ -85,7 +85,7 @@ export default function ComboboxWithCheckbox() {
                   }}
                 >
                   <div
-                    className="border-border pointer-events-none size-5 shrink-0 rounded-base border-2 transition-all select-none *:[svg]:opacity-0 data-[selected=true]:*:[svg]:opacity-100"
+                    className="border-main-foreground pointer-events-none size-5 shrink-0 rounded-base border-2 transition-all select-none *:[svg]:opacity-0 data-[selected=true]:*:[svg]:opacity-100"
                     data-selected={selectedFrameworks.some((f) => f.value === framework.value)}
                   >
                     <CheckIcon className="size-4 text-current" />

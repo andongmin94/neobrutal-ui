@@ -34,14 +34,24 @@ CSS variables, so they can be changed without replacing component source.
     </TableRow>
     <TableRow>
       <TableCell>--main-foreground</TableCell>
-      <TableCell>Content displayed on the main accent</TableCell>
+      <TableCell>Content and current-item indicators on the main accent</TableCell>
     </TableRow>
     <TableRow>
       <TableCell>--border</TableCell>
-      <TableCell>Outlines and hard-shadow color</TableCell>
+      <TableCell>Structural outlines and hard-shadow color</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>--input</TableCell>
+      <TableCell>Empty checkbox boundaries on secondary surfaces</TableCell>
     </TableRow>
   </TableBody>
 </Table>
+
+Keep structural borders separate from controls and state indicators.
+An unchecked Checkbox uses `--input`; Command and Select use `--main-foreground` for the
+current item on a `--main` surface. Custom palettes must keep these indicators at least 3:1
+against their adjacent backgrounds in both modes. Changing `--border` globally is not
+necessary to make these states visible.
 
 ## Shape and depth
 

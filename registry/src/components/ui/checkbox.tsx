@@ -16,7 +16,7 @@ function Checkbox({ className, nativeButton, render, ...props }: CheckboxPrimiti
       {...props}
       className={(state) =>
         cn(
-          "peer relative flex size-4 shrink-0 items-center justify-center rounded-base border-2 border-border bg-secondary-background outline-hidden transition-colors focus-visible:ring-1 focus-visible:ring-ring data-checked:bg-main data-checked:text-main-foreground data-disabled:cursor-not-allowed data-disabled:opacity-50 data-indeterminate:bg-main data-indeterminate:text-main-foreground",
+          "peer relative flex size-4 shrink-0 items-center justify-center rounded-base border-2 border-input bg-secondary-background outline-hidden transition-colors focus-visible:ring-1 focus-visible:ring-ring data-checked:border-border data-checked:bg-main data-checked:text-main-foreground data-disabled:cursor-not-allowed data-disabled:opacity-50 data-indeterminate:border-border data-indeterminate:bg-main data-indeterminate:text-main-foreground",
           typeof className === "function" ? className(state) : className,
         )
       }

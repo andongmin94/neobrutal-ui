@@ -13,6 +13,7 @@ export default defineConfig({
     "release-controls.spec.ts",
     "template-navigation.spec.ts",
     "mono-theme.spec.ts",
+    "non-text-contrast.spec.ts",
     "visual-controls.spec.ts",
   ],
   fullyParallel: true,
