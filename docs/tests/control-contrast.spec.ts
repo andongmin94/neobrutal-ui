@@ -62,38 +62,36 @@ for (const mode of ["light", "dark"] as const) {
   });
 
   for (const component of ["dropdown-menu", "context-menu", "menubar"]) {
-    test(`${component} current rows and open submenus contrast in every ${mode} palette`, async ({
-      page,
-    }) => {
-      test.setTimeout(120_000);
-      await page.goto(`/docs/${component}`);
-      await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true");
-      const previews = page.locator(`.component-preview[data-component="${component}"]`);
-      const previewCount = await previews.count();
-      expect(previewCount).toBeGreaterThan(0);
-      for (let index = 0; index < previewCount; index++) {
-        const preview = previews.nth(index);
-        const host = preview.locator("[data-react-host]");
-        await host.scrollIntoViewIfNeeded();
-        await expect(host).not.toHaveAttribute("aria-busy", "true");
-        const triggers = preview.locator(`[data-slot="${component}-trigger"]`);
-        await expect(triggers.first()).toBeVisible();
-        const count = await triggers.count();
-        for (let triggerIndex = 0; triggerIndex < count; triggerIndex++) {
-          const trigger = triggers.nth(triggerIndex);
-          if (component === "context-menu") await trigger.click({ button: "right" });
-          else await trigger.press("ArrowDown");
-          await page.mouse.move(0, 0);
-          const popup = page.locator(`[data-slot="${component}-content"]:visible`).first();
-          await expect(popup).toBeVisible();
-          await expect
-            .poll(() => popup.evaluate((node) => node.contains(document.activeElement)))
-            .toBe(true);
-          const items = popup.locator('[role^="menuitem"]');
-          const itemCount = await items.count();
-          expect(itemCount).toBeGreaterThan(0);
-          for (const color of colors) {
-            await applyPalette(page, color, mode);
+    // Give each palette its own timeout and report without dropping any menu states.
+    for (const color of colors) {
+      test(`${component}: ${color.name}/${mode} menu contrast`, async ({ page }) => {
+        await page.goto(`/docs/${component}`);
+        await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true");
+        await applyPalette(page, color, mode);
+        const previews = page.locator(`.component-preview[data-component="${component}"]`);
+        const previewCount = await previews.count();
+        expect(previewCount).toBeGreaterThan(0);
+        for (let index = 0; index < previewCount; index++) {
+          const preview = previews.nth(index);
+          const host = preview.locator("[data-react-host]");
+          await host.scrollIntoViewIfNeeded();
+          await expect(host).not.toHaveAttribute("aria-busy", "true");
+          const triggers = preview.locator(`[data-slot="${component}-trigger"]`);
+          await expect(triggers.first()).toBeVisible();
+          const count = await triggers.count();
+          for (let triggerIndex = 0; triggerIndex < count; triggerIndex++) {
+            const trigger = triggers.nth(triggerIndex);
+            if (component === "context-menu") await trigger.click({ button: "right" });
+            else await trigger.press("ArrowDown");
+            await page.mouse.move(0, 0);
+            const popup = page.locator(`[data-slot="${component}-content"]:visible`).first();
+            await expect(popup).toBeVisible();
+            await expect
+              .poll(() => popup.evaluate((node) => node.contains(document.activeElement)))
+              .toBe(true);
+            const items = popup.locator('[role^="menuitem"]');
+            const itemCount = await items.count();
+            expect(itemCount).toBeGreaterThan(0);
             // Send keys to the native focus target. Locator.press on the popup
             // would first steal focus from its already-highlighted first item.
             await page.keyboard.press("End");
@@ -152,12 +150,12 @@ for (const mode of ["light", "dark"] as const) {
                 await expect(item).toBeFocused();
               }
             }
+            await page.keyboard.press("Escape");
+            await expect(popup).toBeHidden();
+            await expect(trigger).toBeFocused();
           }
-          await page.keyboard.press("Escape");
-          await expect(popup).toBeHidden();
-          await expect(trigger).toBeFocused();
         }
-      }
-    });
+      });
+    }
   }
 }
