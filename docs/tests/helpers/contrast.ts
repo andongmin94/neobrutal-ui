@@ -3,7 +3,7 @@ import colors from "../../src/data/colors";
 import { createThemeCssVars } from "../../src/data/theme";
 
 type Mode = "light" | "dark";
-type Indicator = "border" | "outline" | "inset-outline" | "color";
+type Indicator = "border" | "outline" | "inset-outline" | "color" | "placeholder";
 
 export async function applyPalette(page: Page, color: (typeof colors)[number], mode: Mode) {
   const theme = createThemeCssVars(color);
@@ -68,6 +68,7 @@ async function indicatorContrast(locator: Locator, indicator: Indicator) {
       outline: style.outlineColor,
       "inset-outline": style.outlineColor,
       color: style.color,
+      placeholder: getComputedStyle(node, "::placeholder").color,
     };
     const ink = rgba(inkColors[kind]);
     const surfaces =
@@ -105,7 +106,7 @@ export async function expectContrast(locator: Locator, indicator: Indicator, lab
       },
       { message: label },
     )
-    .toBeGreaterThanOrEqual(3);
+    .toBeGreaterThanOrEqual(indicator === "placeholder" ? 4.5 : 3);
   test.info().annotations.push({
     type: "contrast",
     description: `${label}: ${ratio.toFixed(3)}:1`,

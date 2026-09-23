@@ -122,6 +122,8 @@ for (const mode of ["light", "dark"] as const) {
     await page.mouse.move(0, 0);
     for (const color of colors) {
       await applyPalette(page, color, mode);
+      await input.fill("");
+      await expectContrast(input, "placeholder", `${color.name}/${mode}: search placeholder`);
       await input.fill("Next");
       await expect(item).toHaveAttribute("data-highlighted", "");
       await expect(item).toHaveAttribute("aria-selected", "false");

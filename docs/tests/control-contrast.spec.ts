@@ -86,18 +86,31 @@ for (const mode of ["light", "dark"] as const) {
           await page.mouse.move(0, 0);
           const popup = page.locator(`[data-slot="${component}-content"]:visible`).first();
           await expect(popup).toBeVisible();
-          const items = popup.locator('[role^="menuitem"]:not([aria-disabled="true"])');
+          await expect
+            .poll(() => popup.evaluate((node) => node.contains(document.activeElement)))
+            .toBe(true);
+          const items = popup.locator('[role^="menuitem"]');
           const itemCount = await items.count();
           expect(itemCount).toBeGreaterThan(0);
-          const sub = popup.locator(`[data-slot="${component}-sub-trigger"]`).first();
           for (const color of colors) {
             await applyPalette(page, color, mode);
-            await popup.press("Home");
+            // Send keys to the native focus target. Locator.press on the popup
+            // would first steal focus from its already-highlighted first item.
+            await page.keyboard.press("End");
+            await page.keyboard.press("Home");
             for (let row = 0; row < itemCount; row++) {
               const item = items.nth(row);
               if (row) await page.keyboard.press("ArrowDown");
               await expect(item).toBeFocused();
               await expect(item).toHaveAttribute("data-highlighted", "");
+              // Base UI keeps disabled menu items in keyboard navigation.
+              // Verify they cannot activate; contrast checks target enabled controls.
+              if ((await item.getAttribute("aria-disabled")) === "true") {
+                await page.keyboard.press("Enter");
+                await expect(popup).toBeVisible();
+                await expect(item).toBeFocused();
+                continue;
+              }
               const role = await item.getAttribute("role");
               const variant = (await item.getAttribute("data-variant")) ?? "default";
               await expectContrast(
@@ -105,30 +118,39 @@ for (const mode of ["light", "dark"] as const) {
                 "inset-outline",
                 `${color.name}/${mode}: ${component}/${index}/${triggerIndex}/${row} ${role}/${variant}`,
               );
-            }
-            await captureMono(popup, color.name, mode, `${index}-${triggerIndex}-current`);
-            if (await sub.count()) {
-              await sub.press("ArrowRight");
-              await expect(sub).toHaveAttribute("data-popup-open", "");
-              const child = page.locator(`[data-slot="${component}-sub-content"]:visible`).first();
-              await expect(child).toBeVisible();
-              await expectContrast(
-                sub,
-                "inset-outline",
-                `${color.name}/${mode}: open ${component} submenu`,
-              );
-              await child.press("Home");
-              const first = child.getByRole("menuitem").first();
-              await expect(first).toHaveAttribute("data-highlighted", "");
-              await expectContrast(
-                first,
-                "inset-outline",
-                `${color.name}/${mode}: ${component} child`,
-              );
-              await captureMono(child, color.name, mode, "submenu");
-              await page.keyboard.press("Escape");
-              await expect(child).toBeHidden();
-              await expect(sub).toBeFocused();
+              if (row === 0) {
+                await captureMono(popup, color.name, mode, `${index}-${triggerIndex}-current`);
+              }
+              if ((await item.getAttribute("data-slot")) === `${component}-sub-trigger`) {
+                await page.keyboard.press("ArrowRight");
+                await expect(item).toHaveAttribute("data-popup-open", "");
+                const child = page
+                  .locator(`[data-slot="${component}-sub-content"]:visible`)
+                  .first();
+                await expect(child).toBeVisible();
+                await expect
+                  .poll(() => child.evaluate((node) => node.contains(document.activeElement)))
+                  .toBe(true);
+                await expectContrast(
+                  item,
+                  "inset-outline",
+                  `${color.name}/${mode}: open ${component} submenu`,
+                );
+                await page.keyboard.press("End");
+                await page.keyboard.press("Home");
+                const first = child.getByRole("menuitem").first();
+                await expect(first).toBeFocused();
+                await expect(first).toHaveAttribute("data-highlighted", "");
+                await expectContrast(
+                  first,
+                  "inset-outline",
+                  `${color.name}/${mode}: ${component} child`,
+                );
+                await captureMono(child, color.name, mode, "submenu");
+                await page.keyboard.press("Escape");
+                await expect(child).toBeHidden();
+                await expect(item).toBeFocused();
+              }
             }
           }
           await page.keyboard.press("Escape");

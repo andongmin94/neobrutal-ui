@@ -31,7 +31,7 @@ export default function ComboboxWithCheckbox() {
             <Combobox.Input
               aria-label="Search frameworks"
               placeholder="Search framework..."
-              className="h-11 w-full border-0 border-b-2 border-main-foreground bg-transparent px-3 text-sm font-base text-main-foreground outline-none placeholder:text-main-foreground/70"
+              className="h-11 w-full border-0 border-b-2 border-main-foreground bg-transparent px-3 text-sm font-base text-main-foreground outline-none placeholder:text-main-foreground"
             />
             <Combobox.Empty className="py-6 text-center text-sm">
               No framework found.
