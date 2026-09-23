@@ -1,6 +1,12 @@
 import path from "node:path";
 
-export async function verifyInstalledInteractions({ page, expect, reportDirectory, engine, theme }) {
+export async function verifyInstalledInteractions({
+  page,
+  expect,
+  reportDirectory,
+  engine,
+  theme,
+}) {
   const viewport = page.viewportSize();
   const preview = page.getByRole("region", { name: "Installed interactions", exact: true });
   const navigation = preview.getByRole("navigation", { name: "Installed navigation" });
@@ -12,7 +18,10 @@ export async function verifyInstalledInteractions({ page, expect, reportDirector
     if (engine !== "chromium") return;
     const size = page.viewportSize();
     await locator.screenshot({
-      path: path.join(reportDirectory, `${engine}-${size.width}x${size.height}-${theme}-${state}.png`),
+      path: path.join(
+        reportDirectory,
+        `${engine}-${size.width}x${size.height}-${theme}-${state}.png`,
+      ),
     });
   };
 
