@@ -29,25 +29,10 @@
 }
 
 .site-brand__mark {
-  display: grid;
+  display: block;
   width: 34px;
   height: 34px;
-  place-items: center;
-  border: var(--border-width) solid var(--border);
-  border-radius: var(--radius-small);
-  background: var(--main);
-  color: var(--main-foreground);
-  font-family: var(--font-heading);
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 1;
-  transition: background-color 120ms ease;
-}
-
-@media (hover: hover) {
-  .site-brand:hover .site-brand__mark {
-    background: var(--main-hover);
-  }
+  flex: none;
 }
 
 .primary-nav {

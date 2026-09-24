@@ -3,5 +3,5 @@
   "homepage": "https://neobrutal-ui.andongmin.com",
   "url": "https://neobrutal-ui.andongmin.com/r/{name}.json",
   "description": "Neobrutalist React UI with staged press feedback, shared themes, and editable Next.js page templates, built with Base UI.",
-  "logo": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><path d='M7 7h23v23H7z' fill='var(--foreground,currentColor)'/><path d='M2 2h23v23H2z' fill='var(--background,white)' stroke='var(--foreground,currentColor)' stroke-width='2'/><path d='M8 19V8l11 11V8' stroke='var(--foreground,currentColor)' stroke-width='3' stroke-linecap='square' stroke-linejoin='miter'/></svg>"
+  "logo": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' fill='none'><rect width='200' height='200' rx='50' fill='url(#neobrutal-ui-logo-gradient)'/><rect x='4' y='4' width='192' height='192' rx='46' stroke='white' stroke-opacity='0.3' stroke-width='8'/><rect x='75' y='75' width='75' height='75' rx='5' fill='#808080'/><rect x='50' y='50' width='75' height='75' rx='5' fill='white'/><defs><linearGradient id='neobrutal-ui-logo-gradient' x1='100' y1='0' x2='100' y2='200' gradientUnits='userSpaceOnUse'><stop stop-color='#3D3D3D'/><stop offset='1' stop-color='#0B0B0B'/></linearGradient></defs></svg>"
 }

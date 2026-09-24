@@ -90,7 +90,7 @@ const config = defineConfig({
           <meta property="og:image" content={SOCIAL_IMAGE_URL} />
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:image" content={SOCIAL_IMAGE_URL} />
-          <link rel="icon" href="/favicon.ico" />
+          <link rel="icon" href="/logo.svg" type="image/svg+xml" />
           <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         </>
       );

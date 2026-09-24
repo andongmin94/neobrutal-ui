@@ -88,9 +88,7 @@ export function SiteHeader({
         </button>
 
         <Link className="site-brand" href="/" aria-label="neobrutal-ui home">
-          <span className="site-brand__mark" aria-hidden="true">
-            N
-          </span>
+          <img className="site-brand__mark" src="/logo.svg" alt="" width={34} height={34} />
           <span className="site-brand__name">neobrutal-ui</span>
         </Link>
 
