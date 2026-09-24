@@ -22,7 +22,7 @@ export function verifyDocsUsage() {
   const host = ts.createCompilerHost(parsed.options);
   const original = host.getSourceFile;
   host.getSourceFile = (name, languageVersion, ...args) => {
-    const example = examples.get(name);
+    const example = examples.get(path.normalize(name));
     return example === undefined
       ? original(name, languageVersion, ...args)
       : ts.createSourceFile(name, example, languageVersion, true, ts.ScriptKind.TSX);

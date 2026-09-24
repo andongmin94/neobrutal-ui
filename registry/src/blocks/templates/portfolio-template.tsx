@@ -164,7 +164,7 @@ export default function PortfolioTemplate() {
             aria-label="Contact links"
             className="mt-6 flex scroll-mt-16 flex-wrap items-center gap-x-5 gap-y-3 border-t-2 border-border pt-4"
           >
-            <a href="mailto:hello@sorahan.design" className={buttonVariants({ size: "sm" })}>
+            <a href="mailto:hello@example.com" className={buttonVariants({ size: "sm" })}>
               <Mail aria-hidden="true" />
               Email
             </a>

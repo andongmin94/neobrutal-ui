@@ -4,14 +4,14 @@ import { stripVTControlCharacters } from "node:util";
 
 export function run(command, args, cwd, additionalEnvironment = {}, preserveFile) {
   return new Promise((resolve, reject) => {
-    const spawnCommand =
-      process.platform === "win32"
-        ? [command, ...args].map(quoteCommandArgument).join(" ")
-        : command;
-    const child = spawn(spawnCommand, process.platform === "win32" ? [] : args, {
+    const useShell = process.platform === "win32" && /\.(cmd|bat)$/i.test(command);
+    const spawnCommand = useShell
+      ? [command, ...args].map(quoteCommandArgument).join(" ")
+      : command;
+    const child = spawn(spawnCommand, useShell ? [] : args, {
       cwd,
       env: { ...process.env, CI: "1", ...additionalEnvironment },
-      shell: process.platform === "win32",
+      shell: useShell,
       stdio: preserveFile ? ["pipe", "pipe", "pipe"] : "inherit",
       timeout: 300000,
     });
