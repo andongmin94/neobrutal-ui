@@ -20,6 +20,7 @@ import {
 import colors from "../src/data/colors";
 import { createThemeCssVars } from "../src/data/theme";
 import { serializeThemeVariables } from "../src/data/theme-styles";
+import TEMPLATES from "../src/data/templates";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const source = (relative: string) => readFileSync(path.join(root, relative), "utf8");
@@ -430,9 +431,12 @@ test("error text is a separate theme token included in every palette export", ()
 });
 
 test("installable templates inherit tokens; gallery presets stay in docs", () => {
-  for (const name of ["blog", "blog-post", "portfolio", "cms", "link-hub"]) {
-    const original = source(`registry/src/blocks/templates/${name}-template.tsx`);
-    const generated = source(`docs/src/components/templates/${name}-template.tsx`);
+  for (const name of [
+    ...TEMPLATES.map((template) => template.registryItem),
+    "blog-post-template",
+  ]) {
+    const original = source(`registry/src/blocks/templates/${name}.tsx`);
+    const generated = source(`docs/src/components/templates/${name}.tsx`);
     assert.equal(generated, original, `${name}: regenerate managed docs copies`);
     assert.doesNotMatch(
       original,

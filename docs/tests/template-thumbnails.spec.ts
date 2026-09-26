@@ -1,11 +1,12 @@
 import { expect, test } from "@playwright/test";
+import TEMPLATES from "../src/data/templates";
 
 test("template thumbnails use current, inert layouts and remain inside their cards", async ({
   page,
 }) => {
   await page.goto("/templates");
   const thumbnails = page.locator("[data-thumbnail-ready]");
-  await expect(thumbnails).toHaveCount(4);
+  await expect(thumbnails).toHaveCount(TEMPLATES.length);
   for (const thumbnail of await thumbnails.all()) {
     await expect(thumbnail).toHaveAttribute("data-thumbnail-ready", "true");
     await expect(thumbnail).toHaveAttribute("inert", "");

@@ -2,6 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 import colors from "../src/data/colors";
 import { createThemeCssVars } from "../src/data/theme";
+import TEMPLATES from "../src/data/templates";
 
 async function openReady(page: Page, route: string) {
   const response = await page.goto(route);
@@ -111,11 +112,8 @@ test("form errors pass contrast checks in every light/dark palette", async ({ pa
 });
 
 for (const [route, name] of [
-  ["/templates/blog", "blog"],
+  ...TEMPLATES.map(({ slug }) => [`/templates/${slug}`, slug]),
   ["/templates/blog/small-interfaces", "blog"],
-  ["/templates/portfolio", "portfolio"],
-  ["/templates/cms", "cms"],
-  ["/templates/links", "links"],
 ] as const) {
   test(`template inherits preview-parent tokens: ${route}`, async ({ page }) => {
     await openReady(page, route);

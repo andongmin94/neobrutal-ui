@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import TEMPLATES from "../src/data/templates";
 
 async function expectNavbar(page: Page) {
   const header = page.locator("[data-site-navbar]");
@@ -13,13 +14,13 @@ async function expectNavbar(page: Page) {
   return header;
 }
 
-for (const slug of ["blog", "portfolio", "cms", "links"]) {
+for (const { slug } of TEMPLATES) {
   test(`template navigation keeps the shared header: ${slug}`, async ({ page }, info) => {
     const errors: string[] = [];
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto("/templates");
     await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true");
-    await expect(page.locator("[data-template-preview]")).toHaveCount(4);
+    await expect(page.locator("[data-template-preview]")).toHaveCount(TEMPLATES.length);
     await expectNavbar(page);
     if (slug === "blog") {
       await info.attach("template-gallery-header", {

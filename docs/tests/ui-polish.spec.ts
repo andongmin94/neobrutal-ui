@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import TEMPLATES from "../src/data/templates";
 
 async function openReady(page: Page, route: string) {
   const response = await page.goto(route);
@@ -97,7 +98,7 @@ test("template card actions align despite different description lengths", async 
   await page.setViewportSize({ width: 1280, height: 1000 });
   await openReady(page, "/templates");
   const cards = page.locator(".not-prose > article");
-  await expect(cards).toHaveCount(4);
+  await expect(cards).toHaveCount(TEMPLATES.length);
   const first = cards.nth(0);
   const second = cards.nth(1);
   const description = first.locator(":scope > div:last-child p");

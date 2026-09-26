@@ -135,6 +135,7 @@ function NavigationMenuLink({ className, ...props }: NavigationMenuPrimitive.Lin
   return (
     <NavigationMenuPrimitive.Link
       data-slot="navigation-menu-link"
+      tabIndex={0}
       {...props}
       className={(state) =>
         cn(

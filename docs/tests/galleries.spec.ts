@@ -91,7 +91,7 @@ test("clipboard denial shows honest feedback without runtime errors", async ({ p
   });
   await page.goto("/templates");
   const card = page.locator(".not-prose > article").first();
-  await card.getByRole("button", { name: /Copy/ }).click();
+  await card.getByRole("button", { name: "Copy command", exact: true }).click();
   await expect(card.getByRole("button", { name: "Copy failed", exact: true })).toBeVisible();
   expect(errors).toEqual([]);
 });

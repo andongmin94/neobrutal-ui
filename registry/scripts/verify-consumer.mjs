@@ -347,8 +347,12 @@ function createNextFixture(directory) {
   );
   writeFile(path.join(directory, "src", "app", "globals.css"), '@import "tailwindcss";\n');
   writeFile(
+    path.join(directory, "src", "app", "hydration-ready.tsx"),
+    '"use client";\nimport { useEffect } from "react";\nexport default function HydrationReady() { useEffect(() => { document.documentElement.dataset.consumerHydrated = "true"; }, []); return null; }\n',
+  );
+  writeFile(
     path.join(directory, "src", "app", "layout.tsx"),
-    'import "./globals.css";\nexport const metadata = { title: "Registry installation verification" };\nexport default function Layout({ children }: { children: React.ReactNode }) { return <html lang="en"><body>{children}</body></html>; }\n',
+    'import "./globals.css";\nimport HydrationReady from "./hydration-ready";\nexport const metadata = { title: "Registry installation verification" };\nexport default function Layout({ children }: { children: React.ReactNode }) { return <html lang="en"><body>{children}<HydrationReady /></body></html>; }\n',
   );
   writeFile(
     path.join(directory, "src", "app", "page.tsx"),

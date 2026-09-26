@@ -1,48 +1,56 @@
 # neobrutal-ui
 
-**Source-first neobrutalist UI for React, distributed as a shadcn registry.**
+**React components with bold borders, hard shadows, and buttons that feel pressable.**
 
 [![Verify](https://github.com/andongmin94/neobrutal-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/andongmin94/neobrutal-ui/actions/workflows/ci.yml)
-[![GitHub stars](https://img.shields.io/github/stars/andongmin94/neobrutal-ui?style=flat-square)](https://github.com/andongmin94/neobrutal-ui/stargazers)
 [![MIT License](https://img.shields.io/badge/license-MIT-111111?style=flat-square)](LICENSE)
 
-Built with **React 19**, **Base UI**, and **Tailwind CSS v4**. Install the source with the shadcn CLI,
-then edit it as application code: no runtime package and no separate registry server.
+Build a form, a dashboard, or a complete page with **Base UI** and **Tailwind CSS v4**.
+Pick the components you need, add them with the shadcn CLI, and make them your own.
+The files live in your project, so you can change the styles and behavior directly.
 
-[Documentation](https://neobrutal-ui.andongmin.com/docs) ·
-[Components](https://neobrutal-ui.andongmin.com) ·
-[Charts](https://neobrutal-ui.andongmin.com/charts) ·
-[Templates](https://neobrutal-ui.andongmin.com/templates) ·
-[Styling](https://neobrutal-ui.andongmin.com/styling)
+[Get started](https://neobrutal-ui.andongmin.com/docs/installation) ·
+[Browse components](https://neobrutal-ui.andongmin.com) ·
+[Try the charts](https://neobrutal-ui.andongmin.com/charts) ·
+[Explore templates](https://neobrutal-ui.andongmin.com/templates) ·
+[Choose a theme](https://neobrutal-ui.andongmin.com/styling)
 
-## What is included
+[![The component directory with a working form, raised buttons, a switch, and component cards in the default Mono theme](docs/assets/readme/components.png)](https://neobrutal-ui.andongmin.com)
 
-| Surface | Current direction |
-| --- | --- |
-| Components | Editable controls and compositions with tactile borders, shadows, focus, selection, and feedback states |
-| Themes | Cool **Mono** by default, optional **Mono Warm**, plus color presets with light and dark modes |
-| Charts | 8 installable analytical recipes with controls, calculated summaries, tooltips, and exact data tables |
-| Templates | Blog, portfolio, local CMS, and link hub pages for the Next.js App Router |
-| Tooling | Direct registry URLs, optional `@neobrutal-ui/*` namespace, source previews, and isolated installation checks |
+*Try the form on the [home page](https://neobrutal-ui.andongmin.com), then browse the components below it.
+All images in this README are screenshots of the working demos.*
 
-The design goal is not decorative brutalism. Raised actions should feel pressable, selection should
-stay distinct from hover, keyboard focus should be obvious, and dense screens should still scan cleanly.
+## Add your first component
 
-## Quick start
+You'll need **React 19** and **Tailwind CSS v4**. Components and charts work with **Next.js**
+and **Vite**. The page templates use the **Next.js App Router**.
 
-Start from a shadcn project using Base UI:
+### 1. Set up shadcn
+
+From your app's folder, initialize shadcn if you haven't already. Choose **Base UI** when prompted.
 
 ```bash
 npx shadcn@latest init
+```
+
+### 2. Add the styles and a button
+
+Install the shared styles once, then your first component:
+
+```bash
 npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json
 npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json --overwrite
 ```
 
-`neobrutal-ui.json` installs the shared base: theme variables, global styles, utilities, and core
-dependencies. The first Button install may replace the button created by `shadcn init`; commit an
-existing customized button before using `--overwrite`.
+The first command adds the colors, borders, shadows, and utilities used by the components.
+The second replaces the button that shadcn may have created.
 
-Then use the installed source normally:
+> **Already have a customized app?** Commit your work first. The shared styles affect your whole
+> app, and `--overwrite` replaces your existing button files. You can inspect the styles with
+> `npx shadcn@latest view https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json`.
+> You do not need `--overwrite` for every component you add.
+
+### 3. Use it in a page
 
 ```tsx
 import { Button } from "@/components/ui/button";
@@ -52,10 +60,76 @@ export default function Example() {
 }
 ```
 
+You should see a button with a bold border and hard shadow. Hover or press it to see the interaction.
+Next, pick a [component](https://neobrutal-ui.andongmin.com) and copy its install command.
+
+The [installation guide](https://neobrutal-ui.andongmin.com/docs/installation) covers existing
+projects, custom import paths, and manual installation. Installed files do not update automatically;
+review changes before replacing anything you've customized.
+
+## Build a data view
+
+Start with one of eight chart examples for revenue, conversion, service latency, and more.
+Each brings together a chart, controls, a summary, and a table for inspecting the exact values.
+Replace the sample data in the installed source with your own.
+
+[![Revenue chart with a period selector, revenue and target totals, weekly bars, and a target line](docs/assets/readme/chart.png)](https://neobrutal-ui.andongmin.com/docs/chart-revenue-target)
+
+*[Try this chart](https://neobrutal-ui.andongmin.com/docs/chart-revenue-target) or
+[browse all charts](https://neobrutal-ui.andongmin.com/charts). The values shown are sample data.*
+
+## Start with a complete page
+
+Choose from six starting points, each with a working demo:
+
+| Template | Start with |
+| --- | --- |
+| [Dashboard](https://neobrutal-ui.andongmin.com/templates/dashboard) | Task search, status filters, completion controls, and project progress |
+| [Product landing](https://neobrutal-ui.andongmin.com/templates/landing) | Feature sections, monthly and yearly pricing, plan selection, and FAQs |
+| [Blog](https://neobrutal-ui.andongmin.com/templates/blog) | Searchable posts, topic filters, and reading pages |
+| [Portfolio](https://neobrutal-ui.andongmin.com/templates/portfolio) | Project summaries, expandable case studies, and contact links |
+| [CMS](https://neobrutal-ui.andongmin.com/templates/cms) | A local post editor with search, preview, save, and discard |
+| [Link hub](https://neobrutal-ui.andongmin.com/templates/links) | Grouped links and a copyable contact address |
+
+Explore a demo, then copy its install command from the
+[template gallery](https://neobrutal-ui.andongmin.com/templates).
+
+| Dashboard | Product landing |
+| --- | --- |
+| [![Dashboard with task search, status filters, completion controls, and project progress](docs/assets/readme/dashboard.png)](https://neobrutal-ui.andongmin.com/templates/dashboard) | [![Product landing page with a team-update preview and links to features and pricing](docs/assets/readme/landing.png)](https://neobrutal-ui.andongmin.com/templates/landing) |
+
+*Track sample work in the dashboard, or explore the landing page's billing switch, plan selection,
+and FAQs. Both are interactive starting points you can adapt to your product.*
+
+[![CMS demo with searchable posts, status filters, and a post editor with save and discard controls](docs/assets/readme/cms.png)](https://neobrutal-ui.andongmin.com/templates/cms)
+
+*The CMS is a local UI example. Edits reset on refresh; connect your own data and save logic for
+an application. Gallery colors are for demonstration: installed templates use your app's theme.*
+
+Dashboard changes also stay in the current page. Landing-page plan selection demonstrates the UI;
+it does not create an account or take a payment. Replace the sample content and connect your own
+application logic when you use these templates.
+
+## Make it yours
+
+Start with the default **Mono** theme, or choose **Mono Warm** or a color preset.
+Use the [styling playground](https://neobrutal-ui.andongmin.com/styling) to adjust colors,
+corner radius, and shadows while trying the real controls. Copy the generated CSS when you're happy
+with the result.
+
+| Amber · light | Amber · dark |
+| --- | --- |
+| [![Amber theme in light mode with a form, switch, and button variants](docs/assets/readme/theme-light.png)](https://neobrutal-ui.andongmin.com/styling) | [![The same Amber theme and controls in dark mode](docs/assets/readme/theme-dark.png)](https://neobrutal-ui.andongmin.com/styling) |
+
+*The same components in both modes. Every preset includes light and dark colors;
+your app controls which mode is active.*
+
 ## Optional: shorter install commands
 
-Direct URLs always work. For namespaced commands, add this to the existing `registries` object in
-`components.json`:
+<details>
+<summary>Use names such as @neobrutal-ui/dialog instead of full URLs</summary>
+
+Merge this entry into the existing `registries` object in `components.json`:
 
 ```json
 {
@@ -70,103 +144,40 @@ Then install by name:
 ```bash
 npx shadcn@latest add @neobrutal-ui/dialog
 npx shadcn@latest add @neobrutal-ui/theme-mono-warm
-npx shadcn@latest add @neobrutal-ui/chart-release-activity
 ```
 
-## Themes
+</details>
 
-**Mono** is the default: cool near-white and graphite in light mode, cool charcoal and pale silver
-in dark mode. Data visualization keeps restrained blue, sage, earth, and violet accents so charts
-remain readable without turning the interface colorful.
+## Work on this project
 
-**Mono Warm** preserves the earlier milkier off-white / softer charcoal treatment as an optional
-preset. The remaining color themes are also optional and replace the same shared tokens.
-
-Open the [styling workbench](https://neobrutal-ui.andongmin.com/styling) to compare presets and
-export the corresponding theme.
-
-## Charts
-
-The [chart workbench](https://neobrutal-ui.andongmin.com/charts) currently ships eight independent
-recipes covering revenue targets, signup conversion, service latency, release activity, delivery
-capacity, build duration, work allocation, and install diagnostics.
-
-Each recipe is source-editable and keeps its controls, visual summary, explanatory copy, and exact
-data table together. Sample values are illustrative, not live telemetry.
-
-## Templates
-
-The template gallery contains four page-level compositions:
-
-- **Blog** — search, topic filters, sorting, article cards, and post pages.
-- **Portfolio** — project summaries and expandable case studies.
-- **CMS** — local search/filter/editor/preview flow with explicit save and discard feedback.
-- **Link hub** — grouped destinations and a clear contact action.
-
-Installed templates inherit the consumer project's theme tokens; gallery presets are documentation
-presentation only.
-
-## Existing projects
-
-The shared base changes project-wide colors, borders, shadows, and global styles. Inspect it before
-adding it to an established application:
-
-```bash
-npx shadcn@latest view https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json
-```
-
-Component and recipe installs respect configured aliases. Follow-up installs do not reinstall the
-base theme, and the verification suite checks that customized components and application CSS survive
-subsequent additions.
-
-## Development
+<details>
+<summary>Run the documentation locally and contribute</summary>
 
 Use Node.js 24+ and npm:
 
 ```bash
+git clone https://github.com/andongmin94/neobrutal-ui.git
+cd neobrutal-ui
 npm ci --prefix registry
 npm ci --prefix docs
 npm run build --prefix registry
 npm run dev --prefix docs
 ```
 
-`registry/src` is the source of truth. Registry builds generate shadcn JSON and synchronize managed
-component/template/theme data into the docs app. Do not hand-edit generated copies.
+Edit installable components, templates, tokens, and catalog data in `registry/src`. Build the
+registry before working on docs: it generates installation files and synchronizes the docs app.
+Do not hand-edit generated copies.
 
-Useful verification commands:
+Documentation lives in `docs/content`, interactive examples in `docs/src/examples`, and the
+site UI in `docs/src/site`. Update a component's examples and documentation alongside its source.
+See [AGENTS.md](AGENTS.md) for conventions, [QUALITY.md](QUALITY.md) for release checks, and
+[the CI workflow](.github/workflows/ci.yml) for the complete verification sequence.
 
-```bash
-npm run lint --prefix registry
-npm run typecheck --prefix registry
-npm run lint --prefix docs
-npm run typecheck --prefix docs
-npm run test:browser --prefix docs
-node registry/scripts/verify-independent-items.mjs
-```
+</details>
 
-The canonical release sequence is [.github/workflows/ci.yml](.github/workflows/ci.yml). It verifies
-registry contracts, builds, budgets, browser behavior, independent installs, existing-project
-integration, clean generation, the exact production commit, live registry endpoints, and deployed
-cross-browser smoke tests. Finite release gates and evidence limits are documented in
-[QUALITY.md](QUALITY.md).
-
-## Repository layout
-
-| Path | Responsibility |
-| --- | --- |
-| `registry/src` | Installable components, recipes, templates, tokens, and catalog data |
-| `registry/scripts` | Registry generation and isolated consumer checks |
-| `docs/src/site` | Fumapress documentation shell and site-specific UI |
-| `docs/src/examples` | Published interactive examples |
-| `docs/tests` | Browser, interaction, reflow, and release regressions |
-| `registry/directory-entry.json` | Prepared shadcn directory metadata |
-
-## Directory status
-
-The public registry is production-tested and the directory metadata is prepared. Submission to the
-official shadcn directory is an explicit maintainer action; passing CI does not submit automatically.
+Found a bug? [Open an issue](https://github.com/andongmin94/neobrutal-ui/issues) with your framework,
+steps to reproduce it, and a small code example.
 
 ## License
 
-[MIT](LICENSE). Keep the copyright and permission notices in `LICENSE` with redistributed copies or
-substantial portions of the source.
+[MIT](LICENSE). Keep the copyright and permission notices with redistributed copies.

@@ -721,6 +721,49 @@ const TEMPLATES = [
       },
     ],
   },
+  {
+    name: "dashboard-template",
+    title: "Dashboard template",
+    description: "A project overview with task search, status filters, and progress summaries.",
+    type: "registry:block",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["badge", "button", "checkbox", "input", "progress"],
+    categories: ["template", "dashboard"],
+    files: [
+      {
+        path: "src/blocks/templates/dashboard-template.tsx",
+        type: "registry:component",
+        target: "@components/templates/dashboard-template.tsx",
+      },
+      {
+        path: "src/blocks/templates/pages/dashboard/page.tsx",
+        type: "registry:page",
+        target: "app/dashboard/page.tsx",
+      },
+    ],
+  },
+  {
+    name: "landing-template",
+    title: "Product landing template",
+    description:
+      "A product landing page with feature sections, billing options, and plan selection.",
+    type: "registry:block",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["badge", "button", "card", "switch"],
+    categories: ["template", "landing"],
+    files: [
+      {
+        path: "src/blocks/templates/landing-template.tsx",
+        type: "registry:component",
+        target: "@components/templates/landing-template.tsx",
+      },
+      {
+        path: "src/blocks/templates/pages/landing/page.tsx",
+        type: "registry:page",
+        target: "app/landing/page.tsx",
+      },
+    ],
+  },
 ] satisfies DiscoverableRegistryItem[];
 
 const REGISTRY = [...UI, ...RECIPES, ...TEMPLATES];

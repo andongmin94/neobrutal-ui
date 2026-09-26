@@ -8,6 +8,8 @@ const representativeRoutes = [
   "/styling",
   "/charts",
   "/templates/blog",
+  "/templates/dashboard",
+  "/templates/landing",
 ];
 
 function collectRuntimeErrors(page: Page) {

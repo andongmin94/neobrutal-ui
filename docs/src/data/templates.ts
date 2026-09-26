@@ -5,7 +5,7 @@ export type TemplateEntry = {
   description: string;
   installCommand: string;
   registryItem: `${string}-template`;
-  slug: "blog" | "portfolio" | "cms" | "links";
+  slug: "blog" | "portfolio" | "cms" | "links" | "dashboard" | "landing";
   title: string;
 };
 
@@ -39,6 +39,21 @@ const templatePresentations: TemplatePresentation[] = [
     title: "Link in bio",
     description: "A creator profile with categorized destinations and a copyable contact address.",
     color: "#5093fe",
+  },
+  {
+    slug: "dashboard",
+    registryItem: "dashboard-template",
+    title: "Dashboard",
+    description: "A project overview with task search, status filters, and progress summaries.",
+    color: "#a4e7ba",
+  },
+  {
+    slug: "landing",
+    registryItem: "landing-template",
+    title: "Landing page",
+    description:
+      "A product landing page with feature sections, billing options, and plan selection.",
+    color: "#f8a4d5",
   },
 ];
 

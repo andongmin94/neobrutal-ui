@@ -4,6 +4,8 @@ import { Link } from "fumapress/client";
 import BlogPostTemplate from "@/components/templates/blog-post-template";
 import BlogTemplate from "@/components/templates/blog-template";
 import CmsTemplate from "@/components/templates/cms-template";
+import DashboardTemplate from "@/components/templates/dashboard-template";
+import LandingTemplate from "@/components/templates/landing-template";
 import LinkHubTemplate from "@/components/templates/link-hub-template";
 import PortfolioTemplate from "@/components/templates/portfolio-template";
 import TEMPLATES from "@/data/templates";
@@ -14,6 +16,8 @@ import { TemplateThumbnail } from "./template-thumbnail";
 
 const templateComponents: Record<string, ComponentType> = {
   cms: CmsTemplate,
+  dashboard: DashboardTemplate,
+  landing: LandingTemplate,
   links: LinkHubTemplate,
   portfolio: PortfolioTemplate,
 };
@@ -85,7 +89,7 @@ export function TemplatesPage() {
                     ? "Copied"
                     : failed === template.slug
                       ? "Copy failed"
-                      : "Copy"}
+                      : "Copy command"}
                 </span>
               </button>
             </div>

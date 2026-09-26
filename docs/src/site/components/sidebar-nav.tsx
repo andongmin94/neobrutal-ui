@@ -215,6 +215,7 @@ export function SidebarNav({
                     <Link
                       key={link.href}
                       href={link.href}
+                      tabIndex={0}
                       aria-current={active ? "page" : undefined}
                       className={active ? "is-active" : undefined}
                     >
@@ -237,6 +238,7 @@ export function SidebarNav({
                     <Link
                       key={link.href}
                       href={link.href}
+                      tabIndex={0}
                       aria-current={active ? "page" : undefined}
                       className={active ? "is-active" : undefined}
                     >
@@ -258,6 +260,7 @@ export function SidebarNav({
                       <Link
                         key={link.href}
                         href={link.href}
+                        tabIndex={0}
                         aria-current={active ? "page" : undefined}
                         className={active ? "is-active" : undefined}
                       >
@@ -298,6 +301,7 @@ export function SidebarNav({
                       <Link
                         key={link.href}
                         href={link.href}
+                        tabIndex={0}
                         aria-current={active ? "page" : undefined}
                         className={active ? "is-active" : undefined}
                       >
@@ -319,6 +323,7 @@ export function SidebarNav({
                     <Link
                       key={link.href}
                       href={link.href}
+                      tabIndex={0}
                       aria-current={active ? "page" : undefined}
                       className={active ? "is-active" : undefined}
                     >

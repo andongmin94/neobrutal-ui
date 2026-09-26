@@ -21,12 +21,17 @@ export async function verifyInstalledBrowser({ target, directory, scenario, root
   fs.mkdirSync(reportDirectory, { recursive: true });
   const port = await availablePort();
   const origin = `http://127.0.0.1:${port}`;
-  const executable = path.join(directory, "node_modules/.bin", target === "next" ? "next" : "vite");
+  const requireConsumer = createRequire(path.join(directory, "package.json"));
+  const packagePath = requireConsumer.resolve(`${target}/package.json`);
+  const executable = path.resolve(
+    path.dirname(packagePath),
+    requireConsumer(packagePath).bin[target],
+  );
   const args =
     target === "next"
       ? ["start", "--hostname", "127.0.0.1", "--port", String(port)]
       : ["preview", "--host", "127.0.0.1", "--port", String(port), "--strictPort"];
-  const child = spawn(executable, args, {
+  const child = spawn(process.execPath, [executable, ...args], {
     cwd: directory,
     env: { ...process.env, NEXT_TELEMETRY_DISABLED: "1" },
     stdio: "pipe",
@@ -83,6 +88,9 @@ export async function verifyInstalledBrowser({ target, directory, scenario, root
           page.on("pageerror", (error) => errors.push(error.message));
           try {
             await page.goto(origin);
+            if (target === "next") {
+              await expect(page.locator("html")).toHaveAttribute("data-consumer-hydrated", "true");
+            }
             const button = page.getByRole("button", { name: "Click me", exact: true });
             await expect(button).toBeVisible();
             await expect(button).toHaveCSS("border-top-width", "2px");
@@ -153,8 +161,19 @@ export async function verifyInstalledBrowser({ target, directory, scenario, root
                 });
                 records.push({ engine, width, theme, route, passed: true });
               }
-              for (const route of ["/blog", "/portfolio", "/cms", "/links"]) {
+              for (const route of [
+                "/blog",
+                "/portfolio",
+                "/cms",
+                "/links",
+                "/dashboard",
+                "/landing",
+              ]) {
                 await page.goto(`${origin}${route}`);
+                await expect(page.locator("html")).toHaveAttribute(
+                  "data-consumer-hydrated",
+                  "true",
+                );
                 await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
                 if (route === "/blog") {
                   const search = page.getByRole("searchbox", { name: "Search posts" });
