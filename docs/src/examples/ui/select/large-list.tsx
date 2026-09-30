@@ -18,7 +18,7 @@ const workspaces = Array.from({ length: 80 }, (_, index) => {
 
 export default function SelectDemo() {
   return (
-    <Select>
+    <Select items={workspaces}>
       <SelectTrigger className="w-full max-w-[260px]" aria-label="Select a workspace">
         <SelectValue placeholder="Choose a workspace" />
       </SelectTrigger>

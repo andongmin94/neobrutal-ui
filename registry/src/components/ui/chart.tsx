@@ -158,10 +158,34 @@ function isSafeChartColor(color: string | undefined): color is string {
 
 const ChartTooltip = RechartsPrimitive.Tooltip;
 
+type ChartContentHtmlProps = Omit<
+  React.ComponentProps<"div">,
+  "children" | "dangerouslySetInnerHTML"
+> & { [attribute: `data-${string}`]: string | number | boolean | null | undefined };
+
+type ChartTooltipContentProps = Partial<
+  Pick<
+    RechartsPrimitive.TooltipContentProps<TooltipValueType, TooltipNameType>,
+    "active" | "payload" | "label" | "labelFormatter" | "formatter" | "accessibilityLayer"
+  >
+> & {
+  className?: string;
+  htmlProps?: ChartContentHtmlProps;
+  hideLabel?: boolean;
+  hideIndicator?: boolean;
+  indicator?: "line" | "dot" | "dashed";
+  labelClassName?: string;
+  color?: string;
+  nameKey?: string;
+  labelKey?: string;
+};
+
 function ChartTooltipContent({
   active,
   payload,
   className,
+  htmlProps,
+  accessibilityLayer,
   indicator = "dot",
   hideLabel = false,
   hideIndicator = false,
@@ -172,16 +196,7 @@ function ChartTooltipContent({
   color,
   nameKey,
   labelKey,
-}: React.ComponentProps<typeof RechartsPrimitive.Tooltip> &
-  Partial<RechartsPrimitive.TooltipContentProps<TooltipValueType, TooltipNameType>> &
-  React.ComponentProps<"div"> & {
-    hideLabel?: boolean;
-    hideIndicator?: boolean;
-    indicator?: "line" | "dot" | "dashed";
-    nameKey?: string;
-    labelKey?: string;
-    viewBox?: { x?: number; y?: number; width?: number; height?: number };
-  }) {
+}: ChartTooltipContentProps) {
   const { config } = useChart();
 
   const tooltipLabel = React.useMemo(() => {
@@ -193,7 +208,9 @@ function ChartTooltipContent({
     const key = `${labelKey ?? item?.dataKey ?? item?.name ?? "value"}`;
     const itemConfig = getPayloadConfigFromPayload(config, item, key);
     const value =
-      !labelKey && typeof label === "string" ? (config[label]?.label ?? label) : itemConfig?.label;
+      !labelKey && (typeof label === "string" || typeof label === "number")
+        ? (config[label]?.label ?? label)
+        : itemConfig?.label;
 
     if (labelFormatter) {
       return (
@@ -201,7 +218,7 @@ function ChartTooltipContent({
       );
     }
 
-    if (!value) {
+    if (value === undefined || value === null || value === false || value === "") {
       return null;
     }
 
@@ -216,9 +233,13 @@ function ChartTooltipContent({
 
   return (
     <div
+      role={accessibilityLayer ? "status" : undefined}
+      aria-live={accessibilityLayer ? "assertive" : undefined}
+      {...htmlProps}
       className={cn(
         "grid min-w-32 items-start gap-1.5 rounded-base border-2 border-border bg-background px-2.5 py-1.5 text-xs font-base shadow-shadow",
         className,
+        htmlProps?.className,
       )}
     >
       {!nestLabel ? tooltipLabel : null}
@@ -301,10 +322,13 @@ function ChartLegendContent({
   payload,
   verticalAlign = "bottom",
   nameKey,
-}: React.ComponentProps<"div"> & {
+  htmlProps,
+}: Pick<RechartsPrimitive.DefaultLegendContentProps, "payload" | "verticalAlign"> & {
+  className?: string;
+  htmlProps?: ChartContentHtmlProps;
   hideIcon?: boolean;
   nameKey?: string;
-} & RechartsPrimitive.DefaultLegendContentProps) {
+}) {
   const { config } = useChart();
 
   if (!payload?.length) {
@@ -313,10 +337,12 @@ function ChartLegendContent({
 
   return (
     <div
+      {...htmlProps}
       className={cn(
         "flex items-center justify-center gap-4",
         verticalAlign === "top" ? "pb-3" : "pt-3",
         className,
+        htmlProps?.className,
       )}
     >
       {payload
@@ -342,7 +368,7 @@ function ChartLegendContent({
                   }}
                 />
               )}
-              {itemConfig?.label}
+              {itemConfig?.label ?? item.value}
             </div>
           );
         })}
@@ -403,7 +429,14 @@ function ChartSelect({
       <label htmlFor={id} className="text-xs font-heading">
         {label}
       </label>
-      <Select value={value} onValueChange={onValueChange} items={options}>
+      <Select
+        value={value}
+        onValueChange={(nextValue) => {
+          // This fixed-option control has no cleared selection to expose.
+          if (nextValue !== null) onValueChange(nextValue);
+        }}
+        items={options}
+      >
         <SelectTrigger
           id={id}
           className="h-11 min-w-0 bg-secondary-background font-heading text-foreground shadow-shadow data-popup-open:translate-x-0.5 data-popup-open:translate-y-0.5 data-popup-open:shadow-none [&>svg]:box-content [&>svg]:border-l-2 [&>svg]:border-border [&>svg]:py-1 [&>svg]:pl-3 [&>svg]:opacity-100"

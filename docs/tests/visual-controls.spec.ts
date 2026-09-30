@@ -70,6 +70,9 @@ test("date picker stays anchored, uses a neutral surface, and restores focus", a
     window.scrollBy(0, node.getBoundingClientRect().top - 160);
   });
   await trigger.click();
+  const popup = page.getByRole("dialog", { name: "Choose a project date", exact: true });
+  await expect(popup).toBeVisible();
+  await expect(trigger).toHaveAttribute("aria-controls", (await popup.getAttribute("id"))!);
   const calendar = page.locator('[data-slot="popover-content"] [data-slot="calendar"]');
   await expect(calendar).toBeVisible();
   const anchor = (await trigger.boundingBox())!;

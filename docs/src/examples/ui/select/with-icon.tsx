@@ -8,9 +8,39 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+const chartTypes = [
+  {
+    value: "line",
+    label: (
+      <>
+        <ChartLineIcon />
+        Line
+      </>
+    ),
+  },
+  {
+    value: "bar",
+    label: (
+      <>
+        <ChartBarIcon />
+        Bar
+      </>
+    ),
+  },
+  {
+    value: "pie",
+    label: (
+      <>
+        <ChartPieIcon />
+        Pie
+      </>
+    ),
+  },
+];
+
 export default function SelectDemo() {
   return (
-    <Select>
+    <Select items={chartTypes}>
       <SelectTrigger className="w-[180px]" aria-label="Chart type">
         <SelectValue
           placeholder={
@@ -22,18 +52,11 @@ export default function SelectDemo() {
         />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="line">
-          <ChartLineIcon />
-          Line
-        </SelectItem>
-        <SelectItem value="bar">
-          <ChartBarIcon />
-          Bar
-        </SelectItem>
-        <SelectItem value="pie">
-          <ChartPieIcon />
-          Pie
-        </SelectItem>
+        {chartTypes.map((chartType) => (
+          <SelectItem key={chartType.value} value={chartType.value}>
+            {chartType.label}
+          </SelectItem>
+        ))}
       </SelectContent>
     </Select>
   );

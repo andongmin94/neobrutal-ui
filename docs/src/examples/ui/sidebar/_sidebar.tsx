@@ -27,7 +27,7 @@ import {
 
 import * as React from "react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   DropdownMenu,
@@ -62,7 +62,6 @@ const data = {
   user: {
     name: "John Doe",
     email: "hello@example.com",
-    avatar: "/avatar-placeholder.svg",
   },
   teams: [
     {
@@ -355,7 +354,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 }
               >
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={data.user.avatar} alt="John Doe" />
                   <AvatarFallback>JD</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
@@ -373,7 +371,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <DropdownMenuLabel className="p-0 font-base">
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={data.user.avatar} alt="John Doe" />
                       <AvatarFallback>JD</AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">

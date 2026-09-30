@@ -180,6 +180,25 @@ test("reduced-motion marquee keeps all text visible", async ({ page }, info) => 
   }
 });
 
+test("accordion triggers use tab navigation and Enter or Space to toggle", async ({ page }) => {
+  await page.goto("/docs/accordion");
+  const canvas = await readyCanvas(
+    page.locator('.component-preview[data-component="accordion"]').first(),
+  );
+  const triggers = canvas.locator("button[aria-expanded]");
+  const first = triggers.nth(0);
+  const second = triggers.nth(1);
+  await first.focus();
+  await first.press("Tab");
+  await expect(second).toBeFocused();
+  await second.press("Shift+Tab");
+  await expect(first).toBeFocused();
+  await first.press("Enter");
+  await expect(first).toHaveAttribute("aria-expanded", "true");
+  await first.press("Space");
+  await expect(first).toHaveAttribute("aria-expanded", "false");
+});
+
 for (const component of ["accordion", "collapsible"]) {
   test(`published disclosure states: ${component}`, async ({ page }, info) => {
     await page.goto(`/docs/${component}`);

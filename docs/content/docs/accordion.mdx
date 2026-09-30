@@ -62,8 +62,6 @@ export default function HelpSections() {
 | `value` / `defaultValue` | Controlled or initial open item values | Uncontrolled |
 | `onValueChange` | Receives the next open item values and event details | — |
 | `multiple` | Allow more than one item to stay open | `false` |
-| `loopFocus` | Wrap keyboard focus between triggers | `true` |
-| `orientation` | Keyboard navigation axis | `vertical` |
 | `AccordionItem.disabled` | Disables the section | `false` |
 | `AccordionContent.keepMounted` | Retains closed panel DOM | `false` |
 
@@ -71,4 +69,4 @@ export default function HelpSections() {
 
 ## Accessibility
 
-Write the section name in `AccordionTrigger`; it is a button inside a heading. Enter and Space toggle an item. Arrow keys move between triggers; Home and End reach the first and last enabled triggers. Do not nest another button or link inside the trigger. In controlled mode, treat the value as the array of currently open item values.
+Write the section name in `AccordionTrigger`; it is a button inside a heading. Tab and Shift+Tab move through the triggers and controls in open panels. Enter and Space toggle the focused item. Base UI 1.8 does not use arrow-key, Home, or End navigation between accordion triggers; its deprecated `loopFocus` and `orientation` props do not change keyboard focus behavior. Do not nest another button or link inside the trigger. In controlled mode, treat the value as the array of currently open item values.

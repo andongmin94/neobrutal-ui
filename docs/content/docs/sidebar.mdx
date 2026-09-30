@@ -7,8 +7,11 @@ shadcnDocsLink: https://ui.shadcn.com/docs/components/sidebar
 Use SidebarProvider around both sidebar and main content. Sidebar is an application layout, not just a list of links. Installation includes the mobile detection hook and the component source.
 
 <ComponentPreview wrapperClassName="relative !p-0" component="sidebar">
-<include cwd lang="tsx">
+<include cwd lang="tsx" meta='title="page.tsx"'>
   ./src/examples/ui/sidebar/page.tsx
+</include>
+<include cwd lang="tsx" meta='title="_sidebar.tsx"'>
+  ./src/examples/ui/sidebar/_sidebar.tsx
 </include>
 </ComponentPreview>
 
@@ -38,6 +41,12 @@ Create **`hooks/use-mobile.ts`**:
 </Installation>
 
 The default keyboard toggle is Ctrl+B or Command+B. Check for conflicts with your application shortcuts.
+
+The complete live preview additionally uses [Breadcrumb](/docs/breadcrumb). Install it before copying the Code example, then save both `page.tsx` and `_sidebar.tsx` from that tab in the same directory. Its workspace metrics are illustrative, and the avatar uses initials so no image asset is required. Replace the sample navigation destinations with your application's routes.
+
+```bash
+npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/breadcrumb.json
+```
 
 ## Usage
 

@@ -29,10 +29,12 @@ import { Separator } from "../src/components/ui/separator";
 import { SidebarMenuButton, SidebarProvider, SidebarTrigger } from "../src/components/ui/sidebar";
 import { Slider } from "../src/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../src/components/ui/tabs";
+import BlogPostTemplate from "../src/components/templates/blog-post-template";
 import colors from "../src/data/colors";
 import { createThemeCssVars } from "../src/data/theme";
 import { serializeThemeVariables } from "../src/data/theme-styles";
 import TEMPLATES from "../src/data/templates";
+import type { BlogPost } from "../src/lib/blog-posts";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const source = (relative: string) => readFileSync(path.join(root, relative), "utf8");
@@ -44,6 +46,29 @@ function classesForSlot(html: string, slot: string) {
     return classes.split(/\s+/);
   });
 }
+
+test("blog reading pages display the supplied publication year", () => {
+  const post: BlogPost = {
+    slug: "archived-post",
+    title: "Archived post",
+    summary: "A post from an earlier year.",
+    topic: "Engineering",
+    publishedAt: "2025-07-12",
+    publishedLabel: "Jul 12",
+    readTime: "5 min",
+    intro: "Archived notes.",
+    sections: [],
+  };
+  for (const year of ["2025", "2027"]) {
+    const html = renderToStaticMarkup(
+      <BlogPostTemplate post={{ ...post, publishedAt: `${year}-07-12` }} />,
+    );
+    const time = html.match(/<time\b[^>]*>.*?<\/time>/)?.[0];
+    assert.ok(time);
+    assert.match(time, new RegExp(`dateTime="${year}-07-12"`));
+    assert.match(time, new RegExp(`Jul 12, ${year}</time>`));
+  }
+});
 
 test("composed buttons preserve state-based className functions", () => {
   for (const disabled of [false, true]) {

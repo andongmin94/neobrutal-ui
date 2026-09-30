@@ -81,6 +81,31 @@ Keep wide data tables in their own keyboard-accessible scroll area. Do not hide 
 | `ChartTooltip` / `ChartTooltipContent` | Tooltip primitive and styled content | — |
 | `ChartLegend` / `ChartLegendContent` | Legend primitive and styled content | — |
 | `ChartTooltipContent.indicator` | `dot`, `line`, or `dashed` | `dot` |
+| `ChartTooltipContent.htmlProps` / `ChartLegendContent.htmlProps` | Native attributes, styles, events, and ref for the content's outer div | Unset |
+
+Pass DOM attributes through `htmlProps` when customizing tooltip or legend content. Keep `className` on the content component for appearance. Recharts supplies its own content props, so separating HTML props keeps chart configuration off the DOM:
+
+```tsx
+import {
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+
+<ChartTooltip
+  content={
+    <ChartTooltipContent
+      className="max-w-xs"
+      htmlProps={{ id: "visits-tooltip", "aria-label": "Monthly visits" }}
+    />
+  }
+/>;
+
+<ChartLegend
+  content={<ChartLegendContent htmlProps={{ "aria-label": "Visit series" }} />}
+/>;
+```
 
 ## Accessibility
 

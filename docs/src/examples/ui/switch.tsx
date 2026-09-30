@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 
-import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 
 export default function SwitchDemo() {
@@ -12,9 +11,9 @@ export default function SwitchDemo() {
     <div className="w-full max-w-sm rounded-base border-2 border-border bg-secondary-background p-4 shadow-shadow">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <Label htmlFor="auto-publish" className="font-heading">
+          <label htmlFor="auto-publish" className="text-sm font-heading leading-none select-none">
             Auto-publish documentation
-          </Label>
+          </label>
           <p className="mt-1 text-sm leading-5 text-foreground/75">
             Deploy the docs site after the registry checks pass.
           </p>

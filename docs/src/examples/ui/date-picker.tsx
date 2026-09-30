@@ -37,6 +37,7 @@ export default function DatePickerDemo() {
             <ChevronDown aria-hidden="true" />
           </PopoverTrigger>
           <PopoverContent
+            aria-label="Choose a project date"
             align="start"
             side="bottom"
             sideOffset={8}

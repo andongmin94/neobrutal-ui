@@ -44,7 +44,9 @@ export default function BlogPostTemplate({ backHref = "/blog", post }: BlogPostT
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-foreground/75">{post.summary}</p>
             <div className="mt-5 flex flex-wrap items-center gap-3 text-sm font-heading text-foreground/60">
-              <time dateTime={post.publishedAt}>{post.publishedLabel}, 2026</time>
+              <time dateTime={post.publishedAt}>
+                {post.publishedLabel}, {post.publishedAt.slice(0, 4)}
+              </time>
               <span aria-hidden="true">/</span>
               <span className="flex items-center gap-1.5">
                 <Clock3 aria-hidden="true" className="size-4" />

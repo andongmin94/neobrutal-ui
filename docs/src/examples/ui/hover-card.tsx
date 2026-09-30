@@ -1,7 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import colors from "@/data/colors";
 
 export default function HoverCardDemo() {
   return (
@@ -31,13 +30,13 @@ export default function HoverCardDemo() {
         </p>
         <div className="mt-4 grid grid-cols-3 gap-2 border-t-2 border-border pt-3 text-center text-xs">
           <div>
-            <strong className="block text-base font-heading">49</strong>components
+            <strong className="block text-base font-heading">Editable</strong>source
           </div>
           <div>
-            <strong className="block text-base font-heading">{colors.length}</strong>themes
+            <strong className="block text-base font-heading">Light + dark</strong>themes
           </div>
           <div>
-            <strong className="block text-base font-heading">4</strong>templates
+            <strong className="block text-base font-heading">Next.js</strong>templates
           </div>
         </div>
       </HoverCardContent>

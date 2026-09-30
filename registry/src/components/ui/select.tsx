@@ -7,9 +7,8 @@ import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-type SelectProps = Omit<SelectPrimitive.Root.Props<string>, "onValueChange"> & {
+type SelectProps = SelectPrimitive.Root.Props<string> & {
   dir?: "ltr" | "rtl";
-  onValueChange?: (value: string, eventDetails: SelectPrimitive.Root.ChangeEventDetails) => void;
 };
 
 type SelectContentProps = SelectPrimitive.Popup.Props &
@@ -30,15 +29,8 @@ type SelectContentProps = SelectPrimitive.Popup.Props &
     | "sticky"
   >;
 
-function Select({ dir, onValueChange, ...props }: SelectProps) {
-  const root = (
-    <SelectPrimitive.Root
-      {...props}
-      onValueChange={(value, eventDetails) => {
-        if (value !== null) onValueChange?.(value, eventDetails);
-      }}
-    />
-  );
+function Select({ dir, ...props }: SelectProps) {
+  const root = <SelectPrimitive.Root {...props} />;
 
   return dir === undefined ? root : <DirectionProvider direction={dir}>{root}</DirectionProvider>;
 }
@@ -137,7 +129,7 @@ function SelectContent({
           {...props}
           className={(state) =>
             cn(
-              "relative isolate z-50 flex max-h-96 w-[calc(var(--anchor-width)+4px)] min-w-[8rem] origin-(--transform-origin) flex-col overflow-hidden rounded-base border-2 border-border bg-main font-base text-main-foreground duration-100 data-[align-trigger=true]:animate-none data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+              "relative isolate z-50 flex max-h-[min(24rem,var(--available-height))] w-[calc(var(--anchor-width)+4px)] min-w-[8rem] origin-(--transform-origin) flex-col overflow-hidden rounded-base border-2 border-border bg-main font-base text-main-foreground duration-100 data-[align-trigger=true]:animate-none data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[side=none]:max-h-96 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
               typeof className === "function" ? className(state) : className,
             )
           }

@@ -1,10 +1,11 @@
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function TextareaDemo() {
   return (
     <div className="grid w-full max-w-md gap-2">
-      <Label htmlFor="release-notes">Release notes</Label>
+      <label htmlFor="release-notes" className="text-sm font-heading leading-none select-none">
+        Release notes
+      </label>
       <Textarea
         id="release-notes"
         name="releaseNotes"

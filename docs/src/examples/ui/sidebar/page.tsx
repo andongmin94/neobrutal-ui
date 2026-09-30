@@ -7,14 +7,13 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import colors from "@/data/colors";
 
 import { AppSidebar } from "./_sidebar";
 
 const metrics = [
-  { label: "Components", value: "49", detail: "Documented and installable" },
-  { label: "Themes", value: String(colors.length), detail: "Light and dark presets" },
-  { label: "Templates", value: "4", detail: "Ready for the App Router" },
+  { label: "Projects", value: "12", detail: "Active in this sample workspace" },
+  { label: "Team members", value: "8", detail: "Working across three teams" },
+  { label: "Open tasks", value: "24", detail: "Ready for review this week" },
 ];
 
 const activity = [
@@ -38,7 +37,7 @@ export default function Page() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Registry overview</BreadcrumbPage>
+                  <BreadcrumbPage>Workspace overview</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -49,7 +48,7 @@ export default function Page() {
             <div className="mb-4">
               <p className="text-sm font-base text-foreground/70">Workspace</p>
               <h2 id="sidebar-overview-heading" className="text-2xl font-heading">
-                Registry overview
+                Workspace overview
               </h2>
             </div>
             <div className="grid gap-4 md:grid-cols-3">
