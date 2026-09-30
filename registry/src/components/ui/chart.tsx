@@ -249,6 +249,20 @@ function ChartTooltipContent({
           const key = `${nameKey ?? item.name ?? item.dataKey ?? "value"}`;
           const itemConfig = getPayloadConfigFromPayload(config, item, key);
           const indicatorColor = color ?? item.payload?.fill ?? item.color;
+          let formatted: React.ReactNode;
+          if (formatter && item.value !== undefined && item.name != null) {
+            formatted = formatter(item.value, item.name, item, index, payload);
+            if (formatted == null) return null;
+          }
+          const formattedTuple = Array.isArray(formatted) ? formatted : undefined;
+          const displayName = formattedTuple ? formattedTuple[1] : (itemConfig?.label ?? item.name);
+          const displayValue = formattedTuple
+            ? formattedTuple[0]
+            : item.value == null
+              ? null
+              : typeof item.value === "number"
+                ? item.value.toLocaleString()
+                : String(item.value);
 
           return (
             <div
@@ -258,8 +272,8 @@ function ChartTooltipContent({
                 indicator === "dot" && "items-center",
               )}
             >
-              {formatter && item?.value !== undefined && item.name != null ? (
-                formatter(item.value, item.name, item, index, payload)
+              {formatted !== undefined && !formattedTuple ? (
+                formatted
               ) : (
                 <>
                   {itemConfig?.icon ? (
@@ -294,13 +308,11 @@ function ChartTooltipContent({
                   >
                     <div className="grid gap-1.5">
                       {nestLabel ? tooltipLabel : null}
-                      <span className="text-foreground">{itemConfig?.label ?? item.name}</span>
+                      <span className="text-foreground">{displayName}</span>
                     </div>
-                    {item.value != null && (
+                    {displayValue != null && (
                       <span className="font-mono font-medium text-foreground tabular-nums">
-                        {typeof item.value === "number"
-                          ? item.value.toLocaleString()
-                          : String(item.value)}
+                        {displayValue}
                       </span>
                     )}
                   </div>

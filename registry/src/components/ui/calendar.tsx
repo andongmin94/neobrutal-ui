@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { DayPicker, getDefaultClassNames, type DayButton, type Locale } from "react-day-picker";
+import { DayPicker, getDefaultClassNames, type DayButton } from "react-day-picker";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -20,8 +20,6 @@ function Calendar({
   showOutsideDays = true,
   captionLayout = "label",
   buttonVariant = "ghost",
-  locale,
-  formatters,
   components,
   ...props
 }: CalendarProps) {
@@ -37,11 +35,6 @@ function Calendar({
         className,
       )}
       captionLayout={captionLayout}
-      locale={locale}
-      formatters={{
-        formatMonthDropdown: (date) => date.toLocaleString(locale?.code, { month: "short" }),
-        ...formatters,
-      }}
       classNames={{
         root: cn("w-fit", defaultClassNames.root),
         months: cn("relative flex flex-col gap-2 sm:flex-row", defaultClassNames.months),
@@ -127,7 +120,7 @@ function Calendar({
           }
           return <ChevronDownIcon className={cn("size-4", className)} {...props} />;
         },
-        DayButton: ({ ...props }) => <CalendarDayButton locale={locale} {...props} />,
+        DayButton: CalendarDayButton,
         WeekNumber: ({ children, ...props }) => {
           return (
             <td {...props}>
@@ -148,9 +141,8 @@ function CalendarDayButton({
   className,
   day,
   modifiers,
-  locale,
   ...props
-}: React.ComponentProps<typeof DayButton> & { locale?: Partial<Locale> }) {
+}: React.ComponentProps<typeof DayButton>) {
   const defaultClassNames = getDefaultClassNames();
   const ref = React.useRef<HTMLButtonElement>(null);
   React.useEffect(() => {
@@ -162,7 +154,7 @@ function CalendarDayButton({
       ref={ref}
       variant="ghost"
       size="icon-sm"
-      data-day={day.date.toLocaleDateString(locale?.code)}
+      data-day={day.isoDate}
       data-today={modifiers.today}
       data-selected-single={
         modifiers.selected &&

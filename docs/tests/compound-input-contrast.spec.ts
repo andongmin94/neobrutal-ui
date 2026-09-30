@@ -38,6 +38,8 @@ for (const mode of ["light", "dark"] as const) {
       await field.press("ArrowLeft");
       await expect(field).toBeFocused();
       await expectContrast(group, "border", `${color.name}/${mode}: input-group focused`);
+      await expectContrast(group, "outline", `${color.name}/${mode}: input-group keyboard focus`);
+      await expect(field).toHaveCSS("outline-style", "none");
       await captureMono(preview, color.name, mode, "focused");
     });
 

@@ -81,7 +81,20 @@ Keep wide data tables in their own keyboard-accessible scroll area. Do not hide 
 | `ChartTooltip` / `ChartTooltipContent` | Tooltip primitive and styled content | — |
 | `ChartLegend` / `ChartLegendContent` | Legend primitive and styled content | — |
 | `ChartTooltipContent.indicator` | `dot`, `line`, or `dashed` | `dot` |
+| `ChartTooltipContent.formatter` | Recharts callback returning a `[formattedValue, formattedName]` tuple or complete row content | Default series name and value |
 | `ChartTooltipContent.htmlProps` / `ChartLegendContent.htmlProps` | Native attributes, styles, events, and ref for the content's outer div | Unset |
+
+Return `[formattedValue, formattedName]` to keep the styled indicator, name, and value layout. Both parts can contain JSX; zero and empty names are preserved. A JSX or other non-array return replaces the complete row content. Returning `null` or `undefined` omits that row. The callback receives the original payload entry, index, and complete payload:
+
+```tsx
+<ChartTooltip
+  content={
+    <ChartTooltipContent
+      formatter={(value) => [`${Number(value).toLocaleString()} visits`, "Visits"]}
+    />
+  }
+/>;
+```
 
 Pass DOM attributes through `htmlProps` when customizing tooltip or legend content. Keep `className` on the content component for appearance. Recharts supplies its own content props, so separating HTML props keeps chart configuration off the DOM:
 

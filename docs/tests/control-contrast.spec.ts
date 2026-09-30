@@ -31,6 +31,7 @@ for (const mode of ["light", "dark"] as const) {
         await field.press("ArrowLeft");
         await expect(field).toBeFocused();
         await expectContrast(field, "border", `${color.name}/${mode}: focused ${component}`);
+        await expectContrast(field, "outline", `${color.name}/${mode}: keyboard ${component}`);
         await captureMono(preview, color.name, mode, "focused");
       }
     });

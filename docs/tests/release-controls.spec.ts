@@ -3,10 +3,10 @@ import { expect, test } from "@playwright/test";
 import colors from "../src/data/colors";
 import { createThemeCssVars } from "../src/data/theme";
 
-// Fields reuse their existing border; discrete controls use a compact no-offset focus ring.
+// Text fields have a distinct outline; discrete controls use a compact no-offset focus ring.
 const focusControls = [
-  { route: "input", control: 'input[data-slot="input"]:not(:disabled)', mode: "border" },
-  { route: "textarea", control: "textarea:not(:disabled)", mode: "border" },
+  { route: "input", control: 'input[data-slot="input"]:not(:disabled)', mode: "outline" },
+  { route: "textarea", control: "textarea:not(:disabled)", mode: "outline" },
   { route: "checkbox", control: '[data-slot="checkbox"]', mode: "ring" },
   { route: "radio-group", control: '[data-slot="radio-group-item"]', mode: "ring" },
   { route: "switch", control: '[data-slot="switch"]', mode: "ring" },
@@ -18,7 +18,7 @@ const focusControls = [
     route: "input-group",
     control: 'input[data-slot="input-group-control"]',
     indicator: '[data-slot="input-group"]',
-    mode: "border",
+    mode: "outline",
   },
   {
     route: "slider",
@@ -95,6 +95,12 @@ for (const item of focusControls) {
       await expect
         .poll(() => indicator.evaluate((node) => getComputedStyle(node).boxShadow))
         .not.toContain("rgb(31, 83, 127)");
+    } else if (item.mode === "outline") {
+      await expect(indicator).toHaveCSS("border-color", "rgb(31, 83, 127)");
+      await expect(indicator).toHaveCSS("outline-style", "solid");
+      await expect(indicator).toHaveCSS("outline-color", "rgb(31, 83, 127)");
+      await expect(indicator).toHaveCSS("outline-width", "2px");
+      await expect(indicator).toHaveCSS("outline-offset", "2px");
     } else {
       await expect
         .poll(() => indicator.evaluate((node) => getComputedStyle(node).boxShadow))

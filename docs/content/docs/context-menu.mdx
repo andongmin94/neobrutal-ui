@@ -83,4 +83,6 @@ export default function FileCommands() {
 
 Make the relevant target keyboard reachable when it needs keyboard context-menu access. Test Shift+F10, arrow navigation, and Escape. Keep another discoverable route to essential commands. Avoid unexpectedly replacing the browser's context menu across the entire page.
 
+Menu content is bounded by Base UI's available height. Long menus scroll so pointer users and keyboard users can reach every item.
+
 Right-clicking does not focus the target in every browser. When closing the menu should return focus to its target, pass that target's ref to `ContextMenuContent.finalFocus`, as in the example. Base UI handles the focus return.

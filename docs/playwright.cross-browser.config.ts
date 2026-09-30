@@ -13,6 +13,8 @@ export default defineConfig({
     "search-recovery.spec.ts",
     "selection-semantics.spec.ts",
     "component-composition.spec.ts",
+    "installed-input-focus.spec.ts",
+    "primitive-overflow.spec.ts",
     "sidebar-layering.spec.ts",
     "release-controls.spec.ts",
     "template-navigation.spec.ts",

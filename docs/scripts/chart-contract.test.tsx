@@ -115,6 +115,108 @@ test("tooltip formatter indices match the complete payload when a series is hidd
   assert.doesNotMatch(html, /Hidden: \$5/);
 });
 
+test("tooltip formatter tuples use the styled indicator, name, and value layout", () => {
+  const payload = [
+    { graphicalItemId: "hidden", dataKey: "hidden", name: "Hidden", value: 5, type: "none" },
+    { graphicalItemId: "revenue", dataKey: "revenue", name: "Revenue", value: 1234, color: "blue" },
+  ] satisfies NonNullable<ComponentProps<typeof ChartTooltipContent>["payload"]>;
+  const indices: number[] = [];
+  const html = renderToStaticMarkup(
+    <ChartContainer config={{ revenue: { label: "Configured revenue" } }}>
+      <ChartTooltipContent
+        active
+        hideLabel
+        payload={payload}
+        formatter={(value, name, item, index, entries) => {
+          indices.push(index);
+          assert.equal(value, 1234);
+          assert.equal(name, "Revenue");
+          assert.equal(item, payload[index]);
+          assert.equal(entries, payload);
+          return [<strong key="value">$1,234</strong>, <em key="name">Net revenue</em>];
+        }}
+      />
+    </ChartContainer>,
+  );
+  assert.deepEqual(indices, [1]);
+  assert.match(html, /style="--color-bg:blue;--color-border:blue"/);
+  assert.match(html, /<span class="text-foreground"><em>Net revenue<\/em><\/span>/);
+  assert.match(
+    html,
+    /<span class="font-mono font-medium text-foreground tabular-nums"><strong>\$1,234<\/strong><\/span>/,
+  );
+  assert.doesNotMatch(html, /Configured revenue|Hidden|\$1,234Net revenue/);
+});
+
+test("tooltip tuples preserve array values and explicit zero, empty, or null parts", () => {
+  const payload = [
+    { graphicalItemId: "range", dataKey: "range", name: 0, value: [100, 200] },
+    { graphicalItemId: "empty", dataKey: "empty", name: "", value: 7 },
+    { graphicalItemId: "missing", dataKey: "missing", name: "Missing", value: 8 },
+  ] satisfies NonNullable<ComponentProps<typeof ChartTooltipContent>["payload"]>;
+  const names: Array<string | number> = [];
+  const html = renderToStaticMarkup(
+    <ChartContainer
+      config={{ range: { label: "Configured range" }, empty: { label: "Configured empty" } }}
+    >
+      <ChartTooltipContent
+        active
+        hideLabel
+        hideIndicator
+        payload={payload}
+        formatter={(value, name, _item, index) => {
+          assert.ok(name !== undefined);
+          names.push(name);
+          if (index === 0) {
+            assert.deepEqual(value, [100, 200]);
+            return [[<b key="low">$100</b>, "–", <b key="high">$200</b>], 0];
+          }
+          return index === 1 ? [0, ""] : [null, "Unavailable"];
+        }}
+      />
+    </ChartContainer>,
+  );
+  assert.deepEqual(names, [0, "", "Missing"]);
+  assert.match(html, /<span class="text-foreground">0<\/span>/);
+  assert.match(html, /<span class="text-foreground"><\/span>/);
+  assert.match(
+    html,
+    /<span class="font-mono font-medium text-foreground tabular-nums"><b>\$100<\/b>–<b>\$200<\/b><\/span>/,
+  );
+  assert.match(html, /<span class="font-mono font-medium text-foreground tabular-nums">0<\/span>/);
+  assert.match(html, /<span class="text-foreground">Unavailable<\/span>/);
+  assert.equal(
+    (html.match(/class="font-mono font-medium text-foreground tabular-nums"/g) ?? []).length,
+    2,
+  );
+  assert.doesNotMatch(html, /Configured range|Configured empty|>7<|>8</);
+});
+
+test("null tooltip formatter results omit their rows while JSX remains complete row content", () => {
+  const payload = [
+    { graphicalItemId: "null", dataKey: "null", name: "Null row", value: 5 },
+    { graphicalItemId: "undefined", dataKey: "undefined", name: "Undefined row", value: 7 },
+    { graphicalItemId: "custom", dataKey: "custom", name: "Custom row", value: 9, color: "purple" },
+  ] satisfies NonNullable<ComponentProps<typeof ChartTooltipContent>["payload"]>;
+  const html = renderToStaticMarkup(
+    <ChartContainer config={{ custom: { label: "Configured custom" } }}>
+      <ChartTooltipContent
+        active
+        hideLabel
+        payload={payload}
+        formatter={(_value, _name, _item, index) => {
+          if (index === 0) return null;
+          if (index === 1) return undefined;
+          return <mark>Complete custom row</mark>;
+        }}
+      />
+    </ChartContainer>,
+  );
+  assert.match(html, /<mark>Complete custom row<\/mark>/);
+  assert.equal((html.match(/class="flex w-full flex-wrap\b/g) ?? []).length, 1);
+  assert.doesNotMatch(html, /Null row|Undefined row|Configured custom|--color-bg:purple/);
+});
+
 test("chart content keeps explicit HTML attributes separate from injected Recharts props", () => {
   const tooltipProps = {
     active: true,
