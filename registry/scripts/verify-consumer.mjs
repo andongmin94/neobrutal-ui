@@ -62,8 +62,13 @@ try {
     }
   }
 } finally {
+  const cleanupStarted = performance.now();
+  console.log("Closing the registry server and removing the temporary consumer...");
   if (server.listening) await new Promise((resolve) => server.close(resolve));
-  fs.rmSync(temporaryRoot, { force: true, recursive: true });
+  await fs.promises.rm(temporaryRoot, { force: true, recursive: true, maxRetries: 3 });
+  console.log(
+    `Consumer cleanup completed in ${((performance.now() - cleanupStarted) / 1000).toFixed(1)}s.`,
+  );
 }
 
 async function verifyTarget(target, fixtureDirectory, scenario) {
@@ -185,7 +190,7 @@ async function verifyTarget(target, fixtureDirectory, scenario) {
         ["button", "data-table", "navigation-menu", "dialog", "sheet", "popover"].includes(
           item.name,
         ) ||
-        (target === "next" && ["input-group", "calendar"].includes(item.name)) ||
+        (target === "next" && ["input-group", "calendar", "badge"].includes(item.name)) ||
         (item.name.startsWith("chart-") && item.categories?.includes("recipe")) ||
         (target === "next" && item.categories?.includes("template"))
       );

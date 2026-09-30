@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { mergeProps } from "@base-ui/react/merge-props";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
@@ -52,15 +53,17 @@ function InputGroupAddon({
       data-slot="input-group-addon"
       data-align={align}
       className={cn(inputGroupAddonVariants({ align }), className)}
-      onClick={(e) => {
-        if ((e.target as HTMLElement).closest("button")) {
-          return;
-        }
-        e.currentTarget.parentElement
-          ?.querySelector<HTMLInputElement | HTMLTextAreaElement>("input, textarea")
-          ?.focus();
-      }}
-      {...props}
+      {...mergeProps<"div">(
+        {
+          onClick: (event) => {
+            if (event.defaultPrevented || (event.target as HTMLElement).closest("button")) return;
+            event.currentTarget.parentElement
+              ?.querySelector<HTMLInputElement | HTMLTextAreaElement>("input, textarea")
+              ?.focus();
+          },
+        },
+        props,
+      )}
     />
   );
 }
@@ -94,7 +97,12 @@ function InputGroupButton({
       type={type}
       data-size={size}
       variant={variant}
-      className={cn(inputGroupButtonVariants({ size }), className)}
+      className={(state) =>
+        cn(
+          inputGroupButtonVariants({ size }),
+          typeof className === "function" ? className(state) : className,
+        )
+      }
       {...props}
     />
   );

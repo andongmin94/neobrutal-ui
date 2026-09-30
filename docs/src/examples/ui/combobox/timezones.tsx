@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckIcon, ChevronDownIcon, PlusCircleIcon } from "lucide-react";
+import { CheckIcon, ChevronDownIcon } from "lucide-react";
 
 import * as React from "react";
 
@@ -81,7 +81,6 @@ export default function TimezoneCombobox() {
           <Button
             variant="noShadow"
             role="combobox"
-            aria-haspopup="listbox"
             aria-label="Select a timezone"
             aria-expanded={open}
             aria-controls={open ? contentId : undefined}
@@ -99,10 +98,15 @@ export default function TimezoneCombobox() {
         )}
         <ChevronDownIcon />
       </PopoverTrigger>
-      <PopoverContent id={contentId} className="p-0 border-0" align="start">
+      <PopoverContent
+        id={contentId}
+        aria-label="Choose a timezone"
+        className="p-0 border-0"
+        align="start"
+      >
         <Command className="**:data-[slot=command-input-wrapper]:h-11">
           <CommandInput placeholder="Search timezone..." />
-          <CommandList className="scroll-pb-12">
+          <CommandList>
             <CommandEmpty>No timezone found.</CommandEmpty>
             {timezones.map((region) => (
               <CommandGroup className="p-2" key={region.label} heading={region.label}>
@@ -110,6 +114,7 @@ export default function TimezoneCombobox() {
                   <CommandItem
                     key={timezone.value}
                     value={timezone.value}
+                    keywords={[timezone.label]}
                     onSelect={(currentValue) => {
                       setValue(currentValue as Timezone["timezones"][number]["value"]);
                       setOpen(false);
@@ -124,12 +129,6 @@ export default function TimezoneCombobox() {
                 ))}
               </CommandGroup>
             ))}
-            <CommandGroup className="bg-main border-t-2 p-2 border-t-border sticky bottom-0">
-              <CommandItem>
-                <PlusCircleIcon />
-                Create timezone
-              </CommandItem>
-            </CommandGroup>
           </CommandList>
         </Command>
       </PopoverContent>

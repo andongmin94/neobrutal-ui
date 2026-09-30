@@ -62,6 +62,8 @@ export default function ProjectTabs() {
 | `TabsTrigger.disabled` | Unavailable tab | `false` |
 | `TabsContent.keepMounted` | Retain an inactive panel in the DOM | `false` |
 
+Each part accepts a string or state-based `className` function. For example, `TabsTrigger` exposes `active` and `disabled`, while `TabsContent` exposes `hidden`.
+
 Tabs delegates selection, keyboard navigation, refs, and rendering to Base UI. Use its `render` prop for element composition and `activateOnFocus` for manual activation; no second state or keyboard implementation is maintained.
 
 ## Accessibility

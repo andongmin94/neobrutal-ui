@@ -2,7 +2,6 @@
 
 **React components with bold borders, hard shadows, and buttons that feel pressable.**
 
-[![Verify](https://github.com/andongmin94/neobrutal-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/andongmin94/neobrutal-ui/actions/workflows/ci.yml)
 [![MIT License](https://img.shields.io/badge/license-MIT-111111?style=flat-square)](LICENSE)
 
 Build a form, a dashboard, or a complete page with **Base UI** and **Tailwind CSS v4**.

@@ -97,7 +97,9 @@ test("usage code grows naturally while full source remains contained", async ({ 
   const content = await usage.locator("pre").innerText();
   await usage.getByRole("button", { name: "Copy", exact: true }).click();
   await expect(usage.getByRole("button", { name: "Copied", exact: true })).toBeVisible();
-  expect((await page.evaluate(() => navigator.clipboard.readText())).trim()).toBe(content.trim());
+  const copied = await page.evaluate(() => navigator.clipboard.readText());
+  // Windows uses CRLF on the native clipboard; preserve every other source character.
+  expect(copied.replaceAll("\r\n", "\n").trim()).toBe(content.trim());
 
   const preview = page.locator(".component-preview").first();
   await preview.getByRole("tab", { name: "Code", exact: true }).click();

@@ -7,7 +7,11 @@ import path from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 
 import { verifyInstalledInteractions } from "./verify-installed-interactions.mjs";
-import { verifyServerCalendar, verifyServerInputGroup } from "./verify-server-components.mjs";
+import {
+  verifyServerBadge,
+  verifyServerCalendar,
+  verifyServerInputGroup,
+} from "./verify-server-components.mjs";
 
 export async function verifyInstalledBrowser({ target, directory, scenario, root }) {
   const requireDocs = createRequire(path.join(root, "../docs/package.json"));
@@ -150,6 +154,7 @@ export async function verifyInstalledBrowser({ target, directory, scenario, root
               for (const [route, verify] of [
                 ["/server-input-group", verifyServerInputGroup],
                 ["/server-calendar", verifyServerCalendar],
+                ["/server-badge", verifyServerBadge],
               ]) {
                 await verify({ page, origin, expect });
                 await assertPage(page, expect, AxeBuilder, errors, width);

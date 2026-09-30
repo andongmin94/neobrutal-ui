@@ -67,6 +67,7 @@ export default function VolumeSetting() {
 | `minStepsBetweenValues` | Minimum thumb separation in steps | `0` |
 | `thumbCollisionBehavior` | `swap`, `push`, or `none` | `swap` |
 | `onValueCommitted` | Work performed when an interaction commits | Unset |
+| `className` | String or function of the Base UI slider state | — |
 
 Base UI owns pointer capture, keyboard stepping, value normalization, collision behavior, form integration, and commit events. The wrapper only composes its styled parts and labels; it does not simulate native events or maintain a second slider engine.
 

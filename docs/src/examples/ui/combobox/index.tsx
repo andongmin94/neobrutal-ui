@@ -53,7 +53,6 @@ export default function FrameworkCombobox() {
           <Button
             variant="noShadow"
             role="combobox"
-            aria-haspopup="listbox"
             aria-label="Select a framework"
             aria-expanded={open}
             aria-controls={open ? contentId : undefined}
@@ -66,7 +65,11 @@ export default function FrameworkCombobox() {
           : "Select framework..."}
         <ChevronsUpDown />
       </PopoverTrigger>
-      <PopoverContent id={contentId} className="w-(--anchor-width) border-0 p-0">
+      <PopoverContent
+        id={contentId}
+        aria-label="Choose a framework"
+        className="w-(--anchor-width) border-0 p-0"
+      >
         <Command className="**:data-[slot=command-input-wrapper]:h-11">
           <CommandInput placeholder="Search framework..." />
           <CommandList className="p-1">

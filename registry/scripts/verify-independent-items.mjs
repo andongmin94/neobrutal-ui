@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
+
+import { spawnConsumerProcess, terminateConsumerProcess } from "./consumer-command.mjs";
 
 const root = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const { items } = JSON.parse(fs.readFileSync(path.join(root, "public/r/registry.json"), "utf8"));
@@ -20,6 +21,19 @@ assert.ok(expectedCount > 0, "The independent installation matrix must not be em
 const output = path.join(root, "../docs/test-results/independent-items");
 fs.mkdirSync(output, { recursive: true });
 const records = [];
+const activeConsumers = new Set();
+let interruption;
+
+function interrupt(signal) {
+  interruption ??= new Error(`Independent installations interrupted by ${signal}`);
+  queue.length = 0;
+  for (const stop of activeConsumers) stop(signal, interruption);
+}
+
+const onSigterm = () => interrupt("SIGTERM");
+const onSigint = () => interrupt("SIGINT");
+process.on("SIGTERM", onSigterm);
+process.on("SIGINT", onSigint);
 
 // Shards partition the catalog; each command still uses fresh projects and node_modules.
 async function worker() {
@@ -28,19 +42,45 @@ async function worker() {
     const log = fs.openSync(path.join(output, `${item.name}.log`), "w");
     let passed = false;
     try {
-      passed = await new Promise((resolve, reject) => {
-        const child = spawn(
+      passed = await new Promise((resolve) => {
+        const child = spawnConsumerProcess(
           process.execPath,
           [path.join(root, "scripts/verify-consumer.mjs"), ...targets, `--item=${item.name}`],
           {
             cwd: root,
             env: process.env,
             stdio: ["ignore", log, log],
-            timeout: 240_000,
           },
         );
-        child.once("error", reject);
-        child.once("exit", (code) => resolve(code === 0));
+        let failure;
+        let termination;
+        const stop = (signal = "SIGTERM", error) => {
+          failure ??= error;
+          termination ??= terminateConsumerProcess(child, signal).catch((terminationError) => {
+            failure ??= terminationError;
+            child.kill();
+          });
+        };
+        activeConsumers.add(stop);
+        const timeout = setTimeout(() => {
+          fs.writeSync(
+            log,
+            "\nIndependent installation exceeded 240000ms; stopping its process tree.\n",
+          );
+          stop();
+        }, 240_000);
+        child.once("error", (error) => {
+          failure = error;
+          clearTimeout(timeout);
+        });
+        child.once("close", async (code, signal) => {
+          clearTimeout(timeout);
+          activeConsumers.delete(stop);
+          await termination;
+          if (failure) fs.writeSync(log, `\n${String(failure)}\n`);
+          fs.writeSync(log, `\nConsumer exited with code ${code}, signal ${signal}.\n`);
+          resolve(code === 0 && !termination && !failure);
+        });
       });
     } catch (error) {
       fs.writeSync(log, `\n${String(error)}\n`);
@@ -56,7 +96,13 @@ async function worker() {
   }
 }
 
-await Promise.all(Array.from({ length: 3 }, worker));
+try {
+  await Promise.all(Array.from({ length: 3 }, worker));
+} finally {
+  process.removeListener("SIGTERM", onSigterm);
+  process.removeListener("SIGINT", onSigint);
+}
+if (interruption) throw interruption;
 assert.equal(records.length, expectedCount, "Every selected item must finish");
 assert.ok(
   records.every((record) => record.passed),

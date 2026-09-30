@@ -12,6 +12,7 @@ export default defineConfig({
     "form-composition.spec.ts",
     "search-recovery.spec.ts",
     "selection-semantics.spec.ts",
+    "component-composition.spec.ts",
     "sidebar-layering.spec.ts",
     "release-controls.spec.ts",
     "template-navigation.spec.ts",
@@ -23,10 +24,7 @@ export default defineConfig({
   workers: process.env.CI ? 2 : undefined,
   retries: 0,
   timeout: 45000,
-  reporter: [
-    ["list"],
-    ["html", { open: "never", outputFolder: "playwright-report-cross" }],
-  ],
+  reporter: [["list"], ["html", { open: "never", outputFolder: "playwright-report-cross" }]],
   use: {
     baseURL,
     locale: "en-US",

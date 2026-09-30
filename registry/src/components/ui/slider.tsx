@@ -26,10 +26,12 @@ function Slider({
   const slider = (
     <SliderPrimitive.Root<number[]>
       data-slot="slider"
-      className={cn(
-        "w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-auto",
-        className,
-      )}
+      className={(state) =>
+        cn(
+          "w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-auto",
+          typeof className === "function" ? className(state) : className,
+        )
+      }
       defaultValue={initialValues}
       value={value}
       min={min}

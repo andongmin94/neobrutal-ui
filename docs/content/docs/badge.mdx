@@ -18,6 +18,10 @@ Complete the [base setup](/docs/installation), then use the CLI or copy the sour
 
 <Installation component="badge">
 
+```bash
+npm install @base-ui/react@^1.8.0
+```
+
 Create **`components/ui/badge.tsx`**:
 
 <include cwd lang="tsx">
@@ -49,6 +53,8 @@ export default function ProjectBadges() {
 | `children` | Short visible label | — |
 | `render` | Element containing the badge content | `span` |
 | `className` | Sizing and layout | — |
+
+The `render` element keeps its content and composes its event handlers, styles, and ref with the badge props using Base UI.
 
 ## Accessibility
 

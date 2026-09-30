@@ -7,7 +7,14 @@ import * as React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { useForm } from "react-hook-form";
 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../src/components/ui/accordion";
 import { buttonVariants } from "../src/components/ui/button-variants";
+import { Carousel, CarouselNext, CarouselPrevious } from "../src/components/ui/carousel";
 import {
   Form,
   FormControl,
@@ -17,6 +24,11 @@ import {
   FormLabel,
   FormMessage,
 } from "../src/components/ui/form";
+import { InputGroupButton } from "../src/components/ui/input-group";
+import { Separator } from "../src/components/ui/separator";
+import { SidebarMenuButton, SidebarProvider, SidebarTrigger } from "../src/components/ui/sidebar";
+import { Slider } from "../src/components/ui/slider";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../src/components/ui/tabs";
 import colors from "../src/data/colors";
 import { createThemeCssVars } from "../src/data/theme";
 import { serializeThemeVariables } from "../src/data/theme-styles";
@@ -24,6 +36,176 @@ import TEMPLATES from "../src/data/templates";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const source = (relative: string) => readFileSync(path.join(root, relative), "utf8");
+
+function classesForSlot(html: string, slot: string) {
+  return [...html.matchAll(new RegExp(`<[^>]+data-slot="${slot}"[^>]*>`, "g"))].map(([tag]) => {
+    const classes = /\bclass="([^"]*)"/.exec(tag)?.[1];
+    assert.ok(classes, `${slot} has a class attribute`);
+    return classes.split(/\s+/);
+  });
+}
+
+test("composed buttons preserve state-based className functions", () => {
+  for (const disabled of [false, true]) {
+    const html = renderToStaticMarkup(
+      <>
+        <InputGroupButton
+          disabled={disabled}
+          className={(state) => `consumer-input-group-${state.disabled}`}
+        >
+          Search
+        </InputGroupButton>
+        <SidebarProvider>
+          <SidebarTrigger
+            disabled={disabled}
+            className={(state) => `consumer-sidebar-trigger-${state.disabled}`}
+          />
+        </SidebarProvider>
+        <Carousel>
+          <CarouselPrevious className={(state) => `consumer-previous-${state.disabled}`} />
+          <CarouselNext className={(state) => `consumer-next-${state.disabled}`} />
+        </Carousel>
+      </>,
+    );
+    const buttons = classesForSlot(html, "button");
+    assert.ok(buttons[0].includes(`consumer-input-group-${disabled}`));
+    assert.ok(
+      classesForSlot(html, "sidebar-trigger")[0].includes(`consumer-sidebar-trigger-${disabled}`),
+    );
+    assert.ok(classesForSlot(html, "carousel-previous")[0].includes("consumer-previous-true"));
+    assert.ok(classesForSlot(html, "carousel-next")[0].includes("consumer-next-true"));
+  }
+});
+
+test("Separator className receives its orientation state", () => {
+  for (const orientation of ["horizontal", "vertical"] as const) {
+    let calls = 0;
+    const html = renderToStaticMarkup(
+      <Separator
+        orientation={orientation}
+        className={(state) => {
+          calls += 1;
+          return `consumer-separator-${state.orientation}`;
+        }}
+      />,
+    );
+    assert.ok(calls > 0);
+    assert.ok(classesForSlot(html, "separator")[0].includes(`consumer-separator-${orientation}`));
+  }
+});
+
+test("SidebarMenuButton retains native disabled semantics with a tooltip", () => {
+  for (const tooltip of [undefined, "Unavailable action"]) {
+    const html = renderToStaticMarkup(
+      <SidebarProvider>
+        <SidebarMenuButton disabled tooltip={tooltip}>
+          Unavailable action
+        </SidebarMenuButton>
+      </SidebarProvider>,
+    );
+    const button = html.match(/<button\b[^>]*data-slot="sidebar-menu-button"[^>]*>/)?.[0];
+    assert.ok(button);
+    assert.match(button, /\bdisabled=""/);
+  }
+});
+
+test("Slider className receives its disabled, orientation, and value state", () => {
+  for (const disabled of [false, true]) {
+    const html = renderToStaticMarkup(
+      <Slider
+        defaultValue={[25]}
+        disabled={disabled}
+        orientation="vertical"
+        getAriaLabel={() => "Volume"}
+        className={(state) =>
+          `consumer-slider-${state.disabled}-${state.orientation}-${state.values[0]}`
+        }
+      />,
+    );
+    const [classes] = classesForSlot(html, "slider");
+    assert.ok(classes.includes(`consumer-slider-${disabled}-vertical-25`));
+    assert.ok(classes.includes("w-full"));
+  }
+});
+
+test("every Tabs part evaluates className with its own selection and orientation state", () => {
+  for (const value of ["overview", "activity"]) {
+    const html = renderToStaticMarkup(
+      <Tabs
+        value={value}
+        orientation="vertical"
+        className={(state) => `consumer-tabs-${state.orientation}`}
+      >
+        <TabsList
+          aria-label="Project views"
+          className={(state) => `consumer-list-${state.orientation}`}
+        >
+          <TabsTrigger value="overview" className={(state) => `consumer-tab-${state.active}`}>
+            Overview
+          </TabsTrigger>
+          <TabsTrigger value="activity" className="consumer-tab-string">
+            Activity
+          </TabsTrigger>
+          <TabsTrigger
+            value="unavailable"
+            disabled
+            className={(state) => `consumer-tab-disabled-${state.disabled}`}
+          >
+            Unavailable
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent
+          value="overview"
+          keepMounted
+          className={(state) => `consumer-panel-hidden-${state.hidden}`}
+        >
+          Project summary
+        </TabsContent>
+        <TabsContent value="activity" className="consumer-panel-string">
+          Recent activity
+        </TabsContent>
+      </Tabs>,
+    );
+    assert.ok(classesForSlot(html, "tabs")[0].includes("consumer-tabs-vertical"));
+    assert.ok(classesForSlot(html, "tabs-list")[0].includes("consumer-list-vertical"));
+    const triggers = classesForSlot(html, "tabs-trigger");
+    assert.ok(triggers[0].includes(`consumer-tab-${value === "overview"}`));
+    assert.ok(triggers[1].includes("consumer-tab-string"));
+    assert.ok(triggers[2].includes("consumer-tab-disabled-true"));
+    const panels = classesForSlot(html, "tabs-content");
+    assert.ok(panels[0].includes(`consumer-panel-hidden-${value !== "overview"}`));
+    if (value === "activity") assert.ok(panels[1].includes("consumer-panel-string"));
+  }
+});
+
+test("AccordionContent applies string and state-based classes to the panel element", () => {
+  for (const open of [false, true]) {
+    const html = renderToStaticMarkup(
+      <Accordion value={open ? ["details"] : []}>
+        <AccordionItem value="details">
+          <AccordionTrigger>Details</AccordionTrigger>
+          <AccordionContent
+            keepMounted
+            className={(state) => `consumer-accordion-open-${state.open}`}
+          >
+            Details content
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="reference">
+          <AccordionTrigger>Reference</AccordionTrigger>
+          <AccordionContent keepMounted className="consumer-accordion-string">
+            Reference content
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>,
+    );
+    const panels = classesForSlot(html, "accordion-content");
+    assert.equal(panels.length, 2);
+    assert.ok(panels[0].includes(`consumer-accordion-open-${open}`));
+    assert.ok(panels[1].includes("consumer-accordion-string"));
+    for (const classes of panels) assert.ok(classes.includes("overflow-hidden"));
+  }
+});
 
 function FieldFixture({
   omit,

@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 export function writeServerComponentPages(directory, aliases, items) {
-  for (const name of ["input-group", "calendar"]) {
+  for (const name of ["input-group", "calendar", "badge"]) {
     if (!items.some((item) => item.name === name)) continue;
     const source = fs.readFileSync(
       new URL(`./fixtures/server-${name}.tsx`, import.meta.url),
@@ -15,6 +15,23 @@ export function writeServerComponentPages(directory, aliases, items) {
     fs.mkdirSync(path.dirname(pagePath), { recursive: true });
     fs.writeFileSync(pagePath, source.replaceAll("@/components/ui", aliases.ui));
   }
+}
+
+export async function verifyServerBadge({ page, origin, expect }) {
+  const response = await page.goto(`${origin}/server-badge`);
+  expect(response?.status()).toBe(200);
+  await expect(page).toHaveTitle("Server badge verification");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Server-rendered badges");
+  await expect(page.locator('[data-slot="badge"]').first()).toHaveText("Published");
+  const link = page.getByRole("link", { name: "Read the guide" });
+  await expect(link).toHaveCSS("letter-spacing", "0.5px");
+  await expect(link).toHaveCSS("font-weight", "700");
+  await link.focus();
+  await expect(link).toBeFocused();
+  await link.press("Enter");
+  await expect(page).toHaveURL(`${origin}/`);
+  await page.goto(`${origin}/server-badge`);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Server-rendered badges");
 }
 
 export async function verifyServerInputGroup({ page, origin, expect }) {

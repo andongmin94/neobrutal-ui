@@ -103,3 +103,15 @@ export default function ApplicationLayout() {
 ## Accessibility
 
 Name navigation regions and give links destinations and readable labels. Collapsed icon-only items still need names. The mobile version behaves as a modal sheet; check focus and scroll at both sizes. Persistence is application-owned. Initialize `defaultOpen` or control `open` / `onOpenChange` from your own storage; the component does not write cookies.
+
+In desktop offcanvas mode, collapsed navigation is hidden from keyboard focus and assistive technology. Keep a SidebarTrigger outside the sidebar so it can be reopened. SidebarRail remains available for pointer users.
+
+`onOpenChange` also observes changes when `open` is uncontrolled. Trigger and rail click handlers run before toggling and can cancel it with `event.preventDefault()`. A disabled `SidebarMenuButton` stays disabled when it has a tooltip.
+
+## Offcanvas navigation
+
+<ComponentPreview component="sidebar" example="offcanvas">
+<include cwd lang="tsx">
+  ./src/examples/ui/sidebar/offcanvas.tsx
+</include>
+</ComponentPreview>

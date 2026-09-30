@@ -28,6 +28,50 @@ const focusControls = [
   },
 ] as const;
 
+test("carousel shortcuts preserve text editing and nested slider input", async ({ page }) => {
+  await page.goto("/docs/carousel");
+  const preview = page.locator('.component-preview[data-component="carousel"]').last();
+  await preview.scrollIntoViewIfNeeded();
+  const carousel = preview.getByRole("region", { name: "Project settings" });
+  const input = carousel.getByRole("textbox", { name: "Project title" });
+  const previous = carousel.getByRole("button", { name: "Previous slide" });
+  const next = carousel.getByRole("button", { name: "Next slide" });
+  await expect(next).toBeEnabled();
+  await input.focus();
+  await input.evaluate((node: HTMLInputElement) => node.setSelectionRange(2, 2));
+  await input.press("ArrowLeft");
+  expect(await input.evaluate((node: HTMLInputElement) => node.selectionStart)).toBe(1);
+  await input.press("ArrowRight");
+  expect(await input.evaluate((node: HTMLInputElement) => node.selectionStart)).toBe(2);
+  await expect(previous).toBeDisabled();
+
+  const slider = carousel.getByRole("slider", { name: "Project progress" });
+  await slider.focus();
+  await slider.press("ArrowRight");
+  await expect(slider).toHaveValue("51");
+  await expect(previous).toBeDisabled();
+  await carousel.focus();
+  await carousel.press("ArrowRight");
+  await expect(next).toBeDisabled();
+  await previous.focus();
+  await previous.press("ArrowLeft");
+  await expect(previous).toBeDisabled();
+  await expect(next).toBeEnabled();
+  await expect
+    .poll(() =>
+      carousel
+        .locator('[data-slot="carousel-item"]')
+        .first()
+        .evaluate((node) => {
+          const viewport = node.closest('[data-slot="carousel-content"]')!;
+          return Math.abs(
+            node.getBoundingClientRect().right - viewport.getBoundingClientRect().right,
+          );
+        }),
+    )
+    .toBeLessThanOrEqual(1);
+});
+
 for (const item of focusControls) {
   test(`${item.route}: keyboard focus stays compact and follows the consuming theme`, async ({
     page,

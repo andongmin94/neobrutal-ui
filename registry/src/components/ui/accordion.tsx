@@ -61,14 +61,14 @@ function AccordionContent({ className, children, ...props }: AccordionPrimitive.
     <AccordionPrimitive.Panel
       data-slot="accordion-content"
       {...props}
-      className="h-(--accordion-panel-height) overflow-hidden rounded-b-base bg-secondary-background text-sm font-base transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0"
+      className={(state) =>
+        cn(
+          "h-(--accordion-panel-height) overflow-hidden rounded-b-base bg-secondary-background text-sm font-base transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0",
+          typeof className === "function" ? className(state) : className,
+        )
+      }
     >
-      <div
-        className={cn(
-          "p-4 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
-          typeof className === "function" ? undefined : className,
-        )}
-      >
+      <div className="p-4 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4">
         {children}
       </div>
     </AccordionPrimitive.Panel>

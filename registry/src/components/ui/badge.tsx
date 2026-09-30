@@ -1,3 +1,6 @@
+"use client";
+
+import { useRender } from "@base-ui/react/use-render";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
@@ -21,36 +24,21 @@ const badgeVariants = cva(
 function Badge({
   className,
   variant,
-  asChild = false,
   render,
-  children,
   ...props
 }: React.ComponentProps<"span"> &
   VariantProps<typeof badgeVariants> & {
-    asChild?: boolean;
     render?: React.ReactElement;
   }) {
-  const child = asChild
-    ? (React.Children.toArray(children).find(React.isValidElement) as React.ReactElement)
-    : render;
-  const badgeClassName = cn(badgeVariants({ variant }), className);
-
-  if (React.isValidElement(child)) {
-    const childElement = child as React.ReactElement<Record<string, unknown>>;
-
-    return React.cloneElement(childElement, {
-      ...props,
-      ...childElement.props,
+  return useRender({
+    defaultTagName: "span",
+    render,
+    props: {
       "data-slot": "badge",
-      className: cn(badgeClassName, childElement.props.className as string),
-    });
-  }
-
-  return (
-    <span data-slot="badge" className={badgeClassName} {...props}>
-      {children}
-    </span>
-  );
+      ...props,
+      className: cn(badgeVariants({ variant }), className),
+    },
+  });
 }
 
 export { Badge, badgeVariants };

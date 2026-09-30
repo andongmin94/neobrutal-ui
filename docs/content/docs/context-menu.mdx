@@ -33,7 +33,7 @@ Create **`components/ui/context-menu.tsx`**:
 
 ```tsx
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   ContextMenu,
   ContextMenuTrigger,
@@ -42,17 +42,19 @@ import {
 } from "@/components/ui/context-menu";
 
 export default function FileCommands() {
+  const triggerRef = useRef<HTMLDivElement>(null);
   const [message, setMessage] = useState("No action selected.");
   return (
     <div className="grid gap-3">
       <ContextMenu>
         <ContextMenuTrigger
+          ref={triggerRef}
           className="block rounded-base border-2 border-dashed border-border p-8"
           tabIndex={0}
         >
           Right-click this file or press Shift+F10.
         </ContextMenuTrigger>
-        <ContextMenuContent>
+        <ContextMenuContent finalFocus={triggerRef}>
           <ContextMenuItem onClick={() => setMessage("Duplicate selected in this preview.")}>
             Duplicate
           </ContextMenuItem>
@@ -72,6 +74,7 @@ export default function FileCommands() {
 | `ContextMenu` | Root state and callbacks | Closed |
 | `ContextMenuTrigger` | Target region and render composition | Primitive trigger |
 | `ContextMenuContent` | Positioned menu surface | Primitive-managed |
+| `ContextMenuContent.finalFocus` | Element ref, function, or boolean controlling focus after close | Trigger or previously focused element |
 | `ContextMenuItem.onClick` / `disabled` | Action and availability | — / `false` |
 | `ContextMenuCheckboxItem` / `ContextMenuRadioGroup` | Stateful choices | Controlled or uncontrolled |
 | `ContextMenuSub` | Nested commands | — |
@@ -79,3 +82,5 @@ export default function FileCommands() {
 ## Accessibility
 
 Make the relevant target keyboard reachable when it needs keyboard context-menu access. Test Shift+F10, arrow navigation, and Escape. Keep another discoverable route to essential commands. Avoid unexpectedly replacing the browser's context menu across the entire page.
+
+Right-clicking does not focus the target in every browser. When closing the menu should return focus to its target, pass that target's ref to `ContextMenuContent.finalFocus`, as in the example. Base UI handles the focus return.

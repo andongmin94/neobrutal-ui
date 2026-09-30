@@ -1,6 +1,74 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
+test("user search matches names while preserving user IDs for selection", async ({ page }) => {
+  await page.goto("/docs/combobox");
+  await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true");
+  const preview = page.locator('.component-preview[data-component="combobox"]').filter({
+    has: page.getByRole("tablist", { name: "combobox users preview", exact: true }),
+  });
+  await preview.locator("[data-react-host]").scrollIntoViewIfNeeded();
+  const trigger = preview.getByRole("combobox", { name: "Select a user", exact: true });
+  await expect(trigger).toContainText("johndoe");
+  await trigger.press("Enter");
+  const input = page.getByRole("combobox", { name: "Search user...", exact: true });
+  const popup = page.getByRole("dialog", { name: "Choose a user", exact: true });
+  await expect(popup).toBeVisible();
+  await expect(trigger).toHaveAttribute("aria-haspopup", "dialog");
+  await expect(trigger).toHaveAttribute("aria-controls", (await popup.getAttribute("id"))!);
+  await expect(popup.getByRole("combobox", { name: "Search user...", exact: true })).toBeVisible();
+  const options = page.locator('[data-slot="command-list"]').getByRole("option");
+  await input.fill("janedoe");
+  await expect(options).toHaveCount(1);
+  await expect(options).toContainText("janedoe");
+  await input.press("Enter");
+  await expect(input).toBeHidden();
+  await expect(trigger).toBeFocused();
+  await expect(trigger).toContainText("janedoe");
+  await trigger.press("Enter");
+  await input.fill("alexsmith");
+  await expect(options).toHaveCount(1);
+  await expect(options).toContainText("alexsmith");
+  await options.click();
+  await expect(input).toBeHidden();
+  await expect(trigger).toContainText("alexsmith");
+});
+
+test("timezone search matches displayed GMT offsets and selects the original zone", async ({
+  page,
+}) => {
+  await page.goto("/docs/combobox");
+  await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true");
+  const preview = page.locator('.component-preview[data-component="combobox"]').filter({
+    has: page.getByRole("tablist", { name: "combobox timezones preview", exact: true }),
+  });
+  await preview.locator("[data-react-host]").scrollIntoViewIfNeeded();
+  const trigger = preview.getByRole("combobox", { name: "Select a timezone", exact: true });
+  await trigger.press("Enter");
+  const input = page.getByRole("combobox", { name: "Search timezone...", exact: true });
+  const popup = page.getByRole("dialog", { name: "Choose a timezone", exact: true });
+  await expect(popup).toBeVisible();
+  await expect(trigger).toHaveAttribute("aria-haspopup", "dialog");
+  await expect(trigger).toHaveAttribute("aria-controls", (await popup.getAttribute("id"))!);
+  await expect(
+    popup.getByRole("combobox", { name: "Search timezone...", exact: true }),
+  ).toBeVisible();
+  const options = page.locator('[data-slot="command-list"]').getByRole("option");
+  await input.fill("GMT-5");
+  await expect(options).toHaveCount(2);
+  await expect(options).toContainText(["(GMT-5) New York", "(GMT-5) Toronto"]);
+  await options.filter({ hasText: "(GMT-5) Toronto" }).click();
+  await expect(input).toBeHidden();
+  await expect(trigger).toContainText("(GMT-5) Toronto");
+  await trigger.press("Enter");
+  await input.fill("America/Toronto");
+  await expect(options).toHaveCount(1);
+  await expect(options).toContainText("(GMT-5) Toronto");
+  await input.press("Escape");
+  await expect(trigger).toBeFocused();
+  await expect(trigger).toContainText("(GMT-5) Toronto");
+});
+
 test("multiple selections survive navigation, filtering, reopening and deselection", async ({
   page,
 }, info) => {

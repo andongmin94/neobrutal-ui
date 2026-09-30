@@ -13,7 +13,7 @@
     "lint": "oxlint --deny-warnings --format unix --no-error-on-unmatched-pattern src scripts tests press.config.tsx vite.config.ts && oxfmt --check --no-error-on-unmatched-pattern src scripts tests press.config.tsx vite.config.ts tsconfig.json package.json .oxlintrc.json .oxfmtrc.json",
     "pretypecheck": "npm run generate",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test scripts/beginner-copy.test.ts scripts/build-info.test.ts scripts/docs-contract.test.ts scripts/preview-contract.test.ts scripts/template-contract.test.ts scripts/product-foundation.test.tsx scripts/fumapress-runtime.test.ts scripts/chart-contract.test.ts",
+    "test": "tsx --test scripts/beginner-copy.test.ts scripts/build-info.test.ts scripts/docs-contract.test.ts scripts/preview-contract.test.ts scripts/template-contract.test.ts scripts/product-foundation.test.tsx scripts/fumapress-runtime.test.ts scripts/chart-contract.test.tsx",
     "test:browser": "playwright test",
     "test:browser:cross": "playwright test --config=playwright.cross-browser.config.ts",
     "check:budget": "node scripts/check-build-budget.mjs",

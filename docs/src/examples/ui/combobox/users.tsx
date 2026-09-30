@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckIcon, ChevronsUpDown, PlusCircleIcon } from "lucide-react";
+import { CheckIcon, ChevronsUpDown } from "lucide-react";
 
 import * as React from "react";
 
@@ -13,7 +13,6 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
@@ -52,7 +51,6 @@ export default function UserCombobox() {
           <Button
             variant="noShadow"
             role="combobox"
-            aria-haspopup="listbox"
             aria-label="Select a user"
             aria-expanded={open}
             aria-controls={open ? contentId : undefined}
@@ -72,7 +70,11 @@ export default function UserCombobox() {
         )}
         <ChevronsUpDown className="text-muted-foreground" />
       </PopoverTrigger>
-      <PopoverContent id={contentId} className="w-(--anchor-width) border-0 p-0">
+      <PopoverContent
+        id={contentId}
+        aria-label="Choose a user"
+        className="w-(--anchor-width) border-0 p-0"
+      >
         <Command className="**:data-[slot=command-input-wrapper]:h-11">
           <CommandInput placeholder="Search user..." />
           <CommandList className="p-1">
@@ -82,6 +84,7 @@ export default function UserCombobox() {
                 <CommandItem
                   key={user.id}
                   value={user.id}
+                  keywords={[user.username]}
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
@@ -96,13 +99,6 @@ export default function UserCombobox() {
                   />
                 </CommandItem>
               ))}
-            </CommandGroup>
-            <CommandSeparator />
-            <CommandGroup>
-              <CommandItem>
-                <PlusCircleIcon />
-                Create user
-              </CommandItem>
             </CommandGroup>
           </CommandList>
         </Command>

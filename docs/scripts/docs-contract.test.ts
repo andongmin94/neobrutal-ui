@@ -25,6 +25,7 @@ type CatalogItem = {
   description: string;
   categories?: string[];
   dependencies?: string[];
+  registryDependencies?: string[];
   files: { path: string }[];
 };
 
@@ -187,6 +188,16 @@ test("every component document has complete usage, API, accessibility and instal
       );
     for (const dependency of item.dependencies ?? [])
       assert.ok(installation.includes(dependency), `${slug}: missing package ${dependency}`);
+    for (const dependency of item.registryDependencies ?? []) {
+      const dependencySlug = new URL(dependency).pathname
+        .split("/")
+        .pop()!
+        .replace(/\.json$/, "");
+      assert.ok(
+        installation.includes(`](/docs/${dependencySlug})`),
+        `${slug}: missing manual installation link for registry dependency ${dependencySlug}`,
+      );
+    }
   }
 });
 

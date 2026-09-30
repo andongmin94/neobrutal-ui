@@ -54,7 +54,7 @@ export default function FrameworkPicker() {
       >
         {value || "Choose framework"}
       </PopoverTrigger>
-      <PopoverContent className="w-64 p-0">
+      <PopoverContent aria-label="Choose a framework" className="w-64 p-0">
         <Command>
           <CommandInput placeholder="Search frameworks…" aria-label="Search frameworks" />
           <CommandList>
@@ -93,6 +93,10 @@ export default function FrameworkPicker() {
 ## Accessibility
 
 Name the selection control and search field. Keep the current selection visible in the trigger. Verify keyboard opening, list navigation, selection, dismissal, and focus return. Do not use a searchable popup for unrestricted free-text entry; these recipes select from predefined options. For server search, add loading and error states and disable client filtering when the server owns results.
+
+Command filters each item's `value` and `keywords`. When a stable ID differs from its visible label, keep the ID as `value` and pass the label in `keywords`, as the Users and Timezones examples do. This lets users search names or GMT offsets while selection still returns the original ID.
+
+The single-selection popup is a dialog containing the search field and listbox. Give `PopoverContent` an accessible name and retain PopoverTrigger's native `aria-haspopup="dialog"`; its `aria-controls` must reference the popup, rather than the nested listbox.
 
 For multiple selection, use `Combobox.Root` with `multiple` and optionally control its array-valued `value` and `onValueChange`.
 Base UI manages listbox selection, the active descendant, filtering and focus; do not replace these with Command's single current-item state.

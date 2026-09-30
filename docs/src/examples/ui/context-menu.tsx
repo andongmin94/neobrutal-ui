@@ -1,7 +1,7 @@
 "use client";
 
 import { Copy, ExternalLink, FolderInput, Pin, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import {
   ContextMenu,
@@ -20,13 +20,16 @@ import {
 } from "@/components/ui/context-menu";
 
 export default function ContextMenuDemo() {
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const [pinned, setPinned] = useState(true);
   const [visibility, setVisibility] = useState("team");
 
   return (
     <ContextMenu>
       <ContextMenuTrigger
-        render={<button type="button" aria-label="Open component card context menu" />}
+        render={
+          <button ref={triggerRef} type="button" aria-label="Open component card context menu" />
+        }
         aria-haspopup="menu"
         className="flex min-h-44 w-full max-w-sm flex-col items-start justify-between rounded-base border-2 border-border bg-secondary-background p-5 text-left shadow-shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
       >
@@ -40,7 +43,7 @@ export default function ContextMenuDemo() {
           </span>
         </span>
       </ContextMenuTrigger>
-      <ContextMenuContent className="w-64">
+      <ContextMenuContent className="w-64" finalFocus={triggerRef}>
         <ContextMenuItem>
           <ExternalLink aria-hidden="true" />
           Open documentation

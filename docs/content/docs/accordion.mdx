@@ -67,6 +67,8 @@ export default function HelpSections() {
 | `AccordionItem.disabled` | Disables the section | `false` |
 | `AccordionContent.keepMounted` | Retains closed panel DOM | `false` |
 
+`className` accepts a string or a function of the part's Base UI state. On `AccordionContent`, both forms style the panel element; target its direct child to customize the inner padding.
+
 ## Accessibility
 
 Write the section name in `AccordionTrigger`; it is a button inside a heading. Enter and Space toggle an item. Arrow keys move between triggers; Home and End reach the first and last enabled triggers. Do not nest another button or link inside the trigger. In controlled mode, treat the value as the array of currently open item values.
