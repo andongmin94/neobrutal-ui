@@ -73,7 +73,7 @@ Base UI owns pointer capture, keyboard stepping, value normalization, collision 
 
 ## Accessibility
 
-Name each thumb, especially for minimum/maximum ranges. Show values and units in text. Test arrows, Home, and End, and keep pointer targets usable. Run expensive work at the end of interaction rather than on every drag update.
+Name each thumb, especially for minimum/maximum ranges. Connect a visible group title with `aria-labelledby` and name each thumb with `getAriaLabel`. Show values and units in text. Test arrows, Home, and End, and keep pointer targets usable. Run expensive work at the end of interaction rather than on every drag update.
 
 ## Examples
 
@@ -95,11 +95,7 @@ Name each thumb, especially for minimum/maximum ranges. Show values and units in
 
 ### Controlled
 
-This example additionally uses [Label](/docs/label). Install it before copying the Code:
-
-```bash
-npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/label.json
-```
+The visible title names the slider group, and each thumb has its own minimum or maximum label.
 
 <ComponentPreview component="slider" example="controlled">
 <include cwd lang="tsx">

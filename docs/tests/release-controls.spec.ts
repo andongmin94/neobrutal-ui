@@ -213,3 +213,37 @@ test("native slider stepping, boundaries, and pointer input agree with its value
   await expect.poll(async () => Number(await thumb.inputValue())).toBeGreaterThan(min);
   await expect.poll(async () => Number(await thumb.inputValue())).toBeLessThan(max);
 });
+
+test("controlled slider labels its range group and reflects keyboard changes", async ({ page }) => {
+  await page.goto("/docs/slider");
+  const preview = page.locator('.component-preview[data-component="slider"]').filter({
+    has: page.getByRole("tablist", { name: "slider controlled preview", exact: true }),
+  });
+  await expect(preview).toHaveCount(1);
+  const canvas = preview.locator(".component-preview__canvas");
+  const host = canvas.locator('[data-react-host="component"][data-react-component="slider"]');
+  await host.scrollIntoViewIfNeeded();
+  await expect(host).not.toHaveAttribute("aria-busy", "true");
+  await expect(host.locator(".react-host__mount > *").first()).toBeAttached();
+  await expect(host.locator(".react-host__error")).toHaveCount(0);
+
+  const range = canvas.locator('[data-slot="slider"]');
+  await expect(range).toHaveRole("group");
+  await expect(range).toHaveAccessibleName("Temperature");
+  const minimum = range.getByRole("slider", { name: "Minimum temperature", exact: true });
+  const maximum = range.getByRole("slider", { name: "Maximum temperature", exact: true });
+  await expect(minimum).toHaveValue("0.3");
+  await expect(maximum).toHaveValue("0.7");
+  await expect(canvas).toContainText("0.3, 0.7");
+
+  await minimum.focus();
+  await minimum.press("ArrowRight");
+  await expect(minimum).toHaveValue("0.4");
+  await expect(maximum).toHaveValue("0.7");
+  await expect(canvas).toContainText("0.4, 0.7");
+  await maximum.focus();
+  await maximum.press("ArrowLeft");
+  await expect(minimum).toHaveValue("0.4");
+  await expect(maximum).toHaveValue("0.6");
+  await expect(canvas).toContainText("0.4, 0.6");
+});
