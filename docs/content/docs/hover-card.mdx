@@ -54,9 +54,12 @@ export default function DocumentationPreview() {
 | --- | --- | --- |
 | `HoverCard.open` / `onOpenChange` | Controlled preview visibility | Uncontrolled |
 | `HoverCardTrigger.href` / `render` | Link destination or composition | Anchor |
-| `HoverCardContent.side` / `align` | Preferred placement | Wrapper positioning |
+| `HoverCardContent.side` / `align` | Preferred placement | `bottom` / `center` |
 | `HoverCardContent.sideOffset` | Trigger-to-card gap | `4` |
 | `HoverCardContent.className` | Width and layout | Styled surface |
+| `HoverCardTrigger.delay` / `closeDelay` | Hover opening and closing delay, in milliseconds | `700` / `300` |
+| `HoverCardContent.alignOffset` / `arrowPadding` / `collisionPadding` | Alignment, arrow, and collision-boundary spacing, in pixels | `0` |
+| `HoverCardContent.positionMethod` | CSS positioning method | `fixed` |
 
 ## Accessibility
 

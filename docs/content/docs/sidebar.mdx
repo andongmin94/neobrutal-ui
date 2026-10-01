@@ -103,11 +103,16 @@ export default function ApplicationLayout() {
 | --- | --- | --- |
 | `SidebarProvider.defaultOpen` | Initial desktop expanded state | `true` |
 | `SidebarProvider.open` / `onOpenChange` | Controlled desktop state | Uncontrolled |
-| `Sidebar.side` | left or right | `left` |
-| `Sidebar.variant` | sidebar, floating, or inset | `sidebar` |
-| `Sidebar.collapsible` | offcanvas, icon, or none | `offcanvas` |
+| `Sidebar.side` | `left` or `right` | `left` |
+| `Sidebar.variant` | `sidebar`, `floating`, or `inset` | `sidebar` |
+| `Sidebar.collapsible` | `offcanvas`, `icon`, or `none` | `offcanvas` |
 | `SidebarTrigger` / `useSidebar` | Toggle and context access | Provider required |
 | `SidebarMenuButton.isActive` | Active link styling | `false` |
+| `SidebarMenuButton.variant` | Menu button appearance: `default` or `outline` | `default` |
+| `SidebarMenuButton.size` | Menu button size: `default`, `sm`, or `lg` | `default` |
+| `SidebarMenuAction.showOnHover` | Reveal the action on hover or keyboard focus | `false` |
+| `SidebarMenuSubButton.size` | Nested link size: `sm` or `md` | `md` |
+| `SidebarMenuSubButton.isActive` | Active nested-link styling | `false` |
 
 ## Accessibility
 

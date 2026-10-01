@@ -2,7 +2,12 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { test } from "node:test";
-import ts from "@typescript/typescript6";
+import {
+  getDocumentExamples,
+  readDocsExamples,
+  verifyDocsExamples,
+  type DocsExample,
+} from "./verify-docs-examples";
 
 import { getPreviewIdentity, previewKey } from "../src/data/preview-registry";
 
@@ -86,147 +91,118 @@ test("documentation and discoverable preview sources stay bidirectionally comple
   }
 });
 
-test("all published preview code includes its helpers and documented installation dependencies", () => {
-  const catalog = JSON.parse(fs.readFileSync("../registry/registry.json", "utf8")) as {
-    items: {
-      name: string;
-      dependencies?: string[];
-      registryDependencies?: string[];
-      files?: { path: string }[];
-    }[];
+test("all published preview code includes helpers, declares installs and compiles for consumers", () => {
+  const examples = readDocsExamples("preview");
+  assert.equal(examples.length, getDocumentedPreviewKeys().size);
+  assert.equal(verifyDocsExamples(examples), examples.length);
+});
+
+function replaceExampleSource(example: DocsExample, source: string): DocsExample {
+  const fileName = example.sources.keys().next().value!;
+  return { ...example, sources: new Map([[fileName, source]]) };
+}
+
+test("Usage cannot import undocumented components, npm packages or docs-only aliases", () => {
+  const example = readDocsExamples("usage").find(({ slug }) => slug === "button")!;
+  for (const dependency of ["@/components/ui/label", "fumapress", "@/data/theme"]) {
+    const invalid = replaceExampleSource(
+      example,
+      `import * as dependency from "${dependency}";\nexport default dependency;\n`,
+    );
+    assert.throws(() => verifyDocsExamples([invalid]), /needs a documented (npm )?install/);
+  }
+});
+
+test("published Code rejects omitted helpers even when the docs project contains them", () => {
+  const example = readDocsExamples("preview").find(
+    ({ identity }) => identity === "sidebar/primary",
+  )!;
+  const sources = new Map(
+    [...example.sources].filter(([fileName]) => !path.basename(fileName).startsWith("_")),
+  );
+  assert.equal(sources.size, example.sources.size - 1);
+  assert.throws(
+    () => verifyDocsExamples([{ ...example, sources }]),
+    /Code omits supporting file .*_sidebar/,
+  );
+});
+
+test("included helper imports cannot be satisfied by docs-only dependencies", () => {
+  const example = readDocsExamples("preview").find(
+    ({ identity }) => identity === "sidebar/primary",
+  )!;
+  const sources = new Map(example.sources);
+  const helper = [...sources.keys()].find((fileName) => path.basename(fileName).startsWith("_"))!;
+  sources.set(helper, `${sources.get(helper)}\nexport * from "fumapress";\n`);
+  assert.throws(
+    () => verifyDocsExamples([{ ...example, sources }]),
+    /fumapress needs a documented npm install/,
+  );
+});
+
+test("side-effect imports, re-exports and dynamic imports also require documented installs", () => {
+  const example = readDocsExamples("usage").find(({ slug }) => slug === "button")!;
+  for (const source of [
+    'import "fumapress";',
+    'export * from "fumapress";',
+    'const load = () => import("fumapress");',
+    'type Runtime = import("fumapress");',
+    'const runtime = require("fumapress");',
+  ])
+    assert.throws(
+      () => verifyDocsExamples([replaceExampleSource(example, source)]),
+      /fumapress needs a documented npm install/,
+    );
+  assert.throws(
+    () =>
+      verifyDocsExamples([
+        replaceExampleSource(example, 'const dependency = "fumapress"; void import(dependency);'),
+      ]),
+    /imports must name their dependency explicitly/,
+  );
+});
+
+test("secondary preview type errors are rejected independently of docs project compilation", () => {
+  const examples = readDocsExamples("preview");
+  const example = examples.find(({ identity }) => identity === "input/file")!;
+  const primary = examples.find(({ identity }) => identity === "input/primary")!;
+  const [fileName, source] = [...example.sources][0];
+  assert.match(source, /<Input\b/);
+  const invalid = {
+    ...example,
+    sources: new Map([
+      [fileName, source.replace(/<Input\b/, "<Input registryContractTypo={true}")],
+    ]),
   };
-  const itemByName = new Map(catalog.items.map((item) => [item.name, item]));
-  let checkedPreviews = 0;
+  assert.throws(() => verifyDocsExamples([primary, invalid]), /registryContractTypo/);
+});
 
-  function packageName(dependency: string) {
-    const versionSeparator = dependency.lastIndexOf("@");
-    const name = versionSeparator > 0 ? dependency.slice(0, versionSeparator) : dependency;
-    return name
-      .split("/")
-      .slice(0, name.startsWith("@") ? 2 : 1)
-      .join("/");
-  }
+test("removing a secondary example's documented install rejects its unchanged Code", () => {
+  const example = readDocsExamples("preview").find(({ identity }) => identity === "input/file")!;
+  const document = example.document.replace(/## Examples\n[\s\S]*?(?=### File)/, "## Examples\n\n");
+  assert.notEqual(document, example.document);
+  assert.throws(
+    () => verifyDocsExamples([{ ...example, document }]),
+    /@\/components\/ui\/label needs a documented install/,
+  );
+});
 
-  for (const fileName of fs.readdirSync("content/docs").filter((name) => name.endsWith(".mdx"))) {
-    const document = fs.readFileSync(`content/docs/${fileName}`, "utf8");
-    const previews = [
-      ...document.matchAll(/<ComponentPreview\b([^>]*)>([\s\S]*?)<\/ComponentPreview>/g),
-    ];
-    if (!previews.length) continue;
-    const slug = fileName.replace(/\.mdx$/, "");
-    const installed = new Set<string>();
-    const modules = new Set<string>();
-    // The installation guide starts with the shared base and the first Button.
-    const packages = new Set(["react", "react-dom"]);
-    const pending = [
-      "neobrutal-ui",
-      "button",
-      ...(itemByName.has(slug) ? [slug] : []),
-      ...[...document.matchAll(/https:\/\/neobrutal-ui\.andongmin\.com\/r\/([\w-]+)\.json/g)].map(
-        (match) => match[1],
-      ),
-    ];
+test("all Usage blocks compile, including an invalid block after a valid first example", () => {
+  const original = fs.readFileSync("content/docs/button.mdx", "utf8");
+  const document = original.replace(
+    "## API reference",
+    '```tsx\nimport { Button } from "@/components/ui/button";\nexport default function InvalidButton() { return <Button registryContractTypo />; }\n```\n\n## API reference',
+  );
+  const examples = getDocumentExamples("button", document, "usage");
+  assert.equal(examples.length, 2);
+  assert.throws(() => verifyDocsExamples(examples), /registryContractTypo/);
+});
 
-    // An installation instruction can point to another component's documentation.
-    const prose = document.replace(/```[\s\S]*?```/g, "");
-    for (const paragraph of prose.split(/\n\s*\n/)) {
-      if (!/\binstall\b/i.test(paragraph)) continue;
-      for (const match of paragraph.matchAll(/\]\(\/docs\/([\w-]+)\)/g))
-        if (itemByName.has(match[1])) pending.push(match[1]);
-    }
-    for (const match of document.matchAll(/\bnpm install\s+([^\n`]+)/g))
-      for (const dependency of match[1].trim().split(/\s+/))
-        if (!dependency.startsWith("-")) packages.add(packageName(dependency));
-
-    for (const name of pending) {
-      if (installed.has(name)) continue;
-      installed.add(name);
-      // The shared base declares shadcn's built-in utils item.
-      if (name === "utils") {
-        assert.ok(itemByName.get("neobrutal-ui")?.registryDependencies?.includes("utils"));
-        modules.add("@/lib/utils");
-        continue;
-      }
-      const item = itemByName.get(name);
-      assert.ok(item, `${slug}: unknown registry item ${name}`);
-      for (const file of item.files ?? [])
-        if (file.path.startsWith("src/"))
-          modules.add(`@/${file.path.slice("src/".length).replace(/\.[jt]sx?$/, "")}`);
-      for (const dependency of item.dependencies ?? []) packages.add(packageName(dependency));
-      for (const dependency of item.registryDependencies ?? [])
-        pending.push(
-          dependency === "utils"
-            ? dependency
-            : path.basename(new URL(dependency).pathname, ".json"),
-        );
-    }
-
-    for (const preview of previews) {
-      checkedPreviews++;
-      const component = preview[1].match(/component="([^"]+)"/)?.[1];
-      const example = preview[1].match(/example="([^"]+)"/)?.[1] ?? "primary";
-      const identity = `${component}/${example}`;
-      const sources = new Set(
-        [...preview[2].matchAll(/<include\b[^>]*>\s*([^<]+?)\s*<\/include>/g)].map((match) =>
-          path.resolve(match[1].trim()),
-        ),
-      );
-      assert.ok(sources.size, `${identity}: Code has no included source`);
-
-      for (const file of sources) {
-        const source = ts.createSourceFile(
-          file,
-          fs.readFileSync(file, "utf8"),
-          ts.ScriptTarget.Latest,
-          true,
-          ts.ScriptKind.TSX,
-        );
-        const dependencies: string[] = [];
-        function visit(node: ts.Node) {
-          if (
-            (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
-            node.moduleSpecifier &&
-            ts.isStringLiteral(node.moduleSpecifier)
-          )
-            dependencies.push(node.moduleSpecifier.text);
-          else if (
-            ts.isCallExpression(node) &&
-            node.expression.kind === ts.SyntaxKind.ImportKeyword &&
-            node.arguments[0] &&
-            ts.isStringLiteral(node.arguments[0])
-          )
-            dependencies.push(node.arguments[0].text);
-          ts.forEachChild(node, visit);
-        }
-        visit(source);
-
-        for (const dependency of dependencies) {
-          if (dependency.startsWith("@/"))
-            assert.ok(
-              modules.has(dependency),
-              `${identity}: ${dependency} needs a documented install`,
-            );
-          else if (dependency.startsWith(".")) {
-            const target = path.resolve(path.dirname(file), dependency);
-            assert.ok(
-              [
-                target,
-                `${target}.tsx`,
-                `${target}.ts`,
-                path.join(target, "index.tsx"),
-                path.join(target, "index.ts"),
-              ].some((candidate) => sources.has(candidate)),
-              `${identity}: Code omits supporting file ${dependency}`,
-            );
-          } else
-            assert.ok(
-              packages.has(packageName(dependency)),
-              `${identity}: ${dependency} needs a documented npm install`,
-            );
-        }
-      }
-    }
-  }
-
-  assert.equal(checkedPreviews, getDocumentedPreviewKeys().size);
+test("built-in consumer utils cannot expose application-only utility exports", () => {
+  const example = readDocsExamples("usage").find(({ slug }) => slug === "button")!;
+  const invalid = replaceExampleSource(
+    example,
+    'import { addSpaces } from "@/lib/utils"; export default addSpaces;',
+  );
+  assert.throws(() => verifyDocsExamples([invalid]), /no exported member.*addSpaces/);
 });

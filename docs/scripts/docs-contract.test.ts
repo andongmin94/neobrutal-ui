@@ -231,6 +231,11 @@ test("documentation includes and internal content links resolve", () => {
 });
 
 test("all component Usage examples compile against the installed component types", async () => {
-  const { verifyDocsUsage } = await import("./verify-docs-usage");
-  assert.equal(verifyDocsUsage(), COMPONENT_DIRECTORY_LINKS.length);
+  const { readDocsExamples, verifyDocsExamples } = await import("./verify-docs-examples");
+  const examples = readDocsExamples("usage");
+  assert.deepEqual(
+    [...new Set(examples.map(({ slug }) => slug))].sort(),
+    getDocumentedSlugs().sort(),
+  );
+  assert.equal(verifyDocsExamples(examples), examples.length);
 });

@@ -83,6 +83,10 @@ Keep wide data tables in their own keyboard-accessible scroll area. Do not hide 
 | `ChartTooltipContent.indicator` | `dot`, `line`, or `dashed` | `dot` |
 | `ChartTooltipContent.formatter` | Recharts callback returning a `[formattedValue, formattedName]` tuple or complete row content | Default series name and value |
 | `ChartTooltipContent.htmlProps` / `ChartLegendContent.htmlProps` | Native attributes, styles, events, and ref for the content's outer div | Unset |
+| `ChartContainer.initialDimension` | Initial responsive width and height before measurement, in pixels | `{ width: 320, height: 200 }` |
+| `ChartTooltipContent.hideLabel` / `hideIndicator` | Hide the tooltip heading or series indicators | `false` |
+| `ChartLegendContent.hideIcon` | Hide series icons in the legend | `false` |
+| `ChartLegendContent.verticalAlign` | Position legend spacing above or below the chart | `bottom` |
 
 Return `[formattedValue, formattedName]` to keep the styled indicator, name, and value layout. Both parts can contain JSX; zero and empty names are preserved. A JSX or other non-array return replaces the complete row content. Returning `null` or `undefined` omits that row. The callback receives the original payload entry, index, and complete payload:
 

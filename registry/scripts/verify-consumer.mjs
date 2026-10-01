@@ -310,7 +310,7 @@ function createNextFixture(directory) {
     name: "neobrutal-registry-next-consumer",
     private: true,
     scripts: { build: "next build" },
-    dependencies: { next: "^16.3.5", react: "19.2.8", "react-dom": "19.2.8" },
+    dependencies: { next: "^16.3.6", react: "19.2.8", "react-dom": "19.2.8" },
     devDependencies: {
       "@tailwindcss/postcss": "^4.3.3",
       "@types/node": "^26.1.1",

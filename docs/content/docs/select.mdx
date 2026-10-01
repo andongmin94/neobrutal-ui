@@ -78,9 +78,13 @@ export default function PublicationStatus() {
 | `Select.defaultValue` | Initial selection | Unset |
 | `Select.items` | Value-to-label mapping or `{ value, label }` array used by SelectValue to display the selected label | Unset |
 | `Select.name` / `required` / `disabled` | Form key and constraints | Unset / false / false |
-| `SelectTrigger.size` | sm or default | `default` |
+| `SelectTrigger.size` | `sm` or `default` | `default` |
 | `SelectValue.placeholder` | Prompt without selection | Unset |
 | `SelectItem.value` / `disabled` | Option value and availability | Value required / false |
+| `SelectContent.side` / `align` | Preferred popup placement and alignment | `bottom` / `start` |
+| `SelectContent.alignItemWithTrigger` | Align the selected item over the trigger | `false` |
+| `SelectContent.alignOffset` / `arrowPadding` / `collisionPadding` | Alignment, arrow, and collision-boundary spacing, in pixels | `0` |
+| `SelectContent.sideOffset` | Trigger-to-popup gap, in pixels | `4` |
 
 Pass the same options to `Select.items` and render their `SelectItem` elements, as in the Usage example. `items` supplies the selected display label; it does not render the popup options. Base UI 1.8 does not infer that label from `SelectItem` text. Labels can contain icons and text, and `SelectValue` also accepts a child function for custom display.
 
