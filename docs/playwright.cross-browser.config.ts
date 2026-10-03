@@ -6,6 +6,7 @@ export default defineConfig({
   testDir: "./tests",
   testMatch: [
     "cross-browser.spec.ts",
+    "github-stars.spec.ts",
     "control-contrast.spec.ts",
     "compound-input-contrast.spec.ts",
     "dialog-viewport.spec.ts",
@@ -30,6 +31,20 @@ export default defineConfig({
   use: {
     baseURL,
     locale: "en-US",
+    storageState: {
+      cookies: [],
+      origins: [
+        {
+          origin: new URL(baseURL).origin,
+          localStorage: [
+            {
+              name: "neobrutal-ui-github-stars",
+              value: JSON.stringify({ count: 10_000, fetchedAt: Date.now() }),
+            },
+          ],
+        },
+      ],
+    },
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },

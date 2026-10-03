@@ -4,28 +4,12 @@ import { Link, useRouter } from "fumapress/client";
 import { Menu, Star, X as CloseIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { getGitHubStars } from "@/site/lib/github-stars";
 import { isNavigationPathActive, PRIMARY_NAVIGATION_LINKS } from "@/site/lib/navigation";
 import { SearchLauncher } from "./search-launcher";
 import { ThemeToggle } from "./theme-toggle";
 
 const GITHUB_REPOSITORY_URL = "https://github.com/andongmin94/neobrutal-ui";
-const GITHUB_STARS_URL = "/api/github-stars";
-
-let githubStarsRequest: Promise<number | null> | undefined;
-
-function getGitHubStars() {
-  if (typeof window === "undefined") return Promise.resolve(null);
-
-  githubStarsRequest ??= fetch(GITHUB_STARS_URL)
-    .then(async (response) => {
-      if (!response.ok) return null;
-      const payload = await response.json();
-      return typeof payload.count === "number" ? payload.count : null;
-    })
-    .catch(() => null);
-
-  return githubStarsRequest;
-}
 
 function formatGitHubStars(value: number) {
   return new Intl.NumberFormat("en-US", {

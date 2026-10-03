@@ -13,6 +13,20 @@ export default defineConfig({
   use: {
     baseURL,
     browserName: "chromium",
+    storageState: {
+      cookies: [],
+      origins: [
+        {
+          origin: new URL(baseURL).origin,
+          localStorage: [
+            {
+              name: "neobrutal-ui-github-stars",
+              value: JSON.stringify({ count: 10_000, fetchedAt: Date.now() }),
+            },
+          ],
+        },
+      ],
+    },
     trace: "retain-on-failure",
     screenshot: "on",
   },

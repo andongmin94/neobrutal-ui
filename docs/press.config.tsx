@@ -109,36 +109,6 @@ const config = defineConfig({
 
 type SiteContext = typeof config.$context;
 
-const githubStarsPlugin: PressPlugin<SiteContext> = {
-  name: "site:github-stars",
-  createPages({ createApiIsomorphic }) {
-    createApiIsomorphic({
-      render: "static",
-      path: "/api/github-stars",
-      async handler() {
-        try {
-          const response = await fetch("https://api.github.com/repos/andongmin94/neobrutal-ui", {
-            headers: {
-              Accept: "application/vnd.github+json",
-              "User-Agent": "neobrutal-ui-build",
-            },
-          });
-
-          if (!response.ok) return Response.json({ count: null });
-
-          const payload = await response.json();
-          const count =
-            typeof payload.stargazers_count === "number" ? payload.stargazers_count : null;
-
-          return Response.json({ count });
-        } catch {
-          return Response.json({ count: null });
-        }
-      },
-    });
-  },
-};
-
 const metadataPlugin: PressPlugin<SiteContext> = {
   name: "site:metadata",
   init() {
@@ -171,9 +141,4 @@ export default config
       },
     }),
   )
-  .plugins(
-    oramaSearchPlugin<SiteContext>(),
-    sitemapPlugin<SiteContext>(),
-    githubStarsPlugin,
-    metadataPlugin,
-  );
+  .plugins(oramaSearchPlugin<SiteContext>(), sitemapPlugin<SiteContext>(), metadataPlugin);
