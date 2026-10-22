@@ -16,6 +16,7 @@
     "test": "tsx --test scripts/beginner-copy.test.ts scripts/build-info.test.ts scripts/docs-contract.test.ts scripts/api-contract.test.ts scripts/preview-contract.test.ts scripts/template-contract.test.ts scripts/product-foundation.test.tsx scripts/fumapress-runtime.test.ts scripts/chart-contract.test.tsx scripts/github-stars.test.ts",
     "test:browser": "playwright test",
     "test:browser:cross": "playwright test --config=playwright.cross-browser.config.ts",
+    "test:browser:smoke": "playwright test --config=playwright.smoke.config.ts",
     "check:budget": "node scripts/check-build-budget.mjs",
     "verify:deployment": "node scripts/verify-deployment.mjs"
   },

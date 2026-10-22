@@ -1,10 +1,10 @@
 import { defineConfig } from "@playwright/test";
 
-const baseURL = process.env.DOCS_TEST_URL ?? "http://127.0.0.1:4173";
+const baseURL = "http://127.0.0.1:4173";
 
 export default defineConfig({
   testDir: "./tests",
-  testIgnore: "cross-browser.spec.ts",
+  testIgnore: ["cross-browser.spec.ts", "**/smoke/**"],
   fullyParallel: true,
   workers: process.env.CI ? 2 : undefined,
   retries: 0,
@@ -50,11 +50,9 @@ export default defineConfig({
       },
     },
   ],
-  webServer: process.env.DOCS_TEST_URL
-    ? undefined
-    : {
-        command: "npm run start -- --host 127.0.0.1 --port 4173",
-        url: baseURL,
-        reuseExistingServer: !process.env.CI,
-      },
+  webServer: {
+    command: "npm run start -- --host 127.0.0.1 --port 4173",
+    url: baseURL,
+    reuseExistingServer: !process.env.CI,
+  },
 });

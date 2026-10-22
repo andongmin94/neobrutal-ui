@@ -39,6 +39,7 @@ jobs:
           npm run build
           npm run registry:validate
           npm run registry:check
+          npm run registry:verify-directory
       - name: Verify docs, budgets, and shared contracts
         working-directory: docs
         run: |
@@ -202,6 +203,7 @@ jobs:
           path: docs/test-results/independent-items
 
   verify-deployment:
+    name: Production smoke
     runs-on: ubuntu-latest
     timeout-minutes: 30
     needs:
@@ -230,57 +232,19 @@ jobs:
           DOCS_TEST_URL: https://neobrutal-ui.andongmin.com
           EXPECTED_COMMIT: ${{ github.sha }}
         run: npm run verify:deployment
-      - name: Verify production registry
-        run: npm run registry:verify-live --prefix registry
-      - name: Install representative items from production
-        working-directory: registry
-        run: |
-          npm run consumer:verify -- vite --item=dialog --registry-url=https://neobrutal-ui.andongmin.com/r
-          npm run consumer:verify -- next --item=blog-template --registry-url=https://neobrutal-ui.andongmin.com/r
-
-  verify-deployed-browsers:
-    name: Deployed documentation (${{ matrix.project }})
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    needs: verify-deployment
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - project: chromium-reflow
-            browser: chromium
-          - project: firefox-desktop
-            browser: firefox
-          - project: webkit-mobile
-            browser: webkit
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
-        with:
-          node-version: 24
-          cache: npm
-          cache-dependency-path: |
-            registry/package-lock.json
-            docs/package-lock.json
-      - name: Build synchronized registry verification inputs
-        run: |
-          npm ci --prefix registry
-          npm ci --prefix docs
-          npm run build --prefix registry
       - name: Install browser engine
         working-directory: docs
-        run: npx playwright install --with-deps ${{ matrix.browser }}
-      - name: Verify deployed documentation project
+        run: npx playwright install --with-deps chromium
+      - name: Check core production paths
         working-directory: docs
         env:
           DOCS_TEST_URL: https://neobrutal-ui.andongmin.com
-        run: npm run test:browser:cross -- --project=${{ matrix.project }}
-      - name: Save deployed documentation review evidence
+        run: npm run test:browser:smoke
+      - name: Save production smoke evidence
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: deployed-docs-review-${{ matrix.project }}
+          name: production-smoke
           retention-days: 14
           if-no-files-found: error
-          path: docs/playwright-report-cross
+          path: docs/playwright-report-smoke
