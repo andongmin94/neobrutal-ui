@@ -8,7 +8,9 @@ React 19 and Tailwind CSS v4. Components and analytical recipes support Next.js 
 
 Registry sources, documentation previews, displayed source, and installation JSON must agree. Templates inherit application tokens; gallery presets belong only to docs. CMS data is local to the page and resets on refresh. Chart data is illustrative. Stars and obsolete routes are not supported.
 
-## Required checks
+## Verification coverage
+
+Pushes and pull requests run the core source, build, contract, registry, representative installation and browser checks. The comprehensive checks below are available through **Actions → Verify → Run workflow → comprehensive** for release reviews and broad component changes; they do not run automatically on every commit.
 
 | Gate | Evidence |
 | --- | --- |
@@ -34,8 +36,14 @@ Report the verified document, Usage, preview, source-default and native-default 
 
 Use the commands in `.github/workflows/ci.yml` as the canonical release sequence. During development, format changed sources and run the relevant test files first. Batch related fixes before the full release run. Do not repeatedly cancel the full matrix for cosmetic follow-up commits.
 
-The `verify` job covers source contracts, builds, installed-consumer integration, aggregate installs, official directory validation and clean generation. `verify-browsers` runs each existing Playwright project against the built documentation on localhost: desktop light, mobile dark, Chromium reflow, Firefox desktop and WebKit mobile. The full configurations always start the local server; `DOCS_TEST_URL` cannot redirect them to production. `local-registry.spec.ts` checks every served registry endpoint against the generated files. Consumer and independent installation checks use their local registry servers.
+The default `verify` job covers dependency audits, lint/types, registry schema and source consistency, documentation builds and contracts, asset budgets, fresh dialog installs in Vite and Next.js, and clean generation. Its browser command runs `docs.spec.ts`, `local-registry.spec.ts` and `analytics.spec.ts` on desktop light and mobile dark: 20 cases covering navigation, form submission, dialogs, keyboard selection, styling, all 82 served registry endpoints, and analytics activation/filtering. Analytics tests intercept the canonical hostname and serve it from localhost; they do not send production events. Consumer checks use local registry servers.
 
-`verify-deployment` requires all source, independent-installation and documentation jobs to succeed, then verifies the exact production commit and runs only `tests/smoke/deployment.spec.ts` in one Chromium worker with no retries. Its three cases cover the home demo and installation navigation, dialog hydration/focus, and exactly three registry endpoints (catalog, shared styles and dialog). It does not rerun the full browser matrix or install consumers from production. Run `npm run test:browser:smoke --prefix docs` against a local build during development; only the dedicated smoke configuration accepts `DOCS_TEST_URL`.
+For a comprehensive run, select the `comprehensive` input in the Verify workflow. This also enables README/existing-project integrations, aggregate consumers, official directory validation, all independent installation shards, and the full `verify-browsers` matrix: desktop light, mobile dark, Chromium reflow, Firefox desktop and WebKit mobile. All browser configurations start the built documentation on localhost; `DOCS_TEST_URL` cannot redirect full or core tests to production.
 
-The `docs-review-*` artifacts retain per-project local results and scoped state images; `production-smoke` retains the small production report. Full traces and videos are retained for failures, not duplicated for every successful run. Installation artifacts contain item-level results and logs. Check `verify`, all `verify-installations` and `verify-browsers` jobs, and `verify-deployment` on the final commit before reporting release checks complete.
+On pushes to `main`, `verify-deployment` waits for the core `verify` job, verifies the exact production commit and runs only `tests/smoke/deployment.spec.ts` in one Chromium worker with no retries. Optional comprehensive jobs do not block this core gate by being skipped. Its three cases cover the home demo and installation navigation, dialog hydration/focus, and exactly three registry endpoints (catalog, shared styles and dialog). It does not rerun the full browser matrix or install consumers from production. Run `npm run test:browser:smoke --prefix docs` against a local build during development; only the dedicated smoke configuration accepts `DOCS_TEST_URL`.
+
+The `docs-review-*` artifacts retain comprehensive per-project local results and scoped state images; `production-smoke` retains the small production report. Full traces and videos are retained for failures, not duplicated for every successful run. Installation artifacts contain item-level results and logs. Report core checks and comprehensive release checks separately; a skipped comprehensive job is not a passed test.
+
+## Web Analytics
+
+The documentation uses the official `@vercel/analytics` SDK for page views on the canonical production hostname. Local development, preview hostnames and automated browsers do not load the analytics script. Query strings and fragments are removed before sending, and custom events are rejected. No application form values are passed to analytics. The Vercel project's Web Analytics setting must be enabled; the integration does not enable paid features.

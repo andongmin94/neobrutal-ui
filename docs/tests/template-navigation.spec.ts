@@ -91,7 +91,7 @@ for (const { slug } of TEMPLATES) {
       await expectNavbar(page);
     }
 
-    await header.getByRole("link", { name: "neobrutal-ui home", exact: true }).click();
+    await header.getByRole("link", { name: /^neobrutal ui home$/i }).click();
     await expect.poll(() => new URL(page.url()).pathname).toBe("/");
     await page.goBack();
     await expect(page).toHaveURL(new RegExp(`/templates/${slug}$`));

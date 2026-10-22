@@ -10,6 +10,7 @@ import { z } from "zod";
 import { getMDXComponents } from "@/site/components/mdx-components";
 import { HydrationMarker } from "@/site/components/hydration-marker";
 import NotFound from "@/site/components/not-found";
+import { SiteAnalytics } from "@/site/components/site-analytics";
 import { SiteLayout } from "@/site/components/site-layout";
 import { BridgeToaster } from "@/site/components/toaster";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, SOCIAL_IMAGE_URL } from "@/site/lib/site";
@@ -100,6 +101,7 @@ const config = defineConfig({
     <PressRoot lang={lang}>
       {children}
       <HydrationMarker />
+      <SiteAnalytics />
       <BridgeToaster />
     </PressRoot>
   ),

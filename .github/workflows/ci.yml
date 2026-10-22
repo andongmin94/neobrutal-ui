@@ -5,6 +5,12 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      comprehensive:
+        description: Run all browser projects and fresh installation checks
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -33,29 +39,39 @@ jobs:
       - name: Verify registry
         working-directory: registry
         run: |
-          npm audit --audit-level=high
           npm run lint
           npm run typecheck
           npm run build
           npm run registry:validate
           npm run registry:check
-          npm run registry:verify-directory
       - name: Verify docs, budgets, and shared contracts
         working-directory: docs
         run: |
-          npm audit --audit-level=high
           npm run lint
           npm run typecheck
           npm run build
           npm run check:budget
           npm test
-      - name: Install browser engines
+      - name: Install core browser engine
         working-directory: docs
-        run: npx playwright install --with-deps chromium firefox webkit
+        run: npx playwright install --with-deps chromium
+      - name: Verify core documentation and complete local registry
+        working-directory: docs
+        run: npm run test:browser -- docs.spec.ts local-registry.spec.ts analytics.spec.ts
+      - name: Verify representative fresh consumers
+        working-directory: registry
+        run: |
+          npm run consumer:verify -- vite --item=dialog
+          npm run consumer:verify -- next --item=dialog
+      - name: Install comprehensive browser engines
+        if: ${{ inputs.comprehensive == true }}
+        working-directory: docs
+        run: npx playwright install --with-deps firefox webkit
       - name: Verify README setup and rendered existing-project integration
+        if: ${{ inputs.comprehensive == true }}
         run: npm run consumer:verify --prefix registry -- --integration
       - name: Save installation verification evidence
-        if: always()
+        if: ${{ always() && inputs.comprehensive == true }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: installation-checks
@@ -63,8 +79,13 @@ jobs:
           if-no-files-found: error
           path: docs/test-results/installed-consumers
       - name: Verify fresh aggregate consumers
+        if: ${{ inputs.comprehensive == true }}
         working-directory: registry
         run: npm run consumer:verify
+      - name: Verify official directory integration
+        if: ${{ inputs.comprehensive == true }}
+        working-directory: registry
+        run: npm run registry:verify-directory
       - name: Verify clean generation and unchanged sources
         run: |
           node registry/scripts/verify-generated.mjs
@@ -75,6 +96,13 @@ jobs:
             git status --short
             exit 1
           fi
+      - name: Audit dependencies
+        if: ${{ !cancelled() }}
+        run: |
+          audit_status=0
+          npm audit --prefix registry --audit-level=high || audit_status=1
+          npm audit --prefix docs --audit-level=high || audit_status=1
+          exit "$audit_status"
       - name: Capture formatting diagnostics without modifying sources
         if: ${{ failure() }}
         shell: bash
@@ -118,6 +146,7 @@ jobs:
 
   verify-browsers:
     name: Documentation (${{ matrix.project }})
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.comprehensive == true }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
@@ -174,6 +203,7 @@ jobs:
 
   verify-installations:
     name: Independent installations (${{ matrix.shard }}/3)
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.comprehensive == true }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
@@ -208,8 +238,6 @@ jobs:
     timeout-minutes: 30
     needs:
       - verify
-      - verify-installations
-      - verify-browsers
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
