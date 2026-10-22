@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://neobrutal-ui.andongmin.com/sitemap.xml

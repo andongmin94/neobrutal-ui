@@ -1,9 +1,12 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
+import { SITE_URL } from "../../src/site/lib/site";
 
 test("home hydrates, submits the demo, and opens installation docs", async ({ page }) => {
   const response = await page.goto("/");
   expect(response?.status()).toBe(200);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", `${SITE_URL}/`);
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute("content", `${SITE_URL}/`);
   await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true");
   await expect(page.getByRole("heading", { name: /Bold by design/ })).toBeVisible();
   await page.getByLabel("Workspace name", { exact: true }).fill("Deployment check");
@@ -13,6 +16,10 @@ test("home hydrates, submits the demo, and opens installation docs", async ({ pa
   );
   await page.getByRole("link", { name: "Get started", exact: true }).click();
   await expect(page).toHaveURL(/\/docs\/installation\/?$/);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    `${SITE_URL}/docs/installation`,
+  );
   await expect(page.getByRole("heading", { name: "Requirements" })).toBeVisible();
 });
 

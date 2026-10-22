@@ -115,6 +115,7 @@ const metadataPlugin: PressPlugin<SiteContext> = {
   name: "site:metadata",
   init() {
     this.interceptPageMeta(({ page }) => {
+      const canonical = this.absoluteUrl(page.url);
       const isHome = page.url === "/";
       const title = isHome
         ? `${SITE_NAME} - Component directory`
@@ -125,6 +126,8 @@ const metadataPlugin: PressPlugin<SiteContext> = {
         <>
           <title>{title}</title>
           <meta name="description" content={description} />
+          <link rel="canonical" href={canonical} />
+          <meta property="og:url" content={canonical} />
           <meta property="og:title" content={title} />
           <meta property="og:description" content={description} />
           <meta name="twitter:title" content={title} />
