@@ -13,7 +13,11 @@ test("the documentation build identifies its exact source revision", () => {
   assert.equal(typeof buildInfo.commit, "string");
 
   const commit = buildInfo.commit as string;
-  const expectedCommit = process.env.GITHUB_SHA?.toLowerCase();
+  const expectedCommit = (
+    process.env.WORKERS_CI_COMMIT_SHA ??
+    process.env.GITHUB_SHA ??
+    process.env.VERCEL_GIT_COMMIT_SHA
+  )?.toLowerCase();
 
   if (expectedCommit) {
     assert.match(expectedCommit, /^[\da-f]{40}$/);

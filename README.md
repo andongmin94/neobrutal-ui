@@ -172,6 +172,18 @@ site UI in `docs/src/site`. Update a component's examples and documentation alon
 See [AGENTS.md](AGENTS.md) for conventions, [QUALITY.md](QUALITY.md) for release checks, and
 [the CI workflow](.github/workflows/ci.yml) for the complete verification sequence.
 
+Deploy the documentation with Cloudflare Workers Static Assets using
+[`docs/wrangler.jsonc`](docs/wrangler.jsonc). In Workers Builds, connect this repository's
+`main` branch, set the root directory to `docs`, use Node.js 24, and set the build command
+to `npm run build` and deploy command to `npm run deploy:cloudflare`. The existing prebuild also
+builds and synchronizes the registry. Only `docs/dist/public` is published; no Worker script
+or server runtime is required.
+
+The native Cloudflare build adapter is selected automatically in Workers Builds. Local and
+GitHub builds retain the Node adapter, so `npm run start --prefix docs` still works after a
+local documentation build. Keep the generated HTML, `RSC` payloads, search index, registry
+JSON, and `404.html` together when deploying the static output.
+
 </details>
 
 Found a bug? [Open an issue](https://github.com/andongmin94/neobrutal-ui/issues) with your framework,

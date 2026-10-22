@@ -1,7 +1,7 @@
-import type { BeforeSendEvent } from "@vercel/analytics";
 import { expect, test, type Page } from "@playwright/test";
 
 const origin = "https://neobrutal-ui.andongmin.com";
+const beaconSource = "https://static.cloudflareinsights.com/beacon.min.js";
 
 async function virtualProduction(page: Page, baseURL: string, automated: boolean) {
   await page.addInitScript((automated) => {
@@ -11,16 +11,15 @@ async function virtualProduction(page: Page, baseURL: string, automated: boolean
       JSON.stringify({ count: 10_000, fetchedAt: Date.now() }),
     );
   }, automated);
+  await page.route(beaconSource, (route) =>
+    route.fulfill({
+      contentType: "application/javascript",
+      body: "window.analyticsScriptLoaded = true;",
+    }),
+  );
   // Preserve the production URL in the browser while serving every request locally.
   await page.route(`${origin}/**`, async (route) => {
     const url = new URL(route.request().url());
-    if (url.pathname === "/_vercel/insights/script.js") {
-      await route.fulfill({
-        contentType: "application/javascript",
-        body: "window.analyticsScriptLoaded = true;",
-      });
-      return;
-    }
     const response = await route.fetch({
       url: new URL(`${url.pathname}${url.search}`, baseURL).href,
     });
@@ -28,12 +27,12 @@ async function virtualProduction(page: Page, baseURL: string, automated: boolean
   });
 }
 
-test("production analytics loads once and accepts only sanitized page views", async ({
+test("production analytics loads the site's module beacon once across navigation", async ({
   page,
   baseURL,
 }) => {
   await virtualProduction(page, baseURL!, false);
-  await page.goto(`${origin}/?email=private@example.test#secret`);
+  await page.goto(origin);
   await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true");
   await expect
     .poll(() =>
@@ -42,36 +41,22 @@ test("production analytics loads once and accepts only sanitized page views", as
       ),
     )
     .toBe(true);
-  expect(
-    await page.evaluate(() => {
-      const filter = window.vaq?.find(([type]) => type === "beforeSend")?.[1] as (
-        event: BeforeSendEvent,
-      ) => BeforeSendEvent | null;
-      return {
-        view: filter({
-          type: "pageview",
-          url: `${location.origin}/docs/dialog?email=private@example.test#secret`,
-        }),
-        event: filter({ type: "event", url: location.href }),
-        other: filter({ type: "pageview", url: "https://preview.example.test/docs/dialog" }),
-      };
-    }),
-  ).toEqual({
-    view: { type: "pageview", url: `${origin}/docs/dialog` },
-    event: null,
-    other: null,
+  const beacon = page.locator("script[data-cf-beacon]");
+  await expect(beacon).toHaveAttribute("type", "module");
+  await expect(beacon).toHaveAttribute("src", beaconSource);
+  expect(JSON.parse((await beacon.getAttribute("data-cf-beacon"))!)).toEqual({
+    token: "46a3e4b9ba064b08b6a501923ee191ee",
   });
   await page.getByRole("link", { name: "Get started", exact: true }).click();
   await expect(page).toHaveURL(`${origin}/docs/installation`);
-  await expect(page.locator('script[src="/_vercel/insights/script.js"]')).toHaveCount(1);
+  await expect(beacon).toHaveCount(1);
 });
 
 test("automated production visits do not load analytics", async ({ page, baseURL }) => {
   await virtualProduction(page, baseURL!, true);
   await page.goto(origin);
   await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true");
-  await expect(page.locator('script[src*="insights"]')).toHaveCount(0);
-  expect(await page.evaluate(() => window.vaq)).toBeUndefined();
+  await expect(page.locator("script[data-cf-beacon]")).toHaveCount(0);
 });
 
 test("localhost production builds do not load analytics", async ({ page }) => {
@@ -80,6 +65,5 @@ test("localhost production builds do not load analytics", async ({ page }) => {
   );
   await page.goto("/");
   await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true");
-  await expect(page.locator('script[src*="insights"]')).toHaveCount(0);
-  expect(await page.evaluate(() => window.vaq)).toBeUndefined();
+  await expect(page.locator("script[data-cf-beacon]")).toHaveCount(0);
 });

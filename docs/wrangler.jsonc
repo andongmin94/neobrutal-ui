@@ -1,0 +1,9 @@
+{
+  "name": "neobrutal-ui",
+  "compatibility_date": "2026-10-22",
+  "assets": {
+    "directory": "./dist/public",
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "404-page",
+  },
+}
