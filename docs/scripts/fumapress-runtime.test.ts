@@ -16,7 +16,8 @@ const packageLock = JSON.parse(readFileSync(path.join(docsRoot, "package-lock.js
 
 test("Fumapress owns the docs runtime without React Router compatibility paths", () => {
   assert.equal(packageJson.scripts?.dev, "fumapress dev");
-  assert.equal(packageJson.scripts?.build, "fumapress build");
+  assert.equal(packageJson.scripts?.build, "npm run build:site");
+  assert.match(packageJson.scripts?.["build:site"] ?? "", /&& fumapress build$/);
   assert.equal(packageJson.scripts?.start, "fumapress start");
 
   for (const dependency of ["react-router", "@react-router/node", "@react-router/dev", "isbot"]) {
