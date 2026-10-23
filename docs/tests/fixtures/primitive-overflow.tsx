@@ -1,8 +1,8 @@
 import * as React from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server.browser";
-import { DayPicker, TZDate } from "react-day-picker";
-import { faIR } from "react-day-picker/locale";
+import { DayPicker, TZDate } from "@daypicker/react";
+import { faIR } from "@daypicker/react/locale";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {

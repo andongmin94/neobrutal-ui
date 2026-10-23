@@ -109,7 +109,7 @@ const UI = [
     description: "A date picker calendar with single and range selection support.",
     categories: ["form", "date-time"],
     type: "registry:ui",
-    dependencies: ["react-day-picker"],
+    dependencies: ["@daypicker/react"],
     registryDependencies: ["button"],
     files: [
       {

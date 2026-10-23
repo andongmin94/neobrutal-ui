@@ -223,6 +223,10 @@ test("Command reports initially empty and refreshed empty option collections", a
 test("Switch thumbs stay inside both sizes and move with LTR or RTL state", async ({ page }) => {
   await page.goto(`${origin}?surface=switch`);
   const switches = page.getByRole("switch");
+  // Empty geometry must not count as a rendered fixture before the module loads.
+  await expect(switches).toHaveCount(4);
+  for (const control of await switches.all())
+    await expect(control).toHaveAttribute("aria-checked", "true");
   const geometry = () =>
     switches.evaluateAll((nodes) =>
       nodes.map((node) => {

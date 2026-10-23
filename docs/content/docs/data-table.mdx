@@ -21,7 +21,7 @@ Complete the [base setup](/docs/installation). The CLI resolves the dependencies
 <Installation component="data-table">
 
 ```bash
-npm install @tanstack/react-table@^8.21.3 lucide-react@^1.24.0
+npm install @tanstack/react-table@^9.3.1 lucide-react@^1.61.0
 ```
 
 Install [Button](/docs/button), [Checkbox](/docs/checkbox), [Dropdown Menu](/docs/dropdown-menu), [Input](/docs/input), and [Table](/docs/table). Create **`components/ui/data-table.tsx`**:
@@ -51,8 +51,8 @@ The default export initially renders the bundled example. Replace its `data` and
 | `data` / `columns` | Row model and column definitions in source | Payment schema |
 | `sorting` / `columnFilters` | Client sorting and filtering | Empty state |
 | `rowSelection` / `columnVisibility` | Selected and hidden rows/columns | Empty state |
-| `useReactTable` | Row models and state callbacks | Configured locally |
-| `getPaginationRowModel` | Client pagination | TanStack default page size |
+| `useTable` / `features` | Native TanStack state and explicitly registered features | Configured locally |
+| `createPaginatedRowModel` | Client pagination | TanStack default page size |
 
 ## Accessibility
 

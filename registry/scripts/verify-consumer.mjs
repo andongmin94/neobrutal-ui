@@ -310,7 +310,7 @@ function createNextFixture(directory) {
     name: "neobrutal-registry-next-consumer",
     private: true,
     scripts: { build: "next build" },
-    dependencies: { next: "^16.3.6", react: "19.2.8", "react-dom": "19.2.8" },
+    dependencies: { next: "^16.4.2", react: "19.3.1", "react-dom": "19.3.1" },
     devDependencies: {
       "@tailwindcss/postcss": "^4.3.3",
       "@types/node": "^26.1.1",
@@ -371,7 +371,7 @@ function createViteFixture(directory) {
     private: true,
     type: "module",
     scripts: { build: "tsc --noEmit && vite build" },
-    dependencies: { react: "19.2.8", "react-dom": "19.2.8" },
+    dependencies: { react: "19.3.1", "react-dom": "19.3.1" },
     devDependencies: {
       "@tailwindcss/vite": "^4.3.3",
       "@types/react": "^19.2.17",

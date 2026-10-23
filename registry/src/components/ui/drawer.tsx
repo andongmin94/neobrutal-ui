@@ -1,12 +1,18 @@
 "use client";
 
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer";
-import type * as React from "react";
+import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-function Drawer(props: DrawerPrimitive.Root.Props) {
-  return <DrawerPrimitive.Root data-slot="drawer" {...props} />;
+const DrawerModalContext = React.createContext<DrawerPrimitive.Root.Props["modal"]>(true);
+
+function Drawer({ modal = true, ...props }: DrawerPrimitive.Root.Props) {
+  return (
+    <DrawerModalContext.Provider value={modal}>
+      <DrawerPrimitive.Root data-slot="drawer" modal={modal} {...props} />
+    </DrawerModalContext.Provider>
+  );
 }
 
 function DrawerTrigger(props: DrawerPrimitive.Trigger.Props) {
@@ -37,9 +43,10 @@ function DrawerOverlay({ className, ...props }: DrawerPrimitive.Backdrop.Props) 
 }
 
 function DrawerContent({ className, children, ...props }: DrawerPrimitive.Popup.Props) {
+  const modal = React.useContext(DrawerModalContext);
   return (
     <DrawerPortal>
-      <DrawerOverlay />
+      {modal === true && <DrawerOverlay />}
       <DrawerPrimitive.Viewport
         data-slot="drawer-viewport"
         className="pointer-events-none fixed inset-0 z-50"

@@ -1,0 +1,41 @@
+@import "tailwindcss";
+@source "../../../registry/src/components/ui/drawer.tsx";
+@source "./drawer-modal.tsx";
+
+@theme inline {
+  --color-overlay: rgb(0 0 0 / 0.3);
+  --color-border: #333;
+  --color-background: #f4f4f4;
+  --color-foreground: #222;
+  --radius-base: 8px;
+}
+:root {
+  --neu-overlay: rgb(0 0 0 / 0.3);
+  --popover: #f4f4f4;
+  --popover-foreground: #222;
+  --muted-foreground: #555;
+  --neu-edge: #aaa;
+  --neu-radius-overlay: 16px;
+  --neu-duration: 180ms;
+}
+body {
+  margin: 0;
+  background: #eee;
+  color: #222;
+}
+main {
+  min-height: 100dvh;
+  padding: 24px;
+}
+button {
+  border: 1px solid;
+  padding: 12px;
+  background: #fff;
+}
+[data-testid="background-action"] {
+  display: block;
+  margin-bottom: 12px;
+}
+[data-slot="drawer-content"] {
+  padding: 24px;
+}
