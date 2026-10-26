@@ -8,9 +8,9 @@ import * as React from "react";
 import { Calendar } from "@/components/ui/calendar";
 
 export default function CalendarRangeDemo() {
-  const [dateRange, setDateRange] = React.useState<DateRange | undefined>({
-    from: new Date(new Date().getFullYear(), 0, 12),
-    to: addDays(new Date(new Date().getFullYear(), 0, 12), 30),
+  const [dateRange, setDateRange] = React.useState<DateRange | undefined>(() => {
+    const from = new Date(new Date().getFullYear(), 0, 12);
+    return { from, to: addDays(from, 30) };
   });
 
   return (

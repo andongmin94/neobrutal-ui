@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { measureInitialJavaScript } from "./initial-js-budget.ts";
 
 const assetsDirectory = path.resolve("dist", "public", "assets");
 const kibibyte = 1024;
@@ -8,7 +9,9 @@ const limits = {
   largestStylesheet: 384 * kibibyte,
   totalStylesheets: 448 * kibibyte,
   largestFont: 512 * kibibyte,
+  initialJavaScriptGzip: 280 * kibibyte,
 };
+const representativeRoutes = ["/", "/docs/button", "/docs/chart", "/templates/cms"];
 
 if (!fs.existsSync(assetsDirectory)) {
   throw new Error(`Build assets do not exist: ${assetsDirectory}`);
@@ -48,12 +51,22 @@ const largestStylesheet = largest(stylesheets);
 const largestFont = largest(fonts);
 const totalStylesheets = stylesheets.reduce((total, file) => total + file.bytes, 0);
 const failures = [];
+// Count each emitted module URL once, as individually compressed HTTP responses.
+// The previous build used 234 KiB per route; 280 KiB leaves about 20% headroom.
+const initialJavaScript = representativeRoutes.map((route) =>
+  measureInitialJavaScript(path.dirname(assetsDirectory), route),
+);
 
 for (const [label, actual, limit] of [
   ["largest JavaScript asset", largestScript.bytes, limits.largestJavaScript],
   ["largest stylesheet", largestStylesheet.bytes, limits.largestStylesheet],
   ["total stylesheets", totalStylesheets, limits.totalStylesheets],
   ["largest font asset", largestFont.bytes, limits.largestFont],
+  ...initialJavaScript.map(({ route, gzipBytes }) => [
+    `${route} initial JavaScript (gzip)`,
+    gzipBytes,
+    limits.initialJavaScriptGzip,
+  ]),
 ]) {
   if (actual > limit) failures.push(`${label}: ${formatBytes(actual)} > ${formatBytes(limit)}`);
 }
@@ -71,6 +84,13 @@ console.log(
       totalStylesheets: formatBytes(totalStylesheets),
       largestFont: { ...largestFont, size: formatBytes(largestFont.bytes) },
       fontAssetCount: fonts.length,
+      initialJavaScript: initialJavaScript.map(({ route, assets, bytes, gzipBytes }) => ({
+        route,
+        assetCount: assets.length,
+        rawSize: formatBytes(bytes),
+        gzipSize: formatBytes(gzipBytes),
+        gzipLimit: formatBytes(limits.initialJavaScriptGzip),
+      })),
     },
     null,
     2,

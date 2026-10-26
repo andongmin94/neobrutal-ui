@@ -1,0 +1,48 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directories:
+      - /docs
+      - /registry
+    schedule:
+      interval: weekly
+      day: monday
+      time: "03:00"
+      timezone: Asia/Seoul
+    open-pull-requests-limit: 3
+    groups:
+      react:
+        patterns:
+          - react
+          - react-dom
+          - react-is
+          - "@types/react*"
+        update-types:
+          - minor
+          - patch
+      documentation:
+        patterns:
+          - fumapress
+          - "fumadocs*"
+          - "@fumadocs/*"
+        update-types:
+          - minor
+          - patch
+      compatible-updates:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "03:00"
+      timezone: Asia/Seoul
+    open-pull-requests-limit: 1
+    groups:
+      actions:
+        patterns:
+          - "*"

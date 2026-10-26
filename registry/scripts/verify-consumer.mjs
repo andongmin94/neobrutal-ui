@@ -10,6 +10,10 @@ import { run } from "./consumer-command.mjs";
 import { writeServerComponentPages } from "./verify-server-components.mjs";
 
 const root = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
+const consumerVersions = {
+  ...readJson(path.join(root, "../docs/package.json")).devDependencies,
+  ...readJson(path.join(root, "package.json")).devDependencies,
+};
 const outputDirectory = path.join(root, "public", "r");
 const catalog = readJson(path.join(outputDirectory, "registry.json"));
 const { values: options, positionals: requestedTargets } = parseArgs({
@@ -310,14 +314,18 @@ function createNextFixture(directory) {
     name: "neobrutal-registry-next-consumer",
     private: true,
     scripts: { build: "next build" },
-    dependencies: { next: "^16.4.2", react: "19.3.1", "react-dom": "19.3.1" },
+    dependencies: {
+      next: consumerVersions.next,
+      react: consumerVersions.react,
+      "react-dom": consumerVersions["react-dom"],
+    },
     devDependencies: {
-      "@tailwindcss/postcss": "^4.3.3",
-      "@types/node": "^26.1.1",
-      "@types/react": "^19.2.17",
-      "@types/react-dom": "^19.2.3",
-      tailwindcss: "^4.3.3",
-      typescript: "^7.0.2",
+      "@tailwindcss/postcss": consumerVersions.tailwindcss,
+      "@types/node": consumerVersions["@types/node"],
+      "@types/react": consumerVersions["@types/react"],
+      "@types/react-dom": consumerVersions["@types/react-dom"],
+      tailwindcss: consumerVersions.tailwindcss,
+      typescript: consumerVersions.typescript,
     },
   });
   const config = componentsConfig(true);
@@ -371,15 +379,18 @@ function createViteFixture(directory) {
     private: true,
     type: "module",
     scripts: { build: "tsc --noEmit && vite build" },
-    dependencies: { react: "19.3.1", "react-dom": "19.3.1" },
+    dependencies: {
+      react: consumerVersions.react,
+      "react-dom": consumerVersions["react-dom"],
+    },
     devDependencies: {
-      "@tailwindcss/vite": "^4.3.3",
-      "@types/react": "^19.2.17",
-      "@types/react-dom": "^19.2.3",
-      "@vitejs/plugin-react": "^6.0.1",
-      tailwindcss: "^4.3.3",
-      typescript: "^7.0.2",
-      vite: "^8.3.0",
+      "@tailwindcss/vite": consumerVersions["@tailwindcss/vite"],
+      "@types/react": consumerVersions["@types/react"],
+      "@types/react-dom": consumerVersions["@types/react-dom"],
+      "@vitejs/plugin-react": "^6.1.2",
+      tailwindcss: consumerVersions.tailwindcss,
+      typescript: consumerVersions.typescript,
+      vite: consumerVersions.vite,
     },
   });
   writeJson(path.join(directory, "components.json"), componentsConfig(false));

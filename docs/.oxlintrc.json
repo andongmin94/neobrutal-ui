@@ -4,6 +4,21 @@
   "ignorePatterns": ["node_modules/**", "src/components/ui/**", "src/components/templates/**"],
   "overrides": [
     {
+      "files": [
+        "src/site/components/client-only.tsx",
+        "src/site/components/component-preview.tsx",
+        "src/site/components/search-launcher.tsx",
+        "src/site/components/site-layout.tsx",
+        "src/site/components/table-of-contents.tsx",
+        "src/site/components/theme-toggle.tsx",
+        "src/special-pages/charts-examples.tsx",
+        "tests/fixtures/primitive-overflow.tsx"
+      ],
+      "rules": {
+        "react/set-state-in-effect": "off"
+      }
+    },
+    {
       "files": ["src/site/components/search-launcher.tsx", "src/examples/ui/combobox/**/*.tsx"],
       "rules": {
         "jsx-a11y/prefer-tag-over-role": "off"
