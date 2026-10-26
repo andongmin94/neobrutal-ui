@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 
-import { PreviewErrorBoundary } from "./preview-error-boundary";
+import { PreviewErrorBoundary, PreviewFailure } from "./preview-error-boundary";
 
 const compactComponents = new Set([
   "button",
@@ -114,10 +114,7 @@ function PreviewHost({
     >
       <div className="react-host__mount">
         {error ? (
-          <div className="react-host__error" role="alert">
-            <strong>Preview could not be loaded.</strong>
-            <span>{error.message}</span>
-          </div>
+          <PreviewFailure error={error} />
         ) : Preview ? (
           <PreviewErrorBoundary key={`${component}:${example ?? ""}`}>
             <Preview />

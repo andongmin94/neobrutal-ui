@@ -57,7 +57,7 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Verify core documentation and complete local registry
         working-directory: docs
-        run: npm run test:browser -- docs.spec.ts local-registry.spec.ts analytics.spec.ts
+        run: npm run test:browser -- docs.spec.ts local-registry.spec.ts analytics.spec.ts runtime-recovery.spec.ts
       - name: Verify representative fresh consumers
         working-directory: registry
         run: |

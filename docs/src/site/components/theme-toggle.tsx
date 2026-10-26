@@ -9,8 +9,12 @@ const STORAGE_KEY = "neobrutal-ui-theme";
 function getTheme(): Theme {
   if (typeof window === "undefined") return "light";
 
-  const stored = window.localStorage.getItem(STORAGE_KEY);
-  if (stored === "light" || stored === "dark") return stored;
+  try {
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    if (stored === "light" || stored === "dark") return stored;
+  } catch {
+    // Storage may be blocked; the system preference still provides a theme.
+  }
 
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
@@ -21,7 +25,11 @@ function applyTheme(theme: Theme) {
   root.classList.toggle("dark", theme === "dark");
   root.dataset.theme = theme;
   root.style.colorScheme = theme;
-  window.localStorage.setItem(STORAGE_KEY, theme);
+  try {
+    window.localStorage.setItem(STORAGE_KEY, theme);
+  } catch {
+    // The current page theme remains usable without persistence.
+  }
   window.dispatchEvent(new CustomEvent("neobrutal-ui:theme", { detail: theme }));
 }
 

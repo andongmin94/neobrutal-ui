@@ -31,7 +31,12 @@ const docs = defineDocs({
 
 const themeScript = `
 (() => {
-  const current = localStorage.getItem("neobrutal-ui-theme");
+  let current;
+  try {
+    current = localStorage.getItem("neobrutal-ui-theme");
+  } catch {
+    // A blocked preference store must not prevent the first theme paint.
+  }
   const theme = current === "light" || current === "dark"
     ? current
     : matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";

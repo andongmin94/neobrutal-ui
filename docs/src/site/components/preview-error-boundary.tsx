@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import { Button } from "@/components/ui/button";
 
 type PreviewErrorBoundaryProps = {
   children: ReactNode;
@@ -7,6 +8,24 @@ type PreviewErrorBoundaryProps = {
 type PreviewErrorBoundaryState = {
   error?: Error;
 };
+
+export function PreviewFailure({ error }: { error: Error }) {
+  return (
+    <div className="react-host__error" role="alert">
+      <strong>Preview could not be loaded.</strong>
+      <span>{error.message}</span>
+      <Button
+        className="w-fit"
+        variant="neutral"
+        size="sm"
+        type="button"
+        onClick={() => window.location.reload()}
+      >
+        Reload page
+      </Button>
+    </div>
+  );
+}
 
 export class PreviewErrorBoundary extends Component<
   PreviewErrorBoundaryProps,
@@ -24,12 +43,7 @@ export class PreviewErrorBoundary extends Component<
 
   render() {
     if (this.state.error) {
-      return (
-        <div className="react-host__error" role="alert">
-          <strong>Preview could not be loaded.</strong>
-          <span>{this.state.error.message}</span>
-        </div>
-      );
+      return <PreviewFailure error={this.state.error} />;
     }
 
     return this.props.children;

@@ -3,6 +3,10 @@ import { expect, test, type Page } from "@playwright/test";
 const origin = "https://neobrutal-ui.andongmin.com";
 const beaconSource = "https://static.cloudflareinsights.com/beacon.min.js";
 
+test.afterEach(async ({ page }) => {
+  await page.unrouteAll({ behavior: "wait" });
+});
+
 async function virtualProduction(page: Page, baseURL: string, automated: boolean) {
   await page.addInitScript((automated) => {
     Object.defineProperty(Navigator.prototype, "webdriver", { get: () => automated });
