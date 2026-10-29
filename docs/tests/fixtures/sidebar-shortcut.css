@@ -1,0 +1,7 @@
+@import "../../src/styling/globals.css";
+@source "../../../registry/src/components/ui";
+main {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}

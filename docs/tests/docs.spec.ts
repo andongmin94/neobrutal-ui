@@ -80,6 +80,48 @@ test("button preview applies variants and stays compact", async ({ page }) => {
   ).toBeLessThan(180);
 });
 
+test("preview tabs wrap keyboard navigation and keep separate examples independent", async ({
+  page,
+}) => {
+  await page.goto("/docs/dialog");
+  const primary = page.locator(".component-preview").first();
+  const secondary = page.locator(".component-preview").nth(1);
+  const preview = primary.getByRole("tab", { name: "Preview", exact: true });
+  const code = primary.getByRole("tab", { name: "Code", exact: true });
+
+  await expect(preview).toBeEnabled();
+  await preview.press("ArrowLeft");
+  await expect(code).toBeFocused();
+  await expect(code).toHaveAttribute("aria-selected", "true");
+  await expect(code).toHaveAttribute("tabindex", "0");
+  await expect(preview).toHaveAttribute("tabindex", "-1");
+  await expect(primary.getByRole("tabpanel", { name: "Code", exact: true })).toBeVisible();
+  await expect(primary.getByRole("tabpanel", { name: "Preview", exact: true })).toBeHidden();
+
+  await code.press("ArrowRight");
+  await expect(preview).toBeFocused();
+  await expect(preview).toHaveAttribute("aria-selected", "true");
+  await preview.press("ArrowRight");
+  await expect(code).toBeFocused();
+  await code.press("ArrowLeft");
+  await expect(preview).toBeFocused();
+  await preview.press("End");
+  await expect(code).toBeFocused();
+  await code.press("Home");
+  await expect(preview).toBeFocused();
+  await preview.press("End");
+
+  const secondPreview = secondary.getByRole("tab", { name: "Preview", exact: true });
+  const secondCode = secondary.getByRole("tab", { name: "Code", exact: true });
+  await expect(secondPreview).toHaveAttribute("aria-selected", "true");
+  await secondPreview.press("ArrowLeft");
+  await expect(secondCode).toBeFocused();
+  await secondCode.press("ArrowRight");
+  await expect(secondPreview).toBeFocused();
+  await expect(secondPreview).toHaveAttribute("aria-selected", "true");
+  await expect(code).toHaveAttribute("aria-selected", "true");
+});
+
 test("dialog supports Escape, focus return, and real local form submission", async ({ page }) => {
   await page.goto("/docs/dialog");
   const primary = page.locator(".component-preview").first();

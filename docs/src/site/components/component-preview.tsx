@@ -152,7 +152,15 @@ export function ComponentPreview({
     if (!interactive || !["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
 
     event.preventDefault();
-    const nextTab = event.key === "Home" || event.key === "ArrowLeft" ? "preview" : "code";
+    const tabs = ["preview", "code"] as const;
+    const currentIndex = tabs.indexOf(activeTab);
+    const nextIndex =
+      event.key === "Home"
+        ? 0
+        : event.key === "End"
+          ? tabs.length - 1
+          : (currentIndex + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
+    const nextTab = tabs[nextIndex];
     const tabList = event.currentTarget;
     setActiveTab(nextTab);
 

@@ -17,6 +17,7 @@ export default defineConfig({
     "installed-input-focus.spec.ts",
     "primitive-overflow.spec.ts",
     "sidebar-layering.spec.ts",
+    "sidebar-shortcut.spec.ts",
     "release-controls.spec.ts",
     "template-navigation.spec.ts",
     "mono-theme.spec.ts",
