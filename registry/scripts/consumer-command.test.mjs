@@ -8,42 +8,70 @@ import { setTimeout as delay } from "node:timers/promises";
 
 import { run, spawnConsumerProcess, terminateConsumerProcess } from "./consumer-command.mjs";
 
-function fixture(source, preserveFile = "button.tsx") {
+function fixture(source, answer = "n") {
   return run(
     process.execPath,
     ["--input-type=module", "-e", source],
     process.cwd(),
     {},
-    preserveFile,
+    { file: "button.tsx", answer },
   );
 }
 
-for (const stream of ["stdout", "stderr"]) {
-  test(`declines the expected overwrite on ${stream}, including split colored output`, async () => {
-    await fixture(`
-      const output = process.${stream};
-      process.stdin.once("data", (answer) => {
-        if (answer.toString() !== "n") process.exit(2);
-        output.write("\\nPreserved button; installed remaining files.\\n");
-        process.stdin.destroy();
-      });
-      output.write("? The file \\x1b[36mbutton.tsx\\x1b[0m already exists. ");
-      setTimeout(() => output.write("Would you like to overwrite? › (y/N)"), 20);
-    `);
+for (const answer of ["n", "y"]) {
+  const action = answer === "y" ? "accepts" : "declines";
+  for (const stream of ["stdout", "stderr"]) {
+    test(`${action} the expected overwrite on ${stream}, including split colored output`, async () => {
+      await fixture(
+        `
+          const output = process.${stream};
+          process.stdin.once("data", (answer) => {
+            if (answer.toString() !== "${answer}") process.exit(2);
+            output.write("\\nHandled button; installed remaining files.\\n");
+            process.stdin.destroy();
+          });
+          output.write("? The file \\x1b[36mbutton.tsx\\x1b[0m already exists. ");
+          setTimeout(() => output.write("Would you like to overwrite? › (y/N)"), 20);
+        `,
+        answer,
+      );
+    });
+  }
+
+  test(`successful exit without the expected ${answer} prompt fails`, async () => {
+    await assert.rejects(
+      fixture("process.exit(0)", answer),
+      new RegExp(`never asked to ${answer === "y" ? "overwrite" : "preserve"} button.tsx`),
+    );
+  });
+
+  test(`an unexpected file prompt fails before sending ${answer}`, async () => {
+    await assert.rejects(
+      fixture(
+        `
+          process.stdin.resume();
+          process.stdout.write("? The file secrets.ts already exists. Would you like to overwrite?");
+        `,
+        answer,
+      ),
+      /Unexpected overwrite prompt: secrets.ts/,
+    );
   });
 }
 
-test("successful exit without a preservation prompt fails", async () => {
-  await assert.rejects(fixture("process.exit(0)"), /never asked to preserve button.tsx/);
-});
-
-test("an unexpected file prompt fails instead of granting overwrite permission", async () => {
+test("accepting the init button does not grant permission for another overwrite prompt", async () => {
   await assert.rejects(
-    fixture(`
-      process.stdin.resume();
-      process.stdout.write("? The file secrets.ts already exists. Would you like to overwrite?");
-    `),
-    /Unexpected overwrite prompt: secrets.ts/,
+    fixture(
+      `
+        process.stdin.once("data", (answer) => {
+          if (answer.toString() !== "y") process.exit(2);
+          process.stdout.write("? The file button.tsx already exists. Would you like to overwrite?");
+        });
+        process.stdout.write("? The file button.tsx already exists. Would you like to overwrite?");
+      `,
+      "y",
+    ),
+    /Unexpected overwrite prompt: button.tsx/,
   );
 });
 

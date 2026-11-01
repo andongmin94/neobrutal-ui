@@ -24,7 +24,11 @@ test("beginner onboarding reaches a working button before optional configuration
 
   for (const source of [readme, installation]) {
     assert.ok(source.includes(baseCommand), "shared base command is missing");
-    assert.ok(source.includes(buttonCommand), "first component command is missing");
+    assert.equal(
+      source.split("\n").find((line) => line.startsWith(buttonCommand)),
+      buttonCommand,
+      "first component command must leave overwrite decisions to the CLI prompt",
+    );
     assert.ok(source.includes(firstButton), "working Button example is missing");
   }
 

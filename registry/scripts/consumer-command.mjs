@@ -37,7 +37,7 @@ export async function terminateConsumerProcess(child, signal = "SIGTERM") {
   await closed;
 }
 
-export function run(command, args, cwd, additionalEnvironment = {}, preserveFile) {
+export function run(command, args, cwd, additionalEnvironment = {}, overwritePrompt) {
   return new Promise((resolve, reject) => {
     const useShell = process.platform === "win32" && /\.(cmd|bat)$/i.test(command);
     const spawnCommand = useShell
@@ -47,9 +47,9 @@ export function run(command, args, cwd, additionalEnvironment = {}, preserveFile
       cwd,
       env: { ...process.env, CI: "1", ...additionalEnvironment },
       shell: useShell,
-      stdio: preserveFile ? ["pipe", "pipe", "pipe"] : "inherit",
+      stdio: overwritePrompt ? ["pipe", "pipe", "pipe"] : "inherit",
     });
-    let declined = false;
+    let answered = false;
     let failure;
     let termination;
     const terminate = () => {
@@ -86,7 +86,7 @@ export function run(command, args, cwd, additionalEnvironment = {}, preserveFile
         }
       }
     });
-    if (preserveFile) {
+    if (overwritePrompt) {
       child.stdin.on("error", fail);
       for (const [input, output] of [
         [child.stdout, process.stdout],
@@ -102,13 +102,13 @@ export function run(command, args, cwd, additionalEnvironment = {}, preserveFile
           );
           if (!prompt) return;
           pending = pending.slice(prompt.index + prompt[0].length);
-          if (prompt[1] !== preserveFile || declined) {
+          if (prompt[1] !== overwritePrompt.file || answered) {
             fail(new Error(`Unexpected overwrite prompt: ${prompt[1]}`));
             return;
           }
-          declined = true;
-          // prompts submits on "n". Do not send Enter into a later question.
-          child.stdin.end("n");
+          answered = true;
+          // prompts submits on "y" or "n". Do not send Enter into a later question.
+          child.stdin.end(overwritePrompt.answer);
         });
       }
     }
@@ -121,8 +121,9 @@ export function run(command, args, cwd, additionalEnvironment = {}, preserveFile
       else if (child.killed) reject(new Error(`${path.basename(command)} was terminated`));
       else if (code !== 0) {
         reject(new Error(`${path.basename(command)} exited with ${signal ?? code ?? "unknown"}`));
-      } else if (preserveFile && !declined) {
-        reject(new Error(`The installation never asked to preserve ${preserveFile}`));
+      } else if (overwritePrompt && !answered) {
+        const action = overwritePrompt.answer === "y" ? "overwrite" : "preserve";
+        reject(new Error(`The installation never asked to ${action} ${overwritePrompt.file}`));
       } else resolve();
     });
   });

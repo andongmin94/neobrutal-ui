@@ -24,13 +24,14 @@ Direct URLs work without editing `components.json`.
 
 ```bash
 npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json
-npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json --overwrite
+npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json
 ```
 
-The first-button command deliberately replaces the button that `shadcn init` may have created.
+If `shadcn init` created a default `button.tsx`, answer **Yes** when the CLI asks to overwrite it.
 Without replacing that file, you may still see the default shadcn button with the new colors.
-The `--overwrite` flag replaces the selected component files. Commit or back up an existing
-customized button before running this first-setup command.
+If you've customized your Button, answer **No** and review its diff before replacing it.
+The `--dry-run` command in [Manual installation and updates](#manual-installation-and-updates)
+shows the proposed changes without applying them.
 
 The base provides the colors, borders, shadows, utilities, and global styles used by every
 neobrutal-ui component.
@@ -73,9 +74,8 @@ npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/card.json
 ```
 
 The CLI installs required packages and supporting components automatically.
-For an existing component, review the proposed replacement rather than overwriting your
-customizations indiscriminately. The initial button replacement is not a requirement to
-use `--overwrite` for every subsequent installation.
+When the CLI asks to replace an existing component, review the proposed changes before
+accepting so you can keep your customizations.
 
 ## Choose a theme
 
@@ -126,7 +126,8 @@ npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/blog-template.json
 
 The **Manual** tab shows the source files and required packages.
 Installed files belong to your application and are not updated automatically.
-Review proposed changes before overwriting files that you have customized:
+Check the [release notes](https://github.com/andongmin94/neobrutal-ui/releases), then review proposed
+changes before overwriting files that you have customized:
 
 ```bash
 npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json --dry-run

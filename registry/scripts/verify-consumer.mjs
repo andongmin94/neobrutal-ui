@@ -122,6 +122,12 @@ async function verifyTarget(target, fixtureDirectory, scenario) {
   }
 
   const initialConfig = readJson(configPath);
+  const buttonPath = path.join(
+    fixtureDirectory,
+    initialConfig.aliases.ui.replace(/^@\//, "src/"),
+    "button.tsx",
+  );
+  const initCreatedButton = scenario === "readme" && fs.existsSync(buttonPath);
   const cssPath = path.join(fixtureDirectory, initialConfig.tailwind.css);
   const sentinelPath = path.join(fixtureDirectory, "src", "consumer-owned.ts");
   const sentinel = 'export const consumerOwned = "keep this application code";\n';
@@ -133,14 +139,10 @@ async function verifyTarget(target, fixtureDirectory, scenario) {
   const baseItem = catalog.items.find((item) => item.type === "registry:base");
   if (!baseItem) throw new Error("The registry has no registry:base item");
   const add = async (...names) => {
-    // The documented first-button step deliberately replaces the init scaffold.
-    // Existing-project checks never overwrite a user's customized component.
-    const overwrite =
-      scenario === "standard" || (scenario === "readme" && names.includes("button"));
     const args = [
       "add",
       "--yes",
-      ...(overwrite ? ["--overwrite"] : []),
+      ...(scenario === "standard" ? ["--overwrite"] : []),
       "--cwd",
       fixtureDirectory,
       ...names.map(itemUrl),
@@ -150,6 +152,11 @@ async function verifyTarget(target, fixtureDirectory, scenario) {
         npmExecutable(),
         ["exec", "--yes", "--package=shadcn@latest", "--", "shadcn", ...args],
         fixtureDirectory,
+        {},
+        // Only accept the default Button created by init in this fresh fixture.
+        initCreatedButton && names.includes("button")
+          ? { file: "button.tsx", answer: "y" }
+          : undefined,
       );
     } else {
       await run(
@@ -157,7 +164,9 @@ async function verifyTarget(target, fixtureDirectory, scenario) {
         args,
         root,
         {},
-        scenario === "existing" && names.includes("data-table") ? "button.tsx" : undefined,
+        scenario === "existing" && names.includes("data-table")
+          ? { file: "button.tsx", answer: "n" }
+          : undefined,
       );
     }
   };
@@ -165,11 +174,6 @@ async function verifyTarget(target, fixtureDirectory, scenario) {
 
   if (scenario !== "readme") await add("theme-red");
   let customizedButton;
-  const buttonPath = path.join(
-    fixtureDirectory,
-    initialConfig.aliases.ui.replace(/^@\//, "src/"),
-    "button.tsx",
-  );
   if (scenario === "existing") {
     fs.appendFileSync(cssPath, "\n:root, .dark { --radius: 13px; }\n");
     assert.deepEqual(

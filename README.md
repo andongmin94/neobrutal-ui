@@ -38,16 +38,18 @@ Install the shared styles once, then your first component:
 
 ```bash
 npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json
-npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json --overwrite
+npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json
 ```
 
 The first command adds the colors, borders, shadows, and utilities used by the components.
-The second replaces the button that shadcn may have created.
+If `shadcn init` created a default `button.tsx`, answer **Yes** when the CLI asks to overwrite
+it so your first example uses the neobrutal-ui button.
 
 > **Already have a customized app?** Commit your work first. The shared styles affect your whole
-> app, and `--overwrite` replaces your existing button files. You can inspect the styles with
+> app. If you've customized your Button, answer **No** and review its diff with
+> `npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json --dry-run`
+> before replacing it. You can inspect the styles with
 > `npx shadcn@latest view https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json`.
-> You do not need `--overwrite` for every component you add.
 
 ### 3. Use it in a page
 
@@ -64,7 +66,8 @@ Next, pick a [component](https://neobrutal-ui.andongmin.com) and copy its instal
 
 The [installation guide](https://neobrutal-ui.andongmin.com/docs/installation) covers existing
 projects, custom import paths, and manual installation. Installed files do not update automatically;
-review changes before replacing anything you've customized.
+check the [release notes](https://github.com/andongmin94/neobrutal-ui/releases) and review changes
+before replacing anything you've customized.
 
 ## Build a data view
 
