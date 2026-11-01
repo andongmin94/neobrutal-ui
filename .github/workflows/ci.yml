@@ -67,8 +67,7 @@ jobs:
         run: |
           npm run consumer:verify -- vite --item=dialog
           npm run consumer:verify -- next --item=dialog
-      - name: Install comprehensive browser engines
-        if: ${{ inputs.comprehensive == true }}
+      - name: Install integration browser engines
         working-directory: docs
         run: npx playwright install --with-deps firefox webkit
       - name: Verify README setup and rendered existing-project integration
