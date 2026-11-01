@@ -32,7 +32,7 @@
     "cmdk": "^1.1.1",
     "date-fns": "^4.4.0",
     "embla-carousel-react": "^8.6.0",
-    "fumadocs-core": "16.17.8",
+    "fumadocs-core": "16.17.9",
     "fumadocs-mdx": "15.4.10",
     "fumadocs-ui": "npm:@fumadocs/base-ui@16.17.8",
     "fumapress": "1.6.2",
