@@ -130,7 +130,7 @@ async function verifyTarget(target, fixtureDirectory, scenario) {
         "shadcn",
         "registry",
         "add",
-        `@neobrutal-ui=${registryOrigin}/r/{name}.json`,
+        `@neobrutal-ui=${registryOrigin}/{name}.json`,
         "--cwd",
         fixtureDirectory,
       ],
