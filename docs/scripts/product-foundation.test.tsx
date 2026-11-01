@@ -325,7 +325,6 @@ test("interactive focus stays semantic, compact, and keyboard-only", () => {
   for (const relative of [
     "registry/src/components/ui/input.tsx",
     "registry/src/components/ui/textarea.tsx",
-    "registry/src/components/ui/select.tsx",
     "registry/src/components/ui/input-group.tsx",
   ]) {
     const fieldSource = source(relative);
@@ -334,6 +333,10 @@ test("interactive focus stays semantic, compact, and keyboard-only", () => {
     assert.doesNotMatch(fieldSource, /ring-offset/);
   }
   const selectSource = source("registry/src/components/ui/select.tsx");
+  assert.match(selectSource, /focus-visible:border-ring/);
+  assert.match(selectSource, /focus-visible:ring-1\b/);
+  assert.match(selectSource, /focus-visible:ring-ring/);
+  assert.doesNotMatch(selectSource, /ring-offset/);
   assert.doesNotMatch(selectSource, /\bfocus:ring-/);
   assert.doesNotMatch(source("registry/src/components/ui/button-variants.ts"), /\bsecondary\s*:/);
   assert.doesNotMatch(source("docs/content/docs/button.mdx"), /`secondary`/);
