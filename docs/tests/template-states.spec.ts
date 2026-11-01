@@ -93,7 +93,7 @@ test.describe("template consumer data", () => {
     await expect(articles).toHaveCount(1);
     await expect(articles).toContainText("Consumer research note");
     await blog.getByRole("button", { name: "Clear search", exact: true }).click();
-    await blog.getByLabel("Sort posts", { exact: true }).selectOption("oldest");
+    await blog.getByRole("combobox").selectOption("oldest");
     await expect(articles.first()).toContainText("Consumer all topic");
     await filters.getByRole("button", { name: "All", exact: true }).click();
     await page.getByRole("button", { name: "Load updated data", exact: true }).click();
