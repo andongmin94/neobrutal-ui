@@ -4,7 +4,13 @@ import { ScrollArea as ScrollAreaPrimitive } from "@base-ui/react/scroll-area";
 
 import { cn } from "@/lib/utils";
 
-function ScrollArea({ className, children, ...props }: ScrollAreaPrimitive.Root.Props) {
+function ScrollArea({
+  className,
+  children,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
+  ...props
+}: ScrollAreaPrimitive.Root.Props) {
   return (
     <ScrollAreaPrimitive.Root
       data-slot="scroll-area"
@@ -18,6 +24,9 @@ function ScrollArea({ className, children, ...props }: ScrollAreaPrimitive.Root.
     >
       <ScrollAreaPrimitive.Viewport
         data-slot="scroll-area-viewport"
+        role={ariaLabel || ariaLabelledBy ? "region" : undefined}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
         className="h-full w-full rounded-[inherit] font-base transition-[color,box-shadow] outline-none focus-visible:ring-1 focus-visible:ring-ring"
       >
         <ScrollAreaPrimitive.Content data-slot="scroll-area-content">

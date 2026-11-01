@@ -135,16 +135,20 @@ test("CMS status filter is a flush segmented control", async ({ page }) => {
 test("marquee pause and reduced motion stop both strips", async ({ page }) => {
   await page.goto("/docs/marquee");
   const preview = page.locator(".component-preview").first();
-  const button = preview.getByRole("button", { name: "Pause animation", exact: true });
-  await button.click();
-  await expect(button).toHaveAttribute("aria-pressed", "true");
+  const pause = preview.getByRole("button", { name: "Pause", exact: true });
+  await pause.click();
+  const resume = preview.getByRole("button", { name: "Resume", exact: true });
+  await expect(resume).toHaveAttribute("aria-pressed", "true");
   for (const selector of [".animate-marquee", ".animate-marquee2"]) {
     await expect(preview.locator(selector)).toHaveCSS("animation-play-state", "paused");
   }
-  await button.click();
-  await expect(button).toHaveAttribute("aria-pressed", "false");
+  await resume.click();
+  await expect(pause).toHaveAttribute("aria-pressed", "false");
+  for (const selector of [".animate-marquee", ".animate-marquee2"]) {
+    await expect(preview.locator(selector)).toHaveCSS("animation-play-state", "running");
+  }
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect(button).toBeHidden();
+  await expect(pause).toBeHidden();
   await expect(preview.locator(".animate-marquee")).toHaveCSS("animation-name", "none");
   await expect(preview.locator(".animate-marquee2")).toBeHidden();
 });

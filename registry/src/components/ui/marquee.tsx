@@ -11,7 +11,6 @@ export default function Marquee({ items }: { items: string[] }) {
       <button
         type="button"
         aria-pressed={paused}
-        aria-label="Pause animation"
         onClick={() => setPaused((value) => !value)}
         className="absolute right-2 top-2 z-10 rounded-base border-2 border-border bg-secondary-background px-3 py-1 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring motion-reduce:hidden"
       >

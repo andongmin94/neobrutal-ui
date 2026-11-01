@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createRoot } from "react-dom/client";
-import { SidebarProvider, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import { Sidebar, SidebarProvider, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import "./sidebar-shortcut.css";
 
 function Controls() {
@@ -27,8 +27,30 @@ function Controls() {
     </main>
   );
 }
+
+function SecondControls() {
+  const { open, openMobile, isMobile } = useSidebar();
+  return (
+    <main>
+      <h2>Second sidebar</h2>
+      <output aria-label="Second sidebar open">{String(isMobile ? openMobile : open)}</output>
+      <button type="button">Second shortcut target</button>
+      {isMobile && (
+        <Sidebar>
+          <button type="button">Mobile shortcut target</button>
+        </Sidebar>
+      )}
+    </main>
+  );
+}
+
 createRoot(document.getElementById("root")!).render(
-  <SidebarProvider>
-    <Controls />
-  </SidebarProvider>,
+  <>
+    <SidebarProvider>
+      <Controls />
+    </SidebarProvider>
+    <SidebarProvider>
+      <SecondControls />
+    </SidebarProvider>
+  </>,
 );

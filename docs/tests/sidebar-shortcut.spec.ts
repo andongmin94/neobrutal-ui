@@ -90,3 +90,34 @@ test("Sidebar shortcuts preserve editing, cancelled and composing events", async
     await expect(open).toHaveText(initial);
   }
 });
+
+test("Sidebar shortcuts toggle the focused provider, including its mobile sheet", async ({
+  page,
+}) => {
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(origin);
+    const firstOpen = page.locator('output[aria-label="Current sidebar open"]');
+    const secondOpen = page.locator('output[aria-label="Second sidebar open"]');
+    const initial = width < 768 ? "false" : "true";
+    await expect(firstOpen).toHaveText(initial);
+    await expect(secondOpen).toHaveText(initial);
+
+    const target = page.getByRole("button", { name: "Second shortcut target", exact: true });
+    await target.press("Control+b");
+    await expect(secondOpen).toHaveText(initial === "true" ? "false" : "true");
+    await expect(firstOpen).toHaveText(initial);
+
+    if (width < 768) {
+      const sheet = page.getByRole("dialog", { name: "Sidebar", exact: true });
+      await sheet
+        .getByRole("button", { name: "Mobile shortcut target", exact: true })
+        .press("Meta+b");
+      await expect(sheet).toBeHidden();
+    } else {
+      await target.press("Meta+b");
+    }
+    await expect(secondOpen).toHaveText(initial);
+    await expect(firstOpen).toHaveText(initial);
+  }
+});

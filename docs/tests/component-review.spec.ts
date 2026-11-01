@@ -125,15 +125,17 @@ test("breadcrumb overflow menu exposes its intermediate pages", async ({ page },
   await expect(trigger).toBeFocused();
 });
 
-test("scroll area reveals the last published activity", async ({ page }, info) => {
+test("scroll area has a name and scrolls by keyboard", async ({ page }, info) => {
   const canvas = await openCanvas(page, "scroll-area");
   const viewport = canvas.locator('[data-slot="scroll-area-viewport"]');
+  await expect(viewport).toHaveRole("region");
+  await expect(viewport).toHaveAccessibleName("Recent registry activity");
   // Lazy mounting changes the host height after the initial page scroll.
   await viewport.scrollIntoViewIfNeeded();
   await expect(viewport).toBeInViewport({ ratio: 1 });
-  await viewport.evaluate((node) => {
-    node.scrollTop = node.scrollHeight;
-  });
+  await viewport.focus();
+  await expect(viewport).toBeFocused();
+  await page.keyboard.press("End");
   await expect
     .poll(() => viewport.evaluate((node) => node.scrollHeight - node.clientHeight - node.scrollTop))
     .toBeLessThanOrEqual(1);

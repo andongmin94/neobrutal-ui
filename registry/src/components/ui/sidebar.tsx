@@ -78,30 +78,23 @@ function SidebarProvider({
     return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open);
   }, [isMobile, setOpen, setOpenMobile]);
 
-  // Adds a keyboard shortcut to toggle the sidebar.
-  React.useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const target = event.target;
-      if (
-        event.defaultPrevented ||
-        event.isComposing ||
-        (target instanceof HTMLElement &&
-          (target.isContentEditable || target.closest("input, textarea, select")))
-      ) {
-        return;
-      }
-      if (
-        event.key.toLowerCase() === SIDEBAR_KEYBOARD_SHORTCUT &&
-        (event.metaKey || event.ctrlKey)
-      ) {
-        event.preventDefault();
-        toggleSidebar();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [toggleSidebar]);
+  // React bubbling keeps the shortcut with this provider, including its mobile sheet.
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const target = event.target;
+    if (
+      event.defaultPrevented ||
+      event.isPropagationStopped() ||
+      event.nativeEvent.isComposing ||
+      (target instanceof HTMLElement &&
+        (target.isContentEditable || target.closest("input, textarea, select")))
+    ) {
+      return;
+    }
+    if (event.key.toLowerCase() === SIDEBAR_KEYBOARD_SHORTCUT && (event.metaKey || event.ctrlKey)) {
+      event.preventDefault();
+      toggleSidebar();
+    }
+  };
 
   // We add a state so that we can do data-state="expanded" or "collapsed".
   // This makes it easier to style the sidebar with Tailwind classes.
@@ -135,7 +128,7 @@ function SidebarProvider({
           "group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar",
           className,
         )}
-        {...props}
+        {...mergeProps<"div">({ onKeyDown: handleKeyDown }, props)}
       >
         {children}
       </div>
