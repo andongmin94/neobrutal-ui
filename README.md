@@ -37,9 +37,12 @@ npx shadcn@latest init
 Install the shared styles once, then your first component:
 
 ```bash
-npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json
-npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json
+npx shadcn@latest add @neobrutal-ui/neobrutal-ui
+npx shadcn@latest add @neobrutal-ui/button
 ```
+
+`@neobrutal-ui` is listed in the [shadcn registry directory](https://ui.shadcn.com/docs/directory).
+The CLI resolves the namespace automatically; no separate registry registration is needed.
 
 The first command adds the colors, borders, shadows, and utilities used by the components.
 If `shadcn init` created a default `button.tsx`, answer **Yes** when the CLI asks to overwrite
@@ -47,9 +50,9 @@ it so your first example uses the neobrutal-ui button.
 
 > **Already have a customized app?** Commit your work first. The shared styles affect your whole
 > app. If you've customized your Button, answer **No** and review its diff with
-> `npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json --dry-run`
+> `npx shadcn@latest add @neobrutal-ui/button --dry-run`
 > before replacing it. You can inspect the styles with
-> `npx shadcn@latest view https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json`.
+> `npx shadcn@latest view @neobrutal-ui/neobrutal-ui`.
 
 ### 3. Use it in a page
 
@@ -93,8 +96,10 @@ Choose from six starting points, each with a working demo:
 | [CMS](https://neobrutal-ui.andongmin.com/templates/cms) | A local post editor with search, preview, save, and discard |
 | [Link hub](https://neobrutal-ui.andongmin.com/templates/links) | Grouped links and a copyable contact address |
 
-Explore a demo, then copy its install command from the
+Explore a demo and copy its install command from that page or the
 [template gallery](https://neobrutal-ui.andongmin.com/templates).
+Blog accepts your posts through props; Link Hub accepts your profile and links.
+Their installed page examples show where to connect your application data.
 
 | Dashboard | Product landing |
 | --- | --- |
@@ -126,26 +131,22 @@ with the result.
 *The same components in both modes. Every preset includes light and dark colors;
 your app controls which mode is active.*
 
-## Optional: shorter install commands
+## Registry addresses
 
 <details>
-<summary>Use names such as @neobrutal-ui/dialog instead of full URLs</summary>
+<summary>Install with a namespace or a direct URL</summary>
 
-Merge this entry into the existing `registries` object in `components.json`:
-
-```json
-{
-  "registries": {
-    "@neobrutal-ui": "https://neobrutal-ui.andongmin.com/r/{name}.json"
-  }
-}
-```
-
-Then install by name:
+The official namespace works without manually editing `components.json`:
 
 ```bash
 npx shadcn@latest add @neobrutal-ui/dialog
 npx shadcn@latest add @neobrutal-ui/theme-mono-warm
+```
+
+Direct item URLs also work:
+
+```bash
+npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/dialog.json
 ```
 
 </details>

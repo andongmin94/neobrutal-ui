@@ -6,39 +6,42 @@ import { useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button-variants";
 import { Input } from "@/components/ui/input";
-import { BLOG_POSTS } from "@/lib/blog-posts";
-
-const TOPICS = ["All", ...new Set(BLOG_POSTS.map((post) => post.topic))];
+import type { BlogPost } from "@/lib/blog-posts";
 
 type BlogTemplateProps = {
   basePath?: string;
+  posts: readonly BlogPost[];
 };
 
 function getPostHref(basePath: string, slug: string) {
   return `${basePath.replace(/\/$/, "")}/${slug}`;
 }
 
-export default function BlogTemplate({ basePath = "/blog" }: BlogTemplateProps) {
+export default function BlogTemplate({ basePath = "/blog", posts }: BlogTemplateProps) {
   const [query, setQuery] = useState("");
-  const [topic, setTopic] = useState("All");
+  const [topic, setTopic] = useState<string | null>(null);
   const [sort, setSort] = useState("newest");
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const topics = [...new Set(posts.map((post) => post.topic))];
+  const selectedTopic = topic !== null && topics.includes(topic) ? topic : null;
 
   const filteredPosts = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
 
-    return BLOG_POSTS.filter(
-      (post) =>
-        (topic === "All" || post.topic === topic) &&
-        [post.title, post.summary, post.topic].join(" ").toLowerCase().includes(normalizedQuery),
-    ).sort((a, b) => {
-      if (sort === "shortest")
-        return Number.parseInt(a.readTime, 10) - Number.parseInt(b.readTime, 10);
-      return sort === "oldest"
-        ? a.publishedAt.localeCompare(b.publishedAt)
-        : b.publishedAt.localeCompare(a.publishedAt);
-    });
-  }, [query, topic, sort]);
+    return posts
+      .filter(
+        (post) =>
+          (selectedTopic === null || post.topic === selectedTopic) &&
+          [post.title, post.summary, post.topic].join(" ").toLowerCase().includes(normalizedQuery),
+      )
+      .sort((a, b) => {
+        if (sort === "shortest")
+          return Number.parseInt(a.readTime, 10) - Number.parseInt(b.readTime, 10);
+        return sort === "oldest"
+          ? a.publishedAt.localeCompare(b.publishedAt)
+          : b.publishedAt.localeCompare(a.publishedAt);
+      });
+  }, [posts, query, selectedTopic, sort]);
 
   return (
     <div id="top" className="flex min-h-dvh flex-col bg-background text-foreground">
@@ -122,13 +125,22 @@ export default function BlogTemplate({ basePath = "/blog" }: BlogTemplateProps) 
           </search>
           <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
             <div role="group" aria-label="Filter posts by topic" className="flex flex-wrap gap-2">
-              {TOPICS.map((item) => (
+              <Button
+                type="button"
+                size="sm"
+                variant={selectedTopic === null ? "default" : "neutral"}
+                aria-pressed={selectedTopic === null}
+                onClick={() => setTopic(null)}
+              >
+                All topics
+              </Button>
+              {topics.map((item) => (
                 <Button
                   key={item}
                   type="button"
                   size="sm"
-                  variant={topic === item ? "default" : "neutral"}
-                  aria-pressed={topic === item}
+                  variant={selectedTopic === item ? "default" : "neutral"}
+                  aria-pressed={selectedTopic === item}
                   onClick={() => setTopic(item)}
                 >
                   {item}
@@ -150,7 +162,7 @@ export default function BlogTemplate({ basePath = "/blog" }: BlogTemplateProps) 
           </div>
           <p role="status" className="mt-4 text-xs text-foreground/70">
             {filteredPosts.length} {filteredPosts.length === 1 ? "post" : "posts"}
-            {topic === "All" ? " across all topics" : ` in ${topic}`}
+            {selectedTopic === null ? " across all topics" : ` in ${selectedTopic}`}
           </p>
         </section>
 
@@ -168,7 +180,7 @@ export default function BlogTemplate({ basePath = "/blog" }: BlogTemplateProps) 
                     </time>
 
                     <div className="min-w-0">
-                      {index === 0 && !query && topic === "All" && sort === "newest" ? (
+                      {index === 0 && !query && selectedTopic === null && sort === "newest" ? (
                         <span className="mb-2 inline-block bg-main px-2 py-1 text-xs font-heading text-main-foreground">
                           Editor's pick
                         </span>
@@ -214,7 +226,7 @@ export default function BlogTemplate({ basePath = "/blog" }: BlogTemplateProps) 
                 type="button"
                 variant="neutral"
                 onClick={() => {
-                  setTopic("All");
+                  setTopic(null);
                   setQuery("");
                   searchInputRef.current?.focus();
                 }}

@@ -22,6 +22,10 @@ const sharedFiles = [
     target: path.join(docsSourceDir, "lib", "blog-posts.ts"),
   },
   {
+    source: path.join(process.cwd(), "src", "lib", "link-hub-data.ts"),
+    target: path.join(docsSourceDir, "lib", "link-hub-data.ts"),
+  },
+  {
     source: path.join(process.cwd(), "src", "lib", "utils.ts"),
     target: path.join(docsSourceDir, "lib", "utils.ts"),
   },

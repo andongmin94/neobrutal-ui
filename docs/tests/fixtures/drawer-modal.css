@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @source "../../../registry/src/components/ui/drawer.tsx";
+@source "../../../registry/src/components/ui/dialog.tsx";
 @source "./drawer-modal.tsx";
 
 @theme inline {

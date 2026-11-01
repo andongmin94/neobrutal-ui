@@ -5,3 +5,23 @@ layout: page
 ---
 
 <SpecialPage kind="template-detail" slug="blog" />
+
+## Connect your posts
+
+Pass your application's posts to `BlogTemplate`. Topics, search results, sort order, and reading
+links use that data. The installed page uses `BLOG_POSTS` from `lib/blog-posts.ts` as sample content;
+replace that import with your own data loading. Keep the shared `BlogPost` type from the same module.
+
+```tsx
+import BlogTemplate from "@/components/templates/blog-template";
+import type { BlogPost } from "@/lib/blog-posts";
+
+export default function Journal({ posts }: { posts: readonly BlogPost[] }) {
+  return <BlogTemplate posts={posts} basePath="/journal" />;
+}
+```
+
+`basePath` defaults to `/blog`. Give each post a unique `slug` and an ISO `publishedAt` date;
+`publishedLabel` is the displayed date and `readTime` begins with its duration in minutes for sorting.
+The template does not fetch posts. Connect the installed reading page and its metadata/static params
+to the same content source, and provide the matching routes when changing `basePath`.

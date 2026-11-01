@@ -17,9 +17,8 @@ function collectFiles(root: string, extensions: Set<string>) {
 test("beginner onboarding reaches a working button before optional configuration", () => {
   const readme = read("../README.md");
   const installation = read("content/docs/installation.mdx");
-  const baseCommand =
-    "npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json";
-  const buttonCommand = "npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json";
+  const baseCommand = "npx shadcn@latest add @neobrutal-ui/neobrutal-ui";
+  const buttonCommand = "npx shadcn@latest add @neobrutal-ui/button";
   const firstButton = "return <Button>Click me</Button>;";
 
   for (const source of [readme, installation]) {
@@ -33,12 +32,11 @@ test("beginner onboarding reaches a working button before optional configuration
   }
 
   assert.ok(
-    readme.indexOf(buttonCommand) < readme.indexOf("## Optional: shorter install commands"),
+    readme.indexOf(buttonCommand) < readme.indexOf("## Registry addresses"),
     "README asks for optional namespace configuration too early",
   );
   assert.ok(
-    installation.indexOf("## Check that it works") <
-      installation.indexOf("## Optional: shorter commands"),
+    installation.indexOf("## Check that it works") < installation.indexOf("## Registry addresses"),
     "installation guide explains optional configuration before the first success check",
   );
 });

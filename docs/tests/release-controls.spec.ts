@@ -10,7 +10,7 @@ const focusControls = [
   { route: "checkbox", control: '[data-slot="checkbox"]', mode: "ring" },
   { route: "radio-group", control: '[data-slot="radio-group-item"]', mode: "ring" },
   { route: "switch", control: '[data-slot="switch"]', mode: "ring" },
-  { route: "select", control: '[data-slot="select-trigger"]', mode: "border" },
+  { route: "select", control: '[data-slot="select-trigger"]', mode: "ring" },
   { route: "tabs", control: '[data-slot="tabs-trigger"]', mode: "ring" },
   { route: "calendar", control: 'button[data-day][tabindex="0"]', mode: "ring" },
   { route: "resizable", control: '[data-slot="resizable-handle"]', mode: "ring" },
@@ -90,12 +90,7 @@ for (const item of focusControls) {
     await expect(control).toBeFocused();
     const indicator = "indicator" in item ? preview.locator(item.indicator).first() : control;
 
-    if (item.mode === "border") {
-      await expect(indicator).toHaveCSS("border-color", "rgb(31, 83, 127)");
-      await expect
-        .poll(() => indicator.evaluate((node) => getComputedStyle(node).boxShadow))
-        .not.toContain("rgb(31, 83, 127)");
-    } else if (item.mode === "outline") {
+    if (item.mode === "outline") {
       await expect(indicator).toHaveCSS("border-color", "rgb(31, 83, 127)");
       await expect(indicator).toHaveCSS("outline-style", "solid");
       await expect(indicator).toHaveCSS("outline-color", "rgb(31, 83, 127)");
@@ -112,6 +107,30 @@ for (const item of focusControls) {
       .not.toContain("rgb(239, 243, 247)");
   });
 }
+
+test("select: default light theme distinguishes keyboard focus from its resting border", async ({
+  page,
+}) => {
+  await page.emulateMedia({ colorScheme: "light" });
+  await page.goto("/docs/select");
+  const preview = page.locator('.component-preview[data-component="select"]').first();
+  const control = preview.locator('[data-slot="select-trigger"]').first();
+  await preview.scrollIntoViewIfNeeded();
+  await expect(control).toBeVisible();
+  await expect(page.locator("html")).not.toHaveClass(/\bdark\b/);
+  const resting = await control.evaluate((node) => {
+    const style = getComputedStyle(node);
+    return { border: style.borderColor, shadow: style.boxShadow };
+  });
+  await page.keyboard.press("Tab");
+  await control.focus();
+  await expect(control).toBeFocused();
+  await expect.poll(() => control.evaluate((node) => node.matches(":focus-visible"))).toBe(true);
+  await expect(control).toHaveCSS("border-color", resting.border);
+  await expect
+    .poll(() => control.evaluate((node) => getComputedStyle(node).boxShadow))
+    .not.toBe(resting.shadow);
+});
 
 test("every public button variant remains readable in every palette", async ({ page }) => {
   test.setTimeout(180_000);

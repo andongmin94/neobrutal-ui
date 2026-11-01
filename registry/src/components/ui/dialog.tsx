@@ -2,7 +2,7 @@
 
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { XIcon } from "lucide-react";
-import type * as React from "react";
+import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -11,8 +11,14 @@ type DialogContentProps = DialogPrimitive.Popup.Props & {
   showCloseButton?: boolean;
 };
 
-function Dialog(props: DialogPrimitive.Root.Props) {
-  return <DialogPrimitive.Root {...props} />;
+const DialogModalContext = React.createContext<DialogPrimitive.Root.Props["modal"]>(true);
+
+function Dialog({ modal = true, ...props }: DialogPrimitive.Root.Props) {
+  return (
+    <DialogModalContext.Provider value={modal}>
+      <DialogPrimitive.Root modal={modal} {...props} />
+    </DialogModalContext.Provider>
+  );
 }
 
 function DialogTrigger(props: DialogPrimitive.Trigger.Props) {
@@ -48,9 +54,10 @@ function DialogContent({
   showCloseButton = true,
   ...props
 }: DialogContentProps) {
+  const modal = React.useContext(DialogModalContext);
   return (
     <DialogPortal>
-      <DialogOverlay />
+      {modal === true && <DialogOverlay />}
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         {...props}

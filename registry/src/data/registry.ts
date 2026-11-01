@@ -709,6 +709,7 @@ const TEMPLATES = [
     registryDependencies: ["button"],
     categories: ["template", "profile", "links"],
     files: [
+      { path: "src/lib/link-hub-data.ts", type: "registry:lib", target: "@lib/link-hub-data.ts" },
       {
         path: "src/blocks/templates/link-hub-template.tsx",
         type: "registry:component",

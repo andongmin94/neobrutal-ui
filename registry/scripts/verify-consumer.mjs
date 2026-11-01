@@ -119,6 +119,23 @@ async function verifyTarget(target, fixtureDirectory, scenario) {
       fixtureDirectory,
     );
     assert.ok(fs.existsSync(configPath), "shadcn init must create components.json");
+    // Test-only local endpoint override: use this checkout for the documented namespace commands.
+    await run(
+      npmExecutable(),
+      [
+        "exec",
+        "--yes",
+        "--package=shadcn@latest",
+        "--",
+        "shadcn",
+        "registry",
+        "add",
+        `@neobrutal-ui=${registryOrigin}/r/{name}.json`,
+        "--cwd",
+        fixtureDirectory,
+      ],
+      fixtureDirectory,
+    );
   }
 
   const initialConfig = readJson(configPath);
@@ -145,7 +162,7 @@ async function verifyTarget(target, fixtureDirectory, scenario) {
       ...(scenario === "standard" ? ["--overwrite"] : []),
       "--cwd",
       fixtureDirectory,
-      ...names.map(itemUrl),
+      ...names.map((name) => (scenario === "readme" ? `@neobrutal-ui/${name}` : itemUrl(name))),
     ];
     if (scenario === "readme") {
       await run(

@@ -8,8 +8,10 @@ import DashboardTemplate from "@/components/templates/dashboard-template";
 import LandingTemplate from "@/components/templates/landing-template";
 import LinkHubTemplate from "@/components/templates/link-hub-template";
 import PortfolioTemplate from "@/components/templates/portfolio-template";
+import { Pre } from "@/components/docs/pre";
 import TEMPLATES from "@/data/templates";
-import { getBlogPost } from "@/lib/blog-posts";
+import { BLOG_POSTS, getBlogPost } from "@/lib/blog-posts";
+import { LINK_HUB_LINKS, LINK_HUB_PROFILE } from "@/lib/link-hub-data";
 import { copyText } from "@/site/lib/clipboard";
 import { TemplatePreview } from "./template-preview";
 import { TemplateThumbnail } from "./template-thumbnail";
@@ -18,7 +20,6 @@ const templateComponents: Record<string, ComponentType> = {
   cms: CmsTemplate,
   dashboard: DashboardTemplate,
   landing: LandingTemplate,
-  links: LinkHubTemplate,
   portfolio: PortfolioTemplate,
 };
 
@@ -50,7 +51,7 @@ export function TemplatesPage() {
         >
           <div className="relative shrink-0 border-b-2 border-border">
             <TemplateThumbnail>
-              <TemplateDetailPage slug={template.slug} />
+              <TemplateDemo slug={template.slug} />
             </TemplateThumbnail>
             <Link
               aria-label={`Open ${template.title} template`}
@@ -101,12 +102,45 @@ export function TemplatesPage() {
 }
 
 export function TemplateDetailPage({ slug }: { slug?: string }) {
-  if (!slug) throw new Error("A template slug is required.");
+  const template = TEMPLATES.find((entry) => entry.slug === slug);
+  if (!template) throw new Error(`Unknown template: ${slug}`);
 
+  return (
+    <>
+      <section
+        aria-label={`Install ${template.title} template`}
+        className="not-prose mb-6 grid gap-3 rounded-base border-2 border-border bg-secondary-background p-4 sm:p-6"
+      >
+        <h2 className="font-heading text-xl">Use this template</h2>
+        <p className="text-sm leading-6">
+          <Link href="/docs/installation" className="underline underline-offset-4">
+            Set up the shared base once
+          </Link>
+          , then run this command in your Next.js App Router project. Review existing page routes
+          before replacing them.
+        </p>
+        <Pre __rawstring__={template.installCommand}>
+          <code>{template.installCommand}</code>
+        </Pre>
+      </section>
+      <TemplateDemo slug={template.slug} />
+    </>
+  );
+}
+
+function TemplateDemo({ slug }: { slug: string }) {
   if (slug === "blog") {
     return (
       <TemplatePreview name="blog">
-        <BlogTemplate basePath="/templates/blog" />
+        <BlogTemplate posts={BLOG_POSTS} basePath="/templates/blog" />
+      </TemplatePreview>
+    );
+  }
+
+  if (slug === "links") {
+    return (
+      <TemplatePreview name="links">
+        <LinkHubTemplate profile={LINK_HUB_PROFILE} links={LINK_HUB_LINKS} />
       </TemplatePreview>
     );
   }

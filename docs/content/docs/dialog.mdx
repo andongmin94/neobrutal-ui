@@ -4,7 +4,7 @@ description: "A focused modal task with keyboard focus management."
 shadcnDocsLink: https://base-ui.com/react/components/dialog
 ---
 
-Use Dialog for a focused task that interrupts the current page. Use [Alert Dialog](/docs/alert-dialog) for consequential confirmation. DialogContent includes the portal and backdrop; do not add a second modal wrapper.
+Use Dialog for a focused task that interrupts the current page. Use [Alert Dialog](/docs/alert-dialog) for consequential confirmation. DialogContent includes the portal and shows its backdrop in the default modal mode; do not add a second modal wrapper.
 
 <ComponentPreview component="dialog">
 <include cwd lang="tsx">
@@ -70,6 +70,7 @@ export default function WorkspaceDialog() {
 | --- | --- | --- |
 | `Dialog.open` / `onOpenChange` | Controlled visibility | Uncontrolled |
 | `Dialog.defaultOpen` | Initial visibility | `false` |
+| `Dialog.modal` | `true` blocks outside interaction; `false` allows it; `"trap-focus"` traps keyboard focus while allowing outside pointer interaction | `true` |
 | `DialogContent.showCloseButton` | Built-in close control | `true` |
 | `DialogFooter.showCloseButton` | Add a close button to the footer | `false` |
 | `DialogContent.initialFocus` / `finalFocus` | Focus destinations | Base UI behavior |

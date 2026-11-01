@@ -79,6 +79,7 @@ test("managed registry sources are byte-identical after synchronization", () => 
     ["src/data/theme-styles.ts", "../registry/src/data/theme-styles.ts"],
     ["src/data/colors.ts", "../registry/src/data/colors.ts"],
     ["src/lib/blog-posts.ts", "../registry/src/lib/blog-posts.ts"],
+    ["src/lib/link-hub-data.ts", "../registry/src/lib/link-hub-data.ts"],
     ["src/lib/utils.ts", "../registry/src/lib/utils.ts"],
     ["src/hooks/use-mobile.ts", "../registry/src/hooks/use-mobile.ts"],
   ] as const;

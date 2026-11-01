@@ -1,10 +1,10 @@
 ---
 title: How installation works
-description: Direct URLs, optional short names, and the files installed by the shadcn CLI.
+description: Registry names, direct URLs, and the files installed by the shadcn CLI.
 ---
 
 You do not need to understand the registry format to use neobrutal-ui.
-The recommended beginner flow is to copy the direct install command from a component page.
+Copy the install command from a component page after installing the shared base.
 
 ## What happens when you install
 
@@ -24,24 +24,17 @@ npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/dialog.json
 The full catalog is available at
 [neobrutal-ui.andongmin.com/r/registry.json](https://neobrutal-ui.andongmin.com/r/registry.json).
 
-## Optional short names
+## Registry names
 
-Add the namespace once if you prefer shorter commands:
-
-```json
-{
-  "registries": {
-    "@neobrutal-ui": "https://neobrutal-ui.andongmin.com/r/{name}.json"
-  }
-}
-```
-
-The `{name}` placeholder maps `@neobrutal-ui/button` to the direct URL for `button.json`.
-You can then run:
+`@neobrutal-ui` is listed in the [official shadcn directory](https://ui.shadcn.com/docs/directory).
+The CLI looks up the endpoint automatically, so no separate namespace configuration is needed:
 
 ```bash
 npx shadcn@latest add @neobrutal-ui/dialog
 ```
+
+To use a fork or local registry, override the endpoint in your project's `registries` map.
+Keep the existing aliases and unrelated settings.
 
 ## What you can install
 

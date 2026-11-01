@@ -20,11 +20,12 @@ Choose **Base UI** if the CLI asks which component library to use.
 ## Fastest setup
 
 Install the shared base once, then add your first component.
-Direct URLs work without editing `components.json`.
+`@neobrutal-ui` is listed in the [official shadcn directory](https://ui.shadcn.com/docs/directory).
+The CLI resolves its address automatically; no separate registry registration is needed.
 
 ```bash
-npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json
-npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json
+npx shadcn@latest add @neobrutal-ui/neobrutal-ui
+npx shadcn@latest add @neobrutal-ui/button
 ```
 
 If `shadcn init` created a default `button.tsx`, answer **Yes** when the CLI asks to overwrite it.
@@ -57,7 +58,7 @@ The shared base changes project-wide styles, so commit your current work before 
 existing application. Inspect its changes first:
 
 ```bash
-npx shadcn@latest view https://neobrutal-ui.andongmin.com/r/neobrutal-ui.json
+npx shadcn@latest view @neobrutal-ui/neobrutal-ui
 ```
 
 Pay particular attention to global CSS, `components.json`, dependencies, and your utilities.
@@ -69,8 +70,8 @@ still install into the Next.js App Router. Compositions do not reinstall the bas
 Each component page includes a copyable install command. For example:
 
 ```bash
-npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/dialog.json
-npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/card.json
+npx shadcn@latest add @neobrutal-ui/dialog
+npx shadcn@latest add @neobrutal-ui/card
 ```
 
 The CLI installs required packages and supporting components automatically.
@@ -87,30 +88,24 @@ No extra theme command is needed for this default. Install one named theme to us
 palette instead:
 
 ```bash
-npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/theme-red.json
+npx shadcn@latest add @neobrutal-ui/theme-red
 ```
 
-Use `theme-mono.json` in the same command to return to the default palette.
+Use `@neobrutal-ui/theme-mono` in the same command to return to the default palette.
 Install one theme at a time rather than adding every preset together. Both light and dark
 tokens are included; your application's theme toggle selects the mode with the `.dark` class.
 
-## Optional: shorter commands
+## Registry addresses
 
-To use shorter commands such as `@neobrutal-ui/dialog`, merge this entry into the existing
-`registries` object in `components.json`:
-
-```json
-{
-  "registries": {
-    "@neobrutal-ui": "https://neobrutal-ui.andongmin.com/r/{name}.json"
-  }
-}
-```
+The official namespace works without manually editing `components.json`.
+You can also install with the public item URL:
 
 ```bash
-npx shadcn@latest add @neobrutal-ui/dialog
-npx shadcn@latest add @neobrutal-ui/theme-red
+npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/dialog.json
 ```
+
+For a fork or local registry, configure that endpoint in your project's `registries` map
+while keeping your current aliases and other settings.
 
 ## Templates
 
@@ -118,8 +113,8 @@ Templates install Next.js App Router pages and supporting components.
 Inspect their target files before adding one to a project that already uses the same routes.
 
 ```bash
-npx shadcn@latest view https://neobrutal-ui.andongmin.com/r/blog-template.json
-npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/blog-template.json
+npx shadcn@latest view @neobrutal-ui/blog-template
+npx shadcn@latest add @neobrutal-ui/blog-template
 ```
 
 ## Manual installation and updates
@@ -130,5 +125,5 @@ Check the [release notes](https://github.com/andongmin94/neobrutal-ui/releases),
 changes before overwriting files that you have customized:
 
 ```bash
-npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/button.json --dry-run
+npx shadcn@latest add @neobrutal-ui/button --dry-run
 ```

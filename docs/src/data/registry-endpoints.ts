@@ -13,5 +13,10 @@ export function registryItemUrl(name: string) {
 
 export function registryInstallCommand(...names: string[]) {
   if (names.length === 0) throw new Error("At least one registry item is required.");
-  return `npx shadcn@latest add ${names.map(registryItemUrl).join(" ")}`;
+  const items = names.map((name) =>
+    REGISTRY_BASE_URL === DEFAULT_REGISTRY_BASE_URL
+      ? `@neobrutal-ui/${name.replace(/\.json$/, "")}`
+      : registryItemUrl(name),
+  );
+  return `npx shadcn@latest add ${items.join(" ")}`;
 }

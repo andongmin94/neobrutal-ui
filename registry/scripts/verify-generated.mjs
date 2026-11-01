@@ -19,6 +19,7 @@ const generatedPaths = [
   "docs/src/data/component-descriptions.json",
   "docs/src/hooks/use-mobile.ts",
   "docs/src/lib/blog-posts.ts",
+  "docs/src/lib/link-hub-data.ts",
   "docs/src/lib/utils.ts",
   "docs/src/styling/theme.css",
 ];

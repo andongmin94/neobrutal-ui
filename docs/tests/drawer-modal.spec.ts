@@ -40,6 +40,10 @@ test.beforeAll(async () => {
         "react/jsx-runtime",
         "react/jsx-dev-runtime",
         "@base-ui/react/drawer",
+        "@base-ui/react/dialog",
+        "@base-ui/react/button",
+        "class-variance-authority",
+        "lucide-react",
         "clsx",
         "tailwind-merge",
       ],
@@ -49,7 +53,7 @@ test.beforeAll(async () => {
     if (request.url?.split("?")[0] !== "/") return next();
     response.setHeader("Content-Type", "text/html; charset=utf-8");
     response.end(
-      '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Drawer modal regression</title></head><body><div id="root"></div><script type="module" src="/tests/fixtures/drawer-modal.tsx"></script></body></html>',
+      '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Overlay modal regressions</title></head><body><div id="root"></div><script type="module" src="/tests/fixtures/drawer-modal.tsx"></script></body></html>',
     );
   });
   await server.listen();
@@ -95,6 +99,53 @@ test("default modal drawer preserves its backdrop and focus return", async ({ pa
   await expect(page.locator('[data-slot="drawer-overlay"]')).toBeVisible();
   const background = page.getByTestId("background-action");
   const point = await background.boundingBox();
+  expect(point).not.toBeNull();
+  const x = point!.x + point!.width / 2;
+  const y = point!.y + point!.height / 2;
+  if (test.info().project.use.hasTouch) await page.touchscreen.tap(x, y);
+  else await page.mouse.click(x, y);
+  await expect(page.getByTestId("background-count")).toHaveText("0");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+});
+
+for (const mode of ["false", "trap-focus"] as const) {
+  const description = mode === "false" ? "non-modal" : "focus-trapping";
+  test(`${description} dialog leaves background controls clickable`, async ({ page }) => {
+    await page.goto(`${origin}?surface=dialog&modal=${mode}`);
+    const trigger = page.getByRole("button", { name: "Open dialog", exact: true });
+    await trigger.click();
+    const dialog = page.getByRole("dialog", { name: "Dialog modal behavior" });
+    await expect(dialog).toBeVisible();
+    if (mode === "trap-focus") {
+      await dialog.getByRole("button", { name: "Close dialog", exact: true }).focus();
+      await page.keyboard.press("Tab");
+      await expect
+        .poll(() => dialog.evaluate((node) => node.contains(document.activeElement)))
+        .toBe(true);
+    }
+    const background = page.getByTestId("background-action");
+    if (test.info().project.use.hasTouch) await background.tap({ timeout: 2000 });
+    else await background.click({ timeout: 2000 });
+    await expect(page.getByTestId("background-count")).toHaveText("1");
+    await expect(page.locator('[data-slot="dialog-overlay"]')).toHaveCount(0);
+    await expect(dialog).toHaveCount(0);
+    await trigger.click();
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole("button", { name: "Close dialog", exact: true }).focus();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toHaveCount(0);
+    await expect(trigger).toBeFocused();
+  });
+}
+
+test("default modal dialog preserves its backdrop and focus return", async ({ page }) => {
+  await page.goto(`${origin}?surface=dialog`);
+  const trigger = page.getByRole("button", { name: "Open dialog", exact: true });
+  await trigger.click();
+  await expect(page.getByRole("dialog", { name: "Dialog modal behavior" })).toBeVisible();
+  await expect(page.locator('[data-slot="dialog-overlay"]')).toBeVisible();
+  const point = await page.getByTestId("background-action").boundingBox();
   expect(point).not.toBeNull();
   const x = point!.x + point!.width / 2;
   const y = point!.y + point!.height / 2;

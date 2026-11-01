@@ -1,5 +1,12 @@
+import assert from "node:assert/strict";
+import { mkdir, mkdtemp, rm } from "node:fs/promises";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import tailwindcss from "@tailwindcss/vite";
+import { createServer, type ViteDevServer } from "vite";
+import TEMPLATES from "../src/data/templates";
 import type { TemplateEntry } from "../src/data/templates";
 
 async function openTemplate(page: Page, name: TemplateEntry["slug"]) {
@@ -21,6 +28,171 @@ async function expectHealthyTemplate(page: Page) {
     .analyze();
   expect(result.violations.map(({ id, nodes }) => ({ id, nodes }))).toEqual([]);
 }
+
+test.describe("template consumer data", () => {
+  let server: ViteDevServer;
+  let origin: string;
+  let cacheDirectory: string | undefined;
+  const root = fileURLToPath(new URL("..", import.meta.url));
+  const cacheRoot = join(root, "test-results");
+
+  test.beforeAll(async () => {
+    await mkdir(cacheRoot, { recursive: true });
+    cacheDirectory = await mkdtemp(join(cacheRoot, "template-data-vite-"));
+    server = await createServer({
+      configFile: false,
+      root,
+      cacheDir: cacheDirectory,
+      resolve: { alias: { "@": join(root, "src") } },
+      server: { host: "127.0.0.1", port: 0 },
+      appType: "custom",
+      plugins: [tailwindcss()],
+      oxc: { jsx: { runtime: "automatic" } },
+      optimizeDeps: { entries: ["tests/fixtures/template-data.tsx"] },
+    });
+    server.middlewares.use((request, response, next) => {
+      if (request.url?.split("?")[0] !== "/") return next();
+      response.setHeader("Content-Type", "text/html; charset=utf-8");
+      response.end(
+        '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Template consumer data</title></head><body><div id="root"></div><script type="module" src="/tests/fixtures/template-data.tsx"></script></body></html>',
+      );
+    });
+    await server.listen();
+    origin = server.resolvedUrls!.local[0];
+  });
+
+  test.afterAll(async () => {
+    try {
+      await server?.close();
+    } finally {
+      if (cacheDirectory) {
+        assert.equal(dirname(cacheDirectory), cacheRoot, "Unexpected Vite cache path");
+        await rm(cacheDirectory, { recursive: true, force: true, maxRetries: 3 });
+      }
+    }
+  });
+
+  test("Blog filters supplied topics and updates when application posts change", async ({
+    page,
+  }) => {
+    await page.goto(origin);
+    const blog = page.getByRole("region", { name: "Consumer blog", exact: true });
+    const filters = blog.getByRole("group", { name: "Filter posts by topic" });
+    const articles = blog.getByRole("article");
+    await expect(articles).toHaveCount(2);
+    await expect(articles.first()).toContainText("Consumer research note");
+    await filters.getByRole("button", { name: "All", exact: true }).click();
+    await expect(articles).toHaveCount(1);
+    await expect(articles).toContainText("Consumer all topic");
+    await expect(filters.getByRole("button", { name: "All topics", exact: true })).toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
+    await filters.getByRole("button", { name: "All topics", exact: true }).click();
+    await blog.getByRole("searchbox", { name: "Search posts" }).fill("research");
+    await expect(articles).toHaveCount(1);
+    await expect(articles).toContainText("Consumer research note");
+    await blog.getByRole("button", { name: "Clear search", exact: true }).click();
+    await blog.getByLabel("Sort posts", { exact: true }).selectOption("oldest");
+    await expect(articles.first()).toContainText("Consumer all topic");
+    await filters.getByRole("button", { name: "All", exact: true }).click();
+    await page.getByRole("button", { name: "Load updated data", exact: true }).click();
+    await expect(articles).toHaveCount(1);
+    await expect(articles).toContainText("Updated application post");
+    await expect(filters.getByRole("button", { name: "All", exact: true })).toHaveCount(0);
+    await expect(filters.getByRole("button", { name: "Release", exact: true })).toBeVisible();
+    await expect(
+      blog.getByRole("link", { name: "Updated application post", exact: true }),
+    ).toHaveAttribute("href", "/journal/updated-note");
+    await page.getByRole("button", { name: "Clear data", exact: true }).click();
+    await expect(articles).toHaveCount(0);
+    await expect(blog.getByText("No posts found.", { exact: true })).toBeVisible();
+  });
+
+  test("Link Hub derives groups and copies the current profile email", async ({ page }) => {
+    await page.addInitScript(() => {
+      let copied = "";
+      Object.defineProperty(navigator, "clipboard", {
+        configurable: true,
+        value: {
+          writeText: async (text: string) => {
+            copied = text;
+          },
+          readText: async () => copied,
+        },
+      });
+    });
+    await page.goto(origin);
+    const hub = page.getByRole("region", { name: "Consumer link hub", exact: true });
+    const filters = hub.getByRole("group", { name: "Filter links" });
+    await expect(hub.getByRole("heading", { name: "Mina Park", exact: true })).toBeVisible();
+    await expect(hub.getByRole("listitem")).toHaveCount(2);
+    await expect(filters.getByRole("button", { name: "Work", exact: true })).toHaveCount(0);
+    await filters.getByRole("button", { name: "All", exact: true }).click();
+    await expect(hub.getByRole("listitem")).toHaveCount(1);
+    await expect(hub.getByRole("link", { name: /Consumer guide/ })).toHaveAttribute(
+      "href",
+      "/guide",
+    );
+    await hub.getByRole("button", { name: "Copy email", exact: true }).click();
+    await expect
+      .poll(() => page.evaluate(() => navigator.clipboard.readText()))
+      .toBe("mina+docs@example.org");
+    await page.getByRole("button", { name: "Load updated data", exact: true }).click();
+    await expect(hub.getByRole("heading", { name: "Jae Kim", exact: true })).toBeVisible();
+    await expect(filters.getByRole("button", { name: "Research", exact: true })).toHaveCount(0);
+    await expect(filters.getByRole("button", { name: "Community", exact: true })).toBeVisible();
+    await expect(hub.getByRole("link", { name: /Community/ })).toHaveAttribute(
+      "href",
+      "/community",
+    );
+    await expect(hub.getByRole("region", { name: "Contact" }).getByRole("status")).toBeEmpty();
+    await hub.getByRole("button", { name: "Copy email", exact: true }).click();
+    await expect
+      .poll(() => page.evaluate(() => navigator.clipboard.readText()))
+      .toBe("jae@example.org");
+    await page.getByRole("button", { name: "Clear data", exact: true }).click();
+    await expect(hub.getByRole("listitem")).toHaveCount(0);
+    await expect(hub.getByRole("region", { name: "Contact" })).toHaveCount(0);
+  });
+
+  test("template details expose a keyboard-copyable install command outside the demo", async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      let copied = "";
+      Object.defineProperty(navigator, "clipboard", {
+        configurable: true,
+        value: {
+          writeText: async (text: string) => {
+            copied = text;
+          },
+          readText: async () => copied,
+        },
+      });
+    });
+    for (const slug of ["blog", "links"] as const) {
+      const template = TEMPLATES.find((entry) => entry.slug === slug)!;
+      await openTemplate(page, slug);
+      const installation = page.getByRole("region", {
+        name: `Install ${template.title} template`,
+        exact: true,
+      });
+      await expect(installation.locator("code")).toHaveText(template.installCommand);
+      await expect(
+        installation.getByRole("link", { name: "Set up the shared base once" }),
+      ).toHaveAttribute("href", "/docs/installation");
+      await expect(installation.locator("[data-template-preview]")).toHaveCount(0);
+      const copy = installation.getByRole("button", { name: "Copy", exact: true });
+      await copy.focus();
+      await copy.press("Enter");
+      await expect
+        .poll(() => page.evaluate(() => navigator.clipboard.readText()))
+        .toBe(template.installCommand);
+      await expect(installation.getByRole("button", { name: "Copied", exact: true })).toBeFocused();
+    }
+  });
+});
 
 test("CMS editing a searched title keeps the same editor and input focus", async ({ page }) => {
   await openTemplate(page, "cms");

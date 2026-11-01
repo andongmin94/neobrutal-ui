@@ -5,3 +5,31 @@ layout: page
 ---
 
 <SpecialPage kind="template-detail" slug="links" />
+
+## Connect your profile and links
+
+Pass `profile` and `links` from your application. The installed page uses the sample exports from
+`lib/link-hub-data.ts`; replace those values with your own data. The same module owns the shared types.
+
+```tsx
+import LinkHubTemplate from "@/components/templates/link-hub-template";
+import type { LinkHubLink, LinkHubProfile } from "@/lib/link-hub-data";
+
+export default function ProfilePage({
+  profile,
+  links,
+}: {
+  profile: LinkHubProfile;
+  links: readonly LinkHubLink[];
+}) {
+  return <LinkHubTemplate profile={profile} links={links} />;
+}
+```
+
+The profile supplies `name`, `initials`, `handle`, `bio`, and an optional `email`. Omit `email` to hide
+the contact section. Copy email uses that address. Link groups are generated from the supplied links.
+
+Each link needs a unique `id`, `group`, `title`, `detail`, and `href`. Set `external` to open a new tab
+and `highlighted` for the raised primary appearance. Optional `icon` values are `website`, `code`,
+`social`, `writing`, `profile`, and `email`. These are serializable names, so profiles and links can
+be passed from a Next.js server page without passing icon functions across the client boundary.
