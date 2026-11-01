@@ -145,6 +145,42 @@ test("scroll area has a name and scrolls by keyboard", async ({ page }, info) =>
   await capture(canvas, "scroll-area-last-activity", info);
 });
 
+test("progress keeps indeterminate work visible with reduced motion", async ({ page }) => {
+  const canvas = await openCanvas(page, "progress");
+  const determinate = canvas.getByRole("progressbar", { name: "Loading progress", exact: true });
+  const indeterminate = canvas.getByRole("progressbar", {
+    name: "Processing progress",
+    exact: true,
+  });
+  await expect(determinate).toHaveAttribute("aria-valuenow", "66");
+  await expect(indeterminate).not.toHaveAttribute("aria-valuenow", /.*/);
+  const indicator = indeterminate.locator('[data-slot="progress-indicator"]');
+
+  for (const reducedMotion of ["no-preference", "reduce"] as const) {
+    await page.emulateMedia({ reducedMotion });
+    await expect(indicator).toBeVisible();
+    await expect(indicator).toHaveCSS("background-image", /repeating-linear-gradient/);
+    if (reducedMotion === "reduce") {
+      await expect(indicator).toHaveCSS("animation-name", "none");
+    } else {
+      await expect(indicator).not.toHaveCSS("animation-name", "none");
+    }
+    const geometry = await indicator.evaluate((node) => ({
+      width: node.getBoundingClientRect().width,
+      trackWidth: node.parentElement!.clientWidth,
+      opacity: Number(getComputedStyle(node).opacity),
+    }));
+    expect(geometry.width).toBeGreaterThan(10);
+    expect(Math.abs(geometry.width - geometry.trackWidth)).toBeLessThanOrEqual(1);
+    expect(geometry.opacity).toBeGreaterThan(0);
+  }
+
+  const measuredFill = await determinate
+    .locator('[data-slot="progress-indicator"]')
+    .evaluate((node) => node.getBoundingClientRect().width / node.parentElement!.clientWidth);
+  expect(measuredFill).toBeCloseTo(0.66, 1);
+});
+
 test("sidebar collapsed, mobile, disclosure and menu states work", async ({ page }, info) => {
   const canvas = await openCanvas(page, "sidebar");
   const toggle = canvas.locator('button[data-sidebar="trigger"]');

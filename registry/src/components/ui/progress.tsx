@@ -51,7 +51,7 @@ function ProgressIndicator({ className, ...props }: ProgressPrimitive.Indicator.
       {...props}
       className={(state) =>
         cn(
-          "h-full border-r-2 border-border bg-main transition-all",
+          "h-full border-r-2 border-border bg-main transition-all data-indeterminate:w-full data-indeterminate:border-r-0 data-indeterminate:bg-[repeating-linear-gradient(-45deg,transparent,transparent_0.5rem,var(--border)_0.5rem,var(--border)_0.625rem)] motion-safe:data-indeterminate:animate-pulse",
           typeof className === "function" ? className(state) : className,
         )
       }

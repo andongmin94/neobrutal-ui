@@ -22,6 +22,34 @@ const recipeNames = [
   "chart-install-diagnostics",
 ];
 
+test("chart containers preserve native IDs and isolate colors for IDs that normalize alike", () => {
+  const cases = [
+    { id: "revenue:q1", color: "red" },
+    { id: "revenue-q1", color: "blue" },
+  ];
+  const html = renderToStaticMarkup(
+    <>
+      {cases.map(({ id, color }) => (
+        <ChartContainer key={id} id={id} config={{ total: { color } }}>
+          <div />
+        </ChartContainer>
+      ))}
+    </>,
+  );
+  const styles = [...html.matchAll(/<style>([\s\S]*?)<\/style>/g)].map((match) => match[1]);
+  assert.equal(styles.length, cases.length);
+  const scopes = cases.map(({ id, color }, index) => {
+    const container = html.match(new RegExp(`<div\\b[^>]*\\bid="${id}"[^>]*>`))?.[0];
+    assert.ok(container, `${id}: native ID is preserved`);
+    const scope = container.match(/\bdata-chart="([^"]+)"/)?.[1];
+    assert.ok(scope, `${id}: chart has a CSS scope`);
+    assert.ok(styles[index].includes(`[data-chart="${scope}"]`));
+    assert.ok(styles[index].includes(`--color-total: ${color};`));
+    return scope;
+  });
+  assert.equal(new Set(scopes).size, cases.length, "each chart has an independent CSS scope");
+});
+
 test("tooltip formatters can calculate each series share from the complete payload", () => {
   const row = { month: "January", desktop: 30, mobile: 70 };
   const payload = [

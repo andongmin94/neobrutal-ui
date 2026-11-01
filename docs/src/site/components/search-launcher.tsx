@@ -163,6 +163,7 @@ export function SearchLauncher() {
     setReady(true);
     function shortcut(event: globalThis.KeyboardEvent) {
       if (
+        !event.defaultPrevented &&
         !event.isComposing &&
         event.keyCode !== 229 &&
         (event.metaKey || event.ctrlKey) &&

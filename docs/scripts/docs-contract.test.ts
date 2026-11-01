@@ -159,13 +159,16 @@ test("markdown typography never uses bare descendant element selectors", () => {
   assert.doesNotMatch(css, /\.docs-content\s+(?:h[1-6]|p|a|ol|ul|li|strong)\b/);
 });
 
-test("the docs stylesheet is generated from the same default theme", () => {
+test("the docs stylesheet uses the same imports and default theme as installed components", () => {
   const normalize = (value: string) =>
     value.replace(/#[0-9a-fA-F]{3,8}\b/g, (hex) => hex.toLowerCase()).replace(/\s+/g, "");
   assert.equal(
     normalize(fs.readFileSync("src/styling/theme.css", "utf8")),
     normalize(serializeThemeVariables()),
   );
+  const globals = fs.readFileSync("src/styling/globals.css", "utf8");
+  for (const rule of Object.keys(themeCss).filter((key) => key.startsWith("@import ")))
+    assert.ok(globals.includes(`${rule};`), `docs stylesheet is missing ${rule}`);
 });
 
 test("every component document has complete usage, API, accessibility and installation guidance", () => {

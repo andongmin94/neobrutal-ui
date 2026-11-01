@@ -27,7 +27,13 @@ export default function CommandDemo() {
 
   React.useEffect(() => {
     const down = (event: KeyboardEvent) => {
-      if (event.key === "j" && (event.metaKey || event.ctrlKey)) {
+      if (
+        !event.defaultPrevented &&
+        !event.isComposing &&
+        event.keyCode !== 229 &&
+        event.key.toLowerCase() === "j" &&
+        (event.metaKey || event.ctrlKey)
+      ) {
         event.preventDefault();
         setOpen((currentOpen) => !currentOpen);
       }

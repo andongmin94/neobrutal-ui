@@ -12,5 +12,16 @@ export default function ProgressDemo() {
     return () => clearTimeout(timer);
   }, []);
 
-  return <Progress value={progress} className="w-[60%]" aria-label="Loading progress" />;
+  return (
+    <div className="grid w-[60%] gap-5">
+      <div className="grid gap-2">
+        <p className="text-sm font-heading">Measured progress</p>
+        <Progress value={progress} aria-label="Loading progress" />
+      </div>
+      <div className="grid gap-2">
+        <p className="text-sm font-heading">Unknown total</p>
+        <Progress value={null} aria-label="Processing progress" />
+      </div>
+    </div>
+  );
 }

@@ -84,11 +84,12 @@ function ChartContainer({
   };
 }) {
   const uniqueId = React.useId();
-  const chartId = normalizeChartId(`chart-${id ?? uniqueId}`);
+  const chartId = normalizeChartId(`chart-${uniqueId}`);
 
   return (
     <ChartContext.Provider value={{ config }}>
       <div
+        id={id}
         data-slot="chart"
         data-chart={chartId}
         className={cn(

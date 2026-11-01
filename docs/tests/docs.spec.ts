@@ -152,6 +152,53 @@ test("controlled select supports keyboard choice", async ({ page }) => {
   await expect(primary.getByRole("status")).toHaveText("Selected value: published");
 });
 
+test("command navigation owns its shortcuts before documentation handlers", async ({ page }) => {
+  await page.goto("/docs/command");
+  const trigger = page.getByRole("button", { name: "Open command menu", exact: true });
+  await trigger.click();
+  const command = page.getByRole("dialog", { name: "Command Palette", exact: true });
+  const input = command.getByRole("combobox");
+  const search = page.getByRole("dialog", { name: "Search documentation", exact: true });
+
+  await expect(input).toBeFocused();
+  await expect(command.locator('[data-slot="command-list"]')).toHaveCSS("scrollbar-width", "none");
+  await expect(command.getByRole("option", { name: "Calendar", exact: true })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
+  await input.press("Control+j");
+  await expect(command.getByRole("option", { name: "Search Emoji", exact: true })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
+  await expect(command).toBeVisible();
+  await input.press("Control+k");
+  await expect(command.getByRole("option", { name: "Calendar", exact: true })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
+  await expect(search).toBeHidden();
+  await expect(input).toBeFocused();
+  await input.dispatchEvent("keydown", {
+    key: "j",
+    ctrlKey: true,
+    isComposing: true,
+    bubbles: true,
+  });
+  await expect(command).toBeVisible();
+
+  await input.press("Escape");
+  await expect(command).toBeHidden();
+  await trigger.press("Control+j");
+  await expect(input).toBeFocused();
+  await input.press("Escape");
+  await expect(command).toBeHidden();
+  await trigger.press("Control+k");
+  await expect(search.getByRole("combobox")).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(search).toBeHidden();
+});
+
 test("customizer uses scoped tokens, full CSS export, and reversible defaults", async ({
   page,
 }) => {
