@@ -34,7 +34,7 @@
     "embla-carousel-react": "^8.6.0",
     "fumadocs-core": "16.17.9",
     "fumadocs-mdx": "15.4.10",
-    "fumadocs-ui": "npm:@fumadocs/base-ui@16.17.8",
+    "fumadocs-ui": "npm:@fumadocs/base-ui@16.17.9",
     "fumapress": "1.6.2",
     "input-otp": "^1.5.0",
     "lucide-react": "^1.64.0",
