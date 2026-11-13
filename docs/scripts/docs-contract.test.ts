@@ -15,6 +15,103 @@ import {
   serializeThemeVariables,
   themeCss,
 } from "../src/data/theme-styles";
+import { searchResultText } from "../src/site/lib/search-result";
+
+test("search labels read table cells without repeating Markdown syntax or column headers", () => {
+  assert.equal(
+    searchResultText({
+      type: "root",
+      children: [
+        {
+          type: "element",
+          tagName: "table",
+          properties: {},
+          children: [
+            {
+              type: "element",
+              tagName: "thead",
+              properties: {},
+              children: [
+                {
+                  type: "element",
+                  tagName: "tr",
+                  properties: {},
+                  children: ["Prop / part", "Purpose", "Default"].map((value) => ({
+                    type: "element",
+                    tagName: "th",
+                    properties: {},
+                    children: [{ type: "text", value }],
+                  })),
+                },
+              ],
+            },
+            {
+              type: "element",
+              tagName: "tbody",
+              properties: {},
+              children: [
+                {
+                  type: "element",
+                  tagName: "tr",
+                  properties: {},
+                  children: [
+                    "ResizablePanelGroup.orientation",
+                    "Split direction",
+                    "horizontal",
+                  ].flatMap((value) => [
+                    { type: "text" as const, value: "\n" },
+                    {
+                      type: "element" as const,
+                      tagName: "td",
+                      properties: {},
+                      children: [{ type: "text" as const, value }],
+                    },
+                  ]),
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    }),
+    "ResizablePanelGroup.orientation · Split direction · horizontal",
+  );
+});
+
+test("search labels preserve code punctuation and inline text boundaries", () => {
+  assert.equal(
+    searchResultText({
+      type: "root",
+      children: [
+        {
+          type: "element",
+          tagName: "p",
+          properties: {},
+          children: [
+            { type: "text", value: "Read " },
+            {
+              type: "element",
+              tagName: "code",
+              properties: {},
+              children: [{ type: "text", value: 'React.ComponentProps<"button">' }],
+            },
+            { type: "text", value: " and " },
+            {
+              type: "element",
+              tagName: "a",
+              properties: { href: "/docs/input" },
+              children: [{ type: "text", value: "snake_case[0]" }],
+            },
+            { type: "element", tagName: "br", properties: {}, children: [] },
+            { type: "text", value: "without losing symbols." },
+          ],
+        },
+        { type: "comment", value: "Not visible text" },
+      ],
+    }),
+    'Read React.ComponentProps<"button"> and snake_case[0] without losing symbols.',
+  );
+});
 
 const compositionRecipes = new Set<string>(COMPOSITION_RECIPE_SLUGS);
 

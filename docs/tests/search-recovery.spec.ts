@@ -1,5 +1,41 @@
 import { expect, test } from "@playwright/test";
 
+for (const startPath of ["/", "/docs/resizable"]) {
+  test(`table search from ${startPath} shows readable cells and opens a visible, focused section`, async ({
+    page,
+  }) => {
+    await page.goto(startPath);
+    const trigger = page.getByRole("button", { name: "Search documentation", exact: true });
+    await trigger.click();
+    const dialog = page.getByRole("dialog", { name: "Search documentation", exact: true });
+    await dialog.getByRole("combobox").fill("ResizablePanelGroup.orientation");
+    const result = dialog
+      .getByRole("option")
+      .filter({ hasText: "ResizablePanelGroup.orientation" });
+    await expect(result.locator("strong")).toHaveText(
+      "ResizablePanelGroup.orientation · Split direction · horizontal",
+    );
+    await result.click();
+    await expect(page).toHaveURL(/\/docs\/resizable#api-reference$/);
+    await expect(dialog).toBeHidden();
+    await expect(page.locator("#main-content")).toBeFocused();
+    const heading = page.locator("#api-reference");
+    await expect(heading).toBeInViewport();
+    await expect
+      .poll(async () => {
+        const section = await heading.boundingBox();
+        const header = await page.locator(".site-header").boundingBox();
+        return section !== null && header !== null && section.y >= header.y + header.height;
+      })
+      .toBe(true);
+
+    await trigger.click();
+    await dialog.getByRole("combobox").press("Escape");
+    await expect(dialog).toBeHidden();
+    await expect(trigger).toBeFocused();
+  });
+}
+
 test("failed full-text loading is visible and retry recovers without losing local navigation", async ({
   page,
 }) => {

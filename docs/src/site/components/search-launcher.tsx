@@ -10,6 +10,7 @@ import { COMPONENT_DIRECTORY_LINKS } from "@/data/component-directory";
 import TEMPLATES from "@/data/templates";
 import { BLOG_POSTS } from "@/lib/blog-posts";
 import { PRIMARY_NAVIGATION_LINKS } from "@/site/lib/navigation";
+import { searchResultText } from "@/site/lib/search-result";
 
 type SearchEntry = { group: string; href: string; label: string; terms?: string };
 const resultListId = "docs-search-results";
@@ -47,13 +48,6 @@ const staticEntries: SearchEntry[] = [
   })),
 ];
 
-function plainText(value: string) {
-  return value
-    .replaceAll(/<[^>]+>/g, "")
-    .replaceAll(/[*_`#[\]]/g, "")
-    .trim();
-}
-
 function literalSearchTokens(value: string) {
   return value
     .normalize("NFKC")
@@ -81,6 +75,7 @@ export function SearchLauncher() {
   const router = useRouter();
   const pathname = router.path;
   const input = useRef<HTMLInputElement>(null);
+  const selectedResult = useRef(false);
   const [ready, setReady] = useState(false);
   const [open, setOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -115,10 +110,9 @@ export function SearchLauncher() {
         ? query.data
             .slice(0, 24)
             .map((result) => ({
-              group:
-                result.breadcrumbs?.map(plainText).filter(Boolean).join(" / ") || "Documentation",
+              group: result.breadcrumbs?.filter(Boolean).join(" / ") || "Documentation",
               href: result.url,
-              label: plainText(result.content) || "Untitled section",
+              label: searchResultText(result.hastContent) || "Untitled section",
             }))
             .filter((entry) => includesLiteralSearchTokens(entry, literals))
         : [];
@@ -130,6 +124,7 @@ export function SearchLauncher() {
   const activeIndex = Math.min(selectedIndex, Math.max(0, results.length - 1));
 
   function go(entry: SearchEntry) {
+    selectedResult.current = true;
     setOpen(false);
     void router.push(entry.href);
   }
@@ -178,6 +173,7 @@ export function SearchLauncher() {
   }, []);
   useEffect(() => {
     if (open) {
+      selectedResult.current = false;
       setSearch("");
       setSelectedIndex(0);
     }
@@ -205,6 +201,13 @@ export function SearchLauncher() {
             className="search-dialog"
             aria-label="Search documentation"
             initialFocus={input}
+            finalFocus={() => {
+              if (!selectedResult.current) return true;
+              queueMicrotask(() => {
+                document.getElementById("main-content")?.focus({ preventScroll: true });
+              });
+              return false;
+            }}
           >
             <div className="search-dialog__input">
               <Search aria-hidden="true" size={20} strokeWidth={2.3} />
