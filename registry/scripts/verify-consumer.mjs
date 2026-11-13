@@ -408,7 +408,7 @@ function createViteFixture(directory) {
       "@tailwindcss/vite": consumerVersions["@tailwindcss/vite"],
       "@types/react": consumerVersions["@types/react"],
       "@types/react-dom": consumerVersions["@types/react-dom"],
-      "@vitejs/plugin-react": "^6.1.2",
+      "@vitejs/plugin-react": "^6.3.0",
       tailwindcss: consumerVersions.tailwindcss,
       typescript: consumerVersions.typescript,
       vite: consumerVersions.vite,

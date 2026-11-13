@@ -74,52 +74,50 @@ function TableCaption(props: ComponentProps<"caption">) {
   return <caption {...props} />;
 }
 
-export function getMDXComponents(components?: MDXComponents) {
-  return {
-    a: MdxLink,
-    h1: (props) => <Heading as="h1" {...props} />,
-    h2: (props) => <Heading as="h2" {...props} />,
-    h3: (props) => <Heading as="h3" {...props} />,
-    h4: (props) => <Heading as="h4" {...props} />,
-    p: ({ className, ...props }) => (
-      <p className={["md-paragraph", className].filter(Boolean).join(" ")} {...props} />
-    ),
-    ul: ({ className, ...props }) => (
-      <ul className={["md-list", className].filter(Boolean).join(" ")} {...props} />
-    ),
-    ol: ({ className, ...props }) => (
-      <ol className={["md-list", className].filter(Boolean).join(" ")} {...props} />
-    ),
-    li: ({ className, ...props }) => (
-      <li className={["md-list-item", className].filter(Boolean).join(" ")} {...props} />
-    ),
-    blockquote: ({ className, ...props }) => (
-      <blockquote className={["md-quote", className].filter(Boolean).join(" ")} {...props} />
-    ),
-    strong: ({ className, ...props }) => (
-      <strong className={["md-strong", className].filter(Boolean).join(" ")} {...props} />
-    ),
-    code: ({ className, ...props }) => (
-      <code className={["md-code", className].filter(Boolean).join(" ")} {...props} />
-    ),
-    pre: Pre,
-    table: Table,
-    ComponentPreview,
-    Installation,
-    Link: MdxLink,
-    SpecialPage,
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableFooter,
-    TableHead,
-    TableHeader,
-    TableRow,
-    ...components,
-  } satisfies MDXComponents;
-}
-export const useMDXComponents = getMDXComponents;
+const components = {
+  a: MdxLink,
+  h1: (props) => <Heading as="h1" {...props} />,
+  h2: (props) => <Heading as="h2" {...props} />,
+  h3: (props) => <Heading as="h3" {...props} />,
+  h4: (props) => <Heading as="h4" {...props} />,
+  p: ({ className, ...props }) => (
+    <p className={["md-paragraph", className].filter(Boolean).join(" ")} {...props} />
+  ),
+  ul: ({ className, ...props }) => (
+    <ul className={["md-list", className].filter(Boolean).join(" ")} {...props} />
+  ),
+  ol: ({ className, ...props }) => (
+    <ol className={["md-list", className].filter(Boolean).join(" ")} {...props} />
+  ),
+  li: ({ className, ...props }) => (
+    <li className={["md-list-item", className].filter(Boolean).join(" ")} {...props} />
+  ),
+  blockquote: ({ className, ...props }) => (
+    <blockquote className={["md-quote", className].filter(Boolean).join(" ")} {...props} />
+  ),
+  strong: ({ className, ...props }) => (
+    <strong className={["md-strong", className].filter(Boolean).join(" ")} {...props} />
+  ),
+  code: ({ className, ...props }) => (
+    <code className={["md-code", className].filter(Boolean).join(" ")} {...props} />
+  ),
+  pre: Pre,
+  table: Table,
+  ComponentPreview,
+  Installation,
+  Link: MdxLink,
+  SpecialPage,
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} satisfies MDXComponents;
+
+export default components;
 declare global {
-  type MDXProvidedComponents = ReturnType<typeof getMDXComponents>;
+  type MDXProvidedComponents = typeof components;
 }

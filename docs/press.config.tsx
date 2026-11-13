@@ -1,15 +1,11 @@
-import { defineConfig, getPressContext, type AppShape, type PressPlugin } from "fumapress";
-import { fumadocsMdx } from "fumapress/adapters/mdx";
-import { metaSchema, pageSchema } from "fumapress/adapters/mdx/schema";
-import { createRootLayout } from "fumapress/layouts/root";
+import { createPress, type HeadTag } from "fumapress";
+import { metaSchema, pageSchema } from "fumapress/schema";
 import { oramaSearchPlugin } from "fumapress/plugins/orama-search";
 import { sitemapPlugin } from "fumapress/plugins/sitemap";
 import { defineDocs } from "fumadocs-mdx/macro";
 import { z } from "zod";
 
-import { getMDXComponents } from "@/site/components/mdx-components";
 import { HydrationMarker } from "@/site/components/hydration-marker";
-import NotFound from "@/site/components/not-found";
 import { SiteAnalytics } from "@/site/components/site-analytics";
 import { SiteLayout } from "@/site/components/site-layout";
 import { BridgeToaster } from "@/site/components/toaster";
@@ -46,109 +42,69 @@ const themeScript = `
 })();
 `;
 
-const PressRoot = createRootLayout({
-  providerProps: {
-    search: { enabled: false },
-    theme: { enabled: false },
-  },
-});
+const app = createPress(docs.toFumadocsSource(), { mode: "force-static" }).plugins(
+  oramaSearchPlugin(),
+  sitemapPlugin(),
+);
 
-async function PageLayout({ page }: { page: AppShape["page"] }) {
-  const context = getPressContext();
-  const data = page.data as {
-    description?: string;
-    shadcnDocsLink?: string;
-    title: string;
-  };
-  const body = (await context.getPageBody(page))?.node;
-  const toc = await context.getPageToc(page);
-
-  if (body == null) throw new Error(`No MDX body for ${page.path}`);
-
-  return (
-    <SiteLayout
-      description={data.description}
-      shadcnDocsLink={data.shadcnDocsLink}
-      title={data.title}
-      toc={toc}
-    >
-      {body}
-    </SiteLayout>
-  );
-}
-
-const config = defineConfig({
-  content: docs.toFumadocsSource(),
-  mode: "static",
-  preset: false,
+export default app.config({
+  preset: [],
   site: {
     name: SITE_NAME,
     baseUrl: SITE_URL,
   },
-  meta: {
-    root() {
-      return (
-        <>
-          <meta charSet="utf-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <meta property="og:type" content="website" />
-          <meta property="og:site_name" content={SITE_NAME} />
-          <meta property="og:image" content={SOCIAL_IMAGE_URL} />
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:image" content={SOCIAL_IMAGE_URL} />
-          <link rel="icon" href="/logo.svg" type="image/svg+xml" />
-          <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-        </>
-      );
+  head({ page }): HeadTag[] {
+    if (!page) {
+      return [
+        { tag: "meta", attrs: { property: "og:type", content: "website" } },
+        { tag: "meta", attrs: { property: "og:site_name", content: SITE_NAME } },
+        { tag: "meta", attrs: { property: "og:image", content: SOCIAL_IMAGE_URL } },
+        { tag: "meta", attrs: { name: "twitter:card", content: "summary_large_image" } },
+        { tag: "meta", attrs: { name: "twitter:image", content: SOCIAL_IMAGE_URL } },
+        { tag: "link", attrs: { rel: "icon", href: "/logo.svg", type: "image/svg+xml" } },
+      ];
+    }
+    const title =
+      page.url === "/" ? `${SITE_NAME} - Component directory` : `${page.data.title} - ${SITE_NAME}`;
+    const description = page.data.description ?? SITE_DESCRIPTION;
+
+    return [
+      { tag: "title", children: title },
+      { tag: "meta", attrs: { name: "description", content: description } },
+      { tag: "meta", attrs: { property: "og:title", content: title } },
+      { tag: "meta", attrs: { property: "og:description", content: description } },
+      { tag: "meta", attrs: { name: "twitter:title", content: title } },
+      { tag: "meta", attrs: { name: "twitter:description", content: description } },
+    ];
+  },
+  ui: {
+    providerProps: {
+      search: { enabled: false },
+      theme: { enabled: false },
     },
+    renderRoot: ({ children, lang, head }) => (
+      <html lang={lang ?? "en"} suppressHydrationWarning>
+        <head>
+          {head}
+          <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        </head>
+        <body>
+          {children}
+          <HydrationMarker />
+          <SiteAnalytics />
+          <BridgeToaster />
+        </body>
+      </html>
+    ),
+    renderPage: ({ page, body, toc }) => (
+      <SiteLayout
+        description={page.data.description}
+        shadcnDocsLink={page.data.shadcnDocsLink}
+        title={page.data.title}
+        toc={toc}
+      >
+        {body}
+      </SiteLayout>
+    ),
   },
-  renderRoot: ({ children, lang }) => (
-    <PressRoot lang={lang}>
-      {children}
-      <HydrationMarker />
-      <SiteAnalytics />
-      <BridgeToaster />
-    </PressRoot>
-  ),
-  renderPage: ({ page }) => <PageLayout page={page} />,
-  renderNotFound: () => <NotFound />,
 });
-
-type SiteContext = typeof config.$context;
-
-const metadataPlugin: PressPlugin<SiteContext> = {
-  name: "site:metadata",
-  init() {
-    this.interceptPageMeta(({ page }) => {
-      const canonical = this.absoluteUrl(page.url);
-      const isHome = page.url === "/";
-      const title = isHome
-        ? `${SITE_NAME} - Component directory`
-        : `${page.data.title} - ${SITE_NAME}`;
-      const description = page.data.description ?? SITE_DESCRIPTION;
-
-      return (
-        <>
-          <title>{title}</title>
-          <meta name="description" content={description} />
-          <link rel="canonical" href={canonical} />
-          <meta property="og:url" content={canonical} />
-          <meta property="og:title" content={title} />
-          <meta property="og:description" content={description} />
-          <meta name="twitter:title" content={title} />
-          <meta name="twitter:description" content={description} />
-        </>
-      );
-    });
-  },
-};
-
-export default config
-  .adapters(
-    fumadocsMdx<SiteContext>({
-      getMdxComponents() {
-        return getMDXComponents();
-      },
-    }),
-  )
-  .plugins(oramaSearchPlugin<SiteContext>(), sitemapPlugin<SiteContext>(), metadataPlugin);

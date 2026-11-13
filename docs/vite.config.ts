@@ -5,7 +5,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [
-    press(),
+    press({ components: "./src/site/components/mdx-components.tsx" }),
     fumadocsMdx({
       forcedConfig: {
         default: {

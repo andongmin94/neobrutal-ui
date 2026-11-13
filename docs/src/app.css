@@ -7,8 +7,3 @@
 @import "./site/styles/directory.css";
 @import "./site/styles/index.css";
 @import "./site/styles/components.css";
-
-body[data-version="1.0"] {
-  display: block;
-  min-height: auto;
-}

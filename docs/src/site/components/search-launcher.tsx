@@ -94,7 +94,7 @@ export function SearchLauncher() {
         // Only an explicit retry gets a fresh key; normal queries reuse its index.
         // Keep exact term matching so unrelated fuzzy hits do not mask the empty state.
         return staticClient({
-          from: retry ? `/api/search?attempt=${retry}` : "/api/search",
+          from: retry ? `/api/search.json?attempt=${retry}` : "/api/search.json",
           search: { tolerance: 0 },
         }).search(value);
       },

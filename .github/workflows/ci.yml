@@ -58,7 +58,7 @@ jobs:
       - name: Verify core documentation and complete local registry
         working-directory: docs
         run: |
-          npm run test:browser -- docs.spec.ts local-registry.spec.ts analytics.spec.ts runtime-recovery.spec.ts sidebar-shortcut.spec.ts
+          npm run test:browser -- docs.spec.ts local-registry.spec.ts analytics.spec.ts runtime-recovery.spec.ts sidebar-shortcut.spec.ts search-recovery.spec.ts
           npm run test:browser -- component-review.spec.ts galleries.spec.ts --grep 'scroll area has a name|marquee pause|progress keeps indeterminate work visible'
           npm run test:browser -- drawer-modal.spec.ts release-controls.spec.ts --grep 'dialog|select:'
           npm run test:browser -- template-states.spec.ts --grep 'template consumer data'
