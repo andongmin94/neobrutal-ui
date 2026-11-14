@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("table of contents preserves native navigation, focus, and modified clicks", async ({
   page,
+  context,
   isMobile,
 }) => {
   await page.goto("/docs/button");
@@ -34,7 +35,7 @@ test("table of contents preserves native navigation, focus, and modified clicks"
     [backToTop, "#main-content"],
   ] as const) {
     const [popup] = await Promise.all([
-      page.waitForEvent("popup"),
+      context.waitForEvent("page"),
       link.click({ modifiers: ["ControlOrMeta"] }),
     ]);
     try {
