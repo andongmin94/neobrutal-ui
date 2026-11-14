@@ -44,6 +44,8 @@ The default job also runs the Dialog modal/nonmodal cases, Select focus cases (i
 
 Navigation Menu cases from `primitive-overflow.spec.ts` also run in the default job. They verify a persistent current-page indicator and scrolling through long link groups in short viewports with pointer and keyboard input, using the installable components without documentation layout styles.
 
+Carousel cases from `component-composition.spec.ts` and `release-controls.spec.ts` verify horizontal and vertical arrow shortcuts, consumer cancellation, and keyboard ownership for inputs inside slides.
+
 After verifying and building the registry, this job uses `npm run build:site` in `docs` to generate chart sources, write the exact build marker, and build Fumapress against the synchronized registry. The standalone `npm run build` still installs and builds the registry first, so Cloudflare Builds and local clean builds remain self-contained. The clean-generation check intentionally rebuilds generated output to verify reproducibility.
 
 For a comprehensive run, select the `comprehensive` input in the Verify workflow. This also enables Next.js README/existing-project integrations, aggregate consumers, official directory validation, all independent installation shards, and the full `verify-browsers` matrix: desktop light, mobile dark, Chromium reflow, Firefox desktop and WebKit mobile. All browser configurations start the built documentation on localhost; `DOCS_TEST_URL` cannot redirect full or core tests to production.

@@ -82,7 +82,7 @@ export default function Highlights() {
 
 Name the carousel region and provide meaningful slide content. Keep navigation buttons available for people who cannot swipe. Autoplay is not included; adding it requires pause controls and reduced-motion support. Give a vertical carousel a definite height and test the layout on narrow screens.
 
-Left and right arrow shortcuts apply when the carousel region or its navigation buttons have focus. Add `tabIndex={0}` to make the region focusable. Inputs and other controls inside a slide keep their own keyboard behavior.
+Left and right arrow keys navigate a horizontal carousel; up and down arrow keys navigate a vertical carousel. These shortcuts apply when the carousel region or its navigation buttons have focus. Add `tabIndex={0}` to make the region focusable. Inputs and other controls inside a slide keep their own keyboard behavior.
 
 Navigation buttons accept state-based `className` functions. Their `onClick` handlers run before scrolling; call `event.preventDefault()` to cancel that button's navigation.
 

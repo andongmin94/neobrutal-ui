@@ -115,15 +115,29 @@ function CarouselFixture() {
   const [blocked, setBlocked] = React.useState(false);
   const [nextCalls, setNextCalls] = React.useState(0);
   const [previousCalls, setPreviousCalls] = React.useState(0);
+  const orientation =
+    new URLSearchParams(location.search).get("orientation") === "vertical"
+      ? "vertical"
+      : "horizontal";
   return (
     <section aria-label="Carousel composition">
       <Button onClick={() => setBlocked((value) => !value)} aria-pressed={blocked}>
         Block next navigation
       </Button>
-      <Carousel aria-label="Composed slides" style={{ width: 300 }}>
-        <CarouselContent style={{ display: "flex" }}>
+      <Carousel
+        aria-label="Composed slides"
+        tabIndex={0}
+        orientation={orientation}
+        style={{ width: 300, marginBlock: 48 }}
+        onKeyDown={(event) => {
+          if (blocked) event.preventDefault();
+        }}
+      >
+        <CarouselContent
+          style={{ display: "flex", height: orientation === "vertical" ? 180 : undefined }}
+        >
           {["One", "Two", "Three"].map((title) => (
-            <CarouselItem key={title} style={{ flex: "0 0 100%", minWidth: 0 }}>
+            <CarouselItem key={title} style={{ flex: "0 0 100%", minWidth: 0, minHeight: 0 }}>
               {title}
             </CarouselItem>
           ))}
@@ -352,6 +366,11 @@ const surface = new URLSearchParams(location.search).get("surface");
 if (surface) await import("./component-composition.css");
 
 const fixtures = {
+  "carousel-keyboard": (
+    <div style={{ padding: 64 }}>
+      <CarouselFixture />
+    </div>
+  ),
   "select-clear": <SelectFixture />,
   "select-remove": <SelectFixture removal />,
   "select-cancel": <SelectFixture cancelClear />,

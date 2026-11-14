@@ -102,6 +102,46 @@ test("Carousel keeps navigation when consumer handlers are present and honors ca
   await expect(page.getByTestId("previous-calls")).toHaveText("2");
 });
 
+for (const orientation of ["horizontal", "vertical"] as const) {
+  test(`Carousel ${orientation} shortcuts follow its axis and honor consumer cancellation`, async ({
+    page,
+  }) => {
+    await page.goto(`${origin}?surface=carousel-keyboard&orientation=${orientation}`);
+    const carousel = page.getByRole("region", { name: "Composed slides" });
+    const previous = carousel.getByRole("button", { name: "Previous slide" });
+    const next = carousel.getByRole("button", { name: "Next slide" });
+    const block = page.getByRole("button", { name: "Block next navigation" });
+    const forward = orientation === "horizontal" ? "ArrowRight" : "ArrowDown";
+    const backward = orientation === "horizontal" ? "ArrowLeft" : "ArrowUp";
+    const crossAxis = orientation === "horizontal" ? "ArrowDown" : "ArrowRight";
+    await expect(next).toBeEnabled();
+    await expect(previous).toBeDisabled();
+
+    await carousel.focus();
+    await carousel.press(crossAxis);
+    await expect(previous).toBeDisabled();
+
+    await block.click();
+    await carousel.focus();
+    await carousel.press(forward);
+    await expect(previous).toBeDisabled();
+    await block.click();
+
+    await carousel.focus();
+    await carousel.press(forward);
+    await expect(previous).toBeEnabled();
+    await next.focus();
+    await next.press(forward);
+    await expect(next).toBeDisabled();
+    await previous.focus();
+    await previous.press(backward);
+    await expect(next).toBeEnabled();
+    await carousel.focus();
+    await carousel.press(backward);
+    await expect(previous).toBeDisabled();
+  });
+}
+
 test("Sidebar notifies uncontrolled changes, composes rail clicks and honors cancelled toggles", async ({
   page,
 }) => {

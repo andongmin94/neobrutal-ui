@@ -86,15 +86,15 @@ function Carousel({
       )
         return;
 
-      if (event.key === "ArrowLeft") {
+      if (event.key === (orientation === "horizontal" ? "ArrowLeft" : "ArrowUp")) {
         event.preventDefault();
         scrollPrev();
-      } else if (event.key === "ArrowRight") {
+      } else if (event.key === (orientation === "horizontal" ? "ArrowRight" : "ArrowDown")) {
         event.preventDefault();
         scrollNext();
       }
     },
-    [scrollPrev, scrollNext],
+    [orientation, scrollPrev, scrollNext],
   );
 
   React.useEffect(() => {
