@@ -19,7 +19,7 @@ function Avatar({
       {...props}
       className={(state) =>
         cn(
-          "group/avatar relative flex size-10 shrink-0 overflow-hidden rounded-full outline-2 outline-border select-none data-[size=lg]:size-12 data-[size=sm]:size-8",
+          "group/avatar relative flex size-10 shrink-0 rounded-full outline-2 outline-border select-none data-[size=lg]:size-12 data-[size=sm]:size-8",
           typeof className === "function" ? className(state) : className,
         )
       }
@@ -49,7 +49,7 @@ function AvatarFallback({ className, ...props }: AvatarPrimitive.Fallback.Props)
       {...props}
       className={(state) =>
         cn(
-          "flex size-full items-center justify-center rounded-full bg-secondary-background text-sm font-base text-foreground group-data-[size=sm]/avatar:text-xs",
+          "flex size-full items-center justify-center overflow-hidden rounded-full bg-secondary-background text-sm font-base text-foreground group-data-[size=sm]/avatar:text-xs",
           typeof className === "function" ? className(state) : className,
         )
       }

@@ -32,7 +32,7 @@ Create **`components/ui/avatar.tsx`**:
 ## Usage
 
 ```tsx
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarBadge, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export default function MemberAvatar() {
   return (
@@ -40,6 +40,9 @@ export default function MemberAvatar() {
       <Avatar>
         <AvatarImage src="/images/member.jpg" alt="" />
         <AvatarFallback aria-hidden="true">JD</AvatarFallback>
+        <AvatarBadge>
+          <span className="sr-only">Online</span>
+        </AvatarBadge>
       </Avatar>
       <span>Jordan Davis</span>
     </div>
@@ -48,6 +51,8 @@ export default function MemberAvatar() {
 ```
 
 Add your own image asset. This example keeps the name visible, so the image is decorative. An avatar used alone needs an accessible name for the person or action it represents.
+
+Place `AvatarBadge` alongside the image and fallback. The portrait stays circular while the status badge remains visible at its edge, including when the image fails to load.
 
 ## API reference
 

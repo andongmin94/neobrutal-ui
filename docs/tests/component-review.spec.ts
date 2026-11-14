@@ -31,6 +31,58 @@ test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
 });
 
+for (const imageState of ["loaded", "failed"] as const) {
+  test(`avatar status badges remain visible with ${imageState} images`, async ({ page }, info) => {
+    if (imageState === "failed") {
+      await page.route("**/avatar-placeholder.svg", (route) => route.abort());
+    }
+    const canvas = await openCanvas(page, "avatar");
+    const avatars = canvas.locator('[data-slot="avatar"]');
+    await expect(avatars).toHaveCount(3);
+
+    for (const avatar of await avatars.all()) {
+      const portrait = avatar.locator(
+        imageState === "loaded" ? '[data-slot="avatar-image"]' : '[data-slot="avatar-fallback"]',
+      );
+      await expect(portrait).toBeVisible();
+      const badge = avatar.locator('[data-slot="avatar-badge"]');
+      await expect(badge).toBeVisible();
+      await expect(badge).toMatchAriaSnapshot("- text: Online");
+      const geometry = await avatar.evaluate((node) => {
+        const badge = node.querySelector('[data-slot="avatar-badge"]')!;
+        const portrait = node.querySelector(
+          '[data-slot="avatar-image"], [data-slot="avatar-fallback"]',
+        )!;
+        const root = node.getBoundingClientRect();
+        const marker = badge.getBoundingClientRect();
+        const face = portrait.getBoundingClientRect();
+        // This point is inside the badge circle but outside the portrait circle.
+        const x = marker.right - 1;
+        const y = marker.top + marker.height / 2;
+        return {
+          outsidePortrait:
+            Math.hypot(x - (root.x + root.width / 2), y - (root.y + root.height / 2)) >
+            root.width / 2,
+          badgeVisible: badge.contains(document.elementFromPoint(x, y)),
+          portraitCenterVisible: portrait.contains(
+            document.elementFromPoint(face.x + face.width / 2, face.y + face.height / 2),
+          ),
+          portraitCornerClipped: !portrait.contains(
+            document.elementFromPoint(face.x + 1, face.y + 1),
+          ),
+        };
+      });
+      expect(geometry).toEqual({
+        outsidePortrait: true,
+        badgeVisible: true,
+        portraitCenterVisible: true,
+        portraitCornerClipped: true,
+      });
+    }
+    await capture(canvas, `avatar-${imageState}-status-badges`, info);
+  });
+}
+
 test("alert messages wrap and their inline undo action remains usable", async ({ page }, info) => {
   await page.goto("/docs/alert");
   const previews = page.locator('.component-preview[data-component="alert"]');
