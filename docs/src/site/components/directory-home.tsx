@@ -14,7 +14,7 @@ import {
   X,
   type LucideIcon,
 } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { startTransition, useEffect, useOptimistic, useRef } from "react";
 import { Link, useRouter } from "fumapress/client";
 import { buttonVariants } from "@/components/ui/button-variants";
 import {
@@ -50,8 +50,9 @@ const entries = COMPONENT_DIRECTORY_LINKS.map((link) => {
 
 export function DirectoryHome() {
   const router = useRouter();
+  const [optimisticQuery, setOptimisticQuery] = useOptimistic(router.query);
   const params = new URLSearchParams(
-    router.query.startsWith("?") ? router.query.slice(1) : router.query,
+    optimisticQuery.startsWith("?") ? optimisticQuery.slice(1) : optimisticQuery,
   );
   const searchInput = useRef<HTMLInputElement>(null);
   const query = params.get("q") ?? "";
@@ -63,13 +64,18 @@ export function DirectoryHome() {
         .toLowerCase()
         .includes(query.trim().toLowerCase()),
   );
+  function replaceQuery(query: string) {
+    startTransition(async () => {
+      setOptimisticQuery(query);
+      await router.replace(query ? `${router.path}?${query}` : router.path, { scroll: false });
+    });
+  }
   function setFilter(key: string, value: string) {
     const next = new URLSearchParams(params);
     if (value && value !== "All") next.set(key, value);
     else next.delete(key);
 
-    const query = next.toString();
-    void router.replace(query ? `${router.path}?${query}` : router.path, { scroll: false });
+    replaceQuery(next.toString());
   }
   useEffect(() => {
     function shortcut(event: KeyboardEvent) {
@@ -219,7 +225,7 @@ export function DirectoryHome() {
                 className="pressable"
                 type="button"
                 onClick={() => {
-                  void router.replace(router.path, { scroll: false });
+                  replaceQuery("");
                   searchInput.current?.focus();
                 }}
               >
