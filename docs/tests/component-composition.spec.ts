@@ -78,6 +78,39 @@ test("InputGroupAddon preserves consumer clicks, cancellation and nested button 
   await expect(input).not.toBeFocused();
 });
 
+for (const [appearance, behavior] of [
+  ["default", "duration options retain theme styles"],
+  ["custom", "partial class names replace only their matching defaults"],
+  ["native", "explicit native styling is preserved with partial class names"],
+] as const) {
+  test(`Sonner ${behavior}`, async ({ page }) => {
+    await page.clock.install({ time: new Date("2026-01-01T00:00:00Z") });
+    await page.goto(`${origin}?surface=sonner-options&appearance=${appearance}`);
+    const trigger = page.getByRole("button", { name: "Show configured notification" });
+    await expect(trigger).toBeVisible();
+    await page.clock.pauseAt(new Date("2026-01-01T00:01:00Z"));
+    await trigger.click();
+    await page.clock.runFor(20);
+
+    const toast = page.locator("[data-sonner-toast]");
+    await expect(toast).toHaveAttribute("data-mounted", "true");
+    await expect(toast).toHaveAttribute("data-styled", String(appearance === "native"));
+    await expect(toast).toHaveClass(/\bborder-2\b/);
+    await expect(toast).toHaveClass(/\bshadow-shadow\b/);
+    await expect(toast.locator("[data-description]")).toHaveClass(
+      appearance === "default" ? "font-base" : "consumer-description",
+    );
+    await expect(toast.getByRole("button", { name: "Close toast" })).toBeVisible();
+
+    await page.clock.runFor(1000);
+    await expect(toast).toHaveAttribute("data-removed", "false");
+    await page.clock.runFor(500);
+    await expect(toast).toHaveAttribute("data-removed", "true");
+    await page.clock.runFor(200);
+    await expect(toast).toHaveCount(0);
+  });
+}
+
 test("Carousel keeps navigation when consumer handlers are present and honors cancellation", async ({
   page,
 }) => {

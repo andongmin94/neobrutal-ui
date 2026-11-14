@@ -50,6 +50,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 function BadgeFixture() {
   const outer = React.useRef<HTMLSpanElement>(null);
@@ -408,6 +410,31 @@ function ChartHtmlPropsFixture() {
   );
 }
 
+function SonnerFixture() {
+  const appearance = new URLSearchParams(location.search).get("appearance") ?? "default";
+  return (
+    <>
+      <Button
+        onClick={() =>
+          toast("Preferences saved", { description: "Your workspace preferences are up to date." })
+        }
+      >
+        Show configured notification
+      </Button>
+      <Toaster
+        toastOptions={{
+          duration: 1500,
+          closeButton: true,
+          ...(appearance !== "default"
+            ? { classNames: { description: "consumer-description" } }
+            : {}),
+          ...(appearance === "native" ? { unstyled: false } : {}),
+        }}
+      />
+    </>
+  );
+}
+
 const surface = new URLSearchParams(location.search).get("surface");
 if (surface) await import("./component-composition.css");
 
@@ -426,6 +453,7 @@ const fixtures = {
   switch: <SwitchFixture />,
   "alert-long": <LongAlertFixture />,
   "chart-html-props": <ChartHtmlPropsFixture />,
+  "sonner-options": <SonnerFixture />,
 };
 
 createRoot(document.getElementById("root")!).render(

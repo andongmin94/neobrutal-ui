@@ -45,11 +45,13 @@ export default function NotificationExample() {
       <Button onClick={() => toast("This is a local preview notification.")}>
         Show notification
       </Button>
-      <Toaster closeButton />
+      <Toaster closeButton toastOptions={{ duration: 5000 }} />
     </>
   );
 }
 ```
+
+Setting options such as `duration` keeps the wrapper's theme styles. `toastOptions.classNames` replaces only the supplied keys: for example, `{ description: "font-semibold" }` changes description styling while retaining the toast and button styles. Set `toastOptions.unstyled` to `false` explicitly to enable Sonner's own styling.
 
 ## API reference
 

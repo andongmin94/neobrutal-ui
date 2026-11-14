@@ -10,7 +10,7 @@ import {
   Loader2Icon,
 } from "lucide-react";
 
-const Toaster = ({ ...props }: ToasterProps) => {
+const Toaster = ({ toastOptions, ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme();
 
   return (
@@ -32,6 +32,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }
       toastOptions={{
         unstyled: true,
+        ...toastOptions,
         classNames: {
           toast:
             "bg-background text-foreground border-border border-2 font-heading shadow-shadow rounded-base text-[13px] flex items-center gap-2.5 p-4 w-[356px] [&:has(button)]:justify-between",
@@ -43,6 +44,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
           error: "bg-black text-white",
           loading:
             "[&[data-sonner-toast]_[data-icon]]:flex [&[data-sonner-toast]_[data-icon]]:size-4 [&[data-sonner-toast]_[data-icon]]:relative [&[data-sonner-toast]_[data-icon]]:justify-start [&[data-sonner-toast]_[data-icon]]:items-center [&[data-sonner-toast]_[data-icon]]:flex-shrink-0",
+          ...toastOptions?.classNames,
         },
       }}
       {...props}
