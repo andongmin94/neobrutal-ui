@@ -24,6 +24,7 @@ function ResizablePanel(props: React.ComponentProps<typeof ResizablePrimitive.Pa
 }
 
 function ResizableHandle({
+  children,
   withHandle = false,
   className,
   ...props
@@ -37,11 +38,12 @@ function ResizableHandle({
       )}
       {...props}
     >
-      {withHandle && (
-        <div className="z-10 flex h-4 w-3 items-center justify-center rounded-base border bg-border">
-          <GripVertical aria-hidden="true" className="size-2.5" />
-        </div>
-      )}
+      {children ??
+        (withHandle && (
+          <div className="z-10 flex h-4 w-3 items-center justify-center rounded-base border bg-border">
+            <GripVertical aria-hidden="true" className="size-2.5" />
+          </div>
+        ))}
     </ResizablePrimitive.Separator>
   );
 }

@@ -110,6 +110,10 @@ test("popup wrappers infer handle payloads and reject mismatched trigger payload
     ["popover", "Popover", "PopoverTrigger", "Popover", "popover"],
     ["tooltip", "Tooltip", "TooltipTrigger", "Tooltip", "tooltip"],
     ["alert-dialog", "AlertDialog", "AlertDialogTrigger", "AlertDialog", "alert-dialog"],
+    ["dialog", "Dialog", "DialogTrigger", "Dialog", "dialog"],
+    ["drawer", "Drawer", "DrawerTrigger", "Drawer", "drawer"],
+    ["sheet", "Sheet", "SheetTrigger", "Dialog", "dialog"],
+    ["hover-card", "HoverCard", "HoverCardTrigger", "PreviewCard", "preview-card"],
   ];
   const consumers = cases.map(([slug, root, trigger, primitive, module]) => {
     const example = examples.find((entry) => entry.slug === slug)!;

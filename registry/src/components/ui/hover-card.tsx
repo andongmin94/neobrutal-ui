@@ -20,15 +20,15 @@ type HoverCardContentProps = PreviewCardPrimitive.Popup.Props &
     | "sticky"
   >;
 
-function HoverCard(props: PreviewCardPrimitive.Root.Props) {
+function HoverCard<Payload>(props: PreviewCardPrimitive.Root.Props<Payload>) {
   return <PreviewCardPrimitive.Root {...props} />;
 }
 
-function HoverCardTrigger({
+function HoverCardTrigger<Payload>({
   closeDelay = 300,
   delay = 700,
   ...props
-}: PreviewCardPrimitive.Trigger.Props) {
+}: PreviewCardPrimitive.Trigger.Props<Payload>) {
   return (
     <PreviewCardPrimitive.Trigger
       data-slot="hover-card-trigger"

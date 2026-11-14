@@ -25,6 +25,11 @@ import {
   FormMessage,
 } from "../src/components/ui/form";
 import { InputGroupButton } from "../src/components/ui/input-group";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "../src/components/ui/resizable";
 import { Separator } from "../src/components/ui/separator";
 import {
   SidebarMenuAction,
@@ -51,6 +56,24 @@ function classesForSlot(html: string, slot: string) {
     return classes.split(/\s+/);
   });
 }
+
+test("ResizableHandle preserves custom children and its optional default grip", () => {
+  for (const withHandle of [false, true]) {
+    for (const custom of [false, true]) {
+      const html = renderToStaticMarkup(
+        <ResizablePanelGroup>
+          <ResizablePanel>Files</ResizablePanel>
+          <ResizableHandle withHandle={withHandle} aria-label="Resize file panel">
+            {custom ? <span data-consumer-grip>Resize</span> : undefined}
+          </ResizableHandle>
+          <ResizablePanel>Editor</ResizablePanel>
+        </ResizablePanelGroup>,
+      );
+      assert.equal(html.includes("data-consumer-grip"), custom);
+      assert.equal(html.includes("lucide-grip-vertical"), withHandle && !custom);
+    }
+  }
+});
 
 test("blog reading pages display the supplied publication year", () => {
   const post: BlogPost = {

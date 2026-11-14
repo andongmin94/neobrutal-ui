@@ -13,7 +13,7 @@ type DialogContentProps = DialogPrimitive.Popup.Props & {
 
 const DialogModalContext = React.createContext<DialogPrimitive.Root.Props["modal"]>(true);
 
-function Dialog({ modal = true, ...props }: DialogPrimitive.Root.Props) {
+function Dialog<Payload>({ modal = true, ...props }: DialogPrimitive.Root.Props<Payload>) {
   return (
     <DialogModalContext.Provider value={modal}>
       <DialogPrimitive.Root modal={modal} {...props} />
@@ -21,7 +21,7 @@ function Dialog({ modal = true, ...props }: DialogPrimitive.Root.Props) {
   );
 }
 
-function DialogTrigger(props: DialogPrimitive.Trigger.Props) {
+function DialogTrigger<Payload>(props: DialogPrimitive.Trigger.Props<Payload>) {
   return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
 }
 

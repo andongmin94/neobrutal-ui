@@ -12,11 +12,11 @@ type SheetContentProps = SheetPrimitive.Popup.Props & {
   side?: "top" | "right" | "bottom" | "left";
 };
 
-function Sheet(props: SheetPrimitive.Root.Props) {
+function Sheet<Payload>(props: SheetPrimitive.Root.Props<Payload>) {
   return <SheetPrimitive.Root {...props} />;
 }
 
-function SheetTrigger(props: SheetPrimitive.Trigger.Props) {
+function SheetTrigger<Payload>(props: SheetPrimitive.Trigger.Props<Payload>) {
   return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />;
 }
 

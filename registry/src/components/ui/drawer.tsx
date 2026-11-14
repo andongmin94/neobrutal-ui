@@ -7,7 +7,10 @@ import { cn } from "@/lib/utils";
 
 const DrawerModalContext = React.createContext<DrawerPrimitive.Root.Props["modal"]>(true);
 
-function Drawer({ modal = true, ...props }: DrawerPrimitive.Root.Props) {
+function Drawer<Payload = unknown>({
+  modal = true,
+  ...props
+}: DrawerPrimitive.Root.Props<Payload>) {
   return (
     <DrawerModalContext.Provider value={modal}>
       <DrawerPrimitive.Root data-slot="drawer" modal={modal} {...props} />
@@ -15,7 +18,7 @@ function Drawer({ modal = true, ...props }: DrawerPrimitive.Root.Props) {
   );
 }
 
-function DrawerTrigger(props: DrawerPrimitive.Trigger.Props) {
+function DrawerTrigger<Payload>(props: DrawerPrimitive.Trigger.Props<Payload>) {
   return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />;
 }
 
