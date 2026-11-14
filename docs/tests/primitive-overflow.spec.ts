@@ -47,6 +47,71 @@ test.afterAll(async () => {
   }
 });
 
+test("NavigationMenu keeps the current destination visible when another link is hovered", async ({
+  page,
+}) => {
+  await page.goto(`${origin}?surface=navigation-menu`);
+  await page.getByRole("button", { name: "Sections", exact: true }).click();
+  const current = page.getByRole("link", { name: "Section 1", exact: true });
+  const other = page.getByRole("link", { name: "Section 2", exact: true });
+  await expect(current).toHaveAttribute("aria-current", "page");
+  await expect(current).toHaveCSS("text-decoration-line", "underline");
+  await expect(other).not.toHaveAttribute("aria-current");
+  await expect(other).toHaveCSS("text-decoration-line", "none");
+  await other.hover();
+  await expect(current).toHaveCSS("text-decoration-line", "underline");
+});
+
+test("NavigationMenu fits short viewports and scrolls to every link by pointer and keyboard", async ({
+  page,
+  isMobile,
+}) => {
+  await page.setViewportSize({ width: 320, height: 390 });
+  await page.goto(`${origin}?surface=navigation-menu`);
+  const trigger = page.getByRole("button", { name: "Sections", exact: true });
+  await trigger.click();
+  const popup = page.locator('[data-slot="navigation-menu-popup"]');
+  const content = page.locator('[data-slot="navigation-menu-content"]');
+  await expect(popup).toBeVisible();
+  await expect
+    .poll(async () => {
+      const box = await popup.boundingBox();
+      return box !== null && box.y >= -1 && box.y + box.height <= 391;
+    })
+    .toBe(true);
+  await expect(content).toHaveCSS("overflow-y", "auto");
+  expect(await content.evaluate((node) => node.scrollHeight > node.clientHeight)).toBe(true);
+
+  const first = content.getByRole("link", { name: "Section 1", exact: true });
+  const last = content.getByRole("link", { name: "Section 40", exact: true });
+  if (isMobile) {
+    await last.scrollIntoViewIfNeeded();
+  } else {
+    const box = (await content.boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await expect
+      .poll(async () => {
+        await page.mouse.wheel(0, 2000);
+        return content.evaluate(
+          (node) => node.scrollTop + node.clientHeight >= node.scrollHeight - 1,
+        );
+      })
+      .toBe(true);
+  }
+  await expect(last).toBeInViewport({ ratio: 1 });
+  await first.focus();
+  await first.press("End");
+  await expect(last).toBeFocused();
+  await expect(last).toBeInViewport({ ratio: 1 });
+  await last.press("Home");
+  await expect(first).toBeFocused();
+  await expect(first).toBeInViewport({ ratio: 1 });
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  await first.press("Escape");
+  await expect(popup).toBeHidden();
+  await expect(trigger).toBeFocused();
+});
+
 test("Calendar uses the native locale pipeline and stable dates in its time zone", async ({
   page,
 }) => {

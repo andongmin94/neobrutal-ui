@@ -94,7 +94,7 @@ function NavigationMenuContent({ className, ...props }: NavigationMenuPrimitive.
       {...props}
       className={(state) =>
         cn(
-          "h-full w-auto p-2 pr-2.5 transition-[opacity,transform,translate] duration-[0.35s] ease-[cubic-bezier(0.22,1,0.36,1)] data-[activation-direction=down]:data-ending-style:-translate-y-1/2 data-[activation-direction=down]:data-starting-style:translate-y-1/2 data-[activation-direction=left]:data-ending-style:translate-x-1/2 data-[activation-direction=left]:data-starting-style:-translate-x-1/2 data-[activation-direction=right]:data-ending-style:-translate-x-1/2 data-[activation-direction=right]:data-starting-style:translate-x-1/2 data-[activation-direction=up]:data-ending-style:translate-y-1/2 data-[activation-direction=up]:data-starting-style:-translate-y-1/2 data-ending-style:opacity-0 data-starting-style:opacity-0",
+          "h-full max-h-(--available-height) w-auto overflow-y-auto p-2 pr-2.5 transition-[opacity,transform,translate] duration-[0.35s] ease-[cubic-bezier(0.22,1,0.36,1)] data-[activation-direction=down]:data-ending-style:-translate-y-1/2 data-[activation-direction=down]:data-starting-style:translate-y-1/2 data-[activation-direction=left]:data-ending-style:translate-x-1/2 data-[activation-direction=left]:data-starting-style:-translate-x-1/2 data-[activation-direction=right]:data-ending-style:-translate-x-1/2 data-[activation-direction=right]:data-starting-style:translate-x-1/2 data-[activation-direction=up]:data-ending-style:translate-y-1/2 data-[activation-direction=up]:data-starting-style:-translate-y-1/2 data-ending-style:opacity-0 data-starting-style:opacity-0",
           typeof className === "function" ? className(state) : className,
         )
       }
@@ -139,7 +139,7 @@ function NavigationMenuLink({ className, ...props }: NavigationMenuPrimitive.Lin
       {...props}
       className={(state) =>
         cn(
-          "block space-y-1 rounded-base p-2 leading-none no-underline transition-colors outline-none select-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-4 focus-visible:outline-main-foreground [&_svg:not([class*='size-'])]:size-4",
+          "block space-y-1 rounded-base p-2 leading-none no-underline transition-colors outline-none select-none data-active:underline data-active:decoration-2 data-active:underline-offset-4 focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-4 focus-visible:outline-main-foreground [&_svg:not([class*='size-'])]:size-4",
           typeof className === "function" ? className(state) : className,
         )
       }

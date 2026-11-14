@@ -94,8 +94,12 @@ export default function NavigationMenuDemo() {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/docs/">
-            Documentation
+          <NavigationMenuLink
+            active
+            className={navigationMenuTriggerStyle()}
+            href="/docs/navigation-menu"
+          >
+            Current guide
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>

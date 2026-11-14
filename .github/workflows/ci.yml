@@ -62,6 +62,7 @@ jobs:
           npm run test:browser -- component-review.spec.ts galleries.spec.ts --grep 'scroll area has a name|marquee pause|progress keeps indeterminate work visible'
           npm run test:browser -- drawer-modal.spec.ts release-controls.spec.ts --grep 'dialog|select:'
           npm run test:browser -- template-states.spec.ts --grep 'template consumer data'
+          npm run test:browser -- primitive-overflow.spec.ts --grep 'NavigationMenu'
       - name: Verify representative fresh consumers
         working-directory: registry
         run: |

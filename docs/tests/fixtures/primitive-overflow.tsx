@@ -17,6 +17,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
 import SheetSideExample from "@/examples/ui/sheet/side";
 import "./primitive-overflow.css";
 
@@ -99,6 +107,31 @@ function LongMenus() {
   );
 }
 
+function LongNavigationMenu() {
+  return (
+    <div className="p-4">
+      <NavigationMenu aria-label="Site sections">
+        <NavigationMenuList>
+          <NavigationMenuItem value="sections">
+            <NavigationMenuTrigger>Sections</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <ul className="w-64">
+                {Array.from({ length: 40 }, (_, index) => index + 1).map((item) => (
+                  <li key={item}>
+                    <NavigationMenuLink href={`#section-${item}`} active={item === 1}>
+                      Section {item}
+                    </NavigationMenuLink>
+                  </li>
+                ))}
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
+    </div>
+  );
+}
+
 const root = document.getElementById("root")!;
 if (surface === "calendar-hydrate") {
   document.documentElement.dataset.hydrationErrors = "[]";
@@ -117,6 +150,8 @@ if (surface === "calendar-hydrate") {
       <LocaleCalendars />
     ) : surface === "sheet" ? (
       <SheetSideExample />
+    ) : surface === "navigation-menu" ? (
+      <LongNavigationMenu />
     ) : (
       <LongMenus />
     ),
