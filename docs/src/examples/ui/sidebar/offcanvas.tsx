@@ -18,10 +18,16 @@ export default function OffcanvasSidebar() {
           <nav aria-label="Offcanvas navigation" className="p-2">
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton render={<a href="/docs">Documentation</a>} />
+                <SidebarMenuButton
+                  nativeButton={false}
+                  render={<a href="/docs">Documentation</a>}
+                />
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton render={<a href="/docs/installation">Installation</a>} />
+                <SidebarMenuButton
+                  nativeButton={false}
+                  render={<a href="/docs/installation">Installation</a>}
+                />
               </SidebarMenuItem>
             </SidebarMenu>
           </nav>

@@ -298,6 +298,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             {data.projects.map((item) => (
               <SidebarMenuItem key={item.name}>
                 <SidebarMenuButton
+                  nativeButton={false}
                   render={
                     <a href={item.url}>
                       <item.icon />

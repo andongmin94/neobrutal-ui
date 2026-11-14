@@ -26,7 +26,12 @@ import {
 } from "../src/components/ui/form";
 import { InputGroupButton } from "../src/components/ui/input-group";
 import { Separator } from "../src/components/ui/separator";
-import { SidebarMenuButton, SidebarProvider, SidebarTrigger } from "../src/components/ui/sidebar";
+import {
+  SidebarMenuAction,
+  SidebarMenuButton,
+  SidebarProvider,
+  SidebarTrigger,
+} from "../src/components/ui/sidebar";
 import { Slider } from "../src/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../src/components/ui/tabs";
 import BlogPostTemplate from "../src/components/templates/blog-post-template";
@@ -131,6 +136,75 @@ test("SidebarMenuButton retains native disabled semantics with a tooltip", () =>
     const button = html.match(/<button\b[^>]*data-slot="sidebar-menu-button"[^>]*>/)?.[0];
     assert.ok(button);
     assert.match(button, /\bdisabled=""/);
+  }
+});
+
+test("Sidebar action controls retain non-submit defaults through render composition", () => {
+  const renders: React.ComponentProps<typeof SidebarMenuButton>["render"][] = [
+    undefined,
+    <button key="element" aria-label="Action" />,
+    (props) => <button {...props} />,
+  ];
+  for (const Component of [SidebarMenuButton, SidebarMenuAction]) {
+    for (const render of renders) {
+      const html = renderToStaticMarkup(
+        <SidebarProvider>
+          <Component render={render}>Action</Component>
+        </SidebarProvider>,
+      );
+      const button = html.match(/<button\b[^>]*>/)?.[0];
+      assert.ok(button);
+      assert.match(button, /\btype="button"/);
+      assert.doesNotMatch(button, /nativeButton/);
+    }
+  }
+});
+
+test("Sidebar action controls honor explicit submit types", () => {
+  const renders: React.ComponentProps<typeof SidebarMenuButton>["render"][] = [
+    undefined,
+    <button key="element" aria-label="Submit" />,
+    (props) => <button {...props} />,
+  ];
+  for (const Component of [SidebarMenuButton, SidebarMenuAction]) {
+    for (const render of renders) {
+      const html = renderToStaticMarkup(
+        <SidebarProvider>
+          <Component type="submit" render={render}>
+            Submit
+          </Component>
+        </SidebarProvider>,
+      );
+      assert.match(html, /<button\b[^>]*\btype="submit"/);
+    }
+    const html = renderToStaticMarkup(
+      <SidebarProvider>
+        <Component render={<button type="submit" aria-label="Submit" />}>Submit</Component>
+      </SidebarProvider>,
+    );
+    assert.match(html, /<button\b[^>]*\btype="submit"/);
+  }
+});
+
+test("Sidebar navigation renders keep link semantics without button attributes", () => {
+  const renders: React.ComponentProps<typeof SidebarMenuButton>["render"][] = [
+    <a key="element" href="#destination" aria-label="Destination" />,
+    (props) => <a {...props} href="#destination" aria-label="Destination" />,
+  ];
+  for (const Component of [SidebarMenuButton, SidebarMenuAction]) {
+    for (const render of renders) {
+      const html = renderToStaticMarkup(
+        <SidebarProvider>
+          <Component nativeButton={false} render={render}>
+            Destination
+          </Component>
+        </SidebarProvider>,
+      );
+      const link = html.match(/<a\b[^>]*>/)?.[0];
+      assert.ok(link);
+      assert.match(link, /\bhref="#destination"/);
+      assert.doesNotMatch(link, /\b(?:type|role)=|nativeButton/);
+    }
   }
 });
 

@@ -76,7 +76,10 @@ export default function ApplicationLayout() {
               <nav aria-label="Workspace navigation">
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <SidebarMenuButton render={<a href="/docs">Documentation</a>} />
+                    <SidebarMenuButton
+                      nativeButton={false}
+                      render={<a href="/docs">Documentation</a>}
+                    />
                   </SidebarMenuItem>
                 </SidebarMenu>
               </nav>
@@ -110,9 +113,12 @@ export default function ApplicationLayout() {
 | `SidebarMenuButton.isActive` | Active link styling | `false` |
 | `SidebarMenuButton.variant` | Menu button appearance: `default` or `outline` | `default` |
 | `SidebarMenuButton.size` | Menu button size: `default`, `sm`, or `lg` | `default` |
+| `SidebarMenuButton.nativeButton` / `SidebarMenuAction.nativeButton` | Set to `false` when `render` produces a link or another non-button element | `true` |
 | `SidebarMenuAction.showOnHover` | Reveal the action on hover or keyboard focus | `false` |
 | `SidebarMenuSubButton.size` | Nested link size: `sm` or `md` | `md` |
 | `SidebarMenuSubButton.isActive` | Active nested-link styling | `false` |
+
+`SidebarMenuButton` and `SidebarMenuAction` use `type="button"` by default, including when `render` supplies a custom button or callback. Set `type="submit"` for an action that submits a form. For navigation, set `nativeButton={false}` and render an anchor with its destination and label; the anchor keeps its link semantics without a button type.
 
 ## Accessibility
 

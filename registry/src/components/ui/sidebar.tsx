@@ -458,6 +458,7 @@ const sidebarMenuButtonVariants = cva(
 function SidebarMenuButton({
   render,
   children,
+  nativeButton = true,
   isActive = false,
   variant = "default",
   size = "default",
@@ -466,6 +467,7 @@ function SidebarMenuButton({
   ...props
 }: useRender.ComponentProps<"button"> &
   React.ComponentProps<"button"> & {
+    nativeButton?: boolean;
     isActive?: boolean;
     children?: React.ReactNode;
     tooltip?: string | React.ComponentProps<typeof TooltipContent>;
@@ -475,7 +477,7 @@ function SidebarMenuButton({
     defaultTagName: "button",
     props: mergeProps<"button">(
       {
-        type: render ? undefined : "button",
+        type: nativeButton ? "button" : undefined,
         className: cn(sidebarMenuButtonVariants({ variant, size }), className),
         children,
       },
@@ -517,17 +519,19 @@ function SidebarMenuAction({
   children,
   className,
   render,
+  nativeButton = true,
   showOnHover = false,
   ...props
 }: useRender.ComponentProps<"button"> &
   React.ComponentProps<"button"> & {
+    nativeButton?: boolean;
     showOnHover?: boolean;
   }) {
   return useRender({
     defaultTagName: "button",
     props: mergeProps<"button">(
       {
-        type: render ? undefined : "button",
+        type: nativeButton ? "button" : undefined,
         className: cn(
           "absolute top-1.5 right-1 flex aspect-square w-6 items-center justify-center rounded-base p-0 text-main-foreground outline-1 outline-transparent transition-transform group-data-[collapsible=icon]:hidden peer-data-[size=default]/menu-button:top-1.5 peer-data-[size=lg]/menu-button:top-2.5 peer-data-[size=sm]/menu-button:top-1 after:absolute after:-inset-2 hover:bg-main hover:text-main-foreground hover:outline-border focus-visible:ring-1 md:after:hidden [&>svg]:size-4 [&>svg]:shrink-0 [&_svg]:text-foreground hover:[&_svg]:text-main-foreground",
           showOnHover &&

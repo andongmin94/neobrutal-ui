@@ -169,6 +169,33 @@ test("A tooltip does not make a disabled SidebarMenuButton actionable", async ({
   await expect(button).not.toBeFocused();
 });
 
+for (const control of ["menu", "action"]) {
+  test(`Sidebar ${control} buttons submit forms only when explicitly requested`, async ({
+    page,
+  }) => {
+    await page.goto(`${origin}?surface=sidebar-form&control=${control}`);
+    const submissions = page.getByTestId("sidebar-form-submissions");
+    for (const name of ["Default action", "Rendered action", "Callback action"]) {
+      const button = page.getByRole("button", { name, exact: true });
+      await expect(button).toHaveAttribute("type", "button");
+      await button.click();
+      await button.press("Enter");
+      await expect(submissions).toHaveText("0");
+    }
+
+    await page.getByRole("button", { name: "Submit form", exact: true }).click();
+    await expect(submissions).toHaveText("1");
+    await page.getByRole("button", { name: "Submit from rendered button", exact: true }).click();
+    await expect(submissions).toHaveText("2");
+
+    const link = page.getByRole("link", { name: "Navigation link", exact: true });
+    await expect(link).not.toHaveAttribute("type");
+    await link.click();
+    await expect(page).toHaveURL(`${origin}?surface=sidebar-form&control=${control}#destination`);
+    await expect(submissions).toHaveText("2");
+  });
+}
+
 test("Select forwards null changes and supports choosing again after clearing", async ({
   page,
 }) => {

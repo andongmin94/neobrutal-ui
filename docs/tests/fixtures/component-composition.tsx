@@ -35,6 +35,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import {
+  SidebarMenuAction,
   SidebarMenuButton,
   SidebarProvider,
   SidebarRail,
@@ -198,6 +199,51 @@ function SidebarFixture() {
         <output data-testid="sidebar-observed">{String(observed)}</output>
       </SidebarProvider>
     </section>
+  );
+}
+
+function SidebarFormFixture() {
+  const [submissions, setSubmissions] = React.useState(0);
+  const Control =
+    new URLSearchParams(location.search).get("control") === "action"
+      ? SidebarMenuAction
+      : SidebarMenuButton;
+  const controlStyle = { position: "static", width: "auto", height: "auto", padding: 8 } as const;
+  return (
+    <SidebarProvider className="min-h-0">
+      <form
+        style={{ display: "grid", gap: 16 }}
+        onSubmit={(event) => {
+          event.preventDefault();
+          setSubmissions((value) => value + 1);
+        }}
+      >
+        <Control style={controlStyle}>Default action</Control>
+        <Control style={controlStyle} render={<button aria-label="Rendered action" />}>
+          Rendered action
+        </Control>
+        <Control style={controlStyle} render={(props) => <button {...props} />}>
+          Callback action
+        </Control>
+        <Control style={controlStyle} type="submit" render={<button aria-label="Submit form" />}>
+          Submit form
+        </Control>
+        <Control
+          style={controlStyle}
+          render={<button type="submit" aria-label="Submit from rendered button" />}
+        >
+          Submit from rendered button
+        </Control>
+        <Control
+          style={controlStyle}
+          nativeButton={false}
+          render={<a href="#destination" aria-label="Navigation link" />}
+        >
+          Navigation link
+        </Control>
+        <output data-testid="sidebar-form-submissions">{submissions}</output>
+      </form>
+    </SidebarProvider>
   );
 }
 
@@ -366,6 +412,7 @@ const surface = new URLSearchParams(location.search).get("surface");
 if (surface) await import("./component-composition.css");
 
 const fixtures = {
+  "sidebar-form": <SidebarFormFixture />,
   "carousel-keyboard": (
     <div style={{ padding: 64 }}>
       <CarouselFixture />
