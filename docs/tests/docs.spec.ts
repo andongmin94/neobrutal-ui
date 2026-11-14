@@ -1,5 +1,51 @@
 import { expect, test } from "@playwright/test";
 
+test("table of contents preserves native navigation, focus, and modified clicks", async ({
+  page,
+  isMobile,
+}) => {
+  await page.goto("/docs/button");
+  await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true");
+  const toc = page.locator(isMobile ? ".docs-toc-inline" : ".docs-toc");
+  if (isMobile) await toc.locator("summary").click();
+  const usage = toc.getByRole("link", { name: "Usage", exact: true });
+  const backToTop = toc.getByRole("link", { name: "Back to top", exact: true });
+
+  await usage.click();
+  await expect(page).toHaveURL(/\/docs\/button#usage$/);
+  const heading = page.locator("#usage");
+  await expect(heading).toBeInViewport();
+  await expect
+    .poll(async () => {
+      const section = await heading.boundingBox();
+      const header = await page.locator(".site-header").boundingBox();
+      return section !== null && header !== null && section.y >= header.y + header.height;
+    })
+    .toBe(true);
+
+  await backToTop.press("Enter");
+  await expect(page).toHaveURL(/\/docs\/button#main-content$/);
+  await expect(page.locator("#main-content")).toBeFocused();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+
+  const originalUrl = page.url();
+  for (const [link, hash] of [
+    [usage, "#usage"],
+    [backToTop, "#main-content"],
+  ] as const) {
+    const [popup] = await Promise.all([
+      page.waitForEvent("popup"),
+      link.click({ modifiers: ["ControlOrMeta"] }),
+    ]);
+    try {
+      await expect(popup).toHaveURL(new URL(hash, originalUrl).href);
+      await expect(page).toHaveURL(originalUrl);
+    } finally {
+      await popup.close();
+    }
+  }
+});
+
 test("home has a working showcase, installation path, and URL-backed directory", async ({
   page,
 }) => {

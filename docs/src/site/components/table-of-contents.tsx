@@ -5,15 +5,6 @@ import { List, MoveUp } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "fumapress/client";
 
-function scrollToHash(hash: string, focusTarget = false) {
-  const target = document.getElementById(decodeURIComponent(hash.replace(/^#/, "")));
-  if (!target) return;
-
-  window.history.pushState(null, "", hash);
-  if (focusTarget) target.focus({ preventScroll: true });
-  target.scrollIntoView({ block: "start" });
-}
-
 export function TableOfContents({
   toc = [],
   variant = "aside",
@@ -65,10 +56,6 @@ export function TableOfContents({
                   .filter(Boolean)
                   .join(" ")}
                 href={header.url}
-                onClick={(event) => {
-                  event.preventDefault();
-                  scrollToHash(header.url);
-                }}
               >
                 {header.title}
               </a>
@@ -79,14 +66,7 @@ export function TableOfContents({
         <p className="docs-toc__empty">Overview</p>
       )}
 
-      <a
-        className="back-to-top"
-        href="#main-content"
-        onClick={(event) => {
-          event.preventDefault();
-          scrollToHash("#main-content", true);
-        }}
-      >
+      <a className="back-to-top" href="#main-content">
         <MoveUp aria-hidden="true" size={13} />
         Back to top
       </a>
