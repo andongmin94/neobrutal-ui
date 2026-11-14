@@ -100,10 +100,10 @@ test("NavigationMenu fits short viewports and scrolls to every link by pointer a
   }
   await expect(last).toBeInViewport({ ratio: 1 });
   await first.focus();
-  await first.press("End");
+  await first.press("ArrowUp");
   await expect(last).toBeFocused();
   await expect(last).toBeInViewport({ ratio: 1 });
-  await last.press("Home");
+  await last.press("ArrowDown");
   await expect(first).toBeFocused();
   await expect(first).toBeInViewport({ ratio: 1 });
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
