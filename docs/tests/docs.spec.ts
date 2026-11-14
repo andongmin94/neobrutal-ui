@@ -61,7 +61,8 @@ test("home has a working showcase, installation path, and URL-backed directory",
     "href",
     "/docs/installation",
   );
-  await page.getByRole("searchbox", { name: "Search component directory" }).fill("calendar");
+  const search = page.getByRole("searchbox", { name: "Search component directory" });
+  await search.fill("calendar");
   await expect(page).toHaveURL(/q=calendar/);
   const card = page
     .locator(".directory-card")
@@ -76,10 +77,36 @@ test("home has a working showcase, installation path, and URL-backed directory",
   ).toBeVisible();
   await page.goBack();
   await expect(page).toHaveURL(/\/\?q=calendar$/);
-  await expect(page.getByRole("searchbox", { name: "Search component directory" })).toHaveValue(
-    "calendar",
-  );
+  await expect(search).toHaveValue("calendar");
   await page.getByRole("button", { name: "Clear search", exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(search).toHaveValue("");
+  await expect(search).toBeFocused();
+  await page.keyboard.type("button");
+  await expect(search).toHaveValue("button");
+  await expect(page).toHaveURL(/q=button/);
+
+  await page
+    .locator(".directory-categories")
+    .getByRole("button", { name: /^Forms/ })
+    .click();
+  await expect(page).toHaveURL(/category=Forms/);
+  await search.fill("no-matching-component-7319");
+  await expect(
+    page.getByRole("heading", { name: "No components found", exact: true }),
+  ).toBeVisible();
+  const reset = page.getByRole("button", { name: "Reset filters", exact: true });
+  await reset.focus();
+  await reset.press("Enter");
+  await expect(page).toHaveURL(/\/$/);
+  await expect(search).toHaveValue("");
+  await expect(search).toBeFocused();
+  await expect(
+    page.locator(".directory-categories").getByRole("button", { name: /^All/ }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await page.keyboard.type("calendar");
+  await expect(search).toHaveValue("calendar");
+  await expect(page).toHaveURL(/q=calendar/);
 });
 
 test("markdown list and link styling does not leak into the breadcrumb preview", async ({

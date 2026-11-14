@@ -137,7 +137,14 @@ export function DirectoryHome() {
             onChange={(event) => setFilter("q", event.target.value)}
           />
           {query ? (
-            <button type="button" aria-label="Clear search" onClick={() => setFilter("q", "")}>
+            <button
+              type="button"
+              aria-label="Clear search"
+              onClick={() => {
+                setFilter("q", "");
+                searchInput.current?.focus();
+              }}
+            >
               <X aria-hidden="true" size={17} />
             </button>
           ) : (
@@ -211,7 +218,10 @@ export function DirectoryHome() {
               <button
                 className="pressable"
                 type="button"
-                onClick={() => void router.replace(router.path, { scroll: false })}
+                onClick={() => {
+                  void router.replace(router.path, { scroll: false });
+                  searchInput.current?.focus();
+                }}
               >
                 Reset filters
               </button>
