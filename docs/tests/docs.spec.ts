@@ -1,5 +1,37 @@
 import { expect, test } from "@playwright/test";
 
+test("mobile documentation navigation leaves composing Escape with the filter input", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/docs/button");
+  await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true");
+  const trigger = page.getByRole("button", {
+    name: "Toggle documentation navigation",
+    exact: true,
+  });
+  await trigger.click();
+  const navigation = page.getByRole("dialog", { name: "Documentation navigation", exact: true });
+  const input = navigation.getByRole("searchbox", { name: "Filter components", exact: true });
+  await expect(input).toBeFocused();
+
+  for (const composition of [{ isComposing: true }, { keyCode: 229 }]) {
+    await input.dispatchEvent("keydown", {
+      key: "Escape",
+      code: "Escape",
+      bubbles: true,
+      cancelable: true,
+      ...composition,
+    });
+    await expect(navigation).toBeVisible();
+    await expect(input).toBeFocused();
+  }
+
+  await input.press("Escape");
+  await expect(navigation).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+});
+
 test("table of contents preserves native navigation, focus, and modified clicks", async ({
   page,
   context,

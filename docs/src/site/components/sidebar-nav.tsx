@@ -137,6 +137,8 @@ export function SidebarNav({
     setBackgroundInert(mobileOpen);
 
     function onKeyDown(event: globalThis.KeyboardEvent) {
+      if (event.isComposing || event.keyCode === 229) return;
+
       if (event.key === "Escape") {
         event.preventDefault();
         closeAndRestoreFocus();
