@@ -7,7 +7,7 @@ import type * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-type DropdownMenuRootProps = MenuPrimitive.Root.Props & {
+type DropdownMenuRootProps<Payload> = MenuPrimitive.Root.Props<Payload> & {
   dir?: "ltr" | "rtl";
 };
 
@@ -27,7 +27,7 @@ type DropdownMenuContentProps = MenuPrimitive.Popup.Props &
     | "sticky"
   >;
 
-function DropdownMenu({ dir, ...props }: DropdownMenuRootProps) {
+function DropdownMenu<Payload>({ dir, ...props }: DropdownMenuRootProps<Payload>) {
   const menu = <MenuPrimitive.Root {...props} />;
   return dir ? <DirectionProvider direction={dir}>{menu}</DirectionProvider> : menu;
 }
@@ -36,7 +36,7 @@ function DropdownMenuPortal(props: MenuPrimitive.Portal.Props) {
   return <MenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props} />;
 }
 
-function DropdownMenuTrigger(props: MenuPrimitive.Trigger.Props) {
+function DropdownMenuTrigger<Payload>(props: MenuPrimitive.Trigger.Props<Payload>) {
   return <MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />;
 }
 

@@ -24,11 +24,11 @@ function TooltipProvider({ delay = 0, timeout = 300, ...props }: TooltipPrimitiv
   return <TooltipPrimitive.Provider delay={delay} timeout={timeout} {...props} />;
 }
 
-function Tooltip(props: TooltipPrimitive.Root.Props) {
+function Tooltip<Payload>(props: TooltipPrimitive.Root.Props<Payload>) {
   return <TooltipPrimitive.Root {...props} />;
 }
 
-function TooltipTrigger(props: TooltipPrimitive.Trigger.Props) {
+function TooltipTrigger<Payload>(props: TooltipPrimitive.Trigger.Props<Payload>) {
   return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />;
 }
 

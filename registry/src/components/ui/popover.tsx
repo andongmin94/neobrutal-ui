@@ -21,11 +21,11 @@ type PopoverContentProps = PopoverPrimitive.Popup.Props &
     | "sticky"
   >;
 
-function Popover(props: PopoverPrimitive.Root.Props) {
+function Popover<Payload>(props: PopoverPrimitive.Root.Props<Payload>) {
   return <PopoverPrimitive.Root {...props} />;
 }
 
-function PopoverTrigger(props: PopoverPrimitive.Trigger.Props) {
+function PopoverTrigger<Payload>(props: PopoverPrimitive.Trigger.Props<Payload>) {
   return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />;
 }
 

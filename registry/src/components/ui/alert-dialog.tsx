@@ -13,11 +13,11 @@ type AlertDialogContentProps = AlertDialogPrimitive.Popup.Props & {
 type AlertDialogButtonProps = AlertDialogPrimitive.Close.Props &
   Pick<React.ComponentProps<typeof Button>, "variant" | "size">;
 
-function AlertDialog(props: AlertDialogPrimitive.Root.Props) {
+function AlertDialog<Payload>(props: AlertDialogPrimitive.Root.Props<Payload>) {
   return <AlertDialogPrimitive.Root {...props} />;
 }
 
-function AlertDialogTrigger(props: AlertDialogPrimitive.Trigger.Props) {
+function AlertDialogTrigger<Payload>(props: AlertDialogPrimitive.Trigger.Props<Payload>) {
   return <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" {...props} />;
 }
 

@@ -102,6 +102,36 @@ function replaceExampleSource(example: DocsExample, source: string): DocsExample
   return { ...example, sources: new Map([[fileName, source]]) };
 }
 
+test("popup wrappers infer handle payloads and reject mismatched trigger payloads", () => {
+  const examples = readDocsExamples("usage");
+  const cases = [
+    ["dropdown-menu", "DropdownMenu", "DropdownMenuTrigger", "Menu", "menu"],
+    ["menubar", "MenubarMenu", "MenubarTrigger", "Menu", "menu"],
+    ["popover", "Popover", "PopoverTrigger", "Popover", "popover"],
+    ["tooltip", "Tooltip", "TooltipTrigger", "Tooltip", "tooltip"],
+    ["alert-dialog", "AlertDialog", "AlertDialogTrigger", "AlertDialog", "alert-dialog"],
+  ];
+  const consumers = cases.map(([slug, root, trigger, primitive, module]) => {
+    const example = examples.find((entry) => entry.slug === slug)!;
+    return replaceExampleSource(
+      example,
+      `import { ${primitive} as Primitive } from "@base-ui/react/${module}";
+import { ${root}, ${trigger} } from "@/components/ui/${slug}";
+const handle = Primitive.createHandle<{ id: string }>();
+export default function Example() {
+  return <>
+    <${trigger} handle={handle} payload={{ id: "project" }}>Open</${trigger}>
+    <${root} handle={handle}>{({ payload }) => payload?.id ?? null}</${root}>
+  </>;
+}
+// @ts-expect-error A trigger must preserve the linked handle's payload type.
+export const invalidPayload = <${trigger} handle={handle} payload={{ id: 123 }} />;
+`,
+    );
+  });
+  assert.equal(verifyDocsExamples(consumers), cases.length);
+});
+
 test("Usage cannot import undocumented components, npm packages or docs-only aliases", () => {
   const example = readDocsExamples("usage").find(({ slug }) => slug === "button")!;
   for (const dependency of ["@/components/ui/label", "fumapress", "@/data/theme"]) {

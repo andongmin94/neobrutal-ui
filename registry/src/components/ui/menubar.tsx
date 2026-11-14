@@ -37,7 +37,7 @@ function Menubar({ className, ...props }: MenubarPrimitive.Props) {
   );
 }
 
-function MenubarMenu(props: React.ComponentProps<typeof DropdownMenu>) {
+function MenubarMenu<Payload>(props: React.ComponentProps<typeof DropdownMenu<Payload>>) {
   return <DropdownMenu data-slot="menubar-menu" {...props} />;
 }
 
@@ -49,7 +49,10 @@ function MenubarPortal(props: React.ComponentProps<typeof DropdownMenuPortal>) {
   return <DropdownMenuPortal data-slot="menubar-portal" {...props} />;
 }
 
-function MenubarTrigger({ className, ...props }: React.ComponentProps<typeof DropdownMenuTrigger>) {
+function MenubarTrigger<Payload>({
+  className,
+  ...props
+}: React.ComponentProps<typeof DropdownMenuTrigger<Payload>>) {
   return (
     <DropdownMenuTrigger
       data-slot="menubar-trigger"
