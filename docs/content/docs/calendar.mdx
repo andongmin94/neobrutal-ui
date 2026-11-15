@@ -62,13 +62,15 @@ export default function ChooseDate() {
 | `month` / `onMonthChange` | Controlled displayed month | Current month if uncontrolled |
 | `defaultMonth` | Initial displayed month | Current month |
 | `disabled` | Dates that cannot be selected | Unrestricted |
-| `startMonth` / `endMonth` | Navigation bounds | Unrestricted |
+| `startMonth` / `endMonth` | Navigation bounds | Unrestricted without a year dropdown |
 | `showOutsideDays` | Show adjacent-month days | `true` |
 | `captionLayout` / `numberOfMonths` | Month controls and visible month count | `label` / `1` |
 | `locale` / `formatters` | Native DayPicker date labels and formatting | DayPicker defaults (`en-US`) |
 | `buttonVariant` | Month navigation appearance: `default`, `outline`, `ghost`, `destructive`, `link`, `noShadow`, `neutral`, or `reverse` | `ghost` |
 
 Month labels use DayPicker's DateLib and its locale, rather than the browser's language. Pass a DayPicker locale or native formatter when you need a different language. Day buttons use DayPicker's stable `yyyy-MM-dd` date identifier for `data-day`.
+
+With a year dropdown (`captionLayout="dropdown"` or `"dropdown-years"`), omitted bounds default to January 100 years before `today` and December of `today`'s year. Set `startMonth` and `endMonth` explicitly to use another window. `today` defaults to the current date; `"label"` and `"dropdown-months"` do not add these bounds.
 
 ## Accessibility
 
