@@ -4,7 +4,7 @@ description: "A compact label for status, category, or short metadata."
 shadcnDocsLink: https://ui.shadcn.com/docs/components/badge
 ---
 
-Use Badge for a short status or category, not a primary action. This implementation supports two variants. For a destination, the `render` element must contain the visible content.
+Use Badge for a short status or category, not a primary action. This implementation supports two variants. For a destination, provide a real link with `render`.
 
 <ComponentPreview component="badge">
 <include cwd lang="tsx">
@@ -39,7 +39,7 @@ export default function ProjectBadges() {
     <div className="flex flex-wrap gap-2">
       <Badge>Published</Badge>
       <Badge variant="neutral">Documentation</Badge>
-      <Badge render={<a href="/docs">Read the guide</a>} />
+      <Badge render={<a href="/docs" />}>Read the guide</Badge>
     </div>
   );
 }
@@ -51,10 +51,10 @@ export default function ProjectBadges() {
 | --- | --- | --- |
 | `variant` | `default` or `neutral` | `default` |
 | `children` | Short visible label | — |
-| `render` | Element containing the badge content | `span` |
+| `render` | Element replacing the default span | `span` |
 | `className` | Sizing and layout | — |
 
-The `render` element keeps its content and composes its event handlers, styles, and ref with the badge props using Base UI.
+Badge children supply the content unless the `render` element provides its own children, which take precedence. Base UI composes the render element's event handlers, styles, and ref with the badge props.
 
 ## Accessibility
 
