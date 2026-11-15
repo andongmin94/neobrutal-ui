@@ -47,7 +47,7 @@ export default function CardDemo() {
                   Forgot your password?
                 </button>
               </div>
-              <Input id="password" type="password" required />
+              <Input id="password" type="password" autoComplete="current-password" required />
             </div>
           </div>
         </CardContent>

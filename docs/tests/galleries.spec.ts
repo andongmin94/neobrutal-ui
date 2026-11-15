@@ -138,12 +138,12 @@ test("marquee pause and reduced motion stop both strips", async ({ page }) => {
   const pause = preview.getByRole("button", { name: "Pause", exact: true });
   await pause.click();
   const resume = preview.getByRole("button", { name: "Resume", exact: true });
-  await expect(resume).toHaveAttribute("aria-pressed", "true");
+  await expect(resume).not.toHaveAttribute("aria-pressed");
   for (const selector of [".animate-marquee", ".animate-marquee2"]) {
     await expect(preview.locator(selector)).toHaveCSS("animation-play-state", "paused");
   }
   await resume.click();
-  await expect(pause).toHaveAttribute("aria-pressed", "false");
+  await expect(pause).not.toHaveAttribute("aria-pressed");
   for (const selector of [".animate-marquee", ".animate-marquee2"]) {
     await expect(preview.locator(selector)).toHaveCSS("animation-play-state", "running");
   }

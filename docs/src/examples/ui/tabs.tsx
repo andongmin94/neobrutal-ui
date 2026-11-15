@@ -85,11 +85,16 @@ export default function TabsDemo() {
               <CardContent className="grid gap-6">
                 <div className="grid gap-3">
                   <Label htmlFor="tabs-demo-current">Current password</Label>
-                  <Input id="tabs-demo-current" type="password" required />
+                  <Input
+                    id="tabs-demo-current"
+                    type="password"
+                    autoComplete="current-password"
+                    required
+                  />
                 </div>
                 <div className="grid gap-3">
                   <Label htmlFor="tabs-demo-new">New password</Label>
-                  <Input id="tabs-demo-new" type="password" required />
+                  <Input id="tabs-demo-new" type="password" autoComplete="new-password" required />
                 </div>
               </CardContent>
               <CardFooter>
