@@ -17,6 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function TabsDemo() {
   const [message, setMessage] = useState("");
+  const [profile, setProfile] = useState({ name: "John Doe", username: "@johndoe" });
 
   return (
     <div className="grid gap-3">
@@ -29,6 +30,11 @@ export default function TabsDemo() {
           <form
             onSubmit={(event) => {
               event.preventDefault();
+              const data = new FormData(event.currentTarget);
+              setProfile({
+                name: String(data.get("name") ?? ""),
+                username: String(data.get("username") ?? ""),
+              });
               setMessage("Account preview updated locally.");
             }}
           >
@@ -42,11 +48,16 @@ export default function TabsDemo() {
               <CardContent className="grid gap-6">
                 <div className="grid gap-3">
                   <Label htmlFor="tabs-demo-name">Name</Label>
-                  <Input id="tabs-demo-name" defaultValue="John Doe" required />
+                  <Input id="tabs-demo-name" name="name" defaultValue={profile.name} required />
                 </div>
                 <div className="grid gap-3">
                   <Label htmlFor="tabs-demo-username">Username</Label>
-                  <Input id="tabs-demo-username" defaultValue="@johndoe" required />
+                  <Input
+                    id="tabs-demo-username"
+                    name="username"
+                    defaultValue={profile.username}
+                    required
+                  />
                 </div>
               </CardContent>
               <CardFooter>
@@ -61,7 +72,7 @@ export default function TabsDemo() {
           <form
             onSubmit={(event) => {
               event.preventDefault();
-              setMessage("Password preview updated locally. No credentials were sent.");
+              setMessage("Password form submitted locally. No credentials were sent.");
             }}
           >
             <Card>
