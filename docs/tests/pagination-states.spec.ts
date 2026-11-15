@@ -6,8 +6,8 @@ test("pagination current and unavailable states stay distinct", async ({ page },
   const preview = page.locator('.component-preview[data-component="pagination"]').first();
   const canvas = preview.locator(".component-preview__canvas");
   const current = canvas.locator('a[aria-current="page"]');
-  const previous = canvas.getByRole("link", { name: "Go to previous page", exact: true });
-  const next = canvas.getByRole("link", { name: "Go to next page", exact: true });
+  const previous = canvas.locator('[data-slot="pagination-previous"]');
+  const next = canvas.locator('[data-slot="pagination-next"]');
   await expect(current).toHaveText("2");
 
   for (const value of [2, 1, 7]) {
@@ -22,6 +22,26 @@ test("pagination current and unavailable states stay distinct", async ({ page },
     await expect(next).toHaveAttribute("aria-disabled", String(value === 7));
     await expect(previous).toHaveCSS("opacity", value === 1 ? "0.5" : "1");
     await expect(next).toHaveCSS("opacity", value === 7 ? "0.5" : "1");
+    const unavailable = value === 1 ? previous : value === 7 ? next : null;
+    if (unavailable) {
+      await expect(unavailable).not.toHaveAttribute("href");
+      const historyCalls = await unavailable.evaluate((element) => {
+        const replaceState = window.history.replaceState;
+        let calls = 0;
+        window.history.replaceState = function (...args: Parameters<History["replaceState"]>) {
+          calls += 1;
+          return replaceState.apply(this, args);
+        };
+        try {
+          (element as HTMLElement).click();
+          return calls;
+        } finally {
+          window.history.replaceState = replaceState;
+        }
+      });
+      expect(historyCalls).toBe(0);
+      await expect(current).toHaveText(String(value));
+    }
     await info.attach(`pagination-page-${value}`, {
       body: await canvas.screenshot({
         animations: "disabled",

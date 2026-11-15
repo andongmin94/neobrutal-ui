@@ -25,6 +25,7 @@ import {
   FormMessage,
 } from "../src/components/ui/form";
 import { InputGroupButton } from "../src/components/ui/input-group";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "../src/components/ui/input-otp";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -56,6 +57,31 @@ function classesForSlot(html: string, slot: string) {
     return classes.split(/\s+/);
   });
 }
+
+test("InputOTP displays native placeholders only while the whole value is empty", () => {
+  const cases = [
+    { value: "", placeholder: "ABCD", expected: ["A", "B", "C", "D"] },
+    { value: "12", placeholder: "ABCD", expected: ["1", "2", "", ""] },
+    { value: "1234", placeholder: "ABCD", expected: ["1", "2", "3", "4"] },
+    { value: "", placeholder: undefined, expected: ["", "", "", ""] },
+  ];
+  for (const { value, placeholder, expected } of cases) {
+    const html = renderToStaticMarkup(
+      <InputOTP value={value} placeholder={placeholder} maxLength={4}>
+        <InputOTPGroup>
+          {[0, 1, 2, 3].map((index) => (
+            <InputOTPSlot key={index} index={index} />
+          ))}
+        </InputOTPGroup>
+      </InputOTP>,
+    );
+    const slots = [...html.matchAll(/data-slot="input-otp-slot"[^>]*>(.*?)<\/div>/g)];
+    assert.deepEqual(
+      slots.map(([, content]) => content.replace(/<[^>]*>/g, "")),
+      expected,
+    );
+  }
+});
 
 test("ResizableHandle preserves custom children and its optional default grip", () => {
   for (const withHandle of [false, true]) {

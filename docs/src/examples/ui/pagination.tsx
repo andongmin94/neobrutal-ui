@@ -48,10 +48,10 @@ export default function PaginationDemo() {
         <PaginationItem>
           <PaginationPrevious
             text="Prev"
-            href={`?page=${Math.max(1, page - 1)}`}
+            href={page === 1 ? undefined : `?page=${page - 1}`}
             aria-disabled={page === 1}
             tabIndex={page === 1 ? -1 : undefined}
-            onClick={(event) => selectPage(event, Math.max(1, page - 1))}
+            onClick={page === 1 ? undefined : (event) => selectPage(event, page - 1)}
           />
         </PaginationItem>
         {tokens.map((token) =>
@@ -79,10 +79,10 @@ export default function PaginationDemo() {
         )}
         <PaginationItem>
           <PaginationNext
-            href={`?page=${Math.min(pageCount, page + 1)}`}
+            href={page === pageCount ? undefined : `?page=${page + 1}`}
             aria-disabled={page === pageCount}
             tabIndex={page === pageCount ? -1 : undefined}
-            onClick={(event) => selectPage(event, Math.min(pageCount, page + 1))}
+            onClick={page === pageCount ? undefined : (event) => selectPage(event, page + 1)}
           />
         </PaginationItem>
       </PaginationContent>
