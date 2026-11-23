@@ -74,7 +74,7 @@ export default function ProjectActions() {
 | `DropdownMenuSub` | Nested menu | — |
 | `DropdownMenuContent.alignOffset` / `arrowPadding` / `collisionPadding` | Alignment, arrow, and collision-boundary spacing, in pixels | `0` |
 | `DropdownMenuContent.sideOffset` | Trigger-to-popup gap, in pixels | `4` |
-| `DropdownMenuSubContent.side` / `align` | Preferred submenu placement and alignment | `right` / `start` |
+| `DropdownMenuSubContent.side` / `align` | Preferred submenu placement and alignment | `inline-end` / `start` |
 | `DropdownMenuSubContent.alignOffset` / `sideOffset` | Submenu alignment adjustment and gap, in pixels | `-3` / `0` |
 | `DropdownMenuItem.variant` | Item appearance: `default` or `destructive` | `default` |
 | `DropdownMenuCheckboxItem.closeOnClick` / `DropdownMenuRadioItem.closeOnClick` | Close after selecting a stateful item | `true` |
@@ -84,6 +84,8 @@ export default function ProjectActions() {
 Use an explicit trigger name and clear action labels. Arrow keys navigate items, Enter selects, and Escape dismisses. Displayed shortcut text does not implement a shortcut. For destructive actions, describe the consequence and use confirmation when warranted. Do not turn a menu into a complex form with unrelated focusable controls.
 
 Menu content is bounded by Base UI's available height. Long menus scroll so pointer users and keyboard users can reach every item.
+
+Place `DropdownMenuLabel` inside the `DropdownMenuGroup` or `DropdownMenuRadioGroup` it names. Base UI associates that visible label with its group automatically. A label beside the group does not name its items. The label supports native `id`, `ref`, `render`, and state-based `className` props.
 
 ## Examples
 
@@ -102,3 +104,5 @@ Menu content is bounded by Base UI's available height. Long menus scroll so poin
   ./src/examples/ui/dropdown-menu/radio.tsx
 </include>
 </ComponentPreview>
+
+For RTL menus, set the root `dir="rtl"` prop along with your application's HTML direction. Popups carry that direction through their portals, and submenus open toward the inline end (left in RTL, right in LTR). Arrow keys, chevrons, labels, and selection marks follow the same direction. An explicit `side` still overrides the preferred placement; Base UI handles collisions.

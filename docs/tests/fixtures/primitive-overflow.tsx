@@ -3,20 +3,52 @@ import { createRoot, hydrateRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server.browser";
 import { DayPicker, TZDate } from "@daypicker/react";
 import { faIR } from "@daypicker/react/locale";
+import { DirectionProvider } from "@base-ui/react/direction-provider";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
   ContextMenu,
   ContextMenuContent,
+  ContextMenuCheckboxItem,
+  ContextMenuGroup,
   ContextMenuItem,
+  ContextMenuLabel,
+  ContextMenuRadioGroup,
+  ContextMenuRadioItem,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuCheckboxItem,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Menubar,
+  MenubarCheckboxItem,
+  MenubarContent,
+  MenubarGroup,
+  MenubarItem,
+  MenubarLabel,
+  MenubarMenu,
+  MenubarRadioGroup,
+  MenubarRadioItem,
+  MenubarSub,
+  MenubarSubContent,
+  MenubarSubTrigger,
+  MenubarTrigger,
+} from "@/components/ui/menubar";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import {
   NavigationMenu,
@@ -181,6 +213,115 @@ function LongNavigationMenu() {
   );
 }
 
+const menuParts = {
+  dropdown: {
+    Group: DropdownMenuGroup,
+    Label: DropdownMenuLabel,
+    Item: DropdownMenuItem,
+    CheckboxItem: DropdownMenuCheckboxItem,
+    RadioGroup: DropdownMenuRadioGroup,
+    RadioItem: DropdownMenuRadioItem,
+    Sub: DropdownMenuSub,
+    SubContent: DropdownMenuSubContent,
+    SubTrigger: DropdownMenuSubTrigger,
+  },
+  context: {
+    Group: ContextMenuGroup,
+    Label: ContextMenuLabel,
+    Item: ContextMenuItem,
+    CheckboxItem: ContextMenuCheckboxItem,
+    RadioGroup: ContextMenuRadioGroup,
+    RadioItem: ContextMenuRadioItem,
+    Sub: ContextMenuSub,
+    SubContent: ContextMenuSubContent,
+    SubTrigger: ContextMenuSubTrigger,
+  },
+  menubar: {
+    Group: MenubarGroup,
+    Label: MenubarLabel,
+    Item: MenubarItem,
+    CheckboxItem: MenubarCheckboxItem,
+    RadioGroup: MenubarRadioGroup,
+    RadioItem: MenubarRadioItem,
+    Sub: MenubarSub,
+    SubContent: MenubarSubContent,
+    SubTrigger: MenubarSubTrigger,
+  },
+};
+
+function MenuGroups({ kind }: { kind: keyof typeof menuParts }) {
+  const { Group, Label, Item, CheckboxItem, RadioGroup, RadioItem, Sub, SubContent, SubTrigger } =
+    menuParts[kind];
+  return (
+    <>
+      <Group>
+        <Label
+          id={`${kind}-actions`}
+          render={<span />}
+          ref={(node) => {
+            node?.setAttribute("data-label-ref", "attached");
+          }}
+          className={() => "native-menu-label"}
+        >
+          File actions
+        </Label>
+        <Item>Rename</Item>
+        <Sub>
+          <SubTrigger>Export</SubTrigger>
+          <SubContent className="min-w-40">
+            <Item>JSON</Item>
+            <Item>CSV</Item>
+          </SubContent>
+        </Sub>
+        <CheckboxItem defaultChecked>Show previews</CheckboxItem>
+      </Group>
+      <RadioGroup defaultValue="grid">
+        <Label inset>View layout</Label>
+        <RadioItem value="grid">Grid</RadioItem>
+        <RadioItem value="list">List</RadioItem>
+      </RadioGroup>
+    </>
+  );
+}
+
+function NamedMenus() {
+  const kind = query.get("kind");
+  const direction = query.get("direction") === "rtl" ? "rtl" : "ltr";
+  const contextTarget = React.useRef<HTMLDivElement>(null);
+  return (
+    <section dir={direction} className="flex min-h-72 items-start justify-center p-8">
+      {kind === "context" ? (
+        <ContextMenu dir={direction}>
+          <ContextMenuTrigger ref={contextTarget} tabIndex={0}>
+            Context commands
+          </ContextMenuTrigger>
+          <ContextMenuContent className="min-w-48" finalFocus={contextTarget}>
+            <MenuGroups kind="context" />
+          </ContextMenuContent>
+        </ContextMenu>
+      ) : kind === "menubar" ? (
+        <DirectionProvider direction={direction}>
+          <Menubar>
+            <MenubarMenu>
+              <MenubarTrigger>Menu commands</MenubarTrigger>
+              <MenubarContent className="min-w-48">
+                <MenuGroups kind="menubar" />
+              </MenubarContent>
+            </MenubarMenu>
+          </Menubar>
+        </DirectionProvider>
+      ) : (
+        <DropdownMenu dir={direction}>
+          <DropdownMenuTrigger render={<Button />}>Dropdown commands</DropdownMenuTrigger>
+          <DropdownMenuContent className="min-w-48">
+            <MenuGroups kind="dropdown" />
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
+    </section>
+  );
+}
+
 const root = document.getElementById("root")!;
 if (surface === "calendar-hydrate") {
   document.documentElement.dataset.hydrationErrors = "[]";
@@ -208,6 +349,8 @@ if (surface === "calendar-hydrate") {
       <SheetSideExample />
     ) : surface === "navigation-menu" ? (
       <LongNavigationMenu />
+    ) : surface === "named-menus" ? (
+      <NamedMenus />
     ) : (
       <LongMenus />
     ),

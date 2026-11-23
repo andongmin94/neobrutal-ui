@@ -74,8 +74,8 @@ export default function ContextMenuDemo() {
           Pin to workspace
         </ContextMenuCheckboxItem>
         <ContextMenuSeparator />
-        <ContextMenuLabel inset>Visibility</ContextMenuLabel>
         <ContextMenuRadioGroup value={visibility} onValueChange={setVisibility}>
+          <ContextMenuLabel inset>Visibility</ContextMenuLabel>
           <ContextMenuRadioItem value="private">Private</ContextMenuRadioItem>
           <ContextMenuRadioItem value="team">Team</ContextMenuRadioItem>
         </ContextMenuRadioGroup>

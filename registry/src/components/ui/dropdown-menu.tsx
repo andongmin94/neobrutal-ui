@@ -1,6 +1,6 @@
 "use client";
 
-import { DirectionProvider } from "@base-ui/react/direction-provider";
+import { DirectionProvider, useDirection } from "@base-ui/react/direction-provider";
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
 import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react";
 import type * as React from "react";
@@ -56,6 +56,7 @@ function DropdownMenuContent({
   sticky,
   ...props
 }: DropdownMenuContentProps) {
+  const direction = useDirection();
   return (
     <DropdownMenuPortal>
       <MenuPrimitive.Positioner
@@ -73,6 +74,7 @@ function DropdownMenuContent({
         className="isolate z-50 outline-none"
       >
         <MenuPrimitive.Popup
+          dir={direction}
           data-slot="dropdown-menu-content"
           {...props}
           className={(state) =>
@@ -97,16 +99,20 @@ function DropdownMenuLabel({
   className,
   inset,
   ...props
-}: React.ComponentProps<"div"> & {
+}: MenuPrimitive.GroupLabel.Props & {
   inset?: boolean;
 }) {
   return (
-    <div
+    <MenuPrimitive.GroupLabel
       data-slot="dropdown-menu-label"
       data-inset={inset}
-      role="presentation"
-      className={cn("px-2 py-1.5 text-sm font-heading data-inset:pl-8", className)}
       {...props}
+      className={(state) =>
+        cn(
+          "px-2 py-1.5 text-sm font-heading data-inset:ps-8",
+          typeof className === "function" ? className(state) : className,
+        )
+      }
     />
   );
 }
@@ -128,7 +134,7 @@ function DropdownMenuItem({
       {...props}
       className={(state) =>
         cn(
-          "group/dropdown-menu-item relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent bg-main px-2 py-1.5 text-sm font-base outline-none transition-colors select-none data-highlighted:outline-2 data-highlighted:outline-solid data-highlighted:-outline-offset-4 data-highlighted:outline-current data-inset:pl-8 data-[variant=destructive]:bg-destructive data-[variant=destructive]:text-destructive-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+          "group/dropdown-menu-item relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent bg-main px-2 py-1.5 text-sm font-base outline-none transition-colors select-none data-highlighted:outline-2 data-highlighted:outline-solid data-highlighted:-outline-offset-4 data-highlighted:outline-current data-inset:ps-8 data-[variant=destructive]:bg-destructive data-[variant=destructive]:text-destructive-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
           typeof className === "function" ? className(state) : className,
         )
       }
@@ -155,13 +161,13 @@ function DropdownMenuSubTrigger({
       {...props}
       className={(state) =>
         cn(
-          "flex cursor-default items-center gap-2 rounded-base border-2 border-transparent bg-main px-2 py-1.5 text-sm font-base outline-none select-none data-highlighted:outline-2 data-highlighted:outline-solid data-highlighted:-outline-offset-4 data-highlighted:outline-current data-inset:pl-8 data-popup-open:outline-2 data-popup-open:outline-solid data-popup-open:-outline-offset-4 data-popup-open:outline-current [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+          "flex cursor-default items-center gap-2 rounded-base border-2 border-transparent bg-main px-2 py-1.5 text-sm font-base outline-none select-none data-highlighted:outline-2 data-highlighted:outline-solid data-highlighted:-outline-offset-4 data-highlighted:outline-current data-inset:ps-8 data-popup-open:outline-2 data-popup-open:outline-solid data-popup-open:-outline-offset-4 data-popup-open:outline-current [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
           typeof className === "function" ? className(state) : className,
         )
       }
     >
       {children}
-      <ChevronRightIcon className="ml-auto" />
+      <ChevronRightIcon className="ms-auto rtl:rotate-180" />
     </MenuPrimitive.SubmenuTrigger>
   );
 }
@@ -169,7 +175,7 @@ function DropdownMenuSubTrigger({
 function DropdownMenuSubContent({
   align = "start",
   alignOffset = -3,
-  side = "right",
+  side = "inline-end",
   sideOffset = 0,
   className,
   ...props
@@ -209,13 +215,13 @@ function DropdownMenuCheckboxItem({
       {...props}
       className={(state) =>
         cn(
-          "relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent py-1.5 pr-2 pl-8 text-sm font-base outline-none transition-colors select-none data-highlighted:outline-2 data-highlighted:outline-solid data-highlighted:-outline-offset-4 data-highlighted:outline-current data-inset:pl-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+          "relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent py-1.5 pe-2 ps-8 text-sm font-base outline-none transition-colors select-none data-highlighted:outline-2 data-highlighted:outline-solid data-highlighted:-outline-offset-4 data-highlighted:outline-current data-inset:ps-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
           typeof className === "function" ? className(state) : className,
         )
       }
     >
       <span
-        className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center"
+        className="pointer-events-none absolute start-2 flex size-3.5 items-center justify-center"
         data-slot="dropdown-menu-checkbox-item-indicator"
       >
         <MenuPrimitive.CheckboxItemIndicator>
@@ -248,13 +254,13 @@ function DropdownMenuRadioItem({
       {...props}
       className={(state) =>
         cn(
-          "relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent py-1.5 pr-2 pl-8 text-sm font-base outline-none transition-colors select-none data-highlighted:outline-2 data-highlighted:outline-solid data-highlighted:-outline-offset-4 data-highlighted:outline-current data-inset:pl-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+          "relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent py-1.5 pe-2 ps-8 text-sm font-base outline-none transition-colors select-none data-highlighted:outline-2 data-highlighted:outline-solid data-highlighted:-outline-offset-4 data-highlighted:outline-current data-inset:ps-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
           typeof className === "function" ? className(state) : className,
         )
       }
     >
       <span
-        className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center"
+        className="pointer-events-none absolute start-2 flex size-3.5 items-center justify-center"
         data-slot="dropdown-menu-radio-item-indicator"
       >
         <MenuPrimitive.RadioItemIndicator>
@@ -285,7 +291,7 @@ function DropdownMenuShortcut({ className, ...props }: React.ComponentProps<"spa
   return (
     <span
       data-slot="dropdown-menu-shortcut"
-      className={cn("ml-auto text-xs font-base tracking-widest", className)}
+      className={cn("ms-auto text-xs font-base tracking-widest", className)}
       {...props}
     />
   );

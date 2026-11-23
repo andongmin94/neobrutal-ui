@@ -23,9 +23,9 @@ export default function DropdownMenuDemo() {
         Registry actions
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-64">
-        <DropdownMenuLabel>neobrutal-ui</DropdownMenuLabel>
-        <DropdownMenuSeparator />
         <DropdownMenuGroup>
+          <DropdownMenuLabel>neobrutal-ui</DropdownMenuLabel>
+          <DropdownMenuSeparator />
           <DropdownMenuItem>
             <BookOpen aria-hidden="true" />
             Open documentation

@@ -1,7 +1,7 @@
 "use client";
 
 import { ContextMenu as ContextMenuPrimitive } from "@base-ui/react/context-menu";
-import { DirectionProvider } from "@base-ui/react/direction-provider";
+import { DirectionProvider, useDirection } from "@base-ui/react/direction-provider";
 import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react";
 import type * as React from "react";
 
@@ -59,11 +59,12 @@ function ContextMenuContent({
   collisionPadding = 0,
   disableAnchorTracking,
   positionMethod,
-  side = "right",
+  side = "inline-end",
   sideOffset = 0,
   sticky,
   ...props
 }: ContextMenuContentProps) {
+  const direction = useDirection();
   return (
     <ContextMenuPortal>
       <ContextMenuPrimitive.Positioner
@@ -81,6 +82,7 @@ function ContextMenuContent({
         className="isolate z-50 outline-none"
       >
         <ContextMenuPrimitive.Popup
+          dir={direction}
           data-slot="context-menu-content"
           {...props}
           className={(state) =>
@@ -105,19 +107,20 @@ function ContextMenuLabel({
   className,
   inset,
   ...props
-}: React.ComponentProps<"div"> & {
+}: ContextMenuPrimitive.GroupLabel.Props & {
   inset?: boolean;
 }) {
   return (
-    <div
+    <ContextMenuPrimitive.GroupLabel
       data-slot="context-menu-label"
       data-inset={inset}
-      role="presentation"
-      className={cn(
-        "border-2 border-transparent px-2 py-1.5 text-sm font-base text-main-foreground data-inset:pl-8",
-        className,
-      )}
       {...props}
+      className={(state) =>
+        cn(
+          "border-2 border-transparent px-2 py-1.5 text-sm font-base text-main-foreground data-inset:ps-8",
+          typeof className === "function" ? className(state) : className,
+        )
+      }
     />
   );
 }
@@ -139,7 +142,7 @@ function ContextMenuItem({
       {...props}
       className={(state) =>
         cn(
-          "group/context-menu-item relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent bg-main px-2 py-1.5 text-sm font-base outline-none transition-colors select-none data-highlighted:outline-2 data-highlighted:outline-solid data-highlighted:-outline-offset-4 data-highlighted:outline-current data-inset:pl-8 data-[variant=destructive]:bg-destructive data-[variant=destructive]:text-destructive-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+          "group/context-menu-item relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent bg-main px-2 py-1.5 text-sm font-base outline-none transition-colors select-none data-highlighted:outline-2 data-highlighted:outline-solid data-highlighted:-outline-offset-4 data-highlighted:outline-current data-inset:ps-8 data-[variant=destructive]:bg-destructive data-[variant=destructive]:text-destructive-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
           typeof className === "function" ? className(state) : className,
         )
       }
@@ -166,13 +169,13 @@ function ContextMenuSubTrigger({
       {...props}
       className={(state) =>
         cn(
-          "flex cursor-default items-center gap-2 rounded-base border-2 border-transparent bg-main px-2 py-1.5 text-sm font-base outline-none select-none data-highlighted:outline-2 data-highlighted:outline-solid data-highlighted:-outline-offset-4 data-highlighted:outline-current data-inset:pl-8 data-popup-open:outline-2 data-popup-open:outline-solid data-popup-open:-outline-offset-4 data-popup-open:outline-current [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+          "flex cursor-default items-center gap-2 rounded-base border-2 border-transparent bg-main px-2 py-1.5 text-sm font-base outline-none select-none data-highlighted:outline-2 data-highlighted:outline-solid data-highlighted:-outline-offset-4 data-highlighted:outline-current data-inset:ps-8 data-popup-open:outline-2 data-popup-open:outline-solid data-popup-open:-outline-offset-4 data-popup-open:outline-current [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
           typeof className === "function" ? className(state) : className,
         )
       }
     >
       {children}
-      <ChevronRightIcon className="ml-auto" />
+      <ChevronRightIcon className="ms-auto rtl:rotate-180" />
     </ContextMenuPrimitive.SubmenuTrigger>
   );
 }
@@ -181,7 +184,7 @@ function ContextMenuSubContent({ className, ...props }: ContextMenuContentProps)
   return (
     <ContextMenuContent
       data-slot="context-menu-sub-content"
-      side="right"
+      side="inline-end"
       {...props}
       className={(state) =>
         cn("shadow-none", typeof className === "function" ? className(state) : className)
@@ -207,12 +210,12 @@ function ContextMenuCheckboxItem({
       {...props}
       className={(state) =>
         cn(
-          "relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent py-1.5 pr-2 pl-8 text-sm font-base text-main-foreground outline-none transition-colors select-none data-highlighted:outline-2 data-highlighted:outline-solid data-highlighted:-outline-offset-4 data-highlighted:outline-current data-inset:pl-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+          "relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent py-1.5 pe-2 ps-8 text-sm font-base text-main-foreground outline-none transition-colors select-none data-highlighted:outline-2 data-highlighted:outline-solid data-highlighted:-outline-offset-4 data-highlighted:outline-current data-inset:ps-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
           typeof className === "function" ? className(state) : className,
         )
       }
     >
-      <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
+      <span className="pointer-events-none absolute start-2 flex size-3.5 items-center justify-center">
         <ContextMenuPrimitive.CheckboxItemIndicator>
           <CheckIcon />
         </ContextMenuPrimitive.CheckboxItemIndicator>
@@ -243,12 +246,12 @@ function ContextMenuRadioItem({
       {...props}
       className={(state) =>
         cn(
-          "relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent py-1.5 pr-2 pl-8 text-sm font-base text-main-foreground outline-none transition-colors select-none data-highlighted:outline-2 data-highlighted:outline-solid data-highlighted:-outline-offset-4 data-highlighted:outline-current data-inset:pl-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+          "relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent py-1.5 pe-2 ps-8 text-sm font-base text-main-foreground outline-none transition-colors select-none data-highlighted:outline-2 data-highlighted:outline-solid data-highlighted:-outline-offset-4 data-highlighted:outline-current data-inset:ps-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
           typeof className === "function" ? className(state) : className,
         )
       }
     >
-      <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
+      <span className="pointer-events-none absolute start-2 flex size-3.5 items-center justify-center">
         <ContextMenuPrimitive.RadioItemIndicator>
           <CircleIcon className="size-2 fill-current" />
         </ContextMenuPrimitive.RadioItemIndicator>
@@ -277,7 +280,7 @@ function ContextMenuShortcut({ className, ...props }: React.ComponentProps<"span
   return (
     <span
       data-slot="context-menu-shortcut"
-      className={cn("ml-auto text-xs font-base tracking-widest", className)}
+      className={cn("ms-auto text-xs font-base tracking-widest", className)}
       {...props}
     />
   );

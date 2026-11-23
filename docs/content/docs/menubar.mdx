@@ -74,3 +74,7 @@ export default function FileMenu() {
 ## Accessibility
 
 Keep labels short and commands meaningful. Arrow keys navigate triggers and menu items; Escape dismisses. MenubarShortcut only displays text: implement and test the corresponding keyboard handler separately. Make disabled commands visually identifiable, and do not use application-menu semantics for an ordinary list of website links.
+
+Place `MenubarLabel` inside the `MenubarGroup` or `MenubarRadioGroup` it names. Base UI associates that visible label with its group automatically. The label supports native `id`, `ref`, `render`, and state-based `className` props.
+
+For RTL applications, use Base UI's `DirectionProvider` with the matching HTML `dir="rtl"` on the menubar's ancestor. Its menus and submenus inherit that direction, including portaled popup content and arrow-key navigation.

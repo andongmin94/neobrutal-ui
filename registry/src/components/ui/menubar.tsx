@@ -116,7 +116,7 @@ function MenubarCheckboxItem({
       {...props}
       className={(state) =>
         cn(
-          "relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent py-1.5 pr-2 pl-8 text-sm font-base transition-colors select-none data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+          "relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent py-1.5 pe-2 ps-8 text-sm font-base transition-colors select-none data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
           typeof className === "function" ? className(state) : className,
         )
       }
@@ -138,7 +138,7 @@ function MenubarRadioItem({
       {...props}
       className={(state) =>
         cn(
-          "relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent py-1.5 pr-2 pl-8 text-sm font-base transition-colors select-none data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+          "relative flex cursor-default items-center gap-2 rounded-base border-2 border-transparent py-1.5 pe-2 ps-8 text-sm font-base transition-colors select-none data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
           typeof className === "function" ? className(state) : className,
         )
       }
@@ -151,7 +151,12 @@ function MenubarLabel({ className, ...props }: React.ComponentProps<typeof Dropd
     <DropdownMenuLabel
       data-slot="menubar-label"
       {...props}
-      className={cn("px-2 py-1.5 text-sm font-heading data-inset:pl-8", className)}
+      className={(state) =>
+        cn(
+          "px-2 py-1.5 text-sm font-heading data-inset:ps-8",
+          typeof className === "function" ? className(state) : className,
+        )
+      }
     />
   );
 }
@@ -181,7 +186,7 @@ function MenubarShortcut({
   return (
     <DropdownMenuShortcut
       data-slot="menubar-shortcut"
-      className={cn("ml-auto text-xs font-base tracking-widest", className)}
+      className={cn("ms-auto text-xs font-base tracking-widest", className)}
       {...props}
     />
   );

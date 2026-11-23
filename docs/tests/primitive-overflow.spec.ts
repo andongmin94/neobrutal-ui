@@ -47,6 +47,105 @@ test.afterAll(async () => {
   }
 });
 
+for (const kind of ["dropdown", "context", "menubar"] as const) {
+  test(`Menu labels associate ${kind} item and radio groups`, async ({ page }) => {
+    await page.goto(`${origin}?surface=named-menus&kind=${kind}`);
+    if (kind === "context") {
+      const target = page.getByText("Context commands", { exact: true });
+      await target.focus();
+      await target.press("Shift+F10");
+    } else {
+      await page
+        .getByRole(kind === "menubar" ? "menuitem" : "button", {
+          name: kind === "menubar" ? "Menu commands" : "Dropdown commands",
+          exact: true,
+        })
+        .click();
+    }
+
+    const actions = page.getByRole("group", { name: "File actions", exact: true });
+    const layout = page.getByRole("group", { name: "View layout", exact: true });
+    await expect(actions).toBeVisible();
+    await expect(layout).toBeVisible();
+    await expect(actions).toHaveAttribute("aria-labelledby", `${kind}-actions`);
+    const label = page.locator(`span#${kind}-actions`);
+    await expect(label).toHaveText("File actions");
+    await expect(label).toHaveClass(/native-menu-label/);
+    await expect(label).toHaveAttribute("data-label-ref", "attached");
+    const layoutLabel = await layout.getAttribute("aria-labelledby");
+    expect(layoutLabel).toBeTruthy();
+    expect(layoutLabel).not.toBe(`${kind}-actions`);
+    expect(
+      await page.evaluate((id) => document.getElementById(id!)?.textContent, layoutLabel),
+    ).toBe("View layout");
+    await expect(layout.getByRole("menuitemradio", { name: "Grid", exact: true })).toHaveAttribute(
+      "aria-checked",
+      "true",
+    );
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("menu")).toHaveCount(0);
+  });
+
+  for (const direction of ["ltr", "rtl"] as const) {
+    test(`Menu submenu ${kind} matches ${direction} placement and arrow navigation`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 1200, height: 800 });
+      await page.goto(`${origin}?surface=named-menus&kind=${kind}&direction=${direction}`);
+      if (kind === "context") {
+        const target = page.getByText("Context commands", { exact: true });
+        await target.focus();
+        await target.press("Shift+F10");
+      } else {
+        await page
+          .getByRole(kind === "menubar" ? "menuitem" : "button", {
+            name: kind === "menubar" ? "Menu commands" : "Dropdown commands",
+            exact: true,
+          })
+          .click();
+      }
+
+      const parentMenu = page.getByRole("menu").first();
+      await expect(parentMenu).toHaveAttribute("dir", direction);
+      const trigger = page.getByRole("menuitem", { name: "Export", exact: true });
+      const arrow = trigger.locator("svg");
+      await expect(arrow).toHaveCSS("rotate", direction === "rtl" ? "180deg" : "none");
+      const checkbox = page.getByRole("menuitemcheckbox", { name: "Show previews", exact: true });
+      const indicator = checkbox.locator("svg");
+      const checkboxBox = (await checkbox.boundingBox())!;
+      const indicatorBox = (await indicator.boundingBox())!;
+      expect(
+        direction === "rtl"
+          ? indicatorBox.x > checkboxBox.x + checkboxBox.width / 2
+          : indicatorBox.x < checkboxBox.x + checkboxBox.width / 2,
+      ).toBe(true);
+
+      await trigger.focus();
+      await trigger.press(direction === "rtl" ? "ArrowLeft" : "ArrowRight");
+      const firstCommand = page.getByRole("menuitem", { name: "JSON", exact: true });
+      await expect(firstCommand).toBeFocused();
+      const submenu = page.getByRole("menu").filter({ has: firstCommand });
+      await expect(submenu).toHaveAttribute("dir", direction);
+      await expect(submenu).toHaveAttribute("data-side", "inline-end");
+      await expect
+        .poll(async () => {
+          const parentBox = await parentMenu.boundingBox();
+          const childBox = await submenu.boundingBox();
+          if (!parentBox || !childBox) return false;
+          return direction === "rtl"
+            ? childBox.x + childBox.width <= parentBox.x + 10
+            : childBox.x >= parentBox.x + parentBox.width - 10;
+        })
+        .toBe(true);
+      await firstCommand.press(direction === "rtl" ? "ArrowRight" : "ArrowLeft");
+      await expect(firstCommand).toBeHidden();
+      await expect(trigger).toBeFocused();
+      await page.keyboard.press("Escape");
+      await expect(parentMenu).toBeHidden();
+    });
+  }
+}
+
 test("NavigationMenu keeps the current destination visible when another link is hovered", async ({
   page,
 }) => {
