@@ -112,6 +112,32 @@ test("NavigationMenu fits short viewports and scrolls to every link by pointer a
   await expect(trigger).toBeFocused();
 });
 
+test("Calendar preserves focus through controlled navigation and parent updates", async ({
+  page,
+}) => {
+  await page.goto(`${origin}?surface=calendar-controlled`);
+  const calendar = page.locator('[data-slot="calendar"]');
+  await expect(calendar).toBeVisible();
+  const rootElement = await calendar.elementHandle();
+  const month = calendar.locator(".rdp-months_dropdown");
+  const year = calendar.locator(".rdp-years_dropdown");
+
+  await month.focus();
+  await month.selectOption("1");
+  await expect(month).toHaveValue("1");
+  await expect(month).toBeFocused();
+
+  await year.focus();
+  await year.selectOption("2025");
+  await expect(year).toHaveValue("2025");
+  await expect(year).toBeFocused();
+
+  await page.getByRole("button", { name: "Refresh calendar props" }).dispatchEvent("click");
+  await expect(page.getByTestId("calendar-parent-updates")).toHaveText("1");
+  await expect(year).toBeFocused();
+  expect(await rootElement!.evaluate((element) => element.isConnected)).toBe(true);
+});
+
 test("Calendar uses the native locale pipeline and stable dates in its time zone", async ({
   page,
 }) => {

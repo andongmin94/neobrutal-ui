@@ -14,6 +14,7 @@ import {
   AccordionTrigger,
 } from "../src/components/ui/accordion";
 import { buttonVariants } from "../src/components/ui/button-variants";
+import { Calendar } from "../src/components/ui/calendar";
 import { Carousel, CarouselNext, CarouselPrevious } from "../src/components/ui/carousel";
 import {
   Form,
@@ -57,6 +58,18 @@ function classesForSlot(html: string, slot: string) {
     return classes.split(/\s+/);
   });
 }
+
+test("Calendar week numbers preserve native row headers without leaking their data object", () => {
+  const html = renderToStaticMarkup(<Calendar month={new Date(2024, 0, 1)} showWeekNumber />);
+  const headers = html.match(/<th\b[^>]*class="[^"]*\brdp-week_number\b[^"]*"[^>]*>/g) ?? [];
+  assert.equal(headers.length, 5);
+  for (const header of headers) {
+    assert.match(header, /scope="row"/);
+    assert.match(header, /role="rowheader"/);
+    assert.match(header, /aria-label="Week \d+"/);
+    assert.doesNotMatch(header, /\bweek=/);
+  }
+});
 
 test("InputOTP displays native placeholders only while the whole value is empty", () => {
   const cases = [

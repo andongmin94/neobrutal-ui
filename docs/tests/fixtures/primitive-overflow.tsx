@@ -51,6 +51,24 @@ function HydrationCalendar() {
   );
 }
 
+function ControlledCalendar() {
+  const [month, setMonth] = React.useState(fixedMonth);
+  const [updates, setUpdates] = React.useState(0);
+  return (
+    <>
+      <Calendar
+        {...calendarProps}
+        month={month}
+        onMonthChange={setMonth}
+        endMonth={new Date(2026, 11, 1)}
+        captionLayout="dropdown"
+      />
+      <Button onClick={() => setUpdates((current) => current + 1)}>Refresh calendar props</Button>
+      <output data-testid="calendar-parent-updates">{updates}</output>
+    </>
+  );
+}
+
 function LocaleCalendars() {
   const timeZone = "Pacific/Honolulu";
   const zonedMonth = new TZDate(2024, 0, 1, timeZone);
@@ -148,6 +166,8 @@ if (surface === "calendar-hydrate") {
       <output data-testid="calendar-ssr-markup">{renderToString(<HydrationCalendar />)}</output>
     ) : surface === "calendar-locale" ? (
       <LocaleCalendars />
+    ) : surface === "calendar-controlled" ? (
+      <ControlledCalendar />
     ) : surface === "sheet" ? (
       <SheetSideExample />
     ) : surface === "navigation-menu" ? (
