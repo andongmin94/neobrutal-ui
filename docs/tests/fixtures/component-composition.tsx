@@ -46,7 +46,9 @@ import {
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -300,6 +302,34 @@ function SelectFixture({ removal = false, cancelClear = false }) {
   );
 }
 
+function SelectDirectionFixture() {
+  const direction = new URLSearchParams(location.search).get("direction") === "rtl" ? "rtl" : "ltr";
+  const options = [
+    { value: "a", label: "Alpha" },
+    { value: "b", label: "Bravo" },
+  ];
+
+  return (
+    <section dir={direction} className="max-w-xs" data-testid="select-direction">
+      <Select dir={direction} defaultValue="a" items={options} name="directional-selection">
+        <SelectTrigger aria-label="Directional selection">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Options</SelectLabel>
+            {options.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                <span data-testid={`select-${option.value}-text`}>{option.label}</span>
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </section>
+  );
+}
+
 const workspaceItems = Array.from({ length: 80 }, (_, index) => ({
   value: `workspace-${index}`,
   label: `Workspace ${index + 1}`,
@@ -464,6 +494,7 @@ const fixtures = {
   "select-clear": <SelectFixture />,
   "select-remove": <SelectFixture removal />,
   "select-cancel": <SelectFixture cancelClear />,
+  "select-direction": <SelectDirectionFixture />,
   "select-long": <LongSelectFixture />,
   "command-empty": <EmptyCommandFixture />,
   switch: <SwitchFixture />,

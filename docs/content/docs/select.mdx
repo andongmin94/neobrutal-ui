@@ -74,6 +74,7 @@ export default function PublicationStatus() {
 | `Select.defaultValue` | Initial selection | Unset |
 | `Select.items` | Value-to-label mapping or `{ value, label }` array used by SelectValue to display the selected label | Unset |
 | `Select.name` / `required` / `disabled` | Form key and constraints | Unset / false / false |
+| `Select.dir` | `ltr` or `rtl` direction for popup placement and content | Inherited |
 | `SelectTrigger.size` | `sm` or `default` | `default` |
 | `SelectValue.placeholder` | Prompt without selection | Unset |
 | `SelectItem.value` / `disabled` | Option value and availability | Value required / false |
@@ -83,6 +84,8 @@ export default function PublicationStatus() {
 | `SelectContent.sideOffset` | Trigger-to-popup gap, in pixels | `4` |
 
 Pass the same options to `Select.items` and render their `SelectItem` elements, as in the Usage example. `items` supplies the selected display label; it does not render the popup options. Base UI does not infer that label from `SelectItem` text. Labels can contain icons and text, and `SelectValue` also accepts a child function for custom display.
+
+For a right-to-left section, use `<Select dir="rtl">` inside an element with `dir="rtl"`. The popup preserves that direction when it opens outside the section, and the selected checkmark stays at the inline end of each option.
 
 ## Accessibility
 

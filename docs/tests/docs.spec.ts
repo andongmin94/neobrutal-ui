@@ -1,5 +1,82 @@
 import { expect, test } from "@playwright/test";
 
+test("directory slash respects canceled keys, composition, and native editable targets", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true");
+  const search = page.getByRole("searchbox", { name: "Search component directory" });
+  const category = page.locator(".directory-categories button").first();
+  await category.focus();
+  await page.keyboard.press("/");
+  await expect(search).toBeFocused();
+
+  await category.focus();
+  await category.evaluate((element) =>
+    element.addEventListener("keydown", (event) => event.preventDefault(), { once: true }),
+  );
+  await page.keyboard.press("/");
+  await expect(category).toBeFocused();
+  for (const composition of [{ isComposing: true }, { keyCode: 229 }]) {
+    const allowed = await category.evaluate(
+      (element, details) =>
+        element.dispatchEvent(
+          new KeyboardEvent("keydown", {
+            key: "/",
+            code: "Slash",
+            bubbles: true,
+            cancelable: true,
+            ...details,
+          }),
+        ),
+      composition,
+    );
+    expect(allowed).toBe(true);
+    await expect(category).toBeFocused();
+  }
+
+  await page.evaluate(() => {
+    const controls = document.createElement("section");
+    controls.id = "shortcut-controls";
+    controls.innerHTML = `
+      <input aria-label="Shortcut input">
+      <textarea aria-label="Shortcut textarea"></textarea>
+      <select aria-label="Shortcut select"><option>Choose</option><option>/</option></select>
+      <div id="editable-true" contenteditable="true" tabindex="0"></div>
+      <div id="editable-empty" contenteditable="" tabindex="0"></div>
+      <div id="editable-plain" contenteditable="plaintext-only" tabindex="0"></div>
+      <div contenteditable="true">
+        <button id="editable-inherited" type="button">Editable child</button>
+        <button id="editable-false" type="button" contenteditable="false">Read-only child</button>
+      </div>`;
+    document.body.append(controls);
+    window.addEventListener("keydown", (event) => {
+      controls.dataset.prevented = String(event.defaultPrevented);
+    });
+  });
+  const controls = page.locator("#shortcut-controls");
+  for (const selector of [
+    "input",
+    "textarea",
+    "select",
+    "#editable-true",
+    "#editable-empty",
+    "#editable-plain",
+    "#editable-inherited",
+  ]) {
+    const target = controls.locator(selector);
+    await target.focus();
+    await page.keyboard.press("/");
+    await expect(target).toBeFocused();
+    await expect(controls).toHaveAttribute("data-prevented", "false");
+  }
+  await expect(controls.locator("input")).toHaveValue("/");
+  await expect(controls.locator("textarea")).toHaveValue("/");
+  await controls.locator("#editable-false").focus();
+  await page.keyboard.press("/");
+  await expect(search).toBeFocused();
+});
+
 test("mobile documentation navigation leaves composing Escape with the filter input", async ({
   page,
 }) => {

@@ -317,6 +317,50 @@ test("Select preserves native cancellation details when clearing", async ({ page
   await expect(page.locator('input[name="selection"]')).toHaveValue("a");
 });
 
+for (const direction of ["ltr", "rtl"] as const) {
+  test(`select: local ${direction} sections preserve popup layout and keyboard selection`, async ({
+    page,
+  }) => {
+    await page.goto(`${origin}?surface=select-direction&direction=${direction}`);
+    await expect(page.locator("body")).toHaveCSS("direction", "ltr");
+    const trigger = page.getByRole("combobox", { name: "Directional selection", exact: true });
+    await expect(trigger).toHaveCSS("direction", direction);
+    await expect(trigger.locator('[data-slot="select-value"]')).toHaveCSS("text-align", "start");
+    await trigger.press("Enter");
+
+    const popup = page.locator('[data-slot="select-content"]');
+    await expect(popup).toBeVisible();
+    await expect(popup).toHaveCSS("direction", direction);
+    expect(
+      await popup.evaluate((node) => node.closest('[data-testid="select-direction"]')),
+    ).toBeNull();
+    const selected = popup.getByRole("option", { name: "Alpha", exact: true });
+    await expect(selected).toHaveAttribute("aria-selected", "true");
+    await expect(selected).toBeFocused();
+    const optionBox = (await selected.boundingBox())!;
+    const indicatorBox = (await selected.locator("svg").boundingBox())!;
+    const textBox = (await popup.getByTestId("select-a-text").boundingBox())!;
+    expect(
+      direction === "rtl"
+        ? indicatorBox.x < optionBox.x + optionBox.width / 2
+        : indicatorBox.x > optionBox.x + optionBox.width / 2,
+    ).toBe(true);
+    expect(
+      direction === "rtl"
+        ? indicatorBox.x + indicatorBox.width < textBox.x
+        : textBox.x + textBox.width < indicatorBox.x,
+    ).toBe(true);
+
+    await page.keyboard.press("End");
+    await expect(popup.getByRole("option", { name: "Bravo", exact: true })).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(popup).toBeHidden();
+    await expect(trigger).toContainText("Bravo");
+    await expect(trigger).toBeFocused();
+    await expect(page.locator('input[name="directional-selection"]')).toHaveValue("b");
+  });
+}
+
 test("Long Select lists fit short viewports and keep the final option reachable", async ({
   page,
 }) => {

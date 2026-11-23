@@ -1,6 +1,6 @@
 "use client";
 
-import { DirectionProvider } from "@base-ui/react/direction-provider";
+import { DirectionProvider, useDirection } from "@base-ui/react/direction-provider";
 import { Select as SelectPrimitive } from "@base-ui/react/select";
 import type * as React from "react";
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
@@ -53,7 +53,7 @@ function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
       data-slot="select-value"
       {...props}
       className={(state) =>
-        cn("flex flex-1 text-left", typeof className === "function" ? className(state) : className)
+        cn("flex flex-1 text-start", typeof className === "function" ? className(state) : className)
       }
     />
   );
@@ -105,6 +105,8 @@ function SelectContent({
   sticky,
   ...props
 }: SelectContentProps) {
+  const direction = useDirection();
+
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Positioner
@@ -124,6 +126,7 @@ function SelectContent({
         className="isolate z-50"
       >
         <SelectPrimitive.Popup
+          dir={direction}
           data-slot="select-content"
           data-align-trigger={alignItemWithTrigger}
           {...props}
@@ -152,7 +155,7 @@ function SelectLabel({ className, ...props }: SelectPrimitive.GroupLabel.Props) 
       {...props}
       className={(state) =>
         cn(
-          "border-2 border-transparent py-1.5 pr-8 pl-2 text-sm font-base text-main-foreground/80",
+          "border-2 border-transparent py-1.5 ps-2 pe-8 text-sm font-base text-main-foreground/80",
           typeof className === "function" ? className(state) : className,
         )
       }
@@ -167,7 +170,7 @@ function SelectItem({ className, children, ...props }: SelectPrimitive.Item.Prop
       {...props}
       className={(state) =>
         cn(
-          "relative flex w-full cursor-default items-center gap-2 rounded-base border-2 border-transparent py-1.5 pr-8 pl-2 text-sm font-base outline-hidden select-none data-highlighted:border-main-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
+          "relative flex w-full cursor-default items-center gap-2 rounded-base border-2 border-transparent py-1.5 ps-2 pe-8 text-sm font-base outline-hidden select-none data-highlighted:border-main-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
           typeof className === "function" ? className(state) : className,
         )
       }
@@ -177,7 +180,7 @@ function SelectItem({ className, children, ...props }: SelectPrimitive.Item.Prop
       </SelectPrimitive.ItemText>
       <SelectPrimitive.ItemIndicator
         render={
-          <span className="pointer-events-none absolute right-2 flex size-4 items-center justify-center" />
+          <span className="pointer-events-none absolute end-2 flex size-4 items-center justify-center" />
         }
       >
         <CheckIcon className="pointer-events-none" />

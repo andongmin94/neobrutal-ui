@@ -81,11 +81,15 @@ export function DirectoryHome() {
     function shortcut(event: KeyboardEvent) {
       const target = event.target as HTMLElement | null;
       if (
+        event.defaultPrevented ||
+        event.isComposing ||
+        event.keyCode === 229 ||
         event.key !== "/" ||
         event.ctrlKey ||
         event.metaKey ||
         event.altKey ||
-        target?.closest("input, textarea, select, [contenteditable=true]")
+        target?.isContentEditable ||
+        target?.closest("input, textarea, select")
       )
         return;
       event.preventDefault();
