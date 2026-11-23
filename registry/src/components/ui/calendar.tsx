@@ -52,12 +52,12 @@ function Calendar({
         ),
         button_previous: cn(
           buttonVariants({ variant: buttonVariant }),
-          "pointer-events-auto absolute start-0 size-8 bg-transparent p-0 text-foreground select-none aria-disabled:opacity-50",
+          "pointer-events-auto absolute start-0 z-10 size-8 bg-transparent p-0 text-foreground select-none aria-disabled:opacity-50",
           defaultClassNames.button_previous,
         ),
         button_next: cn(
           buttonVariants({ variant: buttonVariant }),
-          "pointer-events-auto absolute end-0 size-8 bg-transparent p-0 text-foreground select-none aria-disabled:opacity-50",
+          "pointer-events-auto absolute end-0 z-10 size-8 bg-transparent p-0 text-foreground select-none aria-disabled:opacity-50",
           defaultClassNames.button_next,
         ),
         month_caption: cn(
