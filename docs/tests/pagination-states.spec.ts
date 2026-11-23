@@ -1,5 +1,47 @@
 import { expect, test } from "@playwright/test";
 
+test("pagination restores linked pages and preserves modified-click navigation", async ({
+  page,
+  context,
+}) => {
+  await page.goto("/docs/pagination?page=7");
+  const canvas = page
+    .locator('.component-preview[data-component="pagination"]')
+    .first()
+    .locator(".component-preview__canvas");
+  const current = canvas.locator('a[aria-current="page"]');
+  await expect(current).toHaveText("7");
+  await expect(canvas.locator('[data-slot="pagination-next"]')).toHaveAttribute(
+    "aria-disabled",
+    "true",
+  );
+  await canvas.locator('[data-slot="pagination-previous"]').click();
+  await expect(current).toHaveText("6");
+  await expect(page).toHaveURL(/\/docs\/pagination\?page=6$/);
+  await page.reload();
+  await expect(current).toHaveText("6");
+
+  const originalUrl = page.url();
+  const [popup] = await Promise.all([
+    context.waitForEvent("page"),
+    canvas.getByRole("link", { name: "Go to page 1", exact: true }).click({
+      modifiers: ["ControlOrMeta"],
+    }),
+  ]);
+  try {
+    await expect(popup).toHaveURL(/\/docs\/pagination\?page=1$/);
+    await expect(
+      popup
+        .locator('.component-preview[data-component="pagination"] a[aria-current="page"]')
+        .first(),
+    ).toHaveText("1");
+    await expect(page).toHaveURL(originalUrl);
+    await expect(current).toHaveText("6");
+  } finally {
+    await popup.close();
+  }
+});
+
 test("pagination current and unavailable states stay distinct", async ({ page }, info) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/docs/pagination");

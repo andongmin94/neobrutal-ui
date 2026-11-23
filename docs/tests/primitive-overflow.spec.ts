@@ -112,6 +112,30 @@ test("NavigationMenu fits short viewports and scrolls to every link by pointer a
   await expect(trigger).toBeFocused();
 });
 
+test("InputOTP readOnly blocks transformed paste and preserves caller capture", async ({
+  page,
+}) => {
+  await page.goto(`${origin}?surface=otp-paste`);
+  for (const readOnly of [true, false]) {
+    const field = page.getByRole("region", { name: readOnly ? "Read-only OTP" : "Editable OTP" });
+    const input = field.getByRole("textbox", { name: "Verification code" });
+    await expect(input).toHaveValue("1234");
+    await expect(input).toHaveJSProperty("readOnly", readOnly);
+    await input.focus();
+    await input.evaluate((node: HTMLInputElement) => {
+      node.setSelectionRange(0, node.value.length);
+      const clipboardData = new DataTransfer();
+      clipboardData.setData("text/plain", "98-76");
+      node.dispatchEvent(
+        new ClipboardEvent("paste", { bubbles: true, cancelable: true, clipboardData }),
+      );
+    });
+    await expect(input).toHaveValue(readOnly ? "1234" : "9876");
+    await expect(field.getByTestId("paste-changes")).toHaveText(readOnly ? "0" : "1");
+    await expect(field.getByTestId("paste-captures")).toHaveText("1");
+  }
+});
+
 test("Calendar preserves focus through controlled navigation and parent updates", async ({
   page,
 }) => {

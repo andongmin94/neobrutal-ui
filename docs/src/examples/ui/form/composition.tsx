@@ -28,6 +28,7 @@ export default function FormComposition() {
       <form
         aria-label="Optional field composition"
         className="grid w-full max-w-md gap-5"
+        onChange={() => setMessage("")}
         onSubmit={form.handleSubmit(() => setMessage("Both fields are valid. Nothing was saved."))}
       >
         <FormField

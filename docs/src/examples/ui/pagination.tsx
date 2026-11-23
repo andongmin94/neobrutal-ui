@@ -32,15 +32,19 @@ function getPageTokens(page: number): PageToken[] {
   return tokens;
 }
 
-export default function PaginationDemo() {
-  const [page, setPage] = React.useState(2);
-  const tokens = getPageTokens(page);
+function getCurrentPage() {
+  const page = Number(new URLSearchParams(window.location.search).get("page"));
+  return Number.isInteger(page) && page >= 1 && page <= pageCount ? page : 2;
+}
 
-  const selectPage = (event: React.MouseEvent<HTMLAnchorElement>, nextPage: number) => {
-    event.preventDefault();
-    setPage(nextPage);
-    window.history.replaceState(window.history.state, "", `?page=${nextPage}`);
-  };
+function subscribeToNavigation(update: () => void) {
+  window.addEventListener("popstate", update);
+  return () => window.removeEventListener("popstate", update);
+}
+
+export default function PaginationDemo() {
+  const page = React.useSyncExternalStore(subscribeToNavigation, getCurrentPage, () => 2);
+  const tokens = getPageTokens(page);
 
   return (
     <Pagination aria-label={`Pagination, page ${page} of ${pageCount}`}>
@@ -51,7 +55,6 @@ export default function PaginationDemo() {
             href={page === 1 ? undefined : `?page=${page - 1}`}
             aria-disabled={page === 1}
             tabIndex={page === 1 ? -1 : undefined}
-            onClick={page === 1 ? undefined : (event) => selectPage(event, page - 1)}
           />
         </PaginationItem>
         {tokens.map((token) =>
@@ -66,7 +69,6 @@ export default function PaginationDemo() {
                     ? "hidden sm:inline-flex"
                     : undefined
                 }
-                onClick={(event) => selectPage(event, token)}
               >
                 {token}
               </PaginationLink>
@@ -82,7 +84,6 @@ export default function PaginationDemo() {
             href={page === pageCount ? undefined : `?page=${page + 1}`}
             aria-disabled={page === pageCount}
             tabIndex={page === pageCount ? -1 : undefined}
-            onClick={page === pageCount ? undefined : (event) => selectPage(event, page + 1)}
           />
         </PaginationItem>
       </PaginationContent>

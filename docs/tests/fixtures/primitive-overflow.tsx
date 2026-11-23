@@ -17,6 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -94,6 +95,36 @@ function LocaleCalendars() {
   );
 }
 
+function OtpPasteField({ readOnly }: { readOnly: boolean }) {
+  const [value, setValue] = React.useState("1234");
+  const [changes, setChanges] = React.useState(0);
+  const [captures, setCaptures] = React.useState(0);
+  return (
+    <section aria-label={readOnly ? "Read-only OTP" : "Editable OTP"}>
+      <InputOTP
+        aria-label="Verification code"
+        maxLength={4}
+        value={value}
+        readOnly={readOnly}
+        pasteTransformer={(text) => text.replaceAll("-", "")}
+        onChange={(nextValue) => {
+          setValue(nextValue);
+          setChanges((count) => count + 1);
+        }}
+        onPasteCapture={() => setCaptures((count) => count + 1)}
+      >
+        <InputOTPGroup>
+          {[0, 1, 2, 3].map((index) => (
+            <InputOTPSlot key={index} index={index} />
+          ))}
+        </InputOTPGroup>
+      </InputOTP>
+      <output data-testid="paste-changes">{changes}</output>
+      <output data-testid="paste-captures">{captures}</output>
+    </section>
+  );
+}
+
 function LongMenus() {
   const items = Array.from({ length: 40 }, (_, index) => index + 1);
   const target = React.useRef<HTMLDivElement>(null);
@@ -168,6 +199,11 @@ if (surface === "calendar-hydrate") {
       <LocaleCalendars />
     ) : surface === "calendar-controlled" ? (
       <ControlledCalendar />
+    ) : surface === "otp-paste" ? (
+      <>
+        <OtpPasteField readOnly />
+        <OtpPasteField readOnly={false} />
+      </>
     ) : surface === "sheet" ? (
       <SheetSideExample />
     ) : surface === "navigation-menu" ? (

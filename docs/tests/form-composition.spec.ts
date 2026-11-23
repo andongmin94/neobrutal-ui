@@ -53,4 +53,18 @@ test("optional help, custom IDs, refs, events, and field errors remain independe
   for (const control of await preview.locator("input").all()) {
     expect((await descriptions(control)).every(({ text }) => text !== null)).toBe(true);
   }
+
+  await first.fill("Edited first value");
+  await expect(preview.getByRole("status")).toHaveText("");
+  await first.fill("");
+  await expect(first).toHaveAttribute("aria-invalid", "true");
+  await expect(preview.getByText("Enter the first value.", { exact: true })).toBeVisible();
+  await preview.getByRole("button", { name: "Validate fields", exact: true }).click();
+  await expect(first).toBeFocused();
+  await expect(preview.getByRole("status")).toHaveText("");
+
+  await first.fill("Valid first value");
+  await expect(first).toHaveAttribute("aria-invalid", "false");
+  await preview.getByRole("button", { name: "Validate fields", exact: true }).click();
+  await expect(preview.getByRole("status")).toHaveText("Both fields are valid. Nothing was saved.");
 });
