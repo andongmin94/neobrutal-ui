@@ -60,6 +60,7 @@ function DropdownMenuContent({
   return (
     <DropdownMenuPortal>
       <MenuPrimitive.Positioner
+        dir={direction}
         align={align}
         alignOffset={alignOffset}
         arrowPadding={arrowPadding}

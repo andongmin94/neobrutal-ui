@@ -37,8 +37,8 @@ function Calendar({
       showOutsideDays={showOutsideDays}
       className={cn(
         "group/calendar rounded-base! border-2 border-border bg-secondary-background p-3 font-heading text-foreground shadow-shadow [--cell-radius:var(--radius-base)] [--cell-size:clamp(1.75rem,7vw,2.25rem)]",
-        String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,
-        String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
+        String.raw`rtl:[&_.rdp-nav_.rdp-button\_next>svg]:rotate-180`,
+        String.raw`rtl:[&_.rdp-nav_.rdp-button\_previous>svg]:rotate-180`,
         className,
       )}
       captionLayout={captionLayout}
@@ -52,12 +52,12 @@ function Calendar({
         ),
         button_previous: cn(
           buttonVariants({ variant: buttonVariant }),
-          "pointer-events-auto absolute left-0 size-8 bg-transparent p-0 text-foreground select-none aria-disabled:opacity-50",
+          "pointer-events-auto absolute start-0 size-8 bg-transparent p-0 text-foreground select-none aria-disabled:opacity-50",
           defaultClassNames.button_previous,
         ),
         button_next: cn(
           buttonVariants({ variant: buttonVariant }),
-          "pointer-events-auto absolute right-0 size-8 bg-transparent p-0 text-foreground select-none aria-disabled:opacity-50",
+          "pointer-events-auto absolute end-0 size-8 bg-transparent p-0 text-foreground select-none aria-disabled:opacity-50",
           defaultClassNames.button_next,
         ),
         month_caption: cn(
@@ -87,19 +87,19 @@ function Calendar({
         week_number_header: cn("w-(--cell-size) select-none", defaultClassNames.week_number_header),
         week_number: cn("text-[0.8rem] text-foreground select-none", defaultClassNames.week_number),
         day: cn(
-          "group/day relative p-0 text-center text-sm select-none focus-within:relative focus-within:z-20 [&:last-child[data-selected=true]_button]:rounded-r-(--cell-radius)",
+          "group/day relative p-0 text-center text-sm select-none focus-within:relative focus-within:z-20 [&:last-child[data-selected=true]_button]:rounded-e-(--cell-radius)",
           props.mode === "range"
-            ? "[&:has(>.rdp-range_end)]:rounded-r-(--cell-radius) [&:has(>.rdp-range_start)]:rounded-l-(--cell-radius) data-[selected=true]:bg-main/15 first:data-[selected=true]:rounded-l-(--cell-radius) last:data-[selected=true]:rounded-r-(--cell-radius)"
+            ? "[&:has(>.rdp-range_end)]:rounded-e-(--cell-radius) [&:has(>.rdp-range_start)]:rounded-s-(--cell-radius) data-[selected=true]:bg-main/15 first:data-[selected=true]:rounded-s-(--cell-radius) last:data-[selected=true]:rounded-e-(--cell-radius)"
             : "data-[selected=true]:rounded-(--cell-radius) data-[selected=true]:bg-main/15",
           defaultClassNames.day,
         ),
         range_start: cn(
-          "relative isolate z-0 rounded-l-(--cell-radius) bg-main/15 after:absolute after:inset-y-0 after:right-0 after:w-4 after:bg-main/15",
+          "relative isolate z-0 rounded-s-(--cell-radius) bg-main/15 after:absolute after:inset-y-0 after:end-0 after:w-4 after:bg-main/15",
           defaultClassNames.range_start,
         ),
         range_middle: cn("rounded-none", defaultClassNames.range_middle),
         range_end: cn(
-          "relative isolate z-0 rounded-r-(--cell-radius) bg-main/15 after:absolute after:inset-y-0 after:left-0 after:w-4 after:bg-main/15",
+          "relative isolate z-0 rounded-e-(--cell-radius) bg-main/15 after:absolute after:inset-y-0 after:start-0 after:w-4 after:bg-main/15",
           defaultClassNames.range_end,
         ),
         today: cn(

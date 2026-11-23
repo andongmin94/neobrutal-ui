@@ -78,6 +78,109 @@ test("InputGroupAddon preserves consumer clicks, cancellation and nested button 
   await expect(input).not.toBeFocused();
 });
 
+for (const direction of ["ltr", "rtl"] as const) {
+  test(`InputGroup inline ${direction} gutters follow addon placement and keep controls usable`, async ({
+    page,
+  }) => {
+    await page.goto(`${origin}?surface=input-group-direction&direction=${direction}`);
+    for (const [kind, expectedGutter] of [
+      ["text", 8],
+      ["button", 3.2],
+      ["kbd", 5.6],
+    ] as const) {
+      for (const align of ["inline-start", "inline-end"] as const) {
+        const group = page.getByTestId(`${kind}-${align}`);
+        await expect(group).toHaveCSS("direction", direction);
+        const input = group.getByRole("textbox");
+        await expect(input).toHaveCSS(
+          "padding-inline-start",
+          align === "inline-start" ? "6px" : "12px",
+        );
+        await expect(input).toHaveCSS(
+          "padding-inline-end",
+          align === "inline-end" ? "6px" : "12px",
+        );
+        const isLeft = (direction === "ltr") === (align === "inline-start");
+        const layout = await group.evaluate((element, left) => {
+          const outer = element.getBoundingClientRect();
+          const border = getComputedStyle(element);
+          const addon = element.querySelector('[data-slot="input-group-addon"]')!;
+          const content = addon.firstElementChild!.getBoundingClientRect();
+          const field = element.querySelector("input")!.getBoundingClientRect();
+          return {
+            gutter: left
+              ? content.left - outer.left - Number.parseFloat(border.borderLeftWidth)
+              : outer.right - content.right - Number.parseFloat(border.borderRightWidth),
+            outsideField: left ? content.right <= field.left : content.left >= field.right,
+          };
+        }, isLeft);
+        expect(layout.gutter).toBeCloseTo(expectedGutter, 1);
+        expect(layout.outsideField).toBe(true);
+      }
+    }
+
+    const textGroup = page.getByTestId("text-inline-start");
+    const textInput = textGroup.getByRole("textbox");
+    await textGroup.locator('[data-slot="input-group-addon"]').click();
+    await expect(textInput).toBeFocused();
+    await textInput.fill("Edited value");
+    const button = page.getByTestId("button-inline-end").getByRole("button", { name: "Action" });
+    await button.click();
+    await expect(button).toBeFocused();
+    await button.press("Enter");
+    await expect(page.getByTestId("input-group-actions")).toHaveText("2");
+    await expect(textInput).toHaveValue("Edited value");
+    const keyGroup = page.getByTestId("kbd-inline-end");
+    await keyGroup.locator("kbd").click();
+    await expect(keyGroup.getByRole("textbox")).toBeFocused();
+  });
+
+  test(`Tabs vertical line ${direction} indicator faces its panel and retains arrow navigation`, async ({
+    page,
+  }) => {
+    await page.goto(`${origin}?surface=tabs-direction&direction=${direction}`);
+    await expect(page.locator('[data-slot="tabs"]')).toHaveCSS("direction", direction);
+    const overview = page.getByRole("tab", { name: "Overview", exact: true });
+    const history = page.getByRole("tab", { name: "History", exact: true });
+    const panel = page.getByRole("tabpanel", { name: "Overview", exact: true });
+    await expect(overview).toHaveAttribute("aria-selected", "true");
+    await expect(panel).toBeVisible();
+    await expect
+      .poll(() => overview.evaluate((element) => getComputedStyle(element, "::after").opacity))
+      .toBe("1");
+    const indicator = await overview.evaluate((element) => {
+      const box = element.getBoundingClientRect();
+      const border = getComputedStyle(element);
+      const marker = getComputedStyle(element, "::after");
+      const width = Number.parseFloat(marker.width);
+      const left = Number.parseFloat(marker.left);
+      const x = Number.isFinite(left)
+        ? box.left + Number.parseFloat(border.borderLeftWidth) + left
+        : box.right -
+          Number.parseFloat(border.borderRightWidth) -
+          Number.parseFloat(marker.right) -
+          width;
+      return { center: x + width / 2, left: box.left, right: box.right };
+    });
+    const panelBox = (await panel.boundingBox())!;
+    expect(Number.isFinite(indicator.center)).toBe(true);
+    expect(
+      direction === "rtl"
+        ? panelBox.x + panelBox.width < indicator.center && indicator.center < indicator.left
+        : indicator.right < indicator.center && indicator.center < panelBox.x,
+    ).toBe(true);
+
+    await overview.focus();
+    await overview.press("ArrowDown");
+    await expect(history).toBeFocused();
+    await expect(history).toHaveAttribute("aria-selected", "true");
+    await expect(overview).toHaveAttribute("aria-selected", "false");
+    await expect(page.getByRole("tabpanel", { name: "History", exact: true })).toHaveText(
+      "History panel",
+    );
+  });
+}
+
 for (const [appearance, behavior] of [
   ["default", "duration options retain theme styles"],
   ["custom", "partial class names replace only their matching defaults"],
@@ -318,47 +421,68 @@ test("Select preserves native cancellation details when clearing", async ({ page
 });
 
 for (const direction of ["ltr", "rtl"] as const) {
-  test(`select: local ${direction} sections preserve popup layout and keyboard selection`, async ({
-    page,
-  }) => {
-    await page.goto(`${origin}?surface=select-direction&direction=${direction}`);
-    await expect(page.locator("body")).toHaveCSS("direction", "ltr");
-    const trigger = page.getByRole("combobox", { name: "Directional selection", exact: true });
-    await expect(trigger).toHaveCSS("direction", direction);
-    await expect(trigger.locator('[data-slot="select-value"]')).toHaveCSS("text-align", "start");
-    await trigger.press("Enter");
+  for (const aligned of [true, false]) {
+    test(`select: local ${direction} ${aligned ? "sections" : "floating sections"} preserve popup layout and keyboard selection`, async ({
+      page,
+    }) => {
+      await page.goto(
+        `${origin}?surface=select-direction&direction=${direction}&aligned=${aligned}`,
+      );
+      await expect(page.locator("body")).toHaveCSS("direction", "ltr");
+      const trigger = page.getByRole("combobox", { name: "Directional selection", exact: true });
+      await expect(trigger).toHaveCSS("direction", direction);
+      await expect(trigger.locator('[data-slot="select-value"]')).toHaveCSS("text-align", "start");
+      await trigger.press("Enter");
 
-    const popup = page.locator('[data-slot="select-content"]');
-    await expect(popup).toBeVisible();
-    await expect(popup).toHaveCSS("direction", direction);
-    expect(
-      await popup.evaluate((node) => node.closest('[data-testid="select-direction"]')),
-    ).toBeNull();
-    const selected = popup.getByRole("option", { name: "Alpha", exact: true });
-    await expect(selected).toHaveAttribute("aria-selected", "true");
-    await expect(selected).toBeFocused();
-    const optionBox = (await selected.boundingBox())!;
-    const indicatorBox = (await selected.locator("svg").boundingBox())!;
-    const textBox = (await popup.getByTestId("select-a-text").boundingBox())!;
-    expect(
-      direction === "rtl"
-        ? indicatorBox.x < optionBox.x + optionBox.width / 2
-        : indicatorBox.x > optionBox.x + optionBox.width / 2,
-    ).toBe(true);
-    expect(
-      direction === "rtl"
-        ? indicatorBox.x + indicatorBox.width < textBox.x
-        : textBox.x + textBox.width < indicatorBox.x,
-    ).toBe(true);
+      const popup = page.locator('[data-slot="select-content"]');
+      await expect(popup).toBeVisible();
+      await expect(popup).toHaveCSS("direction", direction);
+      await expect(popup.locator("..")).toHaveCSS("direction", direction);
+      expect(
+        await popup.evaluate((node) => node.closest('[data-testid="select-direction"]')),
+      ).toBeNull();
+      if (!aligned) {
+        await expect
+          .poll(async () => {
+            const anchorBox = (await trigger.boundingBox())!;
+            const popupBox = (await popup.boundingBox())!;
+            return Math.abs(
+              direction === "rtl"
+                ? popupBox.x + popupBox.width - anchorBox.x - anchorBox.width
+                : popupBox.x - anchorBox.x,
+            );
+          })
+          .toBeLessThan(2);
+        const anchorBox = (await trigger.boundingBox())!;
+        const popupBox = (await popup.boundingBox())!;
+        expect(popupBox.width).toBeGreaterThan(anchorBox.width + 40);
+      }
+      const selected = popup.getByRole("option", { name: "Alpha", exact: true });
+      await expect(selected).toHaveAttribute("aria-selected", "true");
+      await expect(selected).toBeFocused();
+      const optionBox = (await selected.boundingBox())!;
+      const indicatorBox = (await selected.locator("svg").boundingBox())!;
+      const textBox = (await popup.getByTestId("select-a-text").boundingBox())!;
+      expect(
+        direction === "rtl"
+          ? indicatorBox.x < optionBox.x + optionBox.width / 2
+          : indicatorBox.x > optionBox.x + optionBox.width / 2,
+      ).toBe(true);
+      expect(
+        direction === "rtl"
+          ? indicatorBox.x + indicatorBox.width < textBox.x
+          : textBox.x + textBox.width < indicatorBox.x,
+      ).toBe(true);
 
-    await page.keyboard.press("End");
-    await expect(popup.getByRole("option", { name: "Bravo", exact: true })).toBeFocused();
-    await page.keyboard.press("Enter");
-    await expect(popup).toBeHidden();
-    await expect(trigger).toContainText("Bravo");
-    await expect(trigger).toBeFocused();
-    await expect(page.locator('input[name="directional-selection"]')).toHaveValue("b");
-  });
+      await page.keyboard.press("End");
+      await expect(popup.getByRole("option", { name: "Bravo", exact: true })).toBeFocused();
+      await page.keyboard.press("Enter");
+      await expect(popup).toBeHidden();
+      await expect(trigger).toContainText("Bravo");
+      await expect(trigger).toBeFocused();
+      await expect(page.locator('input[name="directional-selection"]')).toHaveValue("b");
+    });
+  }
 }
 
 test("Long Select lists fit short viewports and keep the final option reachable", async ({

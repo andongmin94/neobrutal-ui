@@ -60,9 +60,9 @@ jobs:
         run: |
           npm run test:browser -- docs.spec.ts form-composition.spec.ts local-registry.spec.ts analytics.spec.ts runtime-recovery.spec.ts sidebar-shortcut.spec.ts search-recovery.spec.ts pagination-states.spec.ts demo-feedback.spec.ts
           npm run test:browser -- component-review.spec.ts galleries.spec.ts --grep 'scroll area has a name|marquee pause|progress keeps indeterminate work visible|avatar status badges'
-          npm run test:browser -- drawer-modal.spec.ts release-controls.spec.ts component-composition.spec.ts --grep 'dialog|select:|[Cc]arousel|Sidebar .*buttons submit forms|Sonner'
+          npm run test:browser -- drawer-modal.spec.ts release-controls.spec.ts component-composition.spec.ts --grep 'dialog|select:|[Cc]arousel|Sidebar .*buttons submit forms|Sonner|InputGroup inline|Tabs vertical line'
           npm run test:browser -- template-states.spec.ts --grep 'template consumer data'
-          npm run test:browser -- primitive-overflow.spec.ts --grep 'NavigationMenu|Calendar preserves focus|InputOTP readOnly|Menu labels|Menu submenu'
+          npm run test:browser -- primitive-overflow.spec.ts --grep 'NavigationMenu|Calendar preserves focus|Calendar inline layout|InputOTP readOnly|Menu labels|Menu submenu'
       - name: Verify representative fresh consumers
         working-directory: registry
         run: |

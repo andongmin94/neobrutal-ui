@@ -68,6 +68,7 @@ function ContextMenuContent({
   return (
     <ContextMenuPortal>
       <ContextMenuPrimitive.Positioner
+        dir={direction}
         align={align}
         alignOffset={alignOffset}
         arrowPadding={arrowPadding}

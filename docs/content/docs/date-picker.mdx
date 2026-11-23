@@ -43,7 +43,7 @@ export default function AppointmentDate() {
       <label htmlFor="appointment-date">Appointment date</label>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger render={<Button id="appointment-date" variant="outline" />}>
-          {date ? date.toLocaleDateString() : "Choose a date"}
+          {date ? date.toLocaleDateString("en-US") : "Choose a date"}
         </PopoverTrigger>
         <PopoverContent aria-label="Choose an appointment date" align="start" sideOffset={8} className="w-auto border-0! bg-transparent p-0 shadow-none">
           <Calendar

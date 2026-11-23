@@ -1,7 +1,7 @@
 import * as React from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server.browser";
-import { DayPicker, TZDate } from "@daypicker/react";
+import { DayPicker, TZDate, type DateRange } from "@daypicker/react";
 import { faIR } from "@daypicker/react/locale";
 import { DirectionProvider } from "@base-ui/react/direction-provider";
 import { Button } from "@/components/ui/button";
@@ -124,6 +124,26 @@ function LocaleCalendars() {
         />
       </section>
     </>
+  );
+}
+
+function DirectionalCalendar() {
+  const direction = query.get("direction") === "rtl" ? "rtl" : "ltr";
+  const navLayout = query.get("navLayout") === "around" ? "around" : undefined;
+  const [range, setRange] = React.useState<DateRange | undefined>(() => ({
+    from: new Date(2024, 0, 5),
+    to: new Date(2024, 0, 10),
+  }));
+  return (
+    <Calendar
+      dir={direction}
+      navLayout={navLayout}
+      mode="range"
+      defaultMonth={fixedMonth}
+      selected={range}
+      onSelect={setRange}
+      today={new Date(2024, 0, 15)}
+    />
   );
 }
 
@@ -289,7 +309,11 @@ function NamedMenus() {
   const direction = query.get("direction") === "rtl" ? "rtl" : "ltr";
   const contextTarget = React.useRef<HTMLDivElement>(null);
   return (
-    <section dir={direction} className="flex min-h-72 items-start justify-center p-8">
+    <section
+      dir={direction}
+      className="flex min-h-72 items-start justify-center p-8"
+      data-testid="menu-direction"
+    >
       {kind === "context" ? (
         <ContextMenu dir={direction}>
           <ContextMenuTrigger ref={contextTarget} tabIndex={0}>
@@ -304,7 +328,7 @@ function NamedMenus() {
           <Menubar>
             <MenubarMenu>
               <MenubarTrigger>Menu commands</MenubarTrigger>
-              <MenubarContent className="min-w-48">
+              <MenubarContent className="w-72" alignOffset={0}>
                 <MenuGroups kind="menubar" />
               </MenubarContent>
             </MenubarMenu>
@@ -313,7 +337,7 @@ function NamedMenus() {
       ) : (
         <DropdownMenu dir={direction}>
           <DropdownMenuTrigger render={<Button />}>Dropdown commands</DropdownMenuTrigger>
-          <DropdownMenuContent className="min-w-48">
+          <DropdownMenuContent className="w-72" align="start">
             <MenuGroups kind="dropdown" />
           </DropdownMenuContent>
         </DropdownMenu>
@@ -340,6 +364,8 @@ if (surface === "calendar-hydrate") {
       <LocaleCalendars />
     ) : surface === "calendar-controlled" ? (
       <ControlledCalendar />
+    ) : surface === "calendar-direction" ? (
+      <DirectionalCalendar />
     ) : surface === "otp-paste" ? (
       <>
         <OtpPasteField readOnly />

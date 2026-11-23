@@ -34,6 +34,7 @@ import {
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
+  InputGroupText,
 } from "@/components/ui/input-group";
 import {
   SidebarMenuAction,
@@ -53,6 +54,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 
@@ -114,6 +116,48 @@ function InputFixture() {
       <output data-testid="addon-calls">{calls}</output>
       <output data-testid="addon-cancelled">{cancelled}</output>
     </section>
+  );
+}
+
+function InputGroupDirectionFixture() {
+  const direction = new URLSearchParams(location.search).get("direction") === "rtl" ? "rtl" : "ltr";
+  const [actions, setActions] = React.useState(0);
+  return (
+    <section dir={direction} style={{ display: "grid", gap: 16, width: 480 }}>
+      {(["text", "button", "kbd"] as const).flatMap((kind) =>
+        (["inline-start", "inline-end"] as const).map((align) => (
+          <InputGroup key={`${kind}-${align}`} data-testid={`${kind}-${align}`}>
+            <InputGroupAddon align={align}>
+              {kind === "button" ? (
+                <InputGroupButton onClick={() => setActions((current) => current + 1)}>
+                  Action
+                </InputGroupButton>
+              ) : kind === "kbd" ? (
+                <kbd>K</kbd>
+              ) : (
+                <InputGroupText>Unit</InputGroupText>
+              )}
+            </InputGroupAddon>
+            <InputGroupInput aria-label={`${kind} ${align} field`} defaultValue="Initial value" />
+          </InputGroup>
+        )),
+      )}
+      <output data-testid="input-group-actions">{actions}</output>
+    </section>
+  );
+}
+
+function TabsDirectionFixture() {
+  const direction = new URLSearchParams(location.search).get("direction") === "rtl" ? "rtl" : "ltr";
+  return (
+    <Tabs dir={direction} orientation="vertical" defaultValue="overview" style={{ width: 480 }}>
+      <TabsList variant="line" aria-label="Directional views">
+        <TabsTrigger value="overview">Overview</TabsTrigger>
+        <TabsTrigger value="history">History</TabsTrigger>
+      </TabsList>
+      <TabsContent value="overview">Overview panel</TabsContent>
+      <TabsContent value="history">History panel</TabsContent>
+    </Tabs>
   );
 }
 
@@ -304,6 +348,7 @@ function SelectFixture({ removal = false, cancelClear = false }) {
 
 function SelectDirectionFixture() {
   const direction = new URLSearchParams(location.search).get("direction") === "rtl" ? "rtl" : "ltr";
+  const aligned = new URLSearchParams(location.search).get("aligned") !== "false";
   const options = [
     { value: "a", label: "Alpha" },
     { value: "b", label: "Bravo" },
@@ -312,10 +357,17 @@ function SelectDirectionFixture() {
   return (
     <section dir={direction} className="max-w-xs" data-testid="select-direction">
       <Select dir={direction} defaultValue="a" items={options} name="directional-selection">
-        <SelectTrigger aria-label="Directional selection">
+        <SelectTrigger
+          aria-label="Directional selection"
+          style={aligned ? undefined : { width: 224 }}
+        >
           <SelectValue />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent
+          alignItemWithTrigger={aligned}
+          align={aligned ? undefined : "start"}
+          style={aligned ? undefined : { width: 320 }}
+        >
           <SelectGroup>
             <SelectLabel>Options</SelectLabel>
             {options.map((option) => (
@@ -485,6 +537,8 @@ const surface = new URLSearchParams(location.search).get("surface");
 if (surface) await import("./component-composition.css");
 
 const fixtures = {
+  "input-group-direction": <InputGroupDirectionFixture />,
+  "tabs-direction": <TabsDirectionFixture />,
   "sidebar-form": <SidebarFormFixture />,
   "carousel-keyboard": (
     <div style={{ padding: 64 }}>

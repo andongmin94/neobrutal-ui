@@ -92,6 +92,8 @@ for (const kind of ["dropdown", "context", "menubar"] as const) {
     }) => {
       await page.setViewportSize({ width: 1200, height: 800 });
       await page.goto(`${origin}?surface=named-menus&kind=${kind}&direction=${direction}`);
+      await expect(page.locator("body")).toHaveCSS("direction", "ltr");
+      await expect(page.getByTestId("menu-direction")).toHaveCSS("direction", direction);
       if (kind === "context") {
         const target = page.getByText("Context commands", { exact: true });
         await target.focus();
@@ -107,6 +109,28 @@ for (const kind of ["dropdown", "context", "menubar"] as const) {
 
       const parentMenu = page.getByRole("menu").first();
       await expect(parentMenu).toHaveAttribute("dir", direction);
+      await expect(parentMenu.locator("..")).toHaveCSS("direction", direction);
+      expect(
+        await parentMenu.evaluate((element) => element.closest('[data-testid="menu-direction"]')),
+      ).toBeNull();
+      if (kind !== "context") {
+        const opener = page.getByRole(kind === "menubar" ? "menuitem" : "button", {
+          name: kind === "menubar" ? "Menu commands" : "Dropdown commands",
+          exact: true,
+        });
+        await expect(parentMenu).toHaveAttribute("data-align", "start");
+        await expect
+          .poll(async () => {
+            const triggerBox = await opener.boundingBox();
+            const popupBox = await parentMenu.boundingBox();
+            if (!triggerBox || !popupBox || popupBox.width <= triggerBox.width + 40) return false;
+            const triggerEdge =
+              direction === "rtl" ? triggerBox.x + triggerBox.width : triggerBox.x;
+            const popupEdge = direction === "rtl" ? popupBox.x + popupBox.width : popupBox.x;
+            return Math.abs(triggerEdge - popupEdge) < 2;
+          })
+          .toBe(true);
+      }
       const trigger = page.getByRole("menuitem", { name: "Export", exact: true });
       const arrow = trigger.locator("svg");
       await expect(arrow).toHaveCSS("rotate", direction === "rtl" ? "180deg" : "none");
@@ -260,6 +284,83 @@ test("Calendar preserves focus through controlled navigation and parent updates"
   await expect(year).toBeFocused();
   expect(await rootElement!.evaluate((element) => element.isConnected)).toBe(true);
 });
+
+for (const direction of ["ltr", "rtl"] as const)
+  for (const navLayout of ["default", "around"] as const) {
+    test(`Calendar inline layout preserves ${direction} ${navLayout} navigation and range edges`, async ({
+      page,
+    }) => {
+      await page.goto(
+        `${origin}?surface=calendar-direction&direction=${direction}&navLayout=${navLayout}`,
+      );
+      await expect(page.locator("body")).toHaveCSS("direction", "ltr");
+      const calendar = page.locator('[data-slot="calendar"]');
+      await expect(calendar).toHaveCSS("direction", direction);
+      const previous = calendar.getByRole("button", {
+        name: "Go to the Previous Month",
+        exact: true,
+      });
+      const next = calendar.getByRole("button", { name: "Go to the Next Month", exact: true });
+      const previousBox = (await previous.boundingBox())!;
+      const nextBox = (await next.boundingBox())!;
+      expect(direction === "rtl" ? previousBox.x > nextBox.x : previousBox.x < nextBox.x).toBe(
+        true,
+      );
+      for (const [button, pointsRight] of [
+        [previous, direction === "rtl"],
+        [next, direction === "ltr"],
+      ] as const) {
+        const horizontalDirection = await button
+          .locator("svg path")
+          .evaluate((path: SVGPathElement) => {
+            const transform = path.getScreenCTM()!;
+            const endpoint = path.getPointAtLength(0).matrixTransform(transform);
+            const tip = path.getPointAtLength(path.getTotalLength() / 2).matrixTransform(transform);
+            return tip.x - endpoint.x;
+          });
+        expect(Math.abs(horizontalDirection)).toBeGreaterThan(0);
+        expect(horizontalDirection > 0).toBe(pointsRight);
+      }
+
+      const radius = await calendar.evaluate((element) =>
+        getComputedStyle(element).getPropertyValue("--cell-radius").trim(),
+      );
+      expect(Number.parseFloat(radius)).toBeGreaterThan(0);
+      for (const [day, edge] of [
+        ["05", "start"],
+        ["06", "end"],
+        ["07", "start"],
+        ["10", "end"],
+      ] as const) {
+        const cell = calendar.locator(`td[data-day="2024-01-${day}"]`);
+        const roundedSide = (edge === "start") === (direction === "ltr") ? "left" : "right";
+        const squareSide = roundedSide === "left" ? "right" : "left";
+        await expect(cell).toHaveCSS(`border-top-${roundedSide}-radius`, radius);
+        await expect(cell).toHaveCSS(`border-top-${squareSide}-radius`, "0px");
+      }
+      for (const [day, side] of [
+        ["05", direction === "rtl" ? "left" : "right"],
+        ["10", direction === "rtl" ? "right" : "left"],
+      ] as const) {
+        const edge = await calendar
+          .locator(`td[data-day="2024-01-${day}"]`)
+          .evaluate(
+            (element, property) => getComputedStyle(element, "::after").getPropertyValue(property),
+            side,
+          );
+        expect(edge).toBe("0px");
+      }
+
+      await next.click();
+      await expect(calendar.locator(".rdp-caption_label")).toHaveText("February 2024");
+      await previous.click();
+      await expect(calendar.locator(".rdp-caption_label")).toHaveText("January 2024");
+      const start = calendar.locator('button[data-day="2024-01-05"]');
+      await start.focus();
+      await start.press(direction === "rtl" ? "ArrowLeft" : "ArrowRight");
+      await expect(calendar.locator('button[data-day="2024-01-06"]')).toBeFocused();
+    });
+  }
 
 test("Calendar uses the native locale pipeline and stable dates in its time zone", async ({
   page,

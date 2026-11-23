@@ -20,7 +20,7 @@ export default function CalendarRangeDemo() {
       selected={dateRange}
       onSelect={setDateRange}
       numberOfMonths={2}
-      disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+      disabled={(date) => date > new Date() || date < new Date(1900, 0, 1)}
     />
   );
 }

@@ -110,6 +110,7 @@ function SelectContent({
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Positioner
+        dir={direction}
         anchor={anchor}
         arrowPadding={arrowPadding}
         side={side}
