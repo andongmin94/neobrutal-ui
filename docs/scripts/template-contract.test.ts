@@ -55,14 +55,14 @@ test("template thumbnails render current templates rather than stale screenshot 
   assert.ok(!fs.existsSync("public/template-previews"));
 });
 
-test("blog renders supplied posts, derives topics and preserves the consumer's order", () => {
+test("blog sorts publication times, encodes reading links and preserves supplied posts", () => {
   const posts: readonly BlogPost[] = Object.freeze([
     {
-      slug: "original-note",
+      slug: "original?draft#한글",
       title: "Original customer note",
       summary: "Older application content.",
       topic: "All",
-      publishedAt: "2025-01-01",
+      publishedAt: "2026-01-01T08:00:00+09:00",
       publishedLabel: "Jan 1",
       readTime: "2 min",
       intro: "First note.",
@@ -73,7 +73,7 @@ test("blog renders supplied posts, derives topics and preserves the consumer's o
       title: "Latest customer note",
       summary: "New application content.",
       topic: "Research",
-      publishedAt: "2026-01-01",
+      publishedAt: "2026-01-01T00:00:00Z",
       publishedLabel: "Jan 1",
       readTime: "4 min",
       intro: "Latest note.",
@@ -83,11 +83,20 @@ test("blog renders supplied posts, derives topics and preserves the consumer's o
   const html = renderToStaticMarkup(createElement(BlogTemplate, { posts, basePath: "/journal/" }));
   assert.match(html, /href="\/journal\/latest-note"/);
   assert.ok(html.indexOf("Latest customer note") < html.indexOf("Original customer note"));
+  const readingSlugs = [...html.matchAll(/href="(\/journal\/[^"]+)"/g)].map(([, href]) => {
+    const url = new URL(href, "https://consumer.example");
+    assert.equal(url.search, "");
+    assert.equal(url.hash, "");
+    const segments = url.pathname.split("/");
+    assert.equal(segments.length, 3);
+    return decodeURIComponent(segments[2]);
+  });
+  assert.deepEqual(readingSlugs, [posts[1].slug, posts[1].slug, posts[0].slug, posts[0].slug]);
   assert.match(html, /aria-pressed="true"[^>]*>All topics<\/button>/);
   assert.match(html, /aria-pressed="false"[^>]*>All<\/button>/);
   assert.match(html, />Research<\/button>/);
   assert.doesNotMatch(html, /Small Interfaces Age Better/);
-  assert.equal(posts[0].slug, "original-note");
+  assert.equal(posts[0].slug, "original?draft#한글");
   const empty = renderToStaticMarkup(createElement(BlogTemplate, { posts: [] }));
   assert.match(empty, /No posts found\./);
   assert.doesNotMatch(empty, /href="\/blog\//);

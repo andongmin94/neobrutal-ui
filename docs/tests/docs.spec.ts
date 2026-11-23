@@ -32,7 +32,7 @@ test("mobile documentation navigation leaves composing Escape with the filter in
   await expect(trigger).toBeFocused();
 });
 
-test("table of contents preserves native navigation, focus, and modified clicks", async ({
+test("table of contents tracks the current section and preserves native navigation, focus, and modified clicks", async ({
   page,
   context,
   isMobile,
@@ -42,6 +42,7 @@ test("table of contents preserves native navigation, focus, and modified clicks"
   const toc = page.locator(isMobile ? ".docs-toc-inline" : ".docs-toc");
   if (isMobile) await toc.locator("summary").click();
   const usage = toc.getByRole("link", { name: "Usage", exact: true });
+  const apiReference = toc.getByRole("link", { name: "API reference", exact: true });
   const backToTop = toc.getByRole("link", { name: "Back to top", exact: true });
 
   await usage.click();
@@ -55,11 +56,25 @@ test("table of contents preserves native navigation, focus, and modified clicks"
       return section !== null && header !== null && section.y >= header.y + header.height;
     })
     .toBe(true);
+  await expect(usage).toHaveClass(/is-active/);
+
+  await apiReference.click();
+  await expect(apiReference).toHaveClass(/is-active/);
+  await heading.evaluate((element) => {
+    const next = document.getElementById("api-reference")!;
+    const bodyMiddle =
+      (element.getBoundingClientRect().bottom + next.getBoundingClientRect().top) / 2;
+    const scrollOffset = Number.parseFloat(getComputedStyle(element).scrollMarginTop);
+    window.scrollBy({ top: bodyMiddle - scrollOffset, behavior: "instant" });
+  });
+  await expect(usage).toHaveClass(/is-active/);
+  await expect(apiReference).not.toHaveClass(/is-active/);
 
   await backToTop.press("Enter");
   await expect(page).toHaveURL(/\/docs\/button#main-content$/);
   await expect(page.locator("#main-content")).toBeFocused();
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+  await expect(toc.locator("nav .is-active")).toHaveCount(0);
 
   const originalUrl = page.url();
   for (const [link, hash] of [

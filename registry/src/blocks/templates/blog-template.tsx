@@ -14,7 +14,7 @@ type BlogTemplateProps = {
 };
 
 function getPostHref(basePath: string, slug: string) {
-  return `${basePath.replace(/\/$/, "")}/${slug}`;
+  return `${basePath.replace(/\/$/, "")}/${encodeURIComponent(slug)}`;
 }
 
 export default function BlogTemplate({ basePath = "/blog", posts }: BlogTemplateProps) {
@@ -38,8 +38,8 @@ export default function BlogTemplate({ basePath = "/blog", posts }: BlogTemplate
         if (sort === "shortest")
           return Number.parseInt(a.readTime, 10) - Number.parseInt(b.readTime, 10);
         return sort === "oldest"
-          ? a.publishedAt.localeCompare(b.publishedAt)
-          : b.publishedAt.localeCompare(a.publishedAt);
+          ? Date.parse(a.publishedAt) - Date.parse(b.publishedAt)
+          : Date.parse(b.publishedAt) - Date.parse(a.publishedAt);
       });
   }, [posts, query, selectedTopic, sort]);
 

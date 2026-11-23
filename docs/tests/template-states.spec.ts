@@ -72,7 +72,7 @@ test.describe("template consumer data", () => {
     }
   });
 
-  test("Blog filters supplied topics and updates when application posts change", async ({
+  test("Blog sorts publication times, filters topics and updates when application posts change", async ({
     page,
   }) => {
     await page.goto(origin);
@@ -95,6 +95,8 @@ test.describe("template consumer data", () => {
     await blog.getByRole("button", { name: "Clear search", exact: true }).click();
     await blog.getByRole("combobox").selectOption("oldest");
     await expect(articles.first()).toContainText("Consumer all topic");
+    await blog.getByRole("combobox").selectOption("newest");
+    await expect(articles.first()).toContainText("Consumer research note");
     await filters.getByRole("button", { name: "All", exact: true }).click();
     await page.getByRole("button", { name: "Load updated data", exact: true }).click();
     await expect(articles).toHaveCount(1);

@@ -25,19 +25,32 @@ export function TableOfContents({
 
     if (elements.length === 0) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+    // Use the same offset as native heading links, including anchor rounding.
+    const scrollOffset = Number.parseFloat(getComputedStyle(elements[0]).scrollMarginTop) + 1;
+    let frame = 0;
 
-        if (visible[0]?.target.id) setActiveId(visible[0].target.id);
-      },
-      { rootMargin: "-96px 0px -68% 0px", threshold: [0, 1] },
-    );
+    function updateActive() {
+      frame = 0;
+      let current = "";
+      for (const element of elements) {
+        if (element.getBoundingClientRect().top > scrollOffset) break;
+        current = element.id;
+      }
+      setActiveId(current);
+    }
 
-    elements.forEach((element) => observer.observe(element));
-    return () => observer.disconnect();
+    function scheduleUpdate() {
+      if (!frame) frame = requestAnimationFrame(updateActive);
+    }
+
+    updateActive();
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate);
+    return () => {
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
+      cancelAnimationFrame(frame);
+    };
   }, [headers, pathname]);
 
   const links = (
