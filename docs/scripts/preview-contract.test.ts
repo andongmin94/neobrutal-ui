@@ -147,6 +147,23 @@ test("Usage cannot import undocumented components, npm packages or docs-only ali
   }
 });
 
+test("published examples use their actual Installation item instead of assuming the page slug", () => {
+  const example = readDocsExamples("usage").find(({ slug }) => slug === "progress")!;
+  const missing = example.document.replace(/<Installation\b[^>]*>[\s\S]*?<\/Installation>/, "");
+  assert.throws(
+    () => verifyDocsExamples([{ ...example, document: missing }]),
+    /@\/components\/ui\/progress needs a documented install/,
+  );
+  const unknown = example.document.replace(
+    '<Installation component="progress">',
+    '<Installation component="missing-registry-item">',
+  );
+  assert.throws(
+    () => verifyDocsExamples([{ ...example, document: unknown }]),
+    /unknown registry item missing-registry-item/,
+  );
+});
+
 test("published Code rejects omitted helpers even when the docs project contains them", () => {
   const example = readDocsExamples("preview").find(
     ({ identity }) => identity === "sidebar/primary",

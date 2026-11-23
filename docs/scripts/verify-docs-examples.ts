@@ -39,7 +39,9 @@ function documentedInstallation(slug: string, document: string) {
   const pending = [
     "neobrutal-ui",
     "button",
-    ...(itemByName.has(slug) ? [slug] : []),
+    ...[...document.matchAll(/<Installation\b[^>]*\bcomponent="([\w-]+)"[^>]*>/g)].map(
+      (match) => match[1],
+    ),
     ...[...document.matchAll(/https:\/\/neobrutal-ui\.andongmin\.com\/r\/([\w-]+)\.json/g)].map(
       (match) => match[1],
     ),

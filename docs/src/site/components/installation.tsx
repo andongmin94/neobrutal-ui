@@ -4,12 +4,17 @@ import { Info, SquareTerminal } from "lucide-react";
 import { useId, useState, type KeyboardEvent, type ReactNode } from "react";
 
 import { CopyButton } from "@/components/docs/copy-button";
+import { Pre } from "@/components/docs/pre";
+import installationDependencies from "@/data/installation-dependencies.json";
 import { registryInstallCommand } from "@/data/registry-endpoints";
 
 export function Installation({ children, component }: { children?: ReactNode; component: string }) {
   const [activeTab, setActiveTab] = useState<"cli" | "manual">("cli");
   const instanceId = useId();
   const command = registryInstallCommand(component);
+  const dependencies = installationDependencies[component as keyof typeof installationDependencies];
+  if (!dependencies) throw new Error(`Unknown registry installation: ${component}`);
+  const packageCommand = dependencies.length ? `npm install ${dependencies.join(" ")}` : undefined;
 
   function handleTabKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
@@ -95,6 +100,11 @@ export function Installation({ children, component }: { children?: ReactNode; co
           tabIndex={0}
           hidden={activeTab !== "manual"}
         >
+          {packageCommand && (
+            <Pre __rawstring__={packageCommand}>
+              <code>{packageCommand}</code>
+            </Pre>
+          )}
           {children}
         </div>
       </div>

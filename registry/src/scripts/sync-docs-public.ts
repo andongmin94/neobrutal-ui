@@ -2,6 +2,7 @@ import REGISTRY from "@/data/registry";
 import { serializeThemeVariables } from "@/data/theme-styles";
 import fs from "node:fs";
 import path from "node:path";
+import { format } from "oxfmt";
 
 const sourceDir = path.resolve(process.cwd(), "public", "r");
 const sourceUiDir = path.resolve(process.cwd(), "src", "components", "ui");
@@ -193,7 +194,7 @@ for (const file of sharedFiles) syncFile(file.source, file.target);
 console.log(`Synced shared registry files to: ${docsSourceDir}`);
 
 const catalog = JSON.parse(fs.readFileSync(path.join(sourceDir, "registry.json"), "utf8")) as {
-  items: { name: string; description: string }[];
+  items: { name: string; description: string; dependencies?: string[] }[];
 };
 const descriptions = Object.fromEntries(catalog.items.map((item) => [item.name, item.description]));
 Object.assign(descriptions, {
@@ -203,6 +204,16 @@ Object.assign(descriptions, {
 fs.writeFileSync(
   path.join(docsSourceDir, "data", "component-descriptions.json"),
   `${JSON.stringify(descriptions, null, 2)}\n`,
+);
+const installationDependencies = await format(
+  "installation-dependencies.json",
+  JSON.stringify(
+    Object.fromEntries(catalog.items.map((item) => [item.name, item.dependencies ?? []])),
+  ),
+);
+fs.writeFileSync(
+  path.join(docsSourceDir, "data", "installation-dependencies.json"),
+  installationDependencies.code,
 );
 
 fs.writeFileSync(path.join(docsSourceDir, "styling", "theme.css"), serializeThemeVariables());

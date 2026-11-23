@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { test } from "node:test";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import colors from "../src/data/colors";
 import {
   COMPONENT_DIRECTORY_LINKS,
@@ -8,6 +10,7 @@ import {
   getComponentInstallMode,
 } from "../src/data/component-directory";
 import descriptions from "../src/data/component-descriptions.json";
+import { Installation } from "../src/site/components/installation";
 import {
   createCustomizedTheme,
   defaultThemeSettings,
@@ -275,20 +278,38 @@ test("every component document has complete usage, API, accessibility and instal
     for (const heading of ["Installation", "Usage", "API reference", "Accessibility"])
       assert.ok(source.includes(`## ${heading}\n`), `${slug}: missing ${heading}`);
     const item = catalog.items.find((entry) => entry.name === slug);
-    const installation = source.match(/<Installation\b[^>]*>([\s\S]*?)<\/Installation>/)?.[1];
+    const installationMatch = source.match(/<Installation\b([^>]*)>([\s\S]*?)<\/Installation>/);
+    const installation = installationMatch?.[2];
     if (!item) {
       assert.ok(compositionRecipes.has(slug));
       assert.ok(!installation, `${slug}: composition must not advertise a nonexistent endpoint`);
       continue;
     }
     assert.ok(installation, `${slug}: manual installation missing`);
+    assert.equal(
+      installationMatch?.[1].match(/component="([^"]+)"/)?.[1],
+      slug,
+      `${slug}: installation uses a different registry item`,
+    );
     for (const file of item.files)
       assert.ok(
         installation.includes(`./${file.path}`),
         `${slug}: missing manual file ${file.path}`,
       );
-    for (const dependency of item.dependencies ?? [])
-      assert.ok(installation.includes(dependency), `${slug}: missing package ${dependency}`);
+    assert.doesNotMatch(
+      installation,
+      /\bnpm install\b/,
+      `${slug}: manual package commands must use the generated registry dependencies`,
+    );
+    const rendered = renderToStaticMarkup(createElement(Installation, { component: slug }));
+    if (item.dependencies?.length) {
+      assert.ok(
+        rendered.includes(`<code>npm install ${item.dependencies.join(" ")}</code>`),
+        `${slug}: rendered manual package command differs from the registry`,
+      );
+    } else {
+      assert.doesNotMatch(rendered, /\bnpm install\b/, `${slug}: unexpected package command`);
+    }
     for (const dependency of item.registryDependencies ?? []) {
       const dependencySlug = new URL(dependency).pathname
         .split("/")
