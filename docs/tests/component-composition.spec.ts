@@ -136,43 +136,89 @@ test("Carousel keeps navigation when consumer handlers are present and honors ca
 });
 
 for (const orientation of ["horizontal", "vertical"] as const) {
-  test(`Carousel ${orientation} shortcuts follow its axis and honor consumer cancellation`, async ({
-    page,
-  }) => {
-    await page.goto(`${origin}?surface=carousel-keyboard&orientation=${orientation}`);
-    const carousel = page.getByRole("region", { name: "Composed slides" });
-    const previous = carousel.getByRole("button", { name: "Previous slide" });
-    const next = carousel.getByRole("button", { name: "Next slide" });
-    const block = page.getByRole("button", { name: "Block next navigation" });
-    const forward = orientation === "horizontal" ? "ArrowRight" : "ArrowDown";
-    const backward = orientation === "horizontal" ? "ArrowLeft" : "ArrowUp";
-    const crossAxis = orientation === "horizontal" ? "ArrowDown" : "ArrowRight";
-    await expect(next).toBeEnabled();
-    await expect(previous).toBeDisabled();
+  for (const direction of ["ltr", "rtl"] as const) {
+    test(`Carousel ${orientation} ${direction} navigation follows its layout and honors cancellation`, async ({
+      page,
+    }) => {
+      await page.goto(
+        `${origin}?surface=carousel-keyboard&orientation=${orientation}&direction=${direction}`,
+      );
+      const carousel = page.getByRole("region", { name: "Composed slides" });
+      const previous = carousel.getByRole("button", { name: "Previous slide" });
+      const next = carousel.getByRole("button", { name: "Next slide" });
+      const block = page.getByRole("button", { name: "Block next navigation" });
+      const selected = page.getByTestId("carousel-selection");
+      const forward =
+        orientation === "horizontal"
+          ? direction === "rtl"
+            ? "ArrowLeft"
+            : "ArrowRight"
+          : "ArrowDown";
+      const backward =
+        orientation === "horizontal"
+          ? direction === "rtl"
+            ? "ArrowRight"
+            : "ArrowLeft"
+          : "ArrowUp";
+      const crossAxis = orientation === "horizontal" ? "ArrowDown" : "ArrowRight";
+      await expect(next).toBeEnabled();
+      await expect(previous).toBeDisabled();
+      await expect(selected).toHaveText("0");
+      await expect(carousel).toHaveCSS("direction", direction);
 
-    await carousel.focus();
-    await carousel.press(crossAxis);
-    await expect(previous).toBeDisabled();
+      const rotation = orientation === "horizontal" && direction === "rtl" ? "180deg" : "none";
+      await expect(previous.locator("svg")).toHaveCSS("rotate", rotation);
+      await expect(next.locator("svg")).toHaveCSS("rotate", rotation);
+      if (orientation === "horizontal") {
+        const track = carousel.locator('[data-slot="carousel-content"] > div');
+        const firstSlide = carousel.locator('[data-slot="carousel-item"]').first();
+        await expect(track).toHaveCSS("margin-inline-start", "-16px");
+        await expect(track).toHaveCSS("margin-inline-end", "0px");
+        await expect(firstSlide).toHaveCSS("padding-inline-start", "16px");
+        await expect(firstSlide).toHaveCSS("padding-inline-end", "0px");
+        const bounds = (await carousel.boundingBox())!;
+        const before = (await (direction === "rtl" ? next : previous).boundingBox())!;
+        const after = (await (direction === "rtl" ? previous : next).boundingBox())!;
+        expect(before.x + before.width).toBeLessThanOrEqual(bounds.x);
+        expect(after.x).toBeGreaterThanOrEqual(bounds.x + bounds.width);
+      }
 
-    await block.click();
-    await carousel.focus();
-    await carousel.press(forward);
-    await expect(previous).toBeDisabled();
-    await block.click();
+      await carousel.focus();
+      await carousel.press(crossAxis);
+      await expect(selected).toHaveText("0");
 
-    await carousel.focus();
-    await carousel.press(forward);
-    await expect(previous).toBeEnabled();
-    await next.focus();
-    await next.press(forward);
-    await expect(next).toBeDisabled();
-    await previous.focus();
-    await previous.press(backward);
-    await expect(next).toBeEnabled();
-    await carousel.focus();
-    await carousel.press(backward);
-    await expect(previous).toBeDisabled();
-  });
+      await block.click();
+      await carousel.focus();
+      await carousel.press(forward);
+      await expect(selected).toHaveText("0");
+      await expect(previous).toBeDisabled();
+      await block.click();
+
+      await carousel.focus();
+      await carousel.press(forward);
+      await expect(selected).toHaveText("1");
+      await expect(previous).toBeEnabled();
+      await next.focus();
+      await next.press(forward);
+      await expect(selected).toHaveText("2");
+      await expect(next).toBeDisabled();
+      await previous.focus();
+      await previous.press(backward);
+      await expect(selected).toHaveText("1");
+      await expect(next).toBeEnabled();
+      await carousel.focus();
+      await carousel.press(backward);
+      await expect(selected).toHaveText("0");
+      await expect(previous).toBeDisabled();
+
+      await next.click();
+      await expect(selected).toHaveText("1");
+      await expect(page.getByTestId("next-calls")).toHaveText("1");
+      await previous.click();
+      await expect(selected).toHaveText("0");
+      await expect(page.getByTestId("previous-calls")).toHaveText("1");
+    });
+  }
 }
 
 test("Sidebar notifies uncontrolled changes, composes rail clicks and honors cancelled toggles", async ({

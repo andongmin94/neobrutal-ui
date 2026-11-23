@@ -19,6 +19,7 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  type CarouselApi,
 } from "@/components/ui/carousel";
 import { ChartContainer, ChartLegendContent, ChartTooltipContent } from "@/components/ui/chart";
 import {
@@ -118,12 +119,24 @@ function CarouselFixture() {
   const [blocked, setBlocked] = React.useState(false);
   const [nextCalls, setNextCalls] = React.useState(0);
   const [previousCalls, setPreviousCalls] = React.useState(0);
+  const [api, setApi] = React.useState<CarouselApi>();
+  const [selected, setSelected] = React.useState(0);
   const orientation =
     new URLSearchParams(location.search).get("orientation") === "vertical"
       ? "vertical"
       : "horizontal";
+  const direction = new URLSearchParams(location.search).get("direction") === "rtl" ? "rtl" : "ltr";
+  React.useEffect(() => {
+    if (!api) return;
+    const onSelect = () => setSelected(api.selectedScrollSnap());
+    onSelect();
+    api.on("select", onSelect);
+    return () => {
+      api.off("select", onSelect);
+    };
+  }, [api]);
   return (
-    <section aria-label="Carousel composition">
+    <section aria-label="Carousel composition" dir={direction}>
       <Button onClick={() => setBlocked((value) => !value)} aria-pressed={blocked}>
         Block next navigation
       </Button>
@@ -131,6 +144,8 @@ function CarouselFixture() {
         aria-label="Composed slides"
         tabIndex={0}
         orientation={orientation}
+        opts={{ direction }}
+        setApi={setApi}
         style={{ width: 300, marginBlock: 48 }}
         onKeyDown={(event) => {
           if (blocked) event.preventDefault();
@@ -155,6 +170,7 @@ function CarouselFixture() {
       </Carousel>
       <output data-testid="next-calls">{nextCalls}</output>
       <output data-testid="previous-calls">{previousCalls}</output>
+      <output data-testid="carousel-selection">{selected}</output>
     </section>
   );
 }
