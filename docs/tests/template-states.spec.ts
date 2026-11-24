@@ -130,6 +130,29 @@ test.describe("template consumer data", () => {
     await expect(blog.getByText("No posts found.", { exact: true })).toBeVisible();
   });
 
+  test("Long consumer titles, groups and descriptions wrap at mobile widths", async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 844 });
+    await page.goto(`${origin}?long`);
+    const title = "reference_".repeat(24);
+    const detail = "https://example.com/" + "long-path-".repeat(24);
+    const blog = page.getByRole("region", { name: "Consumer blog", exact: true });
+    const hub = page.getByRole("region", { name: "Consumer link hub", exact: true });
+    await expect(blog.getByRole("heading", { name: title, exact: true })).toBeVisible();
+    await expect(blog.getByText("Latest post", { exact: true })).toBeVisible();
+    await expect(hub.getByText(detail, { exact: true })).toHaveCSS("white-space", "normal");
+    for (const surface of [blog, hub]) {
+      const filter = surface.getByRole("button", { name: title, exact: true });
+      await filter.click();
+      await expect(filter).toHaveAttribute("aria-pressed", "true");
+      const text = surface.getByText(detail, { exact: true });
+      await expect(text).toBeVisible();
+      expect(
+        await text.evaluate((element) => element.scrollWidth - element.clientWidth),
+      ).toBeLessThanOrEqual(1);
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(321);
+  });
+
   test("Link Hub derives groups and copies the current profile email", async ({ page }) => {
     await page.addInitScript(() => {
       let copied = "";

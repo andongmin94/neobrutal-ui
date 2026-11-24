@@ -33,3 +33,5 @@ Each link needs a unique `id`, `group`, `title`, `detail`, and `href`. Set `exte
 and `highlighted` for the raised primary appearance. Optional `icon` values are `website`, `code`,
 `social`, `writing`, `profile`, and `email`. These are serializable names, so profiles and links can
 be passed from a Next.js server page without passing icon functions across the client boundary.
+Link titles, descriptions, and group names wrap within the available width rather than truncating
+caller-provided content.

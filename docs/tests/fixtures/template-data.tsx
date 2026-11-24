@@ -60,6 +60,24 @@ function TemplateDataFixture() {
     ? { ...profile, name: "Jae Kim", initials: "JK", email: "jae@example.org" }
     : profile;
 
+  if (new URLSearchParams(location.search).has("long")) {
+    const title = "reference_".repeat(24);
+    const detail = "https://example.com/" + "long-path-".repeat(24);
+    return (
+      <>
+        <section aria-label="Consumer blog">
+          <BlogTemplate posts={[{ ...posts[0], title, summary: detail, topic: title }]} />
+        </section>
+        <section aria-label="Consumer link hub">
+          <LinkHubTemplate
+            profile={{ ...profile, handle: "@" + title }}
+            links={[{ ...links[0], title, detail, group: title }]}
+          />
+        </section>
+      </>
+    );
+  }
+
   return (
     <>
       <button type="button" onClick={() => setUpdated(true)}>

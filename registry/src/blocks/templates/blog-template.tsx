@@ -44,7 +44,7 @@ export default function BlogTemplate({ basePath = "/blog", posts }: BlogTemplate
   }, [posts, query, selectedTopic, sort]);
 
   return (
-    <div id="top" className="flex min-h-dvh flex-col bg-background text-foreground">
+    <div id="top" className="flex min-h-dvh min-w-0 flex-col bg-background text-foreground wrap-anywhere">
       <header className="border-b-2 border-border bg-secondary-background">
         <div className="mx-auto flex h-12 max-w-3xl items-center justify-between px-4 sm:px-6">
           <a
@@ -139,6 +139,7 @@ export default function BlogTemplate({ basePath = "/blog", posts }: BlogTemplate
                   key={item}
                   type="button"
                   size="sm"
+                  className="h-auto min-h-9 max-w-full whitespace-normal py-1.5 wrap-anywhere"
                   variant={selectedTopic === item ? "default" : "neutral"}
                   aria-pressed={selectedTopic === item}
                   onClick={() => setTopic(item)}
@@ -182,7 +183,7 @@ export default function BlogTemplate({ basePath = "/blog", posts }: BlogTemplate
                     <div className="min-w-0">
                       {index === 0 && !query && selectedTopic === null && sort === "newest" ? (
                         <span className="mb-2 inline-block bg-main px-2 py-1 text-xs font-heading text-main-foreground">
-                          Editor's pick
+                          Latest post
                         </span>
                       ) : null}
                       <h2 className="text-lg leading-snug font-heading sm:text-xl">
@@ -194,7 +195,7 @@ export default function BlogTemplate({ basePath = "/blog", posts }: BlogTemplate
                         </a>
                       </h2>
                       <p className="mt-1 text-sm leading-5 text-foreground/70">{post.summary}</p>
-                      <p className="mt-2 flex items-center gap-3 text-xs font-heading text-foreground/60">
+                      <p className="mt-2 flex flex-wrap items-center gap-3 text-xs font-heading text-foreground/60">
                         <span>{post.topic}</span>
                         <span className="flex items-center gap-1">
                           <Clock3 aria-hidden="true" className="size-3.5" />

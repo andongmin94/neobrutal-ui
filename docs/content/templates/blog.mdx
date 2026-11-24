@@ -23,5 +23,7 @@ export default function Journal({ posts }: { posts: readonly BlogPost[] }) {
 
 `basePath` defaults to `/blog`. Give each post a unique `slug` and an ISO `publishedAt` date;
 `publishedLabel` is the displayed date and `readTime` begins with its duration in minutes for sorting.
+The first entry in the unfiltered newest-first list is marked Latest post; this is not an editorial recommendation.
+Long caller-provided titles, summaries, and topics can wrap on narrow screens.
 The template does not fetch posts. Connect the installed reading page and its metadata/static params
 to the same content source, and provide the matching routes when changing `basePath`.

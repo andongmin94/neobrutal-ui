@@ -6,6 +6,7 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button-variants";
 import type { LinkHubLink, LinkHubProfile } from "@/lib/link-hub-data";
+import { cn } from "@/lib/utils";
 
 const linkIcons = {
   website: LayoutGrid,
@@ -49,7 +50,7 @@ export default function LinkHubTemplate({ profile, links }: LinkHubTemplateProps
   }
 
   return (
-    <div className="min-h-dvh flex flex-col bg-background text-foreground">
+    <div className="min-h-dvh flex min-w-0 flex-col bg-background text-foreground wrap-anywhere">
       <div className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
         <section aria-labelledby="profile-name" className="text-center">
           <div className="mx-auto grid size-24 place-items-center rounded-full border-2 border-border bg-main text-main-foreground">
@@ -84,6 +85,7 @@ export default function LinkHubTemplate({ profile, links }: LinkHubTemplateProps
                 key={item}
                 type="button"
                 size="sm"
+                className="h-auto min-h-9 max-w-full whitespace-normal py-1.5 wrap-anywhere"
                 variant={selectedGroup === item ? "default" : "neutral"}
                 aria-pressed={selectedGroup === item}
                 onClick={() => setGroup(item)}
@@ -96,21 +98,20 @@ export default function LinkHubTemplate({ profile, links }: LinkHubTemplateProps
             {filteredLinks.length} {filteredLinks.length === 1 ? "link" : "links"}
           </p>
         </div>
-        <ul className="mt-5 grid gap-3 sm:grid-cols-2">
+        <ul className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {filteredLinks.map((link) => {
             const LinkIcon = link.icon ? linkIcons[link.icon] : null;
 
             return (
-              <li key={link.id}>
+              <li key={link.id} className="min-w-0">
                 <a
                   href={link.href}
                   target={link.external ? "_blank" : undefined}
                   rel={link.external ? "noreferrer" : undefined}
-                  className={buttonVariants({
-                    variant: link.highlighted ? "default" : "neutral",
-                    className:
-                      "h-auto min-h-20 w-full justify-start whitespace-normal p-0 text-left [&_svg]:size-5",
-                  })}
+                  className={cn(
+                    buttonVariants({ variant: link.highlighted ? "default" : "neutral" }),
+                    "h-auto min-h-20 w-full min-w-0 justify-start whitespace-normal p-0 text-start [&_svg]:size-5",
+                  )}
                 >
                   <span className="flex w-full min-w-0 items-center gap-3 p-4">
                     {LinkIcon ? <LinkIcon className="shrink-0" aria-hidden="true" /> : null}
@@ -118,7 +119,7 @@ export default function LinkHubTemplate({ profile, links }: LinkHubTemplateProps
                       <span className="block font-heading text-base leading-tight">
                         {link.title}
                       </span>
-                      <span className="mt-1 block truncate text-xs">{link.detail}</span>
+                      <span className="mt-1 block wrap-anywhere text-xs">{link.detail}</span>
                       {link.external ? <span className="sr-only">Opens in a new tab</span> : null}
                     </span>
                   </span>
