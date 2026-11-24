@@ -32,7 +32,7 @@ function Tabs({
 }
 
 const tabsListVariants = cva(
-  "group/tabs-list relative inline-flex w-fit min-w-0 max-w-full items-center justify-start rounded-base border-2 border-border bg-background p-1 text-foreground data-[orientation=horizontal]:min-h-12 data-[orientation=horizontal]:overflow-x-auto data-[orientation=vertical]:h-fit data-[orientation=vertical]:max-w-[50%] data-[orientation=vertical]:flex-col data-[variant=line]:rounded-none data-[variant=line]:border-0 data-[variant=line]:bg-transparent",
+  "group/tabs-list relative inline-flex w-fit min-w-0 max-w-full items-center justify-start rounded-base border-2 border-border bg-background p-1 text-foreground data-[orientation=horizontal]:min-h-12 data-[orientation=horizontal]:overflow-x-auto data-[orientation=horizontal]:scroll-px-1 data-[orientation=vertical]:h-fit data-[orientation=vertical]:max-w-[50%] data-[orientation=vertical]:flex-col data-[variant=line]:rounded-none data-[variant=line]:border-0 data-[variant=line]:bg-transparent",
   {
     variants: { variant: { default: "", line: "gap-1" } },
     defaultVariants: { variant: "default" },

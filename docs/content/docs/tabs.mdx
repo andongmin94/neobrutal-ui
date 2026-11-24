@@ -55,7 +55,7 @@ export default function ProjectTabs() {
 | Prop / part | Purpose | Default |
 | --- | --- | --- |
 | `Tabs.value` / `onValueChange` | Controlled active panel | Uncontrolled |
-| `Tabs.defaultValue` | Initial panel; specify a matching trigger value | Base UI default |
+| `Tabs.defaultValue` | Initial panel; specify a matching trigger value. If omitted, Base UI selects value `0` when available or the first enabled tab. | `0` |
 | `Tabs.orientation` | Horizontal or vertical navigation | `horizontal` |
 | `Tabs.dir` | Local reading direction for layout and keyboard navigation (`ltr` or `rtl`) | Inherited direction |
 | `TabsList.activateOnFocus` | Activate with arrow-key focus; false requires Enter or Space | `true` |

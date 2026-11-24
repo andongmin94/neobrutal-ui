@@ -277,7 +277,10 @@ test("scroll area has a name and renders both overflowing axes", async ({ page }
   const preview = page.locator('.component-preview[data-component="scroll-area"]').nth(1);
   const canvas = await readyCanvas(preview);
   const viewport = canvas.getByRole("region", { name: "Registry release matrix" });
+  await page.evaluate(() => document.fonts.ready);
   await viewport.scrollIntoViewIfNeeded();
+  await expect(viewport).toBeInViewport({ ratio: 1 });
+  await expect(viewport).toHaveAttribute("tabindex", "0");
   await viewport.focus();
   await expect(viewport).toBeFocused();
   const vertical = canvas.locator(
@@ -291,9 +294,9 @@ test("scroll area has a name and renders both overflowing axes", async ({ page }
     await expect(bar).toHaveCSS("opacity", "1");
   }
   await expect(canvas.locator('[data-slot="scroll-area-corner"]')).toBeVisible();
-  await viewport.press("ArrowRight");
+  await page.keyboard.press("ArrowRight");
   await expect.poll(() => viewport.evaluate((node) => node.scrollLeft)).toBeGreaterThan(0);
-  await viewport.press("ArrowDown");
+  await page.keyboard.press("ArrowDown");
   await expect.poll(() => viewport.evaluate((node) => node.scrollTop)).toBeGreaterThan(0);
 });
 
