@@ -199,6 +199,9 @@ for (const direction of ["ltr", "rtl"] as const) {
     await expect(second).toBeFocused();
     await second.press("ArrowDown");
     const link = page.getByRole("link", { name: "Resources Overview", exact: true });
+    await expect(link).toBeVisible();
+    await expect(second).toBeFocused();
+    await second.press("Tab");
     await expect(link).toBeFocused();
     const popup = page.locator('[data-slot="navigation-menu-popup"]');
     const positioner = popup.locator("..");
