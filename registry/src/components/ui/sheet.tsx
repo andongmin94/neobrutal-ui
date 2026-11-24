@@ -1,6 +1,7 @@
 "use client";
 
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog";
+import { useDirection } from "@base-ui/react/direction-provider";
 import { XIcon } from "lucide-react";
 import type * as React from "react";
 
@@ -50,10 +51,12 @@ function SheetContent({
   showCloseButton = true,
   ...props
 }: SheetContentProps) {
+  const direction = useDirection();
   return (
     <SheetPortal>
       <SheetOverlay />
       <SheetPrimitive.Popup
+        dir={direction}
         data-slot="sheet-content"
         data-side={side}
         {...props}
@@ -67,7 +70,7 @@ function SheetContent({
         {children}
         {showCloseButton && (
           <SheetClose
-            render={<Button variant="ghost" className="absolute top-3 right-3" size="icon-sm" />}
+            render={<Button variant="ghost" className="absolute top-3 end-3" size="icon-sm" />}
           >
             <XIcon />
             <span className="sr-only">Close</span>

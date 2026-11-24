@@ -95,6 +95,30 @@ Use `@neobrutal-ui/theme-mono` in the same command to return to the default pale
 Install one theme at a time rather than adding every preset together. Both light and dark
 tokens are included; your application's theme toggle selects the mode with the `.dark` class.
 
+## Right-to-left layouts
+
+Use Base UI's `DirectionProvider` together with the matching HTML `dir` attribute. The provider
+controls component behavior, while `dir` controls text and CSS layout. This also lets portaled
+dialogs, menus, and other popups keep the direction of a local region inside an LTR page.
+
+```tsx
+"use client";
+
+import type { ReactNode } from "react";
+import { DirectionProvider } from "@base-ui/react/direction-provider";
+
+export function RtlRegion({ children }: { children: ReactNode }) {
+  return (
+    <DirectionProvider direction="rtl">
+      <div dir="rtl">{children}</div>
+    </DirectionProvider>
+  );
+}
+```
+
+For a whole RTL application, set `dir="rtl"` on the HTML element and wrap the application with
+the provider. See Base UI's [Direction Provider](https://base-ui.com/react/utils/direction-provider).
+
 ## Registry addresses
 
 The official namespace works without manually editing `components.json`.

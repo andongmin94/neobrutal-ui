@@ -5,6 +5,43 @@ import { DayPicker, TZDate, type DateRange } from "@daypicker/react";
 import { faIR } from "@daypicker/react/locale";
 import { DirectionProvider } from "@base-ui/react/direction-provider";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { Popover, PopoverContent, PopoverTitle, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Calendar } from "@/components/ui/calendar";
 import {
   ContextMenu,
@@ -129,7 +166,9 @@ function LocaleCalendars() {
 
 function DirectionalCalendar() {
   const direction = query.get("direction") === "rtl" ? "rtl" : "ltr";
-  const navLayout = query.get("navLayout") === "around" ? "around" : undefined;
+  const requestedLayout = query.get("navLayout");
+  const navLayout =
+    requestedLayout === "around" || requestedLayout === "after" ? requestedLayout : undefined;
   const [range, setRange] = React.useState<DateRange | undefined>(() => ({
     from: new Date(2024, 0, 5),
     to: new Date(2024, 0, 10),
@@ -138,6 +177,8 @@ function DirectionalCalendar() {
     <Calendar
       dir={direction}
       navLayout={navLayout}
+      captionLayout={query.get("captionLayout") === "dropdown" ? "dropdown" : "label"}
+      numberOfMonths={query.get("months") === "2" ? 2 : 1}
       mode="range"
       defaultMonth={fixedMonth}
       selected={range}
@@ -229,6 +270,116 @@ function LongNavigationMenu() {
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
+    </div>
+  );
+}
+
+function DirectionalNavigationMenu() {
+  const direction = query.get("direction") === "rtl" ? "rtl" : "ltr";
+  return (
+    <div dir={direction} className="flex justify-center p-8">
+      <DirectionProvider direction={direction}>
+        <NavigationMenu aria-label="Directional sections">
+          <NavigationMenuList>
+            {["Guides", "Resources"].map((section) => (
+              <NavigationMenuItem key={section} value={section}>
+                <NavigationMenuTrigger>{section}</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="w-60">
+                    {["Overview", "Reference"].map((page) => (
+                      <li key={page}>
+                        <NavigationMenuLink href={`#${section}-${page}`}>
+                          {section} {page}
+                        </NavigationMenuLink>
+                      </li>
+                    ))}
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            ))}
+          </NavigationMenuList>
+        </NavigationMenu>
+      </DirectionProvider>
+    </div>
+  );
+}
+
+function DirectionalPortals() {
+  const direction = query.get("direction") === "rtl" ? "rtl" : "ltr";
+  const kind = query.get("kind");
+  return (
+    <div dir={direction} className="flex justify-center p-8">
+      <DirectionProvider direction={direction}>
+        {kind === "popover" ? (
+          <Popover>
+            <PopoverTrigger render={<Button />}>Open popover</PopoverTrigger>
+            <PopoverContent align="start" className="w-60">
+              <PopoverTitle>Popover details</PopoverTitle>
+              <p>Local direction is preserved.</p>
+            </PopoverContent>
+          </Popover>
+        ) : kind === "tooltip" ? (
+          <Tooltip>
+            <TooltipTrigger delay={0} render={<Button />}>
+              Open tooltip
+            </TooltipTrigger>
+            <TooltipContent align="start" className="w-60">
+              Tooltip details
+            </TooltipContent>
+          </Tooltip>
+        ) : kind === "hover-card" ? (
+          <HoverCard>
+            <HoverCardTrigger href="#profile" delay={0}>
+              Open hover card
+            </HoverCardTrigger>
+            <HoverCardContent align="start" className="w-60">
+              <p>Profile details</p>
+            </HoverCardContent>
+          </HoverCard>
+        ) : kind === "dialog" ? (
+          <Dialog>
+            <DialogTrigger render={<Button />}>Open dialog</DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Dialog details</DialogTitle>
+                <DialogDescription>Local direction is preserved.</DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+        ) : kind === "alert-dialog" ? (
+          <AlertDialog>
+            <AlertDialogTrigger render={<Button />}>Open alert dialog</AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Alert details</AlertDialogTitle>
+                <AlertDialogDescription>Local direction is preserved.</AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+            </AlertDialogContent>
+          </AlertDialog>
+        ) : kind === "sheet" ? (
+          <Sheet>
+            <SheetTrigger render={<Button />}>Open sheet</SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>Sheet details</SheetTitle>
+                <SheetDescription>Local direction is preserved.</SheetDescription>
+              </SheetHeader>
+            </SheetContent>
+          </Sheet>
+        ) : (
+          <Drawer>
+            <DrawerTrigger render={<Button />}>Open drawer</DrawerTrigger>
+            <DrawerContent>
+              <DrawerHeader>
+                <DrawerTitle>Drawer details</DrawerTitle>
+                <DrawerDescription>Local direction is preserved.</DrawerDescription>
+              </DrawerHeader>
+              <DrawerClose render={<Button />}>Close drawer</DrawerClose>
+            </DrawerContent>
+          </Drawer>
+        )}
+      </DirectionProvider>
     </div>
   );
 }
@@ -375,6 +526,10 @@ if (surface === "calendar-hydrate") {
       <SheetSideExample />
     ) : surface === "navigation-menu" ? (
       <LongNavigationMenu />
+    ) : surface === "navigation-direction" ? (
+      <DirectionalNavigationMenu />
+    ) : surface === "portal-direction" ? (
+      <DirectionalPortals />
     ) : surface === "named-menus" ? (
       <NamedMenus />
     ) : (

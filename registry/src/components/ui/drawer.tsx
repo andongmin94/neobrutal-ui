@@ -1,6 +1,7 @@
 "use client";
 
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer";
+import { useDirection } from "@base-ui/react/direction-provider";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
@@ -47,6 +48,7 @@ function DrawerOverlay({ className, ...props }: DrawerPrimitive.Backdrop.Props) 
 
 function DrawerContent({ className, children, ...props }: DrawerPrimitive.Popup.Props) {
   const modal = React.useContext(DrawerModalContext);
+  const direction = useDirection();
   return (
     <DrawerPortal>
       {modal === true && <DrawerOverlay />}
@@ -55,6 +57,7 @@ function DrawerContent({ className, children, ...props }: DrawerPrimitive.Popup.
         className="pointer-events-none fixed inset-0 z-50"
       >
         <DrawerPrimitive.Popup
+          dir={direction}
           data-slot="drawer-content"
           {...props}
           className={(state) =>
@@ -90,7 +93,7 @@ function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="drawer-header"
-      className={cn("grid shrink-0 gap-1.5 p-4 text-center sm:text-left", className)}
+      className={cn("grid shrink-0 gap-1.5 p-4 text-center sm:text-start", className)}
       {...props}
     />
   );

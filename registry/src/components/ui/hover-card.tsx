@@ -1,6 +1,7 @@
 "use client";
 
 import { PreviewCard as PreviewCardPrimitive } from "@base-ui/react/preview-card";
+import { useDirection } from "@base-ui/react/direction-provider";
 
 import { cn } from "@/lib/utils";
 
@@ -55,9 +56,11 @@ function HoverCardContent({
   sticky,
   ...props
 }: HoverCardContentProps) {
+  const direction = useDirection();
   return (
     <PreviewCardPrimitive.Portal data-slot="hover-card-portal">
       <PreviewCardPrimitive.Positioner
+        dir={direction}
         align={align}
         alignOffset={alignOffset}
         arrowPadding={arrowPadding}
@@ -72,6 +75,7 @@ function HoverCardContent({
         className="isolate z-50"
       >
         <PreviewCardPrimitive.Popup
+          dir={direction}
           data-slot="hover-card-content"
           {...props}
           className={(state) =>

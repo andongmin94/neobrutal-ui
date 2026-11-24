@@ -1,6 +1,7 @@
 "use client";
 
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
+import { useDirection } from "@base-ui/react/direction-provider";
 import { XIcon } from "lucide-react";
 import * as React from "react";
 
@@ -55,10 +56,12 @@ function DialogContent({
   ...props
 }: DialogContentProps) {
   const modal = React.useContext(DialogModalContext);
+  const direction = useDirection();
   return (
     <DialogPortal>
       {modal === true && <DialogOverlay />}
       <DialogPrimitive.Popup
+        dir={direction}
         data-slot="dialog-content"
         {...props}
         className={(state) =>
@@ -71,7 +74,7 @@ function DialogContent({
         {children}
         {showCloseButton && (
           <DialogClose
-            render={<Button variant="ghost" className="absolute top-4 right-4" size="icon-sm" />}
+            render={<Button variant="ghost" className="absolute top-4 end-4" size="icon-sm" />}
           >
             <XIcon />
             <span className="sr-only">Close</span>
@@ -86,7 +89,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-header"
-      className={cn("flex flex-col gap-2 text-center sm:text-left", className)}
+      className={cn("flex flex-col gap-2 text-center sm:text-start", className)}
       {...props}
     />
   );

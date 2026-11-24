@@ -78,4 +78,6 @@ export default function ConfirmArchive({ onArchive }: { onArchive: () => void })
 
 ## Accessibility
 
+For local RTL content, follow the [direction setup](/docs/installation#right-to-left-layouts) so portaled content keeps the same direction.
+
 Keep a meaningful title and description. The modal traps keyboard focus and normally returns focus to its trigger. Cancel must be easy to identify. Closing the dialog does not prove that a server operation succeeded: for asynchronous work, control `open`, show failure inside the dialog, and close only after success.

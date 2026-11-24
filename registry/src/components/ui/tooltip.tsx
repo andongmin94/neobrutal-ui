@@ -1,6 +1,7 @@
 "use client";
 
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip";
+import { useDirection } from "@base-ui/react/direction-provider";
 
 import { cn } from "@/lib/utils";
 
@@ -48,9 +49,11 @@ function TooltipContent({
   sticky,
   ...props
 }: TooltipContentProps) {
+  const direction = useDirection();
   return (
     <TooltipPrimitive.Portal>
       <TooltipPrimitive.Positioner
+        dir={direction}
         align={align}
         alignOffset={alignOffset}
         arrowPadding={arrowPadding}
@@ -65,6 +68,7 @@ function TooltipContent({
         className="isolate z-50"
       >
         <TooltipPrimitive.Popup
+          dir={direction}
           role="tooltip"
           data-slot="tooltip-content"
           {...props}

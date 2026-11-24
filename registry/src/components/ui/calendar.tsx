@@ -45,23 +45,33 @@ function Calendar({
       classNames={{
         root: cn("w-fit", defaultClassNames.root),
         months: cn("relative flex flex-col gap-2 sm:flex-row", defaultClassNames.months),
-        month: cn("flex w-full flex-col gap-3", defaultClassNames.month),
+        month: cn(
+          "flex w-full flex-col gap-3",
+          props.navLayout && "relative",
+          defaultClassNames.month,
+        ),
         nav: cn(
-          "pointer-events-none absolute inset-x-0 top-0 z-10 flex h-8 w-full items-center justify-between gap-1",
+          "pointer-events-none absolute top-0 z-10 flex h-8 items-center gap-1",
+          props.navLayout === "after" ? "end-0" : "inset-x-0 w-full justify-between",
           defaultClassNames.nav,
         ),
         button_previous: cn(
           buttonVariants({ variant: buttonVariant }),
-          "pointer-events-auto absolute start-0 z-10 size-8 bg-transparent p-0 text-foreground select-none aria-disabled:opacity-50",
+          "pointer-events-auto z-10 size-8 bg-transparent p-0 text-foreground select-none aria-disabled:opacity-50",
+          props.navLayout !== "after" && "absolute start-0",
+          props.navLayout === "around" && "top-0",
           defaultClassNames.button_previous,
         ),
         button_next: cn(
           buttonVariants({ variant: buttonVariant }),
-          "pointer-events-auto absolute end-0 z-10 size-8 bg-transparent p-0 text-foreground select-none aria-disabled:opacity-50",
+          "pointer-events-auto z-10 size-8 bg-transparent p-0 text-foreground select-none aria-disabled:opacity-50",
+          props.navLayout !== "after" && "absolute end-0",
+          props.navLayout === "around" && "top-0",
           defaultClassNames.button_next,
         ),
         month_caption: cn(
-          "relative flex h-8 w-full items-center justify-center px-10 text-foreground",
+          "relative flex h-8 w-full items-center text-foreground",
+          props.navLayout === "after" ? "justify-start pe-20" : "justify-center px-10",
           defaultClassNames.month_caption,
         ),
         dropdowns: cn(

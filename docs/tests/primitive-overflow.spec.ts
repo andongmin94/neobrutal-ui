@@ -185,6 +185,110 @@ test("NavigationMenu keeps the current destination visible when another link is 
   await expect(current).toHaveCSS("text-decoration-line", "underline");
 });
 
+for (const direction of ["ltr", "rtl"] as const) {
+  test(`NavigationMenu preserves local ${direction} direction through its portal`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1024, height: 700 });
+    await page.goto(`${origin}?surface=navigation-direction&direction=${direction}`);
+    await expect(page.locator("html")).toHaveCSS("direction", "ltr");
+    const first = page.getByRole("button", { name: "Guides", exact: true });
+    const second = page.getByRole("button", { name: "Resources", exact: true });
+    await first.focus();
+    await first.press(direction === "rtl" ? "ArrowLeft" : "ArrowRight");
+    await expect(second).toBeFocused();
+    await second.press("ArrowDown");
+    const link = page.getByRole("link", { name: "Resources Overview", exact: true });
+    await expect(link).toBeFocused();
+    const popup = page.locator('[data-slot="navigation-menu-popup"]');
+    const positioner = popup.locator("..");
+    await expect(popup).toHaveCSS("direction", direction);
+    await expect(positioner).toHaveCSS("direction", direction);
+    await expect
+      .poll(async () => {
+        const anchor = await second.boundingBox();
+        const floating = await positioner.boundingBox();
+        if (!anchor || !floating) return Number.POSITIVE_INFINITY;
+        return Math.abs(
+          direction === "rtl"
+            ? anchor.x + anchor.width - (floating.x + floating.width)
+            : anchor.x - floating.x,
+        );
+      })
+      .toBeLessThanOrEqual(2);
+    await link.press("Escape");
+    await expect(popup).toBeHidden();
+    await expect(second).toBeFocused();
+  });
+
+  test(`Anchored popups preserve local ${direction} direction and start alignment`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1024, height: 700 });
+    for (const kind of ["popover", "tooltip", "hover-card"] as const) {
+      await test.step(kind, async () => {
+        await page.goto(`${origin}?surface=portal-direction&direction=${direction}&kind=${kind}`);
+        await expect(page.locator("html")).toHaveCSS("direction", "ltr");
+        const trigger = page.locator(`[data-slot="${kind}-trigger"]`);
+        if (kind === "popover") await trigger.click();
+        else await trigger.focus();
+        const popup = page.locator(`[data-slot="${kind}-content"]`);
+        await expect(popup).toBeVisible();
+        await expect(popup).toHaveCSS("direction", direction);
+        const positioner = popup.locator("..");
+        await expect(positioner).toHaveCSS("direction", direction);
+        await expect
+          .poll(async () => {
+            const anchor = await trigger.boundingBox();
+            const floating = await positioner.boundingBox();
+            if (!anchor || !floating) return Number.POSITIVE_INFINITY;
+            return Math.abs(
+              direction === "rtl"
+                ? anchor.x + anchor.width - (floating.x + floating.width)
+                : anchor.x - floating.x,
+            );
+          })
+          .toBeLessThanOrEqual(2);
+        await page.keyboard.press("Escape");
+        await expect(popup).toBeHidden();
+      });
+    }
+  });
+
+  test(`Modal popups preserve local ${direction} text direction`, async ({ page }) => {
+    for (const kind of ["dialog", "alert-dialog", "sheet", "drawer"] as const) {
+      await test.step(kind, async () => {
+        await page.goto(`${origin}?surface=portal-direction&direction=${direction}&kind=${kind}`);
+        await expect(page.locator("html")).toHaveCSS("direction", "ltr");
+        const trigger = page.locator(`[data-slot="${kind}-trigger"]`);
+        await trigger.click();
+        const popup = page.locator(`[data-slot="${kind}-content"]`);
+        await expect(popup).toBeVisible();
+        await expect(popup).toHaveCSS("direction", direction);
+        await expect(popup.getByRole("heading")).toHaveCSS("direction", direction);
+        if (kind === "dialog" || kind === "sheet") {
+          const close = popup.getByRole("button", { name: "Close", exact: true });
+          await expect
+            .poll(async () => {
+              const contentBox = await popup.boundingBox();
+              const closeBox = await close.boundingBox();
+              if (!contentBox || !closeBox) return false;
+              const closeCenter = closeBox.x + closeBox.width / 2;
+              const contentCenter = contentBox.x + contentBox.width / 2;
+              return direction === "rtl"
+                ? closeCenter < contentCenter
+                : closeCenter > contentCenter;
+            })
+            .toBe(true);
+        }
+        await page.keyboard.press("Escape");
+        await expect(popup).toBeHidden();
+        await expect(trigger).toBeFocused();
+      });
+    }
+  });
+}
+
 test("NavigationMenu fits short viewports and scrolls to every link by pointer and keyboard", async ({
   page,
   isMobile,
@@ -361,6 +465,84 @@ for (const direction of ["ltr", "rtl"] as const)
       await expect(calendar.locator('button[data-day="2024-01-06"]')).toBeFocused();
     });
   }
+
+for (const direction of ["ltr", "rtl"] as const) {
+  test(`Calendar inline layout keeps ${direction} after controls in visual tab order`, async ({
+    page,
+  }) => {
+    await page.goto(
+      `${origin}?surface=calendar-direction&direction=${direction}&navLayout=after&captionLayout=dropdown`,
+    );
+    const calendar = page.locator('[data-slot="calendar"]');
+    const month = calendar.locator(".rdp-months_dropdown");
+    const year = calendar.locator(".rdp-years_dropdown");
+    const previous = calendar.getByRole("button", {
+      name: "Go to the Previous Month",
+      exact: true,
+    });
+    const next = calendar.getByRole("button", { name: "Go to the Next Month", exact: true });
+    await expect(calendar.getByRole("status")).toHaveText("January 2024");
+    const controls = await Promise.all(
+      [month, year, previous, next].map((control) => control.boundingBox()),
+    );
+    for (let i = 1; i < controls.length; i++) {
+      const before = controls[i - 1]!;
+      const after = controls[i]!;
+      expect(
+        direction === "ltr" ? after.x - before.x - before.width : before.x - after.x - after.width,
+      ).toBeGreaterThanOrEqual(-1);
+      expect(
+        Math.abs(before.y + before.height / 2 - after.y - after.height / 2),
+      ).toBeLessThanOrEqual(3);
+    }
+    await month.focus();
+    for (const control of [year, previous, next]) {
+      await page.keyboard.press("Tab");
+      await expect(control).toBeFocused();
+    }
+    await page.keyboard.press("Enter");
+    await expect(calendar.getByRole("status")).toHaveText("February 2024");
+    await previous.click();
+    await expect(calendar.getByRole("status")).toHaveText("January 2024");
+  });
+
+  test(`Calendar inline layout anchors ${direction} around controls to their own month`, async ({
+    page,
+  }) => {
+    await page.goto(
+      `${origin}?surface=calendar-direction&direction=${direction}&navLayout=around&months=2`,
+    );
+    const calendar = page.locator('[data-slot="calendar"]');
+    const previous = calendar.getByRole("button", {
+      name: "Go to the Previous Month",
+      exact: true,
+    });
+    const next = calendar.getByRole("button", { name: "Go to the Next Month", exact: true });
+    const captions = calendar.locator(".rdp-month_caption");
+    for (const [button, caption, inlineStart] of [
+      [previous, captions.first(), true],
+      [next, captions.last(), false],
+    ] as const) {
+      const buttonBox = (await button.boundingBox())!;
+      const captionBox = (await caption.boundingBox())!;
+      expect(
+        Math.abs(buttonBox.y + buttonBox.height / 2 - captionBox.y - captionBox.height / 2),
+      ).toBeLessThanOrEqual(3);
+      const expectedLeft = inlineStart === (direction === "ltr");
+      expect(
+        Math.abs(
+          expectedLeft
+            ? buttonBox.x - captionBox.x
+            : buttonBox.x + buttonBox.width - captionBox.x - captionBox.width,
+        ),
+      ).toBeLessThanOrEqual(1);
+    }
+    await next.click();
+    await expect(calendar.getByRole("status")).toHaveText(["February 2024", "March 2024"]);
+    await previous.click();
+    await expect(calendar.getByRole("status")).toHaveText(["January 2024", "February 2024"]);
+  });
+}
 
 test("Calendar uses the native locale pipeline and stable dates in its time zone", async ({
   page,

@@ -1,6 +1,7 @@
 "use client";
 
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
+import { useDirection } from "@base-ui/react/direction-provider";
 import type * as React from "react";
 
 import { cn } from "@/lib/utils";
@@ -45,9 +46,11 @@ function PopoverContent({
   sticky,
   ...props
 }: PopoverContentProps) {
+  const direction = useDirection();
   return (
     <PopoverPrimitive.Portal>
       <PopoverPrimitive.Positioner
+        dir={direction}
         align={align}
         alignOffset={alignOffset}
         arrowPadding={arrowPadding}
@@ -62,6 +65,7 @@ function PopoverContent({
         className="isolate z-50"
       >
         <PopoverPrimitive.Popup
+          dir={direction}
           data-slot="popover-content"
           className={(state) =>
             cn(
