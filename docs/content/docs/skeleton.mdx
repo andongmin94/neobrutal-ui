@@ -33,9 +33,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function LoadingProfile() {
   return (
     <section aria-busy="true" aria-label="Profile">
-      <p role="status" className="sr-only">
-        Loading profile.
-      </p>
+      <output className="sr-only">Loading profile.</output>
       <div aria-hidden="true" className="flex items-center gap-4">
         <Skeleton className="size-12 rounded-full" />
         <div className="grid gap-2">

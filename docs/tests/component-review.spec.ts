@@ -236,6 +236,19 @@ test("scroll area has a name and scrolls by keyboard", async ({ page }, info) =>
   await capture(canvas, "scroll-area-last-activity", info);
 });
 
+test("skeleton exposes one loading status and hides decorative shapes", async ({ page }) => {
+  const canvas = await openCanvas(page, "skeleton");
+  const region = canvas.getByRole("region", { name: "Profile", exact: true });
+  await expect(region).toHaveAttribute("aria-busy", "true");
+  const status = region.getByRole("status");
+  await expect(status).toHaveCount(1);
+  await expect(status).toHaveText("Loading profile.");
+  const shapes = region.locator('[aria-hidden="true"]');
+  await expect(shapes).toHaveCount(1);
+  await expect(shapes).toBeVisible();
+  await expect(shapes.locator('[data-slot="skeleton"]')).toHaveCount(3);
+});
+
 test("progress keeps indeterminate work visible with reduced motion", async ({ page }) => {
   const canvas = await openCanvas(page, "progress");
   const determinate = canvas.getByRole("progressbar", { name: "Loading progress", exact: true });

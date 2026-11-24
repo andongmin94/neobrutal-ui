@@ -59,7 +59,7 @@ jobs:
         working-directory: docs
         run: |
           npm run test:browser -- docs.spec.ts form-composition.spec.ts local-registry.spec.ts analytics.spec.ts runtime-recovery.spec.ts sidebar-shortcut.spec.ts search-recovery.spec.ts pagination-states.spec.ts demo-feedback.spec.ts
-          npm run test:browser -- component-review.spec.ts galleries.spec.ts --grep 'scroll area has a name|marquee pause|progress keeps indeterminate work visible|avatar status badges|clipboard|checkbox: changed selection|radio group exposes'
+          npm run test:browser -- component-review.spec.ts galleries.spec.ts --grep 'scroll area has a name|marquee pause|progress keeps indeterminate work visible|avatar status badges|clipboard|checkbox: changed selection|radio group exposes|skeleton exposes'
           npm run test:browser -- drawer-modal.spec.ts release-controls.spec.ts component-composition.spec.ts --grep 'dialog|select:|[Cc]arousel|Sidebar .*buttons submit forms|Sonner|InputGroup|Tabs vertical line'
           npm run test:browser -- template-states.spec.ts --grep 'template consumer data|document landmark|landing billing'
           npm run test:browser -- primitive-overflow.spec.ts --grep 'NavigationMenu|Anchored popups preserve|Modal popups preserve|Calendar preserves focus|Calendar inline layout|InputOTP readOnly|Menu labels|Menu submenu'
