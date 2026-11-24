@@ -393,7 +393,12 @@ test("tooltip rows use series config keys and hide configured icons on request",
   for (const hideIndicator of [false, true]) {
     const html = renderToStaticMarkup(
       <ChartContainer config={config}>
-        <ChartTooltipContent active payload={payload} label="January" hideIndicator={hideIndicator} />
+        <ChartTooltipContent
+          active
+          payload={payload}
+          label="January"
+          hideIndicator={hideIndicator}
+        />
       </ChartContainer>,
     );
     assert.match(html, /Configured visits/);
