@@ -59,16 +59,16 @@ export default function PaginationDemo() {
         </PaginationItem>
         {tokens.map((token) =>
           typeof token === "number" ? (
-            <PaginationItem key={token}>
+            <PaginationItem
+              key={token}
+              className={
+                token !== 1 && token !== page && token !== pageCount ? "hidden sm:block" : undefined
+              }
+            >
               <PaginationLink
                 href={`?page=${token}`}
                 isActive={page === token}
                 aria-label={`Go to page ${token}`}
-                className={
-                  token !== 1 && token !== page && token !== pageCount
-                    ? "hidden sm:inline-flex"
-                    : undefined
-                }
               >
                 {token}
               </PaginationLink>

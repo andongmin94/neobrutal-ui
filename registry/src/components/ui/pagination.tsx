@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "lucide-react";
 
 const paginationLinkClassName =
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-base border-2 border-border bg-main text-sm font-base text-main-foreground transition-all focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50 aria-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0";
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-base border-2 border-border bg-main text-sm font-base text-main-foreground transition-all motion-reduce:transition-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50 aria-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0";
 
 const paginationLinkSizeClassNames = {
   default: "h-10 px-4 py-2",
@@ -19,7 +19,7 @@ function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
       role="navigation"
       aria-label="pagination"
       data-slot="pagination"
-      className={cn("mx-auto flex w-full justify-center", className)}
+      className={cn("mx-auto flex w-full min-w-0 justify-center", className)}
       {...props}
     />
   );
@@ -29,7 +29,7 @@ function PaginationContent({ className, ...props }: React.ComponentProps<"ul">) 
   return (
     <ul
       data-slot="pagination-content"
-      className={cn("flex flex-row items-center gap-1", className)}
+      className={cn("m-0 flex max-w-full flex-wrap items-center justify-center gap-1 p-0 list-none", className)}
       {...props}
     />
   );
@@ -71,10 +71,10 @@ function PaginationPrevious({
       data-slot="pagination-previous"
       aria-label="Go to previous page"
       size="default"
-      className={cn("gap-1 pl-2.5", className)}
+      className={cn("gap-1 ps-2.5", className)}
       {...props}
     >
-      <ChevronLeftIcon className="size-4" />
+      <ChevronLeftIcon aria-hidden="true" className="size-4 rtl:rotate-180" />
       <span>{text}</span>
     </PaginationLink>
   );
@@ -90,11 +90,11 @@ function PaginationNext({
       data-slot="pagination-next"
       aria-label="Go to next page"
       size="default"
-      className={cn("gap-1 pr-2.5", className)}
+      className={cn("gap-1 pe-2.5", className)}
       {...props}
     >
       <span>{text}</span>
-      <ChevronRightIcon className="size-4" />
+      <ChevronRightIcon aria-hidden="true" className="size-4 rtl:rotate-180" />
     </PaginationLink>
   );
 }

@@ -1,5 +1,29 @@
 import { expect, test } from "@playwright/test";
 
+test("pagination wraps in narrow containers and mirrors directional icons", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/docs/pagination");
+  const navigation = page
+    .locator('.component-preview[data-component="pagination"]')
+    .first()
+    .locator('[data-slot="pagination"]');
+  await expect(navigation.locator('[aria-current="page"]')).toHaveText("2");
+  await navigation.evaluate((element) => {
+    element.style.maxWidth = "220px";
+    element.dir = "rtl";
+  });
+  const list = navigation.locator('[data-slot="pagination-content"]');
+  await expect(list).toHaveCSS("flex-wrap", "wrap");
+  expect(
+    await list.evaluate((element) => element.scrollWidth - element.clientWidth),
+  ).toBeLessThanOrEqual(1);
+  for (const part of ["previous", "next"]) {
+    const link = navigation.locator(`[data-slot="pagination-${part}"]`);
+    await expect(link.locator("svg")).toHaveCSS("rotate", "180deg");
+    await expect(link).toHaveCSS("transition-duration", "0s");
+  }
+});
+
 test("pagination restores linked pages and preserves modified-click navigation", async ({
   page,
   context,
