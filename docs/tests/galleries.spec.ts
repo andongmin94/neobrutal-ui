@@ -96,6 +96,82 @@ test("clipboard denial shows honest feedback without runtime errors", async ({ p
   expect(errors).toEqual([]);
 });
 
+test("template clipboard feedback lasts from the latest completed copy", async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText: async () => {} },
+    });
+  });
+  await page.goto("/templates");
+  const copy = page.locator(".not-prose > article").first().getByRole("button");
+  await expect(copy).toBeVisible();
+  await page.clock.install();
+  await page.clock.pauseAt(Date.now() + 1000);
+
+  await copy.click();
+  await expect(copy).toHaveAccessibleName("Copied");
+  await page.clock.runFor(1000);
+  await copy.click();
+  await expect(copy).toHaveAccessibleName("Copied");
+  await page.clock.runFor(600);
+  await expect(copy).toHaveAccessibleName("Copied");
+  await page.clock.runFor(1000);
+  await expect(copy).toHaveAccessibleName("Copy command");
+});
+
+test("template clipboard feedback ignores older success and failure completions", async ({
+  page,
+}) => {
+  type ClipboardWindow = typeof window & {
+    pendingCopies: { resolve: () => void; reject: (reason: Error) => void }[];
+  };
+  await page.addInitScript(() => {
+    const pendingCopies: ClipboardWindow["pendingCopies"] = [];
+    Object.defineProperty(window, "pendingCopies", { value: pendingCopies });
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: {
+        writeText: () =>
+          new Promise<void>((resolve, reject) => {
+            pendingCopies.push({ resolve, reject });
+          }),
+      },
+    });
+  });
+  await page.goto("/templates");
+  const copy = page.locator(".not-prose > article").first().getByRole("button");
+  await expect(copy).toBeVisible();
+  await page.clock.install();
+  await page.clock.pauseAt(Date.now() + 1000);
+
+  for (const [index, outcome] of (["failure", "success"] as const).entries()) {
+    await copy.click();
+    await expect
+      .poll(() => page.evaluate(() => (window as ClipboardWindow).pendingCopies.length))
+      .toBe(index * 2 + 1);
+    await copy.click();
+    await expect
+      .poll(() => page.evaluate(() => (window as ClipboardWindow).pendingCopies.length))
+      .toBe(index * 2 + 2);
+    await page.evaluate((result) => {
+      const latest = (window as ClipboardWindow).pendingCopies.at(-1)!;
+      if (result === "success") latest.resolve();
+      else latest.reject(new Error("Latest copy failed"));
+    }, outcome);
+    const feedback = outcome === "success" ? "Copied" : "Copy failed";
+    await expect(copy).toHaveAccessibleName(feedback);
+
+    await page.evaluate((result) => {
+      const previous = (window as ClipboardWindow).pendingCopies.at(-2)!;
+      if (result === "success") previous.reject(new Error("Previous copy failed"));
+      else previous.resolve();
+    }, outcome);
+    await page.clock.runFor(50);
+    await expect(copy).toHaveAccessibleName(feedback);
+  }
+});
+
 test("CMS status filter is a flush segmented control", async ({ page }) => {
   await page.goto("/templates/cms");
   const group = page.getByRole("group", { name: "Filter posts by status" });

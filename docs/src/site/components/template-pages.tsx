@@ -1,4 +1,4 @@
-import { useState, type ComponentType } from "react";
+import { useEffect, useRef, useState, type ComponentType } from "react";
 import { Link } from "fumapress/client";
 
 import BlogPostTemplate from "@/components/templates/blog-post-template";
@@ -24,22 +24,32 @@ const templateComponents: Record<string, ComponentType> = {
 };
 
 export function TemplatesPage() {
-  const [copied, setCopied] = useState<string | null>(null);
-  const [failed, setFailed] = useState<string | null>(null);
+  const [result, setResult] = useState<{ slug: string; status: "copied" | "failed" } | null>(null);
+  const latestCopy = useRef<object | undefined>(undefined);
+  const resetTimer = useRef<number | undefined>(undefined);
+
+  useEffect(
+    () => () => {
+      latestCopy.current = undefined;
+      window.clearTimeout(resetTimer.current);
+    },
+    [],
+  );
 
   async function handleCopy(slug: string, command: string) {
-    setFailed(null);
-    setCopied(null);
+    const request = {};
+    latestCopy.current = request;
+    window.clearTimeout(resetTimer.current);
+    setResult(null);
+    let status: "copied" | "failed" = "copied";
     try {
       await copyText(command);
-      setCopied(slug);
     } catch {
-      setFailed(slug);
+      status = "failed";
     }
-    globalThis.setTimeout(() => {
-      setCopied((current) => (current === slug ? null : current));
-      setFailed((current) => (current === slug ? null : current));
-    }, 1600);
+    if (latestCopy.current !== request) return;
+    setResult({ slug, status });
+    resetTimer.current = window.setTimeout(() => setResult(null), 1600);
   }
 
   return (
@@ -86,11 +96,11 @@ export function TemplatesPage() {
                 onClick={() => void handleCopy(template.slug, template.installCommand)}
               >
                 <span aria-live="polite">
-                  {copied === template.slug
-                    ? "Copied"
-                    : failed === template.slug
-                      ? "Copy failed"
-                      : "Copy command"}
+                  {result?.slug === template.slug
+                    ? result.status === "copied"
+                      ? "Copied"
+                      : "Copy failed"
+                    : "Copy command"}
                 </span>
               </button>
             </div>
