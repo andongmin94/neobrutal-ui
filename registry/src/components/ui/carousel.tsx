@@ -185,6 +185,7 @@ function CarouselPrevious({
   className,
   variant = "noShadow",
   size = "icon",
+  disabled,
   onClick,
   ...props
 }: React.ComponentProps<typeof Button>) {
@@ -204,7 +205,7 @@ function CarouselPrevious({
           typeof className === "function" ? className(state) : className,
         )
       }
-      disabled={!canScrollPrev}
+      disabled={disabled || !canScrollPrev}
       {...props}
       onClick={
         mergeProps<"button">(
@@ -227,6 +228,7 @@ function CarouselNext({
   className,
   variant = "noShadow",
   size = "icon",
+  disabled,
   onClick,
   ...props
 }: React.ComponentProps<typeof Button>) {
@@ -246,7 +248,7 @@ function CarouselNext({
           typeof className === "function" ? className(state) : className,
         )
       }
-      disabled={!canScrollNext}
+      disabled={disabled || !canScrollNext}
       {...props}
       onClick={
         mergeProps<"button">(

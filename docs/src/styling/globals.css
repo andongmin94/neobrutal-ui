@@ -23,24 +23,6 @@
 @theme inline {
   --shadow-nav: 4px 4px 0px 0px var(--border);
   --spacing-container: 1300px;
-  --animate-marquee: marquee 5s linear infinite;
-  --animate-marquee2: marquee2 5s linear infinite;
-  @keyframes marquee {
-    0% {
-      transform: translateX(0%);
-    }
-    100% {
-      transform: translateX(-100%);
-    }
-  }
-  @keyframes marquee2 {
-    0% {
-      transform: translateX(100%);
-    }
-    100% {
-      transform: translateX(0%);
-    }
-  }
 }
 
 @layer utilities {

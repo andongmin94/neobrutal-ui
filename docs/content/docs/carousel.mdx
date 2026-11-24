@@ -82,7 +82,7 @@ Left and right arrow keys navigate a horizontal carousel; up and down arrow keys
 
 For right-to-left content, match Embla's option to the HTML direction: `<Carousel dir="rtl" opts={{ direction: "rtl" }}>`. The HTML direction can also come from an ancestor. Horizontal navigation buttons, arrow icons, and slide spacing follow that direction; Left moves to the next slide and Right moves to the previous slide. Vertical navigation continues to use Down and Up.
 
-Navigation buttons accept state-based `className` functions. Their `onClick` handlers run before scrolling; call `event.preventDefault()` to cancel that button's navigation.
+Navigation buttons accept state-based `className` functions. Set `disabled` to disable a navigation button; `disabled={false}` does not override a slide boundary. Their `onClick` handlers run before scrolling; call `event.preventDefault()` to cancel that button's navigation.
 
 ## Slides with inputs
 

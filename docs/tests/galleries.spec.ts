@@ -208,25 +208,36 @@ test("CMS status filter is a flush segmented control", async ({ page }) => {
   await expect(posts.getByText("Public page checklist", { exact: true })).toBeVisible();
 });
 
-test("marquee pause and reduced motion stop both strips", async ({ page }) => {
+test("marquee pause and reduced motion preserve the complete repeating track", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/docs/marquee");
   const preview = page.locator(".component-preview").first();
+  const marquee = preview.locator('[data-slot="marquee"]');
+  const viewport = marquee.locator('[data-slot="marquee-viewport"]');
+  const track = marquee.locator('[data-slot="marquee-track"]');
+  const items = marquee.locator('[data-slot="marquee-items"]');
+  const copy = marquee.locator('[data-slot="marquee-copy"]');
   const pause = preview.getByRole("button", { name: "Pause", exact: true });
   await pause.click();
   const resume = preview.getByRole("button", { name: "Resume", exact: true });
   await expect(resume).not.toHaveAttribute("aria-pressed");
-  for (const selector of [".animate-marquee", ".animate-marquee2"]) {
-    await expect(preview.locator(selector)).toHaveCSS("animation-play-state", "paused");
-  }
+  await expect(track).toHaveCSS("animation-play-state", "paused");
+  await expect(copy).toHaveAttribute("aria-hidden", "true");
+  const viewportWidth = (await viewport.boundingBox())!.width;
+  const itemsWidth = (await items.boundingBox())!.width;
+  const copyWidth = (await copy.boundingBox())!.width;
+  expect(itemsWidth).toBeGreaterThanOrEqual(viewportWidth - 1);
+  expect(Math.abs(itemsWidth - copyWidth)).toBeLessThanOrEqual(1);
+  await marquee.evaluate((element) => element.setAttribute("dir", "rtl"));
+  await expect(track).toHaveCSS("--marquee-scroll-end", "50%");
   await resume.click();
   await expect(pause).not.toHaveAttribute("aria-pressed");
-  for (const selector of [".animate-marquee", ".animate-marquee2"]) {
-    await expect(preview.locator(selector)).toHaveCSS("animation-play-state", "running");
-  }
+  await expect(track).toHaveCSS("animation-play-state", "running");
   await page.emulateMedia({ reducedMotion: "reduce" });
   await expect(pause).toBeHidden();
-  await expect(preview.locator(".animate-marquee")).toHaveCSS("animation-name", "none");
-  await expect(preview.locator(".animate-marquee2")).toBeHidden();
+  await expect(track).toHaveCSS("animation-name", "none");
+  await expect(copy).toBeHidden();
+  await expect(items).toBeVisible();
 });
 
 test("navigation and search can be dismissed with focus restored", async ({ page }) => {

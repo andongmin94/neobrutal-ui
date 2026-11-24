@@ -218,6 +218,7 @@ function TabsDirectionFixture() {
 
 function CarouselFixture() {
   const [blocked, setBlocked] = React.useState(false);
+  const [locked, setLocked] = React.useState(false);
   const [nextCalls, setNextCalls] = React.useState(0);
   const [previousCalls, setPreviousCalls] = React.useState(0);
   const [api, setApi] = React.useState<CarouselApi>();
@@ -241,6 +242,9 @@ function CarouselFixture() {
       <Button onClick={() => setBlocked((value) => !value)} aria-pressed={blocked}>
         Block next navigation
       </Button>
+      <Button onClick={() => setLocked((value) => !value)} aria-pressed={locked}>
+        Lock navigation buttons
+      </Button>
       <Carousel
         aria-label="Composed slides"
         tabIndex={0}
@@ -261,8 +265,12 @@ function CarouselFixture() {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious onClick={() => setPreviousCalls((value) => value + 1)} />
+        <CarouselPrevious
+          disabled={locked}
+          onClick={() => setPreviousCalls((value) => value + 1)}
+        />
         <CarouselNext
+          disabled={locked}
           onClick={(event) => {
             setNextCalls((value) => value + 1);
             if (blocked) event.preventDefault();

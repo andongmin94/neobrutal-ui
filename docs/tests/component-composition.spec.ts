@@ -287,6 +287,13 @@ test("Carousel keeps navigation when consumer handlers are present and honors ca
   await block.click();
   await next.click();
   await expect(previous).toBeEnabled();
+  const lock = page.getByRole("button", { name: "Lock navigation buttons" });
+  await lock.click();
+  await expect(previous).toBeDisabled();
+  await expect(next).toBeDisabled();
+  await lock.click();
+  await expect(previous).toBeEnabled();
+  await expect(next).toBeEnabled();
   await next.click();
   await expect(next).toBeDisabled();
   await expect(page.getByTestId("next-calls")).toHaveText("3");
