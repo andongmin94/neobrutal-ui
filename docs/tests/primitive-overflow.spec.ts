@@ -355,11 +355,11 @@ test("InputOTP readOnly blocks transformed paste and preserves caller capture", 
     const slots = field.locator('[data-slot="input-otp-slot"]');
     await expect(slots).toHaveCount(4);
     for (const slot of await slots.all()) {
-      await expect(slot).toHaveCSS("transition-duration", "0s");
+      await expect(slot).toHaveCSS("transition-property", "none");
     }
-    expect(
-      await field.evaluate((node) => node.scrollWidth - node.clientWidth),
-    ).toBeLessThanOrEqual(1);
+    expect(await field.evaluate((node) => node.scrollWidth - node.clientWidth)).toBeLessThanOrEqual(
+      1,
+    );
     await input.focus();
     await input.evaluate((node: HTMLInputElement) => {
       node.setSelectionRange(0, node.value.length);
