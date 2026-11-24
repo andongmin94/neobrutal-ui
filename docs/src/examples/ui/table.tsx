@@ -59,14 +59,14 @@ const total = invoices.reduce((sum, invoice) => sum + invoice.totalAmount, 0);
 
 export default function TableDemo() {
   return (
-    <Table>
+    <Table containerProps={{ role: "region", "aria-label": "Recent invoices" }}>
       <TableCaption className="text-foreground">A list of your recent invoices.</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[100px]">Invoice</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Method</TableHead>
-          <TableHead className="text-right">Amount</TableHead>
+          <TableHead scope="col" className="w-[100px]">Invoice</TableHead>
+          <TableHead scope="col">Status</TableHead>
+          <TableHead scope="col">Method</TableHead>
+          <TableHead scope="col" className="text-right">Amount</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

@@ -128,6 +128,15 @@ test("radio indicators inherit the selected card foreground", async ({ page }, i
   }
 });
 
+test("table scroll area has a name and preserves keyboard focus", async ({ page }) => {
+  const canvas = await openCanvas(page, "table");
+  const region = canvas.getByRole("region", { name: "Recent invoices", exact: true });
+  await expect(region).toHaveAttribute("tabindex", "0");
+  await expect(region.getByRole("table", { name: "A list of your recent invoices." })).toBeVisible();
+  await region.focus();
+  await expect(region).toBeFocused();
+});
+
 test("table totals follow data and selected rows remain readable", async ({ page }, info) => {
   const canvas = await openCanvas(page, "table");
   const amounts = await canvas.locator("tbody tr td:last-child").allTextContents();

@@ -42,6 +42,10 @@ for (const denied of [false, true]) {
 test("table sorting and empty states follow visible columns", async ({ page }) => {
   await page.goto("/docs/data-table");
   const preview = page.locator('.component-preview[data-component="data-table"]').first();
+  const region = preview.getByRole("region", { name: "Payment records", exact: true });
+  await expect(region.getByRole("table", { name: "Payments", exact: true })).toBeVisible();
+  await region.focus();
+  await expect(region).toBeFocused();
   const sortButton = preview.getByRole("button", { name: "Email", exact: true });
   const header = preview.getByRole("columnheader", { name: "Email", exact: true });
   await sortButton.click();
@@ -54,4 +58,5 @@ test("table sorting and empty states follow visible columns", async ({ page }) =
   await preview.getByLabel("Filter email records").fill("nobody@example.invalid");
   const empty = preview.getByRole("cell", { name: "No results.", exact: true });
   await expect(empty).toHaveAttribute("colspan", "4");
+  await expect(empty.getByRole("status")).toHaveText("No results.");
 });

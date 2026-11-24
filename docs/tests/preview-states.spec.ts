@@ -161,7 +161,10 @@ test("reduced-motion marquee keeps all text visible", async ({ page }, info) => 
   for (const width of [320, 390, 1440]) {
     await page.setViewportSize({ width, height: 844 });
     await strip.scrollIntoViewIfNeeded();
-    await expect(preview.locator('[data-slot="marquee-track"]')).toHaveCSS("animation-name", "none");
+    await expect(preview.locator('[data-slot="marquee-track"]')).toHaveCSS(
+      "animation-name",
+      "none",
+    );
     await expect(preview.locator('[data-slot="marquee-copy"]')).toBeHidden();
     const layout = await strip.evaluate((node) => {
       const bounds = node.getBoundingClientRect();

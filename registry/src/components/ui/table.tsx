@@ -2,12 +2,20 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+function Table({
+  className,
+  containerProps,
+  ...props
+}: React.ComponentProps<"table"> & { containerProps?: React.ComponentProps<"div"> }) {
   return (
     <div
-      data-slot="table-container"
-      className="relative w-full overflow-auto focus-visible:outline-1 focus-visible:outline-offset-0 focus-visible:outline-ring"
       tabIndex={0}
+      {...containerProps}
+      data-slot="table-container"
+      className={cn(
+        "relative w-full min-w-0 overflow-auto focus-visible:outline-1 focus-visible:outline-offset-0 focus-visible:outline-ring",
+        containerProps?.className,
+      )}
     >
       <table
         data-slot="table"

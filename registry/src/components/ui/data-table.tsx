@@ -37,6 +37,7 @@ import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -209,6 +210,7 @@ export const columns: ColumnDef<typeof features, Payment>[] = [
   },
   {
     id: "actions",
+    header: () => <span className="sr-only">Actions</span>,
     enableHiding: false,
     cell: ({ row }) => <PaymentActions payment={row.original} />,
   },
@@ -258,7 +260,8 @@ export default function DataTableDemo() {
         </DropdownMenu>
       </div>
       <div>
-        <Table>
+        <Table containerProps={{ role: "region", "aria-label": "Payment records" }}>
+          <TableCaption className="sr-only">Payments</TableCaption>
           <TableHeader className="font-heading">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow className="bg-secondary-background text-foreground" key={headerGroup.id}>
@@ -268,6 +271,7 @@ export default function DataTableDemo() {
                     <TableHead
                       className="text-foreground"
                       key={header.id}
+                      scope="col"
                       aria-sort={
                         sort === "asc" ? "ascending" : sort === "desc" ? "descending" : undefined
                       }
@@ -302,7 +306,7 @@ export default function DataTableDemo() {
                   colSpan={table.getVisibleLeafColumns().length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  <span role="status">No results.</span>
                 </TableCell>
               </TableRow>
             )}

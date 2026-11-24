@@ -40,7 +40,7 @@ import {
 
 export default function InvoiceTable() {
   return (
-    <Table>
+    <Table containerProps={{ role: "region", "aria-label": "Recent invoices" }}>
       <TableCaption>Recent workspace invoices</TableCaption>
       <TableHeader>
         <TableRow>
@@ -68,6 +68,7 @@ export default function InvoiceTable() {
 | Part | Purpose | Default |
 | --- | --- | --- |
 | `Table` | Native table in horizontal overflow wrapper | Full width |
+| `Table.containerProps` | Native div props for the scroll wrapper, including its accessible name and focus settings | Unset |
 | `TableHeader` / `TableBody` / `TableFooter` | thead, tbody, tfoot | Semantic elements |
 | `TableRow` | Row of cells | tr |
 | `TableHead` / `TableCell` | Header/data cell; native scope, colSpan, rowSpan | th / td |
@@ -75,4 +76,4 @@ export default function InvoiceTable() {
 
 ## Accessibility
 
-Provide a caption or accessible name and appropriate header scopes. Align numbers consistently. Do not replace semantic cells with generic divs or make rows click-only controls. On mobile, keep the scroll region reachable without overflowing the whole page.
+Provide a caption or accessible name and appropriate header scopes. Align numbers consistently. Do not replace semantic cells with generic divs or make rows click-only controls. The scroll wrapper is keyboard-focusable by default. Use containerProps to give it role="region" and an accessible name, as in the example. A table's own native props still apply to the table element, not to its wrapper. On mobile, keep the scroll region reachable without overflowing the whole page.
