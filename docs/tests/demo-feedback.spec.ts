@@ -1,5 +1,119 @@
 import { expect, test } from "@playwright/test";
 
+test("theme copy feedback follows the current export and lasts from the latest copy", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText: async () => {} },
+    });
+  });
+  await page.goto("/styling");
+  const palette = page.getByLabel("Palette", { exact: true });
+  const command = page.locator(".theme-workbench__export > .docs-code");
+  const copy = command.getByRole("button");
+  await palette.selectOption("red");
+  await expect(command.locator("code")).toHaveText("npx shadcn@latest add @neobrutal-ui/theme-red");
+  await page.clock.install();
+  await page.clock.pauseAt(Date.now() + 1000);
+
+  await copy.click();
+  await expect(copy).toHaveAccessibleName("Copied");
+  await palette.selectOption("blue");
+  await expect(command.locator("code")).toHaveText(
+    "npx shadcn@latest add @neobrutal-ui/theme-blue",
+  );
+  await expect(copy).toHaveAccessibleName("Copy");
+  await page.evaluate(() => {
+    navigator.clipboard.writeText = async () => {
+      throw new Error("Clipboard unavailable");
+    };
+  });
+  await copy.click();
+  await expect(copy).toHaveAccessibleName("Copy failed");
+  await palette.selectOption("red");
+  await expect(copy).toHaveAccessibleName("Copy");
+
+  await page.evaluate(() => {
+    navigator.clipboard.writeText = async () => {};
+  });
+  await copy.click();
+  await expect(copy).toHaveAccessibleName("Copied");
+  await page.clock.runFor(1000);
+  await copy.click();
+  await expect(copy).toHaveAccessibleName("Copied");
+  await page.clock.runFor(600);
+  await expect(copy).toHaveAccessibleName("Copied");
+  await page.clock.runFor(1000);
+  await expect(copy).toHaveAccessibleName("Copy");
+});
+
+for (const outcome of ["success", "failure"] as const) {
+  test(`theme copy ignores a late ${outcome} from the previous export`, async ({ page }) => {
+    type ClipboardWindow = typeof window & {
+      pendingCopies: { text: string; resolve: () => void; reject: (reason: Error) => void }[];
+    };
+    await page.addInitScript(() => {
+      const pendingCopies: ClipboardWindow["pendingCopies"] = [];
+      Object.defineProperty(window, "pendingCopies", { value: pendingCopies });
+      Object.defineProperty(navigator, "clipboard", {
+        configurable: true,
+        value: {
+          writeText: (text: string) =>
+            new Promise<void>((resolve, reject) => {
+              pendingCopies.push({ text, resolve, reject });
+            }),
+        },
+      });
+    });
+    await page.goto("/styling");
+    const palette = page.getByLabel("Palette", { exact: true });
+    const command = page.locator(".theme-workbench__export > .docs-code");
+    const copy = command.getByRole("button");
+    await palette.selectOption("red");
+    await expect(command.locator("code")).toHaveText(
+      "npx shadcn@latest add @neobrutal-ui/theme-red",
+    );
+    await page.clock.install();
+    await page.clock.pauseAt(Date.now() + 1000);
+    await copy.click();
+    await expect
+      .poll(() => page.evaluate(() => (window as ClipboardWindow).pendingCopies.length))
+      .toBe(1);
+    await palette.selectOption("blue");
+    await expect(command.locator("code")).toHaveText(
+      "npx shadcn@latest add @neobrutal-ui/theme-blue",
+    );
+    await copy.click();
+    await expect
+      .poll(() => page.evaluate(() => (window as ClipboardWindow).pendingCopies.length))
+      .toBe(2);
+    expect(
+      await page.evaluate(() =>
+        (window as ClipboardWindow).pendingCopies.map((write) => write.text),
+      ),
+    ).toEqual([
+      "npx shadcn@latest add @neobrutal-ui/theme-red",
+      "npx shadcn@latest add @neobrutal-ui/theme-blue",
+    ]);
+
+    await page.evaluate(() => {
+      (window as ClipboardWindow).pendingCopies[1].resolve();
+    });
+    await expect(copy).toHaveAccessibleName("Copied");
+    await page.evaluate((result) => {
+      const previous = (window as ClipboardWindow).pendingCopies[0];
+      if (result === "success") previous.resolve();
+      else previous.reject(new Error("Previous copy failed"));
+    }, outcome);
+    await page.clock.runFor(50);
+    await expect(copy).toHaveAccessibleName("Copied");
+    await page.clock.runFor(1600);
+    await expect(copy).toHaveAccessibleName("Copy");
+  });
+}
+
 test("tabs retain saved account values and describe local-only form submission", async ({
   page,
 }, info) => {

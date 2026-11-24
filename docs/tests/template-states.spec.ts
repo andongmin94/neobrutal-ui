@@ -9,6 +9,9 @@ import { createServer, type ViteDevServer } from "vite";
 import TEMPLATES from "../src/data/templates";
 import type { TemplateEntry } from "../src/data/templates";
 
+type ClipboardRequest = { text: string; resolve: () => void; reject: () => void };
+type ClipboardWindow = Window & { templateCopyRequests: ClipboardRequest[] };
+
 async function openTemplate(page: Page, name: TemplateEntry["slug"]) {
   await page.emulateMedia({ reducedMotion: "reduce" });
   const response = await page.goto(`/templates/${name}`);
@@ -156,6 +159,59 @@ test.describe("template consumer data", () => {
     await page.getByRole("button", { name: "Clear data", exact: true }).click();
     await expect(hub.getByRole("listitem")).toHaveCount(0);
     await expect(hub.getByRole("region", { name: "Contact" })).toHaveCount(0);
+  });
+
+  test("Link Hub keeps the newest copy result when earlier requests settle last", async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      const requests: ClipboardRequest[] = [];
+      (window as ClipboardWindow).templateCopyRequests = requests;
+      Object.defineProperty(navigator, "clipboard", {
+        configurable: true,
+        value: {
+          writeText: (text: string) =>
+            new Promise<void>((resolve, reject) => {
+              requests.push({
+                text,
+                resolve,
+                reject: () => reject(new Error("Earlier clipboard request failed")),
+              });
+            }),
+        },
+      });
+    });
+
+    for (const changedProfile of [false, true]) {
+      await page.goto(origin);
+      const hub = page.getByRole("region", { name: "Consumer link hub", exact: true });
+      const copy = hub.getByRole("button", { name: "Copy email", exact: true });
+      const feedback = hub.getByRole("region", { name: "Contact" }).getByRole("status");
+      await copy.click();
+      if (changedProfile) {
+        await page.getByRole("button", { name: "Load updated data", exact: true }).click();
+      }
+      await copy.click();
+      await expect
+        .poll(() =>
+          page.evaluate(() =>
+            (window as ClipboardWindow).templateCopyRequests.map(({ text }) => text),
+          ),
+        )
+        .toEqual([
+          "mina+docs@example.org",
+          changedProfile ? "jae@example.org" : "mina+docs@example.org",
+        ]);
+      await page.evaluate(() => (window as ClipboardWindow).templateCopyRequests[1].resolve());
+      await expect(feedback).toHaveText("Email copied.");
+      await page.evaluate(async (succeeded) => {
+        const request = (window as ClipboardWindow).templateCopyRequests[0];
+        if (succeeded) request.resolve();
+        else request.reject();
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+      }, changedProfile);
+      await expect(feedback).toHaveText("Email copied.");
+    }
   });
 
   test("template details expose a keyboard-copyable install command outside the demo", async ({

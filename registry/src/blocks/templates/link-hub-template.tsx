@@ -1,7 +1,7 @@
 "use client";
 
 import { AtSign, BookOpen, GitFork, LayoutGrid, Mail, UserRound } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button-variants";
@@ -24,6 +24,7 @@ type LinkHubTemplateProps = {
 export default function LinkHubTemplate({ profile, links }: LinkHubTemplateProps) {
   const [group, setGroup] = useState<string | null>(null);
   const [copyState, setCopyState] = useState<{ email: string; message: string } | null>(null);
+  const copyRequest = useRef(0);
   const groups = [...new Set(links.map((link) => link.group))];
   const selectedGroup = group !== null && groups.includes(group) ? group : null;
   const filteredLinks = links.filter(
@@ -33,10 +34,13 @@ export default function LinkHubTemplate({ profile, links }: LinkHubTemplateProps
   async function copyEmail() {
     const email = profile.email;
     if (!email) return;
+    const request = ++copyRequest.current;
     try {
       await navigator.clipboard.writeText(email);
+      if (request !== copyRequest.current) return;
       setCopyState({ email, message: "Email copied." });
     } catch {
+      if (request !== copyRequest.current) return;
       setCopyState({
         email,
         message: "Could not copy. Select the email address above and copy it manually.",

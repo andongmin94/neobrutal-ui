@@ -5,6 +5,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
 import BlogTemplate from "../src/components/templates/blog-template";
+import BlogPostTemplate from "../src/components/templates/blog-post-template";
 import LinkHubTemplate from "../src/components/templates/link-hub-template";
 import { registryInstallCommand } from "../src/data/registry-endpoints";
 import TEMPLATES from "../src/data/templates";
@@ -100,6 +101,46 @@ test("blog sorts publication times, encodes reading links and preserves supplied
   const empty = renderToStaticMarkup(createElement(BlogTemplate, { posts: [] }));
   assert.match(empty, /No posts found\./);
   assert.doesNotMatch(empty, /href="\/blog\//);
+});
+
+test("blog reading sections resolve unique heading references for caller slugs", () => {
+  const sections = [
+    { heading: "First topic", body: ["First paragraph."] },
+    { heading: "Second topic", body: ["Second paragraph."] },
+  ];
+  const posts: BlogPost[] = ["field notes / 한글", "field%20notes"].map((slug) => ({
+    slug,
+    title: "Field notes",
+    summary: "Notes from the application.",
+    topic: "Engineering",
+    publishedAt: "2026-01-01",
+    publishedLabel: "Jan 1",
+    readTime: "2 min",
+    intro: "Introduction.",
+    sections,
+  }));
+  const html = renderToStaticMarkup(
+    createElement(
+      "div",
+      null,
+      posts.map((post) => createElement(BlogPostTemplate, { key: post.slug, post })),
+    ),
+  );
+  const headings = new Map(
+    [...html.matchAll(/<h2\b[^>]*id="([^"]+)"[^>]*>([^<]+)<\/h2>/g)].map(([, id, heading]) => [
+      id,
+      heading,
+    ]),
+  );
+  const references = [...html.matchAll(/<section\b[^>]*aria-labelledby="([^"]+)"/g)].map(
+    ([, reference]) => reference,
+  );
+  assert.equal(headings.size, posts.length * sections.length);
+  assert.equal(references.length, posts.length * sections.length);
+  for (const [index, reference] of references.entries()) {
+    assert.equal(reference.split(/\s+/).length, 1, "a section references one heading ID");
+    assert.equal(headings.get(reference), sections[index % sections.length].heading);
+  }
 });
 
 test("link hub renders supplied profile, groups and destinations without demo fallbacks", () => {

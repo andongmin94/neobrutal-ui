@@ -61,7 +61,7 @@ export default function BlogPostTemplate({ backHref = "/blog", post }: BlogPostT
 
           <div className="mt-9 space-y-10">
             {post.sections.map((section, index) => {
-              const headingId = `${post.slug}-section-${index + 1}`;
+              const headingId = `${encodeURIComponent(post.slug)}-section-${index + 1}`;
 
               return (
                 <section key={section.heading} aria-labelledby={headingId}>

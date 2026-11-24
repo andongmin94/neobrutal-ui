@@ -1,24 +1,35 @@
 "use client";
 
 import { Check, Copy } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function CopyButton({ text, label = "Copy" }: { text: string; label?: string }) {
-  const [state, setState] = useState<"idle" | "copied" | "failed">("idle");
+  const [result, setResult] = useState<{ text: string; status: "copied" | "failed" } | null>(null);
+  const latestCopy = useRef<object | undefined>(undefined);
+  const resetTimer = useRef<number | undefined>(undefined);
+  const state = result?.text === text ? result.status : "idle";
 
-  useEffect(() => {
-    if (state === "idle") return;
-    const timer = window.setTimeout(() => setState("idle"), 1600);
-    return () => window.clearTimeout(timer);
-  }, [state]);
+  useEffect(
+    () => () => {
+      latestCopy.current = undefined;
+      window.clearTimeout(resetTimer.current);
+    },
+    [],
+  );
 
   async function copy() {
+    const request = {};
+    latestCopy.current = request;
+    window.clearTimeout(resetTimer.current);
+    let status: "copied" | "failed" = "copied";
     try {
       await navigator.clipboard.writeText(text);
-      setState("copied");
     } catch {
-      setState("failed");
+      status = "failed";
     }
+    if (latestCopy.current !== request) return;
+    setResult({ text, status });
+    resetTimer.current = window.setTimeout(() => setResult(null), 1600);
   }
 
   const status = state === "copied" ? "Copied" : state === "failed" ? "Copy failed" : label;
