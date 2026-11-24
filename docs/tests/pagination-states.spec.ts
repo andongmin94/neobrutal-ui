@@ -10,7 +10,7 @@ test("pagination wraps in narrow containers and mirrors directional icons", asyn
   await expect(navigation.locator('[aria-current="page"]')).toHaveText("2");
   await navigation.evaluate((element) => {
     element.style.maxWidth = "220px";
-    element.dir = "rtl";
+    element.setAttribute("dir", "rtl");
   });
   const list = navigation.locator('[data-slot="pagination-content"]');
   await expect(list).toHaveCSS("flex-wrap", "wrap");
@@ -20,7 +20,7 @@ test("pagination wraps in narrow containers and mirrors directional icons", asyn
   for (const part of ["previous", "next"]) {
     const link = navigation.locator(`[data-slot="pagination-${part}"]`);
     await expect(link.locator("svg")).toHaveCSS("rotate", "180deg");
-    await expect(link).toHaveCSS("transition-duration", "0s");
+    await expect(link).toHaveCSS("transition-property", "none");
   }
 });
 
