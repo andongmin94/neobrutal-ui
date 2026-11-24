@@ -26,7 +26,7 @@ export default function TabsDemo() {
         className="w-full max-w-[400px]"
         onValueChange={() => setMessage("")}
       >
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList aria-label="Account settings" className="grid w-full grid-cols-2">
           <TabsTrigger value="account">Account</TabsTrigger>
           <TabsTrigger value="password">Password</TabsTrigger>
         </TabsList>

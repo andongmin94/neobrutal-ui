@@ -177,6 +177,37 @@ for (const direction of ["ltr", "rtl"] as const) {
     await expect(keyGroup.getByRole("textbox")).toBeFocused();
   });
 
+  test(`Tabs narrow ${direction} lists keep the final tab reachable`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto(`${origin}?surface=tabs-narrow&direction=${direction}`);
+    for (const variant of ["default", "line"]) {
+      const list = page.getByRole("tablist", { name: `${variant} views` });
+      const first = list.getByRole("tab", { name: "Overview", exact: true });
+      const last = list.getByRole("tab", { name: "Release notes", exact: true });
+      await expect(list).toHaveCSS("overflow-x", "auto");
+      expect(await list.evaluate((node) => node.scrollWidth - node.clientWidth)).toBeGreaterThan(0);
+      await first.focus();
+      await first.press("End");
+      await expect(last).toBeFocused();
+      await expect(last).toHaveAttribute("aria-selected", "true");
+      await expect
+        .poll(async () => {
+          const outer = (await list.boundingBox())!;
+          const inner = (await last.boundingBox())!;
+          return Math.max(outer.x - inner.x, inner.x + inner.width - outer.x - outer.width);
+        })
+        .toBeLessThanOrEqual(1);
+      if (variant === "line") {
+        await expect
+          .poll(() => last.evaluate((node) => getComputedStyle(node, "::after").opacity))
+          .toBe("1");
+        await expect
+          .poll(() => last.evaluate((node) => getComputedStyle(node, "::after").bottom))
+          .toBe("0px");
+      }
+    }
+  });
+
   test(`Tabs vertical line ${direction} indicator faces its panel and retains arrow navigation`, async ({
     page,
   }) => {

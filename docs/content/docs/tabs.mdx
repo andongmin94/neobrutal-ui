@@ -71,4 +71,4 @@ Tabs delegates selection, keyboard navigation, refs, and rendering to Base UI. U
 
 ## Accessibility
 
-Name the tab list. Keep labels short and test arrows, Home/End, and Tab into the panel. Set `activateOnFocus={false}` on TabsList when opening a panel triggers expensive work. Do not hide critical instructions behind an undiscoverable tab.
+Name the tab list. Keep labels short and test arrows, Home/End, and Tab into the panel. Horizontal lists scroll within their available width when the triggers do not fit; the focused tab remains reachable without scrolling the page sideways. Vertical lists use at most half of the root width for the list and wrap long labels. The horizontal line indicator stays inside its trigger so it remains visible in the scrolling list. Set `activateOnFocus={false}` on TabsList when opening a panel triggers expensive work. Do not hide critical instructions behind an undiscoverable tab.

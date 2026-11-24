@@ -216,6 +216,32 @@ function TabsDirectionFixture() {
   );
 }
 
+function NarrowTabsFixture() {
+  const direction = new URLSearchParams(location.search).get("direction") === "rtl" ? "rtl" : "ltr";
+  const views = ["Overview", "Activity", "Permissions", "Audit history", "Release notes"];
+
+  return (
+    <section className="grid w-[200px] gap-4">
+      {(["default", "line"] as const).map((variant) => (
+        <Tabs key={variant} dir={direction} defaultValue={views[0]}>
+          <TabsList variant={variant} aria-label={`${variant} views`}>
+            {views.map((view) => (
+              <TabsTrigger key={view} value={view}>
+                {view}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          {views.map((view) => (
+            <TabsContent key={view} value={view}>
+              {view} panel
+            </TabsContent>
+          ))}
+        </Tabs>
+      ))}
+    </section>
+  );
+}
+
 function CarouselFixture() {
   const [blocked, setBlocked] = React.useState(false);
   const [locked, setLocked] = React.useState(false);
@@ -603,6 +629,7 @@ const fixtures = {
   "input-group-disabled": <InputGroupDisabledFixture />,
   "input-group-direction": <InputGroupDirectionFixture />,
   "tabs-direction": <TabsDirectionFixture />,
+  "tabs-narrow": <NarrowTabsFixture />,
   "sidebar-form": <SidebarFormFixture />,
   "carousel-keyboard": (
     <div style={{ padding: 64 }}>
