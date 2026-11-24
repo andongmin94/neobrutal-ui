@@ -150,7 +150,9 @@ test.describe("template consumer data", () => {
         await text.evaluate((element) => element.scrollWidth - element.clientWidth),
       ).toBeLessThanOrEqual(1);
     }
-    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(321);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+      321,
+    );
   });
 
   test("Link Hub derives groups and copies the current profile email", async ({ page }) => {
