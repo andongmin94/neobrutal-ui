@@ -17,7 +17,7 @@ export default function DatePickerDemo() {
   return (
     <div className="w-full max-w-sm">
       <div className="grid gap-2">
-        <label htmlFor={id} className="text-sm font-heading">
+        <label id={`${id}-label`} htmlFor={id} className="text-sm font-heading">
           Project date
         </label>
         <Popover open={open} onOpenChange={setOpen}>
@@ -27,13 +27,16 @@ export default function DatePickerDemo() {
                 id={id}
                 ref={trigger}
                 variant="neutral"
+                aria-labelledby={`${id}-label ${id}-value`}
                 aria-describedby={`${id}-hint`}
                 className="w-full justify-start text-left font-base"
               />
             }
           >
             <CalendarIcon aria-hidden="true" />
-            <span className="flex-1">{date ? format(date, "PPP") : "Pick a date"}</span>
+            <span id={`${id}-value`} className="min-w-0 flex-1 truncate">
+              {date ? format(date, "PPP") : "Pick a date"}
+            </span>
             <ChevronDown aria-hidden="true" />
           </PopoverTrigger>
           <PopoverContent

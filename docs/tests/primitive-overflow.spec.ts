@@ -345,12 +345,21 @@ test("NavigationMenu fits short viewports and scrolls to every link by pointer a
 test("InputOTP readOnly blocks transformed paste and preserves caller capture", async ({
   page,
 }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto(`${origin}?surface=otp-paste`);
   for (const readOnly of [true, false]) {
     const field = page.getByRole("region", { name: readOnly ? "Read-only OTP" : "Editable OTP" });
     const input = field.getByRole("textbox", { name: "Verification code" });
     await expect(input).toHaveValue("1234");
     await expect(input).toHaveJSProperty("readOnly", readOnly);
+    const slots = field.locator('[data-slot="input-otp-slot"]');
+    await expect(slots).toHaveCount(4);
+    for (const slot of await slots.all()) {
+      await expect(slot).toHaveCSS("transition-duration", "0s");
+    }
+    expect(
+      await field.evaluate((node) => node.scrollWidth - node.clientWidth),
+    ).toBeLessThanOrEqual(1);
     await input.focus();
     await input.evaluate((node: HTMLInputElement) => {
       node.setSelectionRange(0, node.value.length);

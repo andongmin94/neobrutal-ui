@@ -199,7 +199,7 @@ const catalog = JSON.parse(fs.readFileSync(path.join(sourceDir, "registry.json")
 const descriptions = Object.fromEntries(catalog.items.map((item) => [item.name, item.description]));
 Object.assign(descriptions, {
   combobox: "A searchable option picker composed from a popover and command list.",
-  "date-picker": "A calendar in a popover for choosing a single date or date range.",
+  "date-picker": "A calendar in a popover for choosing and clearing a single date.",
 });
 fs.writeFileSync(
   path.join(docsSourceDir, "data", "component-descriptions.json"),

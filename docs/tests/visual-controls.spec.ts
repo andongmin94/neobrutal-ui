@@ -64,7 +64,8 @@ test("date picker stays anchored, uses a neutral surface, and restores focus", a
 }, info) => {
   await page.goto("/docs/date-picker");
   const preview = page.locator(".component-preview").first();
-  const trigger = preview.getByRole("button", { name: "Project date", exact: true });
+  const trigger = preview.getByRole("button", { name: /^Project date / });
+  await expect(trigger).toHaveAccessibleName("Project date Pick a date");
   await expect(trigger).toBeVisible();
   await trigger.evaluate((node) => {
     window.scrollBy(0, node.getBoundingClientRect().top - 160);
@@ -107,8 +108,10 @@ test("date picker stays anchored, uses a neutral surface, and restores focus", a
   await expect(calendar).toBeHidden();
   await expect(trigger).toBeFocused();
   await expect(preview.locator("output")).toContainText("Selected:");
+  await expect(trigger).toHaveAccessibleName(/^Project date (?!Pick a date).+/);
   await preview.getByRole("button", { name: "Clear", exact: true }).click();
   await expect(preview.locator("output")).toHaveText("No date selected");
+  await expect(trigger).toHaveAccessibleName("Project date Pick a date");
   await expect(trigger).toBeFocused();
 });
 

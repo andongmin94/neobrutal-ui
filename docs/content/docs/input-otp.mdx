@@ -67,10 +67,11 @@ export default function VerificationCode() {
 | `InputOTP.value` / `onChange` | Controlled code string | Uncontrolled |
 | `InputOTP.pattern` | Allowed-character regex string | Upstream behavior |
 | `InputOTP.placeholder` | Per-slot hint shown only while the whole code is empty | Unset |
+| `InputOTP.containerClassName` | Classes for the visible slot container; className styles the underlying input | Unset |
 | `InputOTPGroup` | Visual slot group | Flex row |
 | `InputOTPSlot.index` | Zero-based slot index | Required |
 | `InputOTPSeparator` | Decorative group separator | Dot |
 
 ## Accessibility
 
-Label the underlying input and explain the length. Set autocomplete and input mode appropriately and keep paste enabled. Associate verification errors with the field. Do not log or publish real authentication codes, and do not treat a complete-length value as proof that verification succeeded.
+Label the underlying input and explain the length. Slots shrink within narrow containers, and the simulated caret stops blinking when reduced motion is requested. Set autocomplete and input mode appropriately and keep paste enabled. Associate verification errors with the field. Do not log or publish real authentication codes, and do not treat a complete-length value as proof that verification succeeded.

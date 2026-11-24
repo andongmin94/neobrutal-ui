@@ -193,7 +193,7 @@ function OtpPasteField({ readOnly }: { readOnly: boolean }) {
   const [changes, setChanges] = React.useState(0);
   const [captures, setCaptures] = React.useState(0);
   return (
-    <section aria-label={readOnly ? "Read-only OTP" : "Editable OTP"}>
+    <section aria-label={readOnly ? "Read-only OTP" : "Editable OTP"} className="w-28">
       <InputOTP
         aria-label="Verification code"
         maxLength={4}

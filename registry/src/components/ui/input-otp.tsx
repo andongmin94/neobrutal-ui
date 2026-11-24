@@ -18,7 +18,7 @@ function InputOTP({
     <OTPInput
       data-slot="input-otp"
       containerClassName={cn(
-        "cn-input-otp flex items-center gap-2 has-disabled:opacity-50",
+        "cn-input-otp flex min-w-0 max-w-full items-center gap-2 has-disabled:opacity-50",
         containerClassName,
       )}
       spellCheck={false}
@@ -34,7 +34,7 @@ function InputOTP({
 
 function InputOTPGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div data-slot="input-otp-group" className={cn("flex items-center", className)} {...props} />
+    <div data-slot="input-otp-group" className={cn("flex min-w-0 items-center", className)} {...props} />
   );
 }
 
@@ -53,7 +53,7 @@ function InputOTPSlot({
       data-slot="input-otp-slot"
       data-active={isActive}
       className={cn(
-        "relative flex size-10 items-center justify-center border-y-2 border-r-2 border-input bg-secondary-background text-sm font-base text-foreground transition-all first:rounded-l-base first:border-l-2 last:rounded-r-base data-[active=true]:z-10 data-[active=true]:ring-1 data-[active=true]:ring-ring",
+        "relative flex h-10 w-10 min-w-0 items-center justify-center border-y-2 border-e-2 border-input bg-secondary-background text-sm font-base text-foreground transition-all motion-reduce:transition-none first:rounded-s-base first:border-s-2 last:rounded-e-base data-[active=true]:z-10 data-[active=true]:ring-1 data-[active=true]:ring-ring",
         className,
       )}
       {...props}
@@ -61,7 +61,7 @@ function InputOTPSlot({
       {char ?? (placeholderChar && <span className="text-foreground/65">{placeholderChar}</span>)}
       {hasFakeCaret && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="h-4 w-px animate-caret-blink bg-current duration-1000" />
+          <div className="h-4 w-px animate-caret-blink bg-current duration-1000 motion-reduce:animate-none" />
         </div>
       )}
     </div>
