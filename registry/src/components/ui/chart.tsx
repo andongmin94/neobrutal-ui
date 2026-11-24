@@ -247,7 +247,7 @@ function ChartTooltipContent({
       <div className="grid gap-1.5">
         {payload.map((item, index) => {
           if (item.type === "none") return null;
-          const key = `${nameKey ?? item.name ?? item.dataKey ?? "value"}`;
+          const key = `${nameKey ?? item.dataKey ?? item.name ?? "value"}`;
           const itemConfig = getPayloadConfigFromPayload(config, item, key);
           const indicatorColor = color ?? item.payload?.fill ?? item.color;
           let formatted: React.ReactNode;
@@ -274,13 +274,20 @@ function ChartTooltipContent({
               )}
             >
               {formatted !== undefined && !formattedTuple ? (
-                formatted
+                nestLabel ? (
+                  <div className="grid gap-1.5">
+                    {tooltipLabel}
+                    {formatted}
+                  </div>
+                ) : (
+                  formatted
+                )
               ) : (
                 <>
-                  {itemConfig?.icon ? (
-                    <itemConfig.icon />
-                  ) : (
-                    !hideIndicator && (
+                  {!hideIndicator &&
+                    (itemConfig?.icon ? (
+                      <itemConfig.icon />
+                    ) : (
                       <div
                         className={cn(
                           "shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg)",
@@ -299,8 +306,7 @@ function ChartTooltipContent({
                           } as React.CSSProperties
                         }
                       />
-                    )
-                  )}
+                    ))}
                   <div
                     className={cn(
                       "flex flex-1 justify-between leading-none",

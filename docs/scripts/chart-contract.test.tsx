@@ -383,6 +383,47 @@ test("tooltip headers preserve numeric axis labels including zero", () => {
   assert.equal(formattedLabel, 0);
 });
 
+test("tooltip rows use series config keys and hide configured icons on request", () => {
+  const payload = [
+    { graphicalItemId: "visits", dataKey: "visits", name: "Native name", value: 120 },
+  ] satisfies NonNullable<ComponentProps<typeof ChartTooltipContent>["payload"]>;
+  const config = {
+    visits: { label: "Configured visits", icon: () => <span data-series-icon="">Marker</span> },
+  };
+  for (const hideIndicator of [false, true]) {
+    const html = renderToStaticMarkup(
+      <ChartContainer config={config}>
+        <ChartTooltipContent active payload={payload} label="January" hideIndicator={hideIndicator} />
+      </ChartContainer>,
+    );
+    assert.match(html, /Configured visits/);
+    assert.doesNotMatch(html, /Native name/);
+    assert.equal(html.includes("data-series-icon"), !hideIndicator);
+  }
+});
+
+test("single-series custom tooltip rows preserve their heading", () => {
+  const payload = [{ graphicalItemId: "visits", dataKey: "visits", value: 120, name: "Visits" }];
+  for (const indicator of ["dot", "line", "dashed"] as const) {
+    for (const hideLabel of [false, true]) {
+      const html = renderToStaticMarkup(
+        <ChartContainer config={{ visits: { label: "Visits" } }}>
+          <ChartTooltipContent
+            active
+            payload={payload}
+            label="January"
+            indicator={indicator}
+            hideLabel={hideLabel}
+            formatter={() => <strong>120 visits</strong>}
+          />
+        </ChartContainer>,
+      );
+      assert.match(html, /<strong>120 visits<\/strong>/);
+      assert.equal(html.includes("January"), !hideLabel);
+    }
+  }
+});
+
 test("legends use native series names unless an explicit config label is supplied", () => {
   const payload = [{ dataKey: "visits", value: "Visits", color: "blue" }];
   for (const [label, expected] of [
