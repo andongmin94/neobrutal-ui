@@ -430,3 +430,34 @@ test("customizer uses scoped tokens, full CSS export, and reversible defaults", 
   await expect(page.getByLabel("Palette", { exact: true })).toHaveValue("mono");
   await expect(page.locator("[data-theme-preview]")).toHaveCSS("--radius", "5px");
 });
+
+test("breadcrumb keeps separators with their destinations and exposes real menu links", async ({
+  page,
+}) => {
+  await page.goto("/docs/breadcrumb");
+  const preview = page.locator('.component-preview[data-component="breadcrumb"]').first();
+  const trail = preview.locator('[data-slot="breadcrumb"]');
+  const list = trail.locator('[data-slot="breadcrumb-list"]');
+  await expect(list.locator(":scope > li")).toHaveCount(4);
+  await expect(list.locator(':scope > li > [data-slot="breadcrumb-separator"]')).toHaveCount(3);
+  const current = trail.locator('[aria-current="page"]');
+  await expect(current).toHaveText("Breadcrumb");
+  await expect(current).not.toHaveAttribute("role", "link");
+  await trail.evaluate((element) => {
+    element.setAttribute("dir", "rtl");
+    element.style.width = "120px";
+  });
+  const separator = trail.locator('[data-slot="breadcrumb-separator"]').first();
+  await expect(separator.locator("svg")).toHaveCSS("rotate", "180deg");
+  await expect(current).toBeVisible();
+  expect(
+    await list.evaluate((element) => element.scrollWidth - element.clientWidth),
+  ).toBeLessThanOrEqual(1);
+  await trail.getByRole("button", { name: "Show intermediate pages" }).click();
+  const menu = page.getByRole("menu");
+  await expect(menu.getByRole("menuitem", { name: "Design tokens" })).toHaveAttribute(
+    "href",
+    "/docs/design-tokens",
+  );
+  await page.keyboard.press("Escape");
+});

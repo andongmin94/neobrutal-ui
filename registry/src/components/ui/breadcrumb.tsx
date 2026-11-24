@@ -17,7 +17,7 @@ function BreadcrumbList({ className, ...props }: React.ComponentProps<"ol">) {
     <ol
       data-slot="breadcrumb-list"
       className={cn(
-        "flex flex-wrap items-center gap-1.5 text-sm font-base wrap-break-word text-foreground sm:gap-2.5",
+        "m-0 flex min-w-0 list-none flex-wrap items-center gap-1.5 p-0 text-sm font-base text-foreground sm:gap-2.5",
         className,
       )}
       {...props}
@@ -29,7 +29,7 @@ function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
   return (
     <li
       data-slot="breadcrumb-item"
-      className={cn("inline-flex items-center gap-1.5", className)}
+      className={cn("inline-flex min-w-0 max-w-full items-center gap-1.5 wrap-anywhere", className)}
       {...props}
     />
   );
@@ -40,7 +40,10 @@ function BreadcrumbLink({ className, render, ...props }: useRender.ComponentProp
     defaultTagName: "a",
     props: {
       ...props,
-      className: cn("transition-colors hover:text-main", className),
+      className: cn(
+        "min-w-0 underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-ring",
+        className,
+      ),
     },
     render,
     state: {
@@ -53,26 +56,24 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       data-slot="breadcrumb-page"
-      role="link"
-      aria-disabled="true"
       aria-current="page"
-      className={cn(className)}
+      className={cn("min-w-0", className)}
       {...props}
     />
   );
 }
 
-function BreadcrumbSeparator({ children, className, ...props }: React.ComponentProps<"li">) {
+function BreadcrumbSeparator({ children, className, ...props }: React.ComponentProps<"span">) {
   return (
-    <li
+    <span
       data-slot="breadcrumb-separator"
       role="presentation"
       aria-hidden="true"
-      className={cn("[&>svg]:size-3.5", className)}
+      className={cn("shrink-0 [&>svg]:size-3.5", className)}
       {...props}
     >
-      {children ?? <ChevronRightIcon />}
-    </li>
+      {children ?? <ChevronRightIcon className="rtl:rotate-180" />}
+    </span>
   );
 }
 

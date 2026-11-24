@@ -50,12 +50,12 @@ export default function DocumentationTrail() {
         <BreadcrumbItem>
           <BreadcrumbLink href="/">Home</BreadcrumbLink>
         </BreadcrumbItem>
-        <BreadcrumbSeparator />
         <BreadcrumbItem>
+          <BreadcrumbSeparator />
           <BreadcrumbLink href="/docs">Documentation</BreadcrumbLink>
         </BreadcrumbItem>
-        <BreadcrumbSeparator />
         <BreadcrumbItem>
+          <BreadcrumbSeparator />
           <BreadcrumbPage>Components</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
@@ -72,11 +72,11 @@ export default function DocumentationTrail() {
 | `BreadcrumbList` / `BreadcrumbItem` | Ordered trail and steps | — |
 | `BreadcrumbLink.href` / `render` | Destination or router-link composition | Anchor |
 | `BreadcrumbPage` | Current non-interactive page | `aria-current="page"` |
-| `BreadcrumbSeparator` | Decorative divider | Chevron |
+| `BreadcrumbSeparator` | Decorative divider inside the following BreadcrumbItem | Chevron, mirrored in RTL |
 | `BreadcrumbEllipsis` | Visual omitted-level indicator | Not a menu button |
 
 Use `BreadcrumbLink`'s `render` prop to compose a router link. The custom link must forward its props and ref to the underlying anchor.
 
 ## Accessibility
 
-Use descriptive link text and mark only the current page. Separators are decorative. An ellipsis alone does not reveal hidden levels: compose a real menu trigger when users need to open the omitted trail. On narrow screens allow wrapping rather than hiding the current page.
+Use descriptive link text and mark only the current page. Place each decorative separator inside the following BreadcrumbItem so it cannot wrap onto a line by itself. An ellipsis alone does not reveal hidden levels: compose a real menu trigger with actionable destinations, as in the live preview. On narrow screens allow wrapping rather than hiding the current page.

@@ -35,8 +35,8 @@ export default function Page() {
                 <BreadcrumbItem className="hidden md:block">
                   <BreadcrumbLink href="/docs">Documentation</BreadcrumbLink>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
+                  <BreadcrumbSeparator className="hidden md:block" />
                   <BreadcrumbPage>Workspace overview</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>

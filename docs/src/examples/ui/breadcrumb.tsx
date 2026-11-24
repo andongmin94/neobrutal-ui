@@ -21,8 +21,8 @@ export default function BreadcrumbDemo() {
         <BreadcrumbItem>
           <BreadcrumbLink href="/">Home</BreadcrumbLink>
         </BreadcrumbItem>
-        <BreadcrumbSeparator />
         <BreadcrumbItem>
+          <BreadcrumbSeparator />
           <DropdownMenu>
             <DropdownMenuTrigger
               className="grid size-10 place-items-center"
@@ -31,18 +31,22 @@ export default function BreadcrumbDemo() {
               <BreadcrumbEllipsis className="size-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
-              <DropdownMenuItem>Documentation</DropdownMenuItem>
-              <DropdownMenuItem>Themes</DropdownMenuItem>
-              <DropdownMenuItem>GitHub</DropdownMenuItem>
+              <DropdownMenuItem render={<a href="/docs" />}>Documentation</DropdownMenuItem>
+              <DropdownMenuItem render={<a href="/docs/design-tokens" />}>
+                Design tokens
+              </DropdownMenuItem>
+              <DropdownMenuItem render={<a href="/docs/installation" />}>
+                Installation
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </BreadcrumbItem>
-        <BreadcrumbSeparator />
         <BreadcrumbItem>
+          <BreadcrumbSeparator />
           <BreadcrumbLink href="/docs/">Components</BreadcrumbLink>
         </BreadcrumbItem>
-        <BreadcrumbSeparator />
         <BreadcrumbItem>
+          <BreadcrumbSeparator />
           <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
