@@ -72,6 +72,23 @@ test("form errors preserve associations, focus, tokens, and recovery", async ({ 
     body: await preview.locator(".component-preview__canvas").screenshot(),
     contentType: "image/png",
   });
+
+  await input.fill("Edited tester");
+  await expect(preview.getByRole("status")).toHaveText("");
+  await input.fill("");
+  await preview.getByRole("button", { name: "Submit", exact: true }).click();
+  await expect(error).toHaveText("Username must be at least 2 characters.");
+  await expect(input).toHaveAttribute("aria-invalid", "true");
+  await expect(input).toBeFocused();
+  await expect(preview.getByRole("status")).toHaveText("");
+
+  await input.fill("Updated tester");
+  await preview.getByRole("button", { name: "Submit", exact: true }).click();
+  await expect(input).toHaveAttribute("aria-invalid", "false");
+  await expect(error).toHaveCount(0);
+  await expect(preview.getByRole("status")).toHaveText(
+    "Updated tester was updated in this demo. Nothing was saved to a server.",
+  );
 });
 
 // This is an automated contrast regression, not a full accessibility certification.

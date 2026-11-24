@@ -58,6 +58,7 @@ export default function ProfileForm() {
     <Form {...form}>
       <form
         className="grid max-w-sm gap-4"
+        onChange={() => setMessage("")}
         onSubmit={form.handleSubmit((values) => setMessage(`Local preview: ${values.username}`))}
       >
         <FormField

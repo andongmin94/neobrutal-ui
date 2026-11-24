@@ -38,7 +38,11 @@ export default function FormDemo() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onChange={() => setMessage("")}
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-8"
+      >
         <FormField
           control={form.control}
           name="username"
