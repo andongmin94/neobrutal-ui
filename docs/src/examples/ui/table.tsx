@@ -63,10 +63,14 @@ export default function TableDemo() {
       <TableCaption className="text-foreground">A list of your recent invoices.</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead scope="col" className="w-[100px]">Invoice</TableHead>
+          <TableHead scope="col" className="w-[100px]">
+            Invoice
+          </TableHead>
           <TableHead scope="col">Status</TableHead>
           <TableHead scope="col">Method</TableHead>
-          <TableHead scope="col" className="text-right">Amount</TableHead>
+          <TableHead scope="col" className="text-right">
+            Amount
+          </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
