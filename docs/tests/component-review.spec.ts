@@ -180,7 +180,7 @@ for (const component of ["checkbox", "switch"]) {
 
       const disabled = canvas.getByRole("checkbox", { name: /^Private preview link/ });
       await expect(disabled).toBeDisabled();
-      await canvas.getByText("Private preview link", { exact: true }).click();
+      await canvas.getByText("Private preview link", { exact: true }).click({ force: true });
       await expect(disabled).not.toBeChecked();
     }
   });
