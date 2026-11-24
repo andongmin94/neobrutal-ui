@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 
 import { cn } from "@/lib/utils";
@@ -36,25 +35,14 @@ function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
   );
 }
 
-function BreadcrumbLink({
-  asChild = false,
-  children,
-  className,
-  render,
-  ...props
-}: useRender.ComponentProps<"a"> & { asChild?: boolean }) {
-  const child = React.Children.toArray(children).find(React.isValidElement);
-
+function BreadcrumbLink({ className, render, ...props }: useRender.ComponentProps<"a">) {
   return useRender({
     defaultTagName: "a",
-    props: mergeProps<"a">(
-      {
-        className: cn("transition-colors hover:text-main", className),
-        children: asChild ? undefined : children,
-      },
-      props,
-    ),
-    render: asChild ? child : render,
+    props: {
+      ...props,
+      className: cn("transition-colors hover:text-main", className),
+    },
+    render,
     state: {
       slot: "breadcrumb-link",
     },

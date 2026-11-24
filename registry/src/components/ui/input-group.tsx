@@ -56,7 +56,11 @@ function InputGroupAddon({
       {...mergeProps<"div">(
         {
           onClick: (event) => {
-            if (event.defaultPrevented || (event.target as HTMLElement).closest("button")) return;
+            if (
+              event.defaultPrevented ||
+              (event.target as HTMLElement).closest("button, [role='button'], a[href]")
+            )
+              return;
             event.currentTarget.parentElement
               ?.querySelector<HTMLInputElement | HTMLTextAreaElement>("input, textarea")
               ?.focus();

@@ -61,7 +61,7 @@ test("Badge merges the rendered link's handlers, styles and refs", async ({ page
   await expect(page).toHaveURL(`${origin}#destination`);
 });
 
-test("InputGroupAddon preserves consumer clicks, cancellation and nested button focus", async ({
+test("InputGroupAddon preserves consumer clicks, cancellation and nested control focus", async ({
   page,
 }) => {
   const input = page.getByRole("textbox", { name: "Search field" });
@@ -75,6 +75,25 @@ test("InputGroupAddon preserves consumer clicks, cancellation and nested button 
   await expect(input).not.toBeFocused();
   await expect(page.getByTestId("addon-cancelled")).toHaveText("1");
   await button.click();
+  await expect(input).not.toBeFocused();
+
+  const customButton = page.getByRole("button", { name: "Keep custom button focus" });
+  await customButton.locator("span").click();
+  await expect(customButton).toBeFocused();
+  await expect(page.getByTestId("addon-custom-button-calls")).toHaveText("1");
+  await customButton.press("Enter");
+  await expect(customButton).toBeFocused();
+  await expect(page.getByTestId("addon-custom-button-calls")).toHaveText("2");
+  await customButton.press("Space");
+  await expect(customButton).toBeFocused();
+  await expect(page.getByTestId("addon-custom-button-calls")).toHaveText("3");
+
+  const link = page.getByRole("link", { name: "Input help" });
+  await link.locator("span").click();
+  await expect(link).toBeFocused();
+  await expect(page).toHaveURL(`${origin}#input-help`);
+  await link.press("Enter");
+  await expect(link).toBeFocused();
   await expect(input).not.toBeFocused();
 });
 

@@ -93,6 +93,7 @@ function BadgeFixture() {
 function InputFixture() {
   const [calls, setCalls] = React.useState(0);
   const [cancelled, setCancelled] = React.useState(0);
+  const [customButtonCalls, setCustomButtonCalls] = React.useState(0);
   return (
     <section aria-label="Input composition">
       <InputGroup>
@@ -112,9 +113,24 @@ function InputFixture() {
         <InputGroupAddon>
           <InputGroupButton>Keep button focus</InputGroupButton>
         </InputGroupAddon>
+        <InputGroupAddon>
+          <InputGroupButton
+            nativeButton={false}
+            render={<div />}
+            onClick={() => setCustomButtonCalls((value) => value + 1)}
+          >
+            <span>Keep custom button focus</span>
+          </InputGroupButton>
+        </InputGroupAddon>
+        <InputGroupAddon>
+          <a href="#input-help">
+            <span>Input help</span>
+          </a>
+        </InputGroupAddon>
       </InputGroup>
       <output data-testid="addon-calls">{calls}</output>
       <output data-testid="addon-cancelled">{cancelled}</output>
+      <output data-testid="addon-custom-button-calls">{customButtonCalls}</output>
     </section>
   );
 }

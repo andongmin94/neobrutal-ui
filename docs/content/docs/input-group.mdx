@@ -6,7 +6,9 @@ shadcnDocsLink: https://ui.shadcn.com/docs/components/input-group
 
 Use Input Group to keep a field and its supporting controls together. The root is a layout container, not an input or form. Use InputGroupInput or InputGroupTextarea for the actual value.
 
-The component module owns its client boundary, so a Next.js App Router page can import these parts while remaining a Server Component. Put your own state and event callbacks in a Client Component. Clicking a non-button addon focuses its input or textarea. An addon `onClick` runs before that focus action and can cancel it with `event.preventDefault()`. `InputGroupButton.className` also accepts a function of the native button state.
+The component module owns its client boundary, so a Next.js App Router page can import these parts while remaining a Server Component. Put your own state and event callbacks in a Client Component.
+
+Clicking passive addon text or an icon focuses its input or textarea. Nested native buttons, semantic buttons such as `InputGroupButton` with `render={<div />}` and `nativeButton={false}`, and anchor links with `href` retain their normal focus behavior. Style destination anchors directly with [buttonVariants](/docs/button#navigation-and-composition). An addon `onClick` runs before the field-focus action and can cancel it with `event.preventDefault()`. `InputGroupButton.className` also accepts a function of the native button state.
 
 <ComponentPreview component="input-group">
 <include cwd lang="tsx">
