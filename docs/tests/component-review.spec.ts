@@ -271,6 +271,36 @@ test("scroll area has a name and scrolls by keyboard", async ({ page }, info) =>
   await capture(canvas, "scroll-area-last-activity", info);
 });
 
+test("scroll area has a name and renders both overflowing axes", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/docs/scroll-area");
+  const preview = page.locator('.component-preview[data-component="scroll-area"]').nth(1);
+  const canvas = await readyCanvas(preview);
+  const viewport = canvas.getByRole("region", { name: "Registry release matrix" });
+  await viewport.scrollIntoViewIfNeeded();
+  await viewport.focus();
+  await expect(viewport).toBeFocused();
+  const vertical = canvas.locator(
+    '[data-slot="scroll-area-scrollbar"][data-orientation="vertical"]',
+  );
+  const horizontal = canvas.locator(
+    '[data-slot="scroll-area-scrollbar"][data-orientation="horizontal"]',
+  );
+  for (const bar of [vertical, horizontal]) {
+    await expect(bar).toBeVisible();
+    await expect(bar).toHaveCSS("opacity", "1");
+  }
+  await expect(canvas.locator('[data-slot="scroll-area-corner"]')).toBeVisible();
+  await viewport.press("ArrowRight");
+  await expect
+    .poll(() => viewport.evaluate((node) => node.scrollLeft))
+    .toBeGreaterThan(0);
+  await viewport.press("ArrowDown");
+  await expect
+    .poll(() => viewport.evaluate((node) => node.scrollTop))
+    .toBeGreaterThan(0);
+});
+
 test("skeleton exposes one loading status and hides decorative shapes", async ({ page }) => {
   const canvas = await openCanvas(page, "skeleton");
   const region = canvas.getByRole("region", { name: "Profile", exact: true });

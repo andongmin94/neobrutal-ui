@@ -27,13 +27,14 @@ function ScrollArea({
         role={ariaLabel || ariaLabelledBy ? "region" : undefined}
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledBy}
-        className="h-full w-full rounded-[inherit] font-base transition-[color,box-shadow] outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        className="h-full w-full rounded-[inherit] font-base transition-[color,box-shadow] motion-reduce:transition-none outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring"
       >
         <ScrollAreaPrimitive.Content data-slot="scroll-area-content">
           {children}
         </ScrollAreaPrimitive.Content>
       </ScrollAreaPrimitive.Viewport>
       <ScrollBar />
+      <ScrollBar orientation="horizontal" />
       <ScrollAreaPrimitive.Corner data-slot="scroll-area-corner" />
     </ScrollAreaPrimitive.Root>
   );
@@ -51,7 +52,7 @@ function ScrollBar({
       {...props}
       className={(state) =>
         cn(
-          "flex touch-none p-px opacity-0 transition-[color,background-color,border-color,opacity] duration-150 select-none data-hovering:opacity-100 data-scrolling:opacity-100 data-[orientation=horizontal]:h-2.5 data-[orientation=horizontal]:flex-col data-[orientation=horizontal]:border-t data-[orientation=horizontal]:border-t-transparent data-[orientation=vertical]:h-full data-[orientation=vertical]:w-2.5 data-[orientation=vertical]:border-l data-[orientation=vertical]:border-l-transparent",
+          "flex touch-none p-px opacity-0 transition-[color,background-color,border-color,opacity] duration-150 motion-reduce:transition-none select-none data-hovering:opacity-100 data-scrolling:opacity-100 group-focus-within/scroll-area:opacity-100 data-[orientation=horizontal]:h-2.5 data-[orientation=horizontal]:flex-col data-[orientation=horizontal]:border-t data-[orientation=horizontal]:border-t-transparent data-[orientation=vertical]:h-full data-[orientation=vertical]:w-2.5 data-[orientation=vertical]:border-l data-[orientation=vertical]:border-l-transparent",
           typeof className === "function" ? className(state) : className,
         )
       }
