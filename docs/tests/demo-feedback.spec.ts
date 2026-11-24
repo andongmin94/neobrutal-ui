@@ -1,5 +1,37 @@
 import { expect, test } from "@playwright/test";
 
+test("theme preview clears saved feedback when project controls change", async ({ page }) => {
+  await page.goto("/styling");
+  const preview = page.locator("[data-theme-preview]");
+  const project = preview.getByLabel("Project name", { exact: true });
+  const updates = preview.getByRole("switch", { name: "Email updates", exact: true });
+  const save = preview.getByRole("button", { name: "Save project", exact: true });
+  const status = preview.getByRole("status");
+  const idleMessage = "Try the controls, then export your theme.";
+  const savedMessage = "Saved in this preview only.";
+
+  await expect(status).toHaveText(idleMessage);
+  await expect(project).toHaveValue("My next idea");
+  await expect(updates).toBeChecked();
+  await save.click();
+  await expect(status).toHaveText(savedMessage);
+
+  await project.fill("Updated workspace");
+  await expect(status).toHaveText(idleMessage);
+  await expect(project).toHaveValue("Updated workspace");
+  await save.click();
+  await expect(status).toHaveText(savedMessage);
+
+  await updates.click();
+  await expect(updates).not.toBeChecked();
+  await expect(status).toHaveText(idleMessage);
+  await expect(project).toHaveValue("Updated workspace");
+  await save.click();
+  await expect(status).toHaveText(savedMessage);
+  await expect(project).toHaveValue("Updated workspace");
+  await expect(updates).not.toBeChecked();
+});
+
 test("theme copy feedback follows the current export and lasts from the latest copy", async ({
   page,
 }) => {
@@ -124,15 +156,30 @@ test("tabs retain saved account values and describe local-only form submission",
   await preview.getByLabel("Username", { exact: true }).fill("@alexrivera");
   await preview.getByRole("button", { name: "Save changes", exact: true }).click();
   await expect(preview.getByRole("status")).toHaveText("Account preview updated locally.");
+  await preview.getByLabel("Username", { exact: true }).fill("@alexrivera-updated");
+  await expect(preview.getByRole("status")).toBeEmpty();
+  await expect(preview.getByLabel("Name", { exact: true })).toHaveValue("Alex Rivera");
+  await preview.getByRole("button", { name: "Save changes", exact: true }).click();
+  await expect(preview.getByRole("status")).toHaveText("Account preview updated locally.");
   await info.attach("tabs-account-saved", {
     body: await preview.locator(".component-preview__canvas").screenshot(),
     contentType: "image/png",
   });
 
   await preview.getByRole("tab", { name: "Password", exact: true }).click();
+  await expect(preview.getByRole("status")).toBeEmpty();
   await expect(preview.getByLabel("Name", { exact: true })).toHaveCount(0);
   await preview.getByLabel("Current password", { exact: true }).fill("current-preview-value");
   await preview.getByLabel("New password", { exact: true }).fill("new-preview-value");
+  await preview.getByRole("button", { name: "Save password", exact: true }).click();
+  await expect(preview.getByRole("status")).toHaveText(
+    "Password form submitted locally. No credentials were sent.",
+  );
+  await preview.getByLabel("New password", { exact: true }).fill("revised-preview-value");
+  await expect(preview.getByRole("status")).toBeEmpty();
+  await expect(preview.getByLabel("Current password", { exact: true })).toHaveValue(
+    "current-preview-value",
+  );
   await preview.getByRole("button", { name: "Save password", exact: true }).click();
   await expect(preview.getByRole("status")).toHaveText(
     "Password form submitted locally. No credentials were sent.",
@@ -142,8 +189,9 @@ test("tabs retain saved account values and describe local-only form submission",
     contentType: "image/png",
   });
   await preview.getByRole("tab", { name: "Account", exact: true }).click();
+  await expect(preview.getByRole("status")).toBeEmpty();
   await expect(preview.getByLabel("Name", { exact: true })).toHaveValue("Alex Rivera");
-  await expect(preview.getByLabel("Username", { exact: true })).toHaveValue("@alexrivera");
+  await expect(preview.getByLabel("Username", { exact: true })).toHaveValue("@alexrivera-updated");
   await preview.getByLabel("Name", { exact: true }).fill("Unsaved edit");
   await preview.getByRole("tab", { name: "Password", exact: true }).click();
   await expect(preview.getByLabel("Name", { exact: true })).toHaveCount(0);

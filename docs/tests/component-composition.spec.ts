@@ -158,7 +158,7 @@ for (const direction of ["ltr", "rtl"] as const) {
     page,
   }) => {
     await page.goto(`${origin}?surface=tabs-direction&direction=${direction}`);
-    await expect(page.locator('[data-slot="tabs"]')).toHaveCSS("direction", direction);
+    await expect(page.getByTestId("vertical-tabs")).toHaveCSS("direction", direction);
     const overview = page.getByRole("tab", { name: "Overview", exact: true });
     const history = page.getByRole("tab", { name: "History", exact: true });
     const panel = page.getByRole("tabpanel", { name: "Overview", exact: true });
@@ -188,6 +188,22 @@ for (const direction of ["ltr", "rtl"] as const) {
         ? panelBox.x + panelBox.width < indicator.center && indicator.center < indicator.left
         : indicator.right < indicator.center && indicator.center < panelBox.x,
     ).toBe(true);
+
+    const nested = page.getByTestId("nested-horizontal-tabs");
+    await expect(nested.getByRole("tablist", { name: "Nested views" })).toHaveCSS(
+      "flex-direction",
+      "row",
+    );
+    const details = nested.getByRole("tab", { name: "Details", exact: true });
+    const activity = nested.getByRole("tab", { name: "Activity", exact: true });
+    await details.focus();
+    await details.press(direction === "rtl" ? "ArrowLeft" : "ArrowRight");
+    await expect(activity).toBeFocused();
+    await expect(activity).toHaveAttribute("aria-selected", "true");
+    await expect(nested.getByRole("tabpanel", { name: "Activity", exact: true })).toHaveText(
+      "Nested activity panel",
+    );
+    await expect(overview).toHaveAttribute("aria-selected", "true");
 
     await overview.focus();
     await overview.press("ArrowDown");

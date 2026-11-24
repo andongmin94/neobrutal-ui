@@ -166,12 +166,28 @@ function InputGroupDirectionFixture() {
 function TabsDirectionFixture() {
   const direction = new URLSearchParams(location.search).get("direction") === "rtl" ? "rtl" : "ltr";
   return (
-    <Tabs dir={direction} orientation="vertical" defaultValue="overview" style={{ width: 480 }}>
+    <Tabs
+      data-testid="vertical-tabs"
+      dir={direction}
+      orientation="vertical"
+      defaultValue="overview"
+      style={{ width: 480 }}
+    >
       <TabsList variant="line" aria-label="Directional views">
         <TabsTrigger value="overview">Overview</TabsTrigger>
         <TabsTrigger value="history">History</TabsTrigger>
       </TabsList>
-      <TabsContent value="overview">Overview panel</TabsContent>
+      <TabsContent value="overview">
+        <p>Overview panel</p>
+        <Tabs data-testid="nested-horizontal-tabs" defaultValue="details">
+          <TabsList variant="line" aria-label="Nested views">
+            <TabsTrigger value="details">Details</TabsTrigger>
+            <TabsTrigger value="activity">Activity</TabsTrigger>
+          </TabsList>
+          <TabsContent value="details">Nested details panel</TabsContent>
+          <TabsContent value="activity">Nested activity panel</TabsContent>
+        </Tabs>
+      </TabsContent>
       <TabsContent value="history">History panel</TabsContent>
     </Tabs>
   );

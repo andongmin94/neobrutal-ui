@@ -125,6 +125,7 @@ export default function Styling() {
             <CardContent>
               <form
                 className="grid gap-5"
+                onChange={() => setSaved(false)}
                 onSubmit={(event) => {
                   event.preventDefault();
                   setSaved(true);

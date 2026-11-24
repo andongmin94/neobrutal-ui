@@ -21,13 +21,18 @@ export default function TabsDemo() {
 
   return (
     <div className="grid gap-3">
-      <Tabs defaultValue="account" className="w-full max-w-[400px]">
+      <Tabs
+        defaultValue="account"
+        className="w-full max-w-[400px]"
+        onValueChange={() => setMessage("")}
+      >
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="account">Account</TabsTrigger>
           <TabsTrigger value="password">Password</TabsTrigger>
         </TabsList>
         <TabsContent value="account">
           <form
+            onChange={() => setMessage("")}
             onSubmit={(event) => {
               event.preventDefault();
               const data = new FormData(event.currentTarget);
@@ -70,6 +75,7 @@ export default function TabsDemo() {
         </TabsContent>
         <TabsContent value="password">
           <form
+            onChange={() => setMessage("")}
             onSubmit={(event) => {
               event.preventDefault();
               setMessage("Password form submitted locally. No credentials were sent.");
