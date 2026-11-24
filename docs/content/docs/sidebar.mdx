@@ -106,6 +106,7 @@ export default function ApplicationLayout() {
 | `Sidebar.variant` | `sidebar`, `floating`, or `inset` | `sidebar` |
 | `Sidebar.collapsible` | `offcanvas`, `icon`, or `none` | `offcanvas` |
 | `SidebarTrigger` / `useSidebar` | Toggle and context access | Provider required |
+| `SidebarInset.render` | Compose the content container with a different element | `<main>` |
 | `SidebarMenuButton.isActive` | Active link styling | `false` |
 | `SidebarMenuButton.variant` | Menu button appearance: `default` or `outline` | `default` |
 | `SidebarMenuButton.size` | Menu button size: `default`, `sm`, or `lg` | `default` |
@@ -117,6 +118,8 @@ export default function ApplicationLayout() {
 `SidebarMenuButton` and `SidebarMenuAction` use `type="button"` by default, including when `render` supplies a custom button or callback. Set `type="submit"` for an action that submits a form. For navigation, set `nativeButton={false}` and render an anchor with its destination and label; the anchor keeps its link semantics without a button type.
 
 ## Accessibility
+
+`SidebarInset` owns the page's main landmark by default. When embedding it inside an existing `<main>`, use `<SidebarInset render={<div />}>` as the live preview does so the document keeps one main landmark.
 
 Name navigation regions and give links destinations and readable labels. Collapsed icon-only items still need names. The mobile version behaves as a modal sheet; check focus and scroll at both sizes. Persistence is application-owned. Initialize `defaultOpen` or control `open` / `onOpenChange` from your own storage; the component does not write cookies.
 

@@ -30,7 +30,7 @@ export default function BlogPostTemplate({ backHref = "/blog", post }: BlogPostT
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
+      <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
         <a href={backHref} className={buttonVariants({ size: "sm", variant: "neutral" })}>
           <ArrowLeft aria-hidden="true" />
           All posts
@@ -85,7 +85,7 @@ export default function BlogPostTemplate({ backHref = "/blog", post }: BlogPostT
             })}
           </div>
         </article>
-      </main>
+      </div>
 
       <footer className="border-t-2 border-border bg-secondary-background">
         <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-4 px-4 py-4 text-xs sm:px-6">

@@ -64,7 +64,7 @@ export default function PortfolioTemplate() {
         </div>
       </header>
 
-      <main className="flex-1">
+      <div className="flex-1">
         <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
           <section aria-labelledby="portfolio-title">
             <p className="mb-3 font-mono text-xs uppercase tracking-widest">
@@ -188,7 +188,7 @@ export default function PortfolioTemplate() {
             </a>
           </div>
         </div>
-      </main>
+      </div>
 
       <footer className="border-t-2 border-border">
         <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-4 px-4 py-4 text-xs sm:px-6">

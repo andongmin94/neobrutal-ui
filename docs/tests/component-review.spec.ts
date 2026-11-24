@@ -162,8 +162,47 @@ for (const component of ["checkbox", "switch"]) {
     await capture(canvas, `${component}-changed`, info);
     await control.click();
     await expect(control).toBeChecked({ checked });
+
+    if (component === "checkbox") {
+      for (const label of await canvas.locator("label").all()) {
+        await expect(
+          label.locator(
+            "button, input:not([type='hidden']), meter, output, progress, select, textarea",
+          ),
+        ).toHaveCount(1);
+      }
+      await expect(control).toHaveAccessibleName(/^Component source/);
+      await canvas.getByText("Component source", { exact: true }).click();
+      await expect(control).toBeChecked({ checked: !checked });
+      await expect(control).toBeFocused();
+      await control.press("Space");
+      await expect(control).toBeChecked({ checked });
+
+      const disabled = canvas.getByRole("checkbox", { name: /^Private preview link/ });
+      await expect(disabled).toBeDisabled();
+      await canvas.getByText("Private preview link", { exact: true }).click();
+      await expect(disabled).not.toBeChecked();
+    }
   });
 }
+
+test("radio group exposes its visible legend and supports keyboard selection", async ({ page }) => {
+  const canvas = await openCanvas(page, "radio-group");
+  const group = canvas.getByRole("radiogroup", { name: "Interface density", exact: true });
+  await expect(group).toBeVisible();
+  const balanced = group.getByRole("radio", { name: /^Balanced/ });
+  const compact = group.getByRole("radio", { name: /^Compact/ });
+  await expect(balanced).toBeChecked();
+  await balanced.focus();
+  await balanced.press("ArrowDown");
+  await expect(compact).toBeFocused();
+  await expect(compact).toBeChecked();
+  await expect(balanced).not.toBeChecked();
+  await compact.press("ArrowUp");
+  await expect(balanced).toBeFocused();
+  await expect(balanced).toBeChecked();
+  await expect(compact).not.toBeChecked();
+});
 
 test("breadcrumb overflow menu exposes its intermediate pages", async ({ page }, info) => {
   const canvas = await openCanvas(page, "breadcrumb");

@@ -127,7 +127,7 @@ export default function DashboardTemplate() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-screen-xl space-y-7 px-4 py-7 sm:px-6 sm:py-10">
+      <div className="mx-auto max-w-screen-xl space-y-7 px-4 py-7 sm:px-6 sm:py-10">
         <div className="flex flex-wrap items-end justify-between gap-5">
           <div className="max-w-xl">
             <p className="text-xs font-heading uppercase tracking-widest text-foreground/70">
@@ -326,7 +326,7 @@ export default function DashboardTemplate() {
             {feedback}
           </p>
         </footer>
-      </main>
+      </div>
     </div>
   );
 }

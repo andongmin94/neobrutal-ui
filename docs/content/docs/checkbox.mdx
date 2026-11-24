@@ -63,4 +63,6 @@ export default function ConsentField() {
 
 ## Accessibility
 
+The default Checkbox renders a native button. Use a sibling `label` with `htmlFor`, as in Usage. For a label that wraps the checkbox, pass `render={<span />}`, as in the preview. Base UI then associates the label with its native input.
+
 Associate a visible label with the checkbox. Space toggles the focused control. Use mixed state for partial selection, not as a third agreement option. Checked state does not submit or save anything on its own. Treat `indeterminate` as presentation for partial selection; `onCheckedChange` still reports a boolean checked state.

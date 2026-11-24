@@ -37,6 +37,7 @@ export default function CheckboxDemo() {
           >
             <Checkbox
               id={option.id}
+              render={<span />}
               defaultChecked={option.checked}
               disabled={option.disabled}
               className="mt-0.5"

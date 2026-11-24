@@ -456,7 +456,7 @@ export default function CmsTemplate() {
         ) : null}
       </div>
 
-      <main className="mx-auto flex w-full max-w-screen-xl flex-1 px-4 py-4 sm:px-6 sm:py-5">
+      <div className="mx-auto flex w-full max-w-screen-xl flex-1 px-4 py-4 sm:px-6 sm:py-5">
         <section
           aria-label="CMS workspace"
           className="grid w-full min-w-0 overflow-hidden rounded-base border-2 border-border bg-secondary-background lg:grid-cols-[minmax(18rem,2fr)_minmax(22rem,3fr)]"
@@ -535,7 +535,7 @@ export default function CmsTemplate() {
             )}
           </section>
         </section>
-      </main>
+      </div>
 
       <footer className="border-t-2 border-border bg-secondary-background">
         <div className="mx-auto flex h-9 w-full max-w-screen-xl items-center justify-between px-4 text-xs text-foreground/60 sm:px-6">

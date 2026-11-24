@@ -103,12 +103,12 @@ test("link categories filter real destinations and clipboard failure remains act
     .getByRole("group", { name: "Filter links" })
     .getByRole("button", { name: "Work", exact: true })
     .click();
-  await expect(page.locator(".special-content main ul a")).toHaveCount(2);
+  await expect(page.locator('[data-template-preview="links"] ul a')).toHaveCount(2);
   await page
     .getByRole("group", { name: "Filter links" })
     .getByRole("button", { name: "All", exact: true })
     .click();
-  await expect(page.locator(".special-content main ul a")).toHaveCount(6);
+  await expect(page.locator('[data-template-preview="links"] ul a')).toHaveCount(6);
   await page.getByRole("button", { name: "Copy email", exact: true }).click();
   await expect(page.getByRole("region", { name: "Contact", exact: true })).toContainText(
     "Could not copy.",

@@ -72,7 +72,7 @@ export default function BlogTemplate({ basePath = "/blog", posts }: BlogTemplate
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
+      <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
         <section aria-labelledby="page-title">
           <p className="mb-3 font-mono text-xs uppercase tracking-widest">
             Field notes / Design & engineering
@@ -236,7 +236,7 @@ export default function BlogTemplate({ basePath = "/blog", posts }: BlogTemplate
             </div>
           )}
         </section>
-      </main>
+      </div>
 
       <footer className="border-t-2 border-border bg-secondary-background">
         <div className="mx-auto max-w-3xl px-4 py-4 text-xs sm:px-6">

@@ -1,3 +1,7 @@
+"use client";
+
+import { useId } from "react";
+
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
@@ -20,10 +24,14 @@ const densities = [
 ];
 
 export default function RadioGroupDemo() {
+  const labelId = useId();
+
   return (
     <fieldset className="w-full max-w-md">
-      <legend className="mb-3 font-heading">Interface density</legend>
-      <RadioGroup defaultValue="balanced" className="grid gap-2">
+      <legend id={labelId} className="mb-3 font-heading">
+        Interface density
+      </legend>
+      <RadioGroup aria-labelledby={labelId} defaultValue="balanced" className="grid gap-2">
         {densities.map((density) => (
           <div
             key={density.value}

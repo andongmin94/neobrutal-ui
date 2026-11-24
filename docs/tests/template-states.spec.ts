@@ -7,12 +7,11 @@ import { expect, test, type Page } from "@playwright/test";
 import tailwindcss from "@tailwindcss/vite";
 import { createServer, type ViteDevServer } from "vite";
 import TEMPLATES from "../src/data/templates";
-import type { TemplateEntry } from "../src/data/templates";
 
 type ClipboardRequest = { text: string; resolve: () => void; reject: () => void };
 type ClipboardWindow = Window & { templateCopyRequests: ClipboardRequest[] };
 
-async function openTemplate(page: Page, name: TemplateEntry["slug"]) {
+async function openTemplate(page: Page, name: string) {
   await page.emulateMedia({ reducedMotion: "reduce" });
   const response = await page.goto(`/templates/${name}`);
   expect(response?.ok()).toBe(true);
@@ -31,6 +30,23 @@ async function expectHealthyTemplate(page: Page) {
     .analyze();
   expect(result.violations.map(({ id, nodes }) => ({ id, nodes }))).toEqual([]);
 }
+
+for (const slug of [...TEMPLATES.map((template) => template.slug), "blog/reading-a-codebase"]) {
+  test(`document landmark belongs to the host around template ${slug}`, async ({ page }) => {
+    await openTemplate(page, slug);
+    await expect(page.locator("[data-template-preview]")).toBeVisible();
+    await expect(page.locator("main")).toHaveCount(1);
+    await expect(page.getByRole("main")).toHaveAttribute("id", "main-content");
+  });
+}
+
+test("document landmark belongs to the host around the Sidebar preview", async ({ page }) => {
+  await page.goto("/docs/sidebar");
+  await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true");
+  await expect(page.locator('[data-slot="sidebar-inset"]')).toBeVisible();
+  await expect(page.locator("main")).toHaveCount(1);
+  await expect(page.getByRole("main")).toHaveAttribute("id", "main-content");
+});
 
 test.describe("template consumer data", () => {
   let server: ViteDevServer;
@@ -359,7 +375,7 @@ test("portfolio details open and close by keyboard without losing their trigger"
 test("link hub keeps raised links readable and contained at 320px", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 844 });
   await openTemplate(page, "links");
-  const links = page.locator(".special-content main ul a");
+  const links = page.locator('[data-template-preview="links"] ul a');
   await expect(links).toHaveCount(6);
   for (const link of await links.all()) {
     const bounds = await link.boundingBox();
@@ -452,6 +468,24 @@ test("landing billing and plan selection show the actual billed amount without a
   await openTemplate(page, "landing");
   const pricing = page.locator("#pricing");
   const yearly = page.getByRole("switch", { name: "Yearly billing", exact: true });
+  const billingLabel = pricing.locator("label").filter({ has: yearly });
+  await expect(
+    billingLabel.locator(
+      "button, input:not([type='hidden']), meter, output, progress, select, textarea",
+    ),
+  ).toHaveCount(1);
+  expect(
+    await billingLabel.evaluate((label) =>
+      (label as HTMLLabelElement).control?.getAttribute("type"),
+    ),
+  ).toBe("checkbox");
+  await expect(yearly).not.toBeChecked();
+  await expect(pricing.getByText("$12 per person, billed monthly", { exact: true })).toBeVisible();
+  const billingText = billingLabel.getByText("Save $24 / person", { exact: true });
+  await billingText.click();
+  await expect(yearly).toBeChecked();
+  await expect(pricing.getByText("$120 per person, billed yearly", { exact: true })).toBeVisible();
+  await billingText.click();
   await expect(yearly).not.toBeChecked();
   await expect(pricing.getByText("$12 per person, billed monthly", { exact: true })).toBeVisible();
   await pricing.getByRole("button", { name: "Choose Team", exact: true }).click();

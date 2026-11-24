@@ -34,14 +34,17 @@ npx shadcn@latest add https://neobrutal-ui.andongmin.com/r/label.json
 ## Usage
 
 ```tsx
+"use client";
+import { useId } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
 export default function DeliveryPreference() {
+  const labelId = useId();
   return (
     <fieldset className="grid gap-3">
-      <legend className="mb-3">Delivery frequency</legend>
-      <RadioGroup defaultValue="weekly" name="frequency">
+      <legend id={labelId} className="mb-3">Delivery frequency</legend>
+      <RadioGroup aria-labelledby={labelId} defaultValue="weekly" name="frequency">
         <div className="flex items-center gap-2">
           <RadioGroupItem value="daily" id="daily" />
           <Label htmlFor="daily">Daily</Label>
@@ -69,4 +72,4 @@ export default function DeliveryPreference() {
 
 ## Accessibility
 
-Use a fieldset and legend or an accessible group name. Label each item; its value is not a visible description. Arrow keys change the focused selection. Do not simulate a mutually exclusive choice with independent checkboxes.
+Give `RadioGroup` an accessible name with `aria-labelledby` or `aria-label`. When using a native fieldset and legend, explicitly connect the inner radio group to the legend with `aria-labelledby`, as shown above. Label each item; its value is not a visible description. Arrow keys change the focused selection. Do not simulate a mutually exclusive choice with independent checkboxes.

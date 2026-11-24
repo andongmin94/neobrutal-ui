@@ -50,7 +50,7 @@ export default function LinkHubTemplate({ profile, links }: LinkHubTemplateProps
 
   return (
     <div className="min-h-dvh flex flex-col bg-background text-foreground">
-      <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
+      <div className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
         <section aria-labelledby="profile-name" className="text-center">
           <div className="mx-auto grid size-24 place-items-center rounded-full border-2 border-border bg-main text-main-foreground">
             <span className="font-heading text-2xl" aria-hidden="true">
@@ -145,7 +145,7 @@ export default function LinkHubTemplate({ profile, links }: LinkHubTemplateProps
             </p>
           </section>
         ) : null}
-      </main>
+      </div>
 
       <footer className="px-4 py-4 text-center text-xs text-foreground/60">
         <p>© {profile.name}</p>

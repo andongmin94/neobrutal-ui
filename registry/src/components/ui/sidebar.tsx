@@ -312,17 +312,19 @@ function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
   );
 }
 
-function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
-  return (
-    <main
-      data-slot="sidebar-inset"
-      className={cn(
+function SidebarInset({ className, render, ...props }: useRender.ComponentProps<"main">) {
+  return useRender({
+    defaultTagName: "main",
+    render,
+    props: {
+      ...props,
+      className: cn(
         "relative flex w-full flex-1 flex-col bg-secondary-background md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-base md:peer-data-[variant=inset]:shadow-sm md:peer-data-[state=collapsed]:ml-2",
         className,
-      )}
-      {...props}
-    />
-  );
+      ),
+    },
+    state: { slot: "sidebar-inset" },
+  });
 }
 
 function SidebarHeader({ className, ...props }: React.ComponentProps<"div">) {

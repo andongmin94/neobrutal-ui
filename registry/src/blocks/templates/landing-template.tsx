@@ -80,7 +80,7 @@ export default function LandingTemplate() {
         </div>
       </header>
 
-      <main>
+      <div>
         <section
           aria-labelledby="relay-title"
           className="mx-auto grid max-w-6xl items-center gap-10 px-5 py-12 sm:px-8 sm:py-20 lg:grid-cols-[1.1fr_1fr] lg:gap-16"
@@ -208,7 +208,12 @@ export default function LandingTemplate() {
               </h2>
             </div>
             <label className="flex cursor-pointer items-center gap-3 text-sm font-heading">
-              <Switch checked={yearly} onCheckedChange={setYearly} aria-label="Yearly billing" />{" "}
+              <Switch
+                render={<span />}
+                checked={yearly}
+                onCheckedChange={setYearly}
+                aria-label="Yearly billing"
+              />{" "}
               Bill yearly <span className="text-xs text-foreground/65">Save $24 / person</span>
             </label>
           </div>
@@ -307,7 +312,7 @@ export default function LandingTemplate() {
             </div>
           </div>
         </section>
-      </main>
+      </div>
 
       <footer className="border-t-2 border-border">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-6 text-xs sm:px-8">
