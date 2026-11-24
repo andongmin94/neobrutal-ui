@@ -31,13 +31,9 @@ export default function BreadcrumbDemo() {
               <BreadcrumbEllipsis className="size-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
-              <DropdownMenuItem render={<a href="/docs" />}>Documentation</DropdownMenuItem>
-              <DropdownMenuItem render={<a href="/docs/design-tokens" />}>
-                Design tokens
-              </DropdownMenuItem>
-              <DropdownMenuItem render={<a href="/docs/installation" />}>
-                Installation
-              </DropdownMenuItem>
+              <DropdownMenuItem render={<a href="/docs">Documentation</a>} />
+              <DropdownMenuItem render={<a href="/docs/design-tokens">Design tokens</a>} />
+              <DropdownMenuItem render={<a href="/docs/installation">Installation</a>} />
             </DropdownMenuContent>
           </DropdownMenu>
         </BreadcrumbItem>
