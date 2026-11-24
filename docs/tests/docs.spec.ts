@@ -187,6 +187,7 @@ test("home has a working showcase, installation path, and URL-backed directory",
   );
   const search = page.getByRole("searchbox", { name: "Search component directory" });
   await search.fill("calendar");
+  await expect(search).toHaveAccessibleName("Search component directory");
   await expect(page).toHaveURL(/q=calendar/);
   const card = page
     .locator(".directory-card")

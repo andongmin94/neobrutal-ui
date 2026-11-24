@@ -136,7 +136,7 @@ export function DirectoryHome() {
           <h2>Find your building blocks.</h2>
           <p>Search by component, purpose, or category.</p>
         </div>
-        <label className="directory-search">
+        <div className="directory-search">
           <Search aria-hidden="true" size={20} />
           <input
             ref={searchInput}
@@ -160,7 +160,7 @@ export function DirectoryHome() {
           ) : (
             <kbd>/</kbd>
           )}
-        </label>
+        </div>
       </section>
       <div className="directory-browser">
         <aside className="directory-categories">
