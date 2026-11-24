@@ -46,7 +46,7 @@ export default function InvoiceTable() {
         <TableRow>
           <TableHead scope="col">Invoice</TableHead>
           <TableHead scope="col">Status</TableHead>
-          <TableHead scope="col" className="text-right">
+          <TableHead scope="col" className="text-end">
             Amount
           </TableHead>
         </TableRow>
@@ -55,7 +55,7 @@ export default function InvoiceTable() {
         <TableRow>
           <TableCell>INV-001</TableCell>
           <TableCell>Paid</TableCell>
-          <TableCell className="text-right">$120.00</TableCell>
+          <TableCell className="text-end">$120.00</TableCell>
         </TableRow>
       </TableBody>
     </Table>
@@ -76,4 +76,4 @@ export default function InvoiceTable() {
 
 ## Accessibility
 
-Provide a caption or accessible name and appropriate header scopes. Align numbers consistently. Do not replace semantic cells with generic divs or make rows click-only controls. The scroll wrapper is keyboard-focusable by default. Use containerProps to give it role="region" and an accessible name, as in the example. A table's own native props still apply to the table element, not to its wrapper. On mobile, keep the scroll region reachable without overflowing the whole page.
+Provide a caption or accessible name and appropriate header scopes. Headers align to the reading start, and selection cells reduce padding at the reading end for both native checkboxes and controls with role="checkbox". Use `text-end` for numeric columns when adapting the table to RTL layouts. Do not replace semantic cells with generic divs or make rows click-only controls. The scroll wrapper is keyboard-focusable by default. Use containerProps to give it role="region" and an accessible name, as in the example. A table's own native props still apply to the table element, not to its wrapper. On mobile, keep the scroll region reachable without overflowing the whole page.

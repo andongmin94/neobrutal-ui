@@ -139,6 +139,30 @@ test("table scroll area has a name and preserves keyboard focus", async ({ page 
   await expect(region).toBeFocused();
 });
 
+test("table scroll area has a name and follows reading direction", async ({ page }) => {
+  const canvas = await openCanvas(page, "data-table");
+  const region = canvas.getByRole("region", { name: "Payment records", exact: true });
+  const selectionHead = region.locator("thead th").first();
+  const selectionCell = region.locator("tbody td").first();
+  const statusHead = region.getByRole("columnheader", { name: "Status", exact: true });
+  await expect(selectionHead.getByRole("checkbox")).toBeVisible();
+  await expect(selectionCell.getByRole("checkbox")).toBeVisible();
+
+  for (const direction of ["ltr", "rtl"] as const) {
+    await region.evaluate((node, dir) => node.setAttribute("dir", dir), direction);
+    await expect(statusHead).toHaveCSS("text-align", "start");
+    for (const cell of [selectionHead, selectionCell]) {
+      await expect(cell).toHaveCSS("padding-inline-start", "16px");
+      await expect(cell).toHaveCSS("padding-inline-end", "0px");
+      await expect(cell).toHaveCSS(direction === "rtl" ? "padding-left" : "padding-right", "0px");
+    }
+    await expect(region.getByRole("columnheader", { name: "Amount" }).locator("div")).toHaveCSS(
+      "text-align",
+      "end",
+    );
+  }
+});
+
 test("table totals follow data and selected rows remain readable", async ({ page }, info) => {
   const canvas = await openCanvas(page, "table");
   const amounts = await canvas.locator("tbody tr td:last-child").allTextContents();

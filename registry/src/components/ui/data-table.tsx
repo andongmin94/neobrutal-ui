@@ -196,7 +196,7 @@ export const columns: ColumnDef<typeof features, Payment>[] = [
   {
     accessorKey: "amount",
     sortFn: "basic",
-    header: () => <div className="text-right">Amount</div>,
+    header: () => <div className="text-end">Amount</div>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("amount"));
 
@@ -205,7 +205,7 @@ export const columns: ColumnDef<typeof features, Payment>[] = [
         currency: "USD",
       }).format(amount);
 
-      return <div className="text-right font-base">{formatted}</div>;
+      return <div className="text-end font-base">{formatted}</div>;
     },
   },
   {
@@ -236,7 +236,7 @@ export default function DataTableDemo() {
         />
         <DropdownMenu>
           <DropdownMenuTrigger
-            render={<Button variant="noShadow" className="self-start sm:ml-auto sm:self-auto" />}
+            render={<Button variant="noShadow" className="self-start sm:ms-auto sm:self-auto" />}
           >
             Columns <ChevronDown />
           </DropdownMenuTrigger>

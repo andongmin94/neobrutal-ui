@@ -68,7 +68,7 @@ export default function TableDemo() {
           </TableHead>
           <TableHead scope="col">Status</TableHead>
           <TableHead scope="col">Method</TableHead>
-          <TableHead scope="col" className="text-right">
+          <TableHead scope="col" className="text-end">
             Amount
           </TableHead>
         </TableRow>
@@ -79,14 +79,14 @@ export default function TableDemo() {
             <TableCell className="font-base">{invoice.invoice}</TableCell>
             <TableCell>{invoice.paymentStatus}</TableCell>
             <TableCell>{invoice.paymentMethod}</TableCell>
-            <TableCell className="text-right">{currency.format(invoice.totalAmount)}</TableCell>
+            <TableCell className="text-end">{currency.format(invoice.totalAmount)}</TableCell>
           </TableRow>
         ))}
       </TableBody>
       <TableFooter>
         <TableRow>
           <TableCell colSpan={3}>Total</TableCell>
-          <TableCell className="text-right">{currency.format(total)}</TableCell>
+          <TableCell className="text-end">{currency.format(total)}</TableCell>
         </TableRow>
       </TableFooter>
     </Table>
