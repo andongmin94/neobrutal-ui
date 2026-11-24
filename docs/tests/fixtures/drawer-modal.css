@@ -1,6 +1,11 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 @source "../../../registry/src/components/ui/drawer.tsx";
 @source "../../../registry/src/components/ui/dialog.tsx";
+@source "../../../registry/src/components/ui/sheet.tsx";
+@source "../../../registry/src/components/ui/accordion.tsx";
+@source "../../../registry/src/components/ui/collapsible.tsx";
 @source "./drawer-modal.tsx";
 
 @theme inline {

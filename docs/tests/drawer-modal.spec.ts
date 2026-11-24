@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { mkdir, mkdtemp, rm } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { expect, test } from "@playwright/test";
+import { expect, test, type Locator } from "@playwright/test";
 import tailwindcss from "@tailwindcss/vite";
 import { createServer, type ViteDevServer } from "vite";
 
@@ -41,6 +41,8 @@ test.beforeAll(async () => {
         "react/jsx-dev-runtime",
         "@base-ui/react/drawer",
         "@base-ui/react/dialog",
+        "@base-ui/react/accordion",
+        "@base-ui/react/collapsible",
         "@base-ui/react/button",
         "class-variance-authority",
         "lucide-react",
@@ -70,6 +72,121 @@ test.afterAll(async () => {
     }
   }
 });
+
+async function expectTransitionPreference(
+  element: Locator,
+  reducedMotion: "reduce" | "no-preference",
+  property: RegExp,
+) {
+  await expect(element).toHaveCSS(
+    "transition-property",
+    reducedMotion === "reduce" ? "none" : property,
+  );
+  if (reducedMotion === "no-preference") {
+    expect(
+      await element.evaluate((node) =>
+        Number.parseFloat(getComputedStyle(node).transitionDuration),
+      ),
+    ).toBeGreaterThan(0);
+  }
+}
+
+async function expectAnimationPreference(
+  element: Locator,
+  reducedMotion: "reduce" | "no-preference",
+) {
+  await expect(element).toHaveCSS("animation-name", reducedMotion === "reduce" ? "none" : "enter");
+  if (reducedMotion === "no-preference") {
+    expect(
+      await element.evaluate((node) => Number.parseFloat(getComputedStyle(node).animationDuration)),
+    ).toBeGreaterThan(0);
+  }
+}
+
+for (const reducedMotion of ["reduce", "no-preference"] as const) {
+  test(`dialog motion preference ${reducedMotion}: disclosures preserve native open and close`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion });
+    await page.goto(`${origin}?surface=disclosures`);
+    for (const kind of ["accordion", "collapsible"] as const) {
+      const trigger = page.locator(`[data-slot="${kind}-trigger"]`);
+      const panel = page.locator(`[data-slot="${kind}-content"]`);
+      await expect(trigger).toHaveAttribute("aria-expanded", "false");
+      await expect(panel).toBeHidden();
+      for (const expanded of [true, false]) {
+        await trigger.click();
+        await expect(trigger).toHaveAttribute("aria-expanded", String(expanded));
+        if (expanded) await expect(panel).toBeVisible();
+        else await expect(panel).toBeHidden();
+        await expectTransitionPreference(panel, reducedMotion, /height/);
+        await expect(panel).toHaveCSS("animation-name", "none");
+        if (kind === "accordion") {
+          await expectTransitionPreference(trigger, reducedMotion, /all/);
+          await expectTransitionPreference(
+            trigger.locator('[data-slot="accordion-trigger-icon"]'),
+            reducedMotion,
+            /transform/,
+          );
+        }
+      }
+    }
+  });
+
+  test(`dialog motion preference ${reducedMotion}: Dialog and Sheet close and return focus`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion });
+    for (const kind of ["dialog", "sheet"] as const) {
+      await page.goto(`${origin}?surface=${kind}`);
+      const trigger = page.getByRole("button", { name: `Open ${kind}`, exact: true });
+      await trigger.click();
+      const popup = page.getByRole("dialog", {
+        name: `${kind === "dialog" ? "Dialog" : "Sheet"} modal behavior`,
+        exact: true,
+      });
+      const overlay = page.locator(`[data-slot="${kind}-overlay"]`);
+      await expect(popup).toBeVisible();
+      await expect(overlay).toBeVisible();
+      await expectAnimationPreference(popup, reducedMotion);
+      if (kind === "dialog") {
+        await expectAnimationPreference(overlay, reducedMotion);
+      } else {
+        await expectTransitionPreference(popup, reducedMotion, /transform/);
+        await expectTransitionPreference(overlay, reducedMotion, /opacity/);
+        await expect(overlay).toHaveCSS("animation-name", "none");
+      }
+      await popup.getByRole("button", { name: `Close ${kind}`, exact: true }).click();
+      await expect(popup).toHaveCount(0);
+      await expect(overlay).toHaveCount(0);
+      await expect(trigger).toBeFocused();
+    }
+  });
+
+  test(`dialog motion preference ${reducedMotion}: Drawer closes and returns focus`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion });
+    await page.goto(origin);
+    const trigger = page.getByRole("button", { name: "Open drawer", exact: true });
+    await trigger.click();
+    const popup = page.getByRole("dialog", { name: "Drawer modal behavior", exact: true });
+    const overlay = page.locator('[data-slot="drawer-overlay"]');
+    const body = popup.locator('[data-slot="drawer-body"]');
+    await expect(popup).toBeVisible();
+    await expect(overlay).toBeVisible();
+    await expectTransitionPreference(popup, reducedMotion, /transform/);
+    await expectTransitionPreference(overlay, reducedMotion, /opacity/);
+    await expectTransitionPreference(body, reducedMotion, /opacity/);
+    for (const part of [popup, overlay, body]) {
+      await expect(part).toHaveCSS("animation-name", "none");
+    }
+    await popup.getByRole("button", { name: "Close drawer", exact: true }).click();
+    await expect(popup).toHaveCount(0);
+    await expect(overlay).toHaveCount(0);
+    await expect(trigger).toBeFocused();
+  });
+}
 
 test("non-modal drawer leaves background controls clickable", async ({ page }) => {
   await page.goto(`${origin}?modal=false`);

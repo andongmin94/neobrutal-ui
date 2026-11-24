@@ -35,6 +35,7 @@ import {
   InputGroupButton,
   InputGroupInput,
   InputGroupText,
+  InputGroupTextarea,
 } from "@/components/ui/input-group";
 import {
   SidebarMenuAction,
@@ -131,6 +132,28 @@ function InputFixture() {
       <output data-testid="addon-calls">{calls}</output>
       <output data-testid="addon-cancelled">{cancelled}</output>
       <output data-testid="addon-custom-button-calls">{customButtonCalls}</output>
+    </section>
+  );
+}
+
+function InputGroupDisabledFixture() {
+  return (
+    <section
+      aria-label="Input group disabled states"
+      style={{ display: "grid", gap: 16, width: 320 }}
+    >
+      <InputGroup data-testid="disabled-addon-group">
+        <InputGroupInput aria-label="Editable message" defaultValue="Draft" />
+        <InputGroupAddon align="inline-end">
+          <InputGroupButton disabled>Send</InputGroupButton>
+        </InputGroupAddon>
+      </InputGroup>
+      <InputGroup data-testid="disabled-input-group">
+        <InputGroupInput aria-label="Disabled message" defaultValue="Unavailable" disabled />
+      </InputGroup>
+      <InputGroup data-testid="disabled-textarea-group">
+        <InputGroupTextarea aria-label="Disabled notes" defaultValue="Unavailable" disabled />
+      </InputGroup>
     </section>
   );
 }
@@ -569,6 +592,7 @@ const surface = new URLSearchParams(location.search).get("surface");
 if (surface) await import("./component-composition.css");
 
 const fixtures = {
+  "input-group-disabled": <InputGroupDisabledFixture />,
   "input-group-direction": <InputGroupDirectionFixture />,
   "tabs-direction": <TabsDirectionFixture />,
   "sidebar-form": <SidebarFormFixture />,

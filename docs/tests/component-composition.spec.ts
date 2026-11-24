@@ -97,6 +97,29 @@ test("InputGroupAddon preserves consumer clicks, cancellation and nested control
   await expect(input).not.toBeFocused();
 });
 
+test("InputGroup disabled addon actions keep fields editable while disabled controls dim their groups", async ({
+  page,
+}) => {
+  await page.goto(`${origin}?surface=input-group-disabled`);
+  const editableGroup = page.getByTestId("disabled-addon-group");
+  const field = editableGroup.getByRole("textbox", { name: "Editable message" });
+  const action = editableGroup.getByRole("button", { name: "Send", exact: true });
+  await expect(action).toBeDisabled();
+  await expect(action).toHaveCSS("opacity", "0.5");
+  await expect(editableGroup).toHaveCSS("opacity", "1");
+  await expect(field).toBeEditable();
+  await field.fill("Updated draft");
+  await expect(field).toHaveValue("Updated draft");
+  await expect(field).toBeFocused();
+  await expect(editableGroup).toHaveCSS("opacity", "1");
+
+  for (const id of ["disabled-input-group", "disabled-textarea-group"]) {
+    const group = page.getByTestId(id);
+    await expect(group.getByRole("textbox")).toBeDisabled();
+    await expect(group).toHaveCSS("opacity", "0.5");
+  }
+});
+
 for (const direction of ["ltr", "rtl"] as const) {
   test(`InputGroup inline ${direction} gutters follow addon placement and keep controls usable`, async ({
     page,

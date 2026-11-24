@@ -38,7 +38,7 @@ function DrawerOverlay({ className, ...props }: DrawerPrimitive.Backdrop.Props) 
       {...props}
       className={(state) =>
         cn(
-          "fixed inset-0 z-50 bg-overlay opacity-[calc(1-var(--drawer-swipe-progress,0))] transition-opacity duration-[calc(var(--drawer-swipe-strength,1)*400ms)] data-starting-style:opacity-0 data-ending-style:opacity-0 data-swiping:duration-0",
+          "fixed inset-0 z-50 bg-overlay opacity-[calc(1-var(--drawer-swipe-progress,0))] transition-opacity motion-reduce:transition-none duration-[calc(var(--drawer-swipe-strength,1)*400ms)] data-starting-style:opacity-0 data-ending-style:opacity-0 data-swiping:duration-0",
           typeof className === "function" ? className(state) : className,
         )
       }
@@ -62,7 +62,7 @@ function DrawerContent({ className, children, ...props }: DrawerPrimitive.Popup.
           {...props}
           className={(state) =>
             cn(
-              "group/drawer-popup pointer-events-auto fixed z-50 flex min-h-0 transform-[translate3d(var(--translate-x,0px),var(--translate-y,0px),0)] flex-col border-2 border-border bg-background text-foreground shadow-none transition-[transform,height,opacity] duration-[calc(var(--drawer-swipe-strength,1)*400ms)] ease-[cubic-bezier(0.22,1,0.36,1)] outline-none data-swiping:duration-0 data-starting-style:transform-(--closed-transform) data-ending-style:transform-(--closed-transform)",
+              "group/drawer-popup pointer-events-auto fixed z-50 flex min-h-0 transform-[translate3d(var(--translate-x,0px),var(--translate-y,0px),0)] flex-col border-2 border-border bg-background text-foreground shadow-none transition-[transform,height,opacity] motion-reduce:transition-none duration-[calc(var(--drawer-swipe-strength,1)*400ms)] ease-[cubic-bezier(0.22,1,0.36,1)] outline-none data-swiping:duration-0 data-starting-style:transform-(--closed-transform) data-ending-style:transform-(--closed-transform)",
               "data-[swipe-direction=down]:inset-x-0 data-[swipe-direction=down]:bottom-0 data-[swipe-direction=down]:max-h-[80vh] data-[swipe-direction=down]:rounded-t-base data-[swipe-direction=down]:[--closed-transform:translate3d(0,calc(100%+2px),0)] data-[swipe-direction=down]:[--translate-y:calc(var(--drawer-snap-point-offset,0px)+var(--drawer-swipe-movement-y,0px))]",
               "data-[swipe-direction=up]:inset-x-0 data-[swipe-direction=up]:top-0 data-[swipe-direction=up]:max-h-[80vh] data-[swipe-direction=up]:rounded-b-base data-[swipe-direction=up]:[--closed-transform:translate3d(0,calc(-100%-2px),0)] data-[swipe-direction=up]:[--translate-y:calc(var(--drawer-snap-point-offset,0px)+var(--drawer-swipe-movement-y,0px))]",
               "data-[swipe-direction=right]:inset-y-0 data-[swipe-direction=right]:right-0 data-[swipe-direction=right]:w-3/4 data-[swipe-direction=right]:rounded-l-base data-[swipe-direction=right]:sm:max-w-sm data-[swipe-direction=right]:[--closed-transform:translate3d(calc(100%+2px),0,0)] data-[swipe-direction=right]:[--translate-x:var(--drawer-swipe-movement-x,0px)]",
@@ -79,7 +79,7 @@ function DrawerContent({ className, children, ...props }: DrawerPrimitive.Popup.
           />
           <DrawerPrimitive.Content
             data-slot="drawer-body"
-            className="flex min-h-0 flex-1 flex-col overflow-hidden overscroll-contain rounded-[inherit] transition-opacity duration-300 select-text group-data-nested-drawer-open/drawer-popup:opacity-0 group-data-nested-drawer-swiping/drawer-popup:opacity-100"
+            className="flex min-h-0 flex-1 flex-col overflow-hidden overscroll-contain rounded-[inherit] transition-opacity motion-reduce:transition-none duration-300 select-text group-data-nested-drawer-open/drawer-popup:opacity-0 group-data-nested-drawer-swiping/drawer-popup:opacity-100"
           >
             {children}
           </DrawerPrimitive.Content>

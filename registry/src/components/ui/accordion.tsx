@@ -40,7 +40,7 @@ function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.
         {...props}
         className={(state) =>
           cn(
-            "group/accordion-trigger flex flex-1 items-center justify-between border-border bg-main p-4 text-left text-base font-heading text-main-foreground transition-all focus-visible:ring-[3px] aria-disabled:pointer-events-none aria-disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 data-panel-open:rounded-b-none data-panel-open:border-b-2 **:data-[slot=accordion-trigger-icon]:ml-auto **:data-[slot=accordion-trigger-icon]:size-5",
+            "group/accordion-trigger flex flex-1 items-center justify-between border-border bg-main p-4 text-left text-base font-heading text-main-foreground transition-all motion-reduce:transition-none focus-visible:ring-[3px] aria-disabled:pointer-events-none aria-disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 data-panel-open:rounded-b-none data-panel-open:border-b-2 **:data-[slot=accordion-trigger-icon]:ml-auto **:data-[slot=accordion-trigger-icon]:size-5",
             typeof className === "function" ? className(state) : className,
           )
         }
@@ -48,7 +48,7 @@ function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.
         {children}
         <ChevronDownIcon
           data-slot="accordion-trigger-icon"
-          className="pointer-events-none shrink-0 transition-transform duration-200 group-data-panel-open/accordion-trigger:rotate-180"
+          className="pointer-events-none shrink-0 transition-transform motion-reduce:transition-none duration-200 group-data-panel-open/accordion-trigger:rotate-180"
           aria-hidden="true"
         />
       </AccordionPrimitive.Trigger>
@@ -63,7 +63,7 @@ function AccordionContent({ className, children, ...props }: AccordionPrimitive.
       {...props}
       className={(state) =>
         cn(
-          "h-(--accordion-panel-height) overflow-hidden rounded-b-base bg-secondary-background text-sm font-base transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0",
+          "h-(--accordion-panel-height) overflow-hidden rounded-b-base bg-secondary-background text-sm font-base transition-[height] motion-reduce:transition-none duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0",
           typeof className === "function" ? className(state) : className,
         )
       }

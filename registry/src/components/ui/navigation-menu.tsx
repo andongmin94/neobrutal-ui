@@ -80,7 +80,7 @@ function NavigationMenuTrigger({
       {children}
       <NavigationMenuPrimitive.Icon
         data-slot="navigation-menu-icon"
-        className="relative top-px ms-2 transition duration-200 group-data-popup-open/navigation-menu-trigger:rotate-180"
+        className="relative top-px ms-2 transition duration-200 motion-reduce:transition-none group-data-popup-open/navigation-menu-trigger:rotate-180"
       >
         <ChevronDownIcon className="size-4" aria-hidden="true" />
       </NavigationMenuPrimitive.Icon>
@@ -95,7 +95,7 @@ function NavigationMenuContent({ className, ...props }: NavigationMenuPrimitive.
       {...props}
       className={(state) =>
         cn(
-          "h-full max-h-(--available-height) w-auto overflow-y-auto p-2 pe-2.5 transition-[opacity,transform,translate] duration-[0.35s] ease-[cubic-bezier(0.22,1,0.36,1)] data-[activation-direction=down]:data-ending-style:-translate-y-1/2 data-[activation-direction=down]:data-starting-style:translate-y-1/2 data-[activation-direction=left]:data-ending-style:translate-x-1/2 data-[activation-direction=left]:data-starting-style:-translate-x-1/2 data-[activation-direction=right]:data-ending-style:-translate-x-1/2 data-[activation-direction=right]:data-starting-style:translate-x-1/2 data-[activation-direction=up]:data-ending-style:translate-y-1/2 data-[activation-direction=up]:data-starting-style:-translate-y-1/2 data-ending-style:opacity-0 data-starting-style:opacity-0",
+          "h-full max-h-(--available-height) w-auto overflow-y-auto p-2 pe-2.5 transition-[opacity,transform,translate] motion-reduce:transition-none duration-[0.35s] ease-[cubic-bezier(0.22,1,0.36,1)] data-[activation-direction=down]:data-ending-style:-translate-y-1/2 data-[activation-direction=down]:data-starting-style:translate-y-1/2 data-[activation-direction=left]:data-ending-style:translate-x-1/2 data-[activation-direction=left]:data-starting-style:-translate-x-1/2 data-[activation-direction=right]:data-ending-style:-translate-x-1/2 data-[activation-direction=right]:data-starting-style:translate-x-1/2 data-[activation-direction=up]:data-ending-style:translate-y-1/2 data-[activation-direction=up]:data-starting-style:-translate-y-1/2 data-ending-style:opacity-0 data-starting-style:opacity-0",
           typeof className === "function" ? className(state) : className,
         )
       }
@@ -117,7 +117,7 @@ function NavigationMenuViewport({ className, ...props }: NavigationMenuPrimitive
         <NavigationMenuPrimitive.Popup
           dir={direction}
           data-slot="navigation-menu-popup"
-          className="relative h-(--popup-height) w-(--popup-width) origin-(--transform-origin) overflow-hidden rounded-base bg-main text-main-foreground shadow-[inset_0_0_0_2px_var(--border)] transition-[opacity,transform,width,height,scale,translate] duration-[0.35s] ease-[cubic-bezier(0.22,1,0.36,1)] outline-none data-ending-style:scale-90 data-ending-style:opacity-0 data-ending-style:duration-150 data-starting-style:scale-90 data-starting-style:opacity-0"
+          className="relative h-(--popup-height) w-(--popup-width) origin-(--transform-origin) overflow-hidden rounded-base bg-main text-main-foreground shadow-[inset_0_0_0_2px_var(--border)] transition-[opacity,transform,width,height,scale,translate] motion-reduce:transition-none duration-[0.35s] ease-[cubic-bezier(0.22,1,0.36,1)] outline-none data-ending-style:scale-90 data-ending-style:opacity-0 data-ending-style:duration-150 data-starting-style:scale-90 data-starting-style:opacity-0"
         >
           <NavigationMenuPrimitive.Viewport
             data-slot="navigation-menu-viewport"

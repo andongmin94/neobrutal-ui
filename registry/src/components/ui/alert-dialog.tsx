@@ -33,7 +33,7 @@ function AlertDialogOverlay({ className, ...props }: AlertDialogPrimitive.Backdr
       {...props}
       className={(state) =>
         cn(
-          "fixed inset-0 isolate z-50 bg-overlay duration-200 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+          "fixed inset-0 isolate z-50 bg-overlay duration-200 motion-safe:data-open:animate-in data-open:fade-in-0 motion-safe:data-closed:animate-out data-closed:fade-out-0",
           typeof className === "function" ? className(state) : className,
         )
       }
@@ -58,7 +58,7 @@ function AlertDialogContent({
         {...props}
         className={(state) =>
           cn(
-            "group/alert-dialog-content fixed top-1/2 left-1/2 z-50 grid max-h-[calc(100dvh-2rem)] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto rounded-base border-2 border-border bg-background p-6 text-foreground shadow-shadow duration-200 outline-none data-[size=default]:sm:max-w-lg data-[size=sm]:sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+            "group/alert-dialog-content fixed top-1/2 left-1/2 z-50 grid max-h-[calc(100dvh-2rem)] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto rounded-base border-2 border-border bg-background p-6 text-foreground shadow-shadow duration-200 outline-none data-[size=default]:sm:max-w-lg data-[size=sm]:sm:max-w-sm motion-safe:data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 motion-safe:data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
             typeof className === "function" ? className(state) : className,
           )
         }
