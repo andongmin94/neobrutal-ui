@@ -292,13 +292,9 @@ test("scroll area has a name and renders both overflowing axes", async ({ page }
   }
   await expect(canvas.locator('[data-slot="scroll-area-corner"]')).toBeVisible();
   await viewport.press("ArrowRight");
-  await expect
-    .poll(() => viewport.evaluate((node) => node.scrollLeft))
-    .toBeGreaterThan(0);
+  await expect.poll(() => viewport.evaluate((node) => node.scrollLeft)).toBeGreaterThan(0);
   await viewport.press("ArrowDown");
-  await expect
-    .poll(() => viewport.evaluate((node) => node.scrollTop))
-    .toBeGreaterThan(0);
+  await expect.poll(() => viewport.evaluate((node) => node.scrollTop)).toBeGreaterThan(0);
 });
 
 test("skeleton exposes one loading status and hides decorative shapes", async ({ page }) => {
