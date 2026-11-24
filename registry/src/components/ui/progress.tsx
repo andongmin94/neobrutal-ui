@@ -51,7 +51,7 @@ function ProgressIndicator({ className, ...props }: ProgressPrimitive.Indicator.
       {...props}
       className={(state) =>
         cn(
-          "h-full border-r-2 border-border bg-main transition-all motion-reduce:transition-none data-indeterminate:w-full data-indeterminate:border-r-0 data-indeterminate:bg-[repeating-linear-gradient(-45deg,transparent,transparent_0.5rem,var(--border)_0.5rem,var(--border)_0.625rem)] motion-safe:data-indeterminate:animate-pulse",
+          "h-full border-e-2 border-border bg-main transition-all motion-reduce:transition-none data-indeterminate:w-full data-indeterminate:border-e-0 data-indeterminate:bg-[repeating-linear-gradient(-45deg,transparent,transparent_0.5rem,var(--border)_0.5rem,var(--border)_0.625rem)] motion-safe:data-indeterminate:animate-pulse",
           typeof className === "function" ? className(state) : className,
         )
       }
@@ -78,7 +78,7 @@ function ProgressValue({ className, ...props }: ProgressPrimitive.Value.Props) {
       {...props}
       className={(state) =>
         cn(
-          "ml-auto text-sm font-base text-foreground tabular-nums",
+          "ms-auto text-sm font-base text-foreground tabular-nums",
           typeof className === "function" ? className(state) : className,
         )
       }

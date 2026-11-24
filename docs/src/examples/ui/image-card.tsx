@@ -5,6 +5,7 @@ export default function ImageCardDemo() {
     <ImageCard
       caption="neobrutal-ui documentation preview"
       imageUrl="/preview.png"
+      alt="Screenshot of the component documentation"
       className="w-full max-w-sm [&_img]:aspect-auto"
     />
   );

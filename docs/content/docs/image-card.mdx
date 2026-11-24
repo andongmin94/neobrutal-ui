@@ -3,7 +3,7 @@ title: Image Card
 description: A figure with an image, caption, border, and hard shadow.
 ---
 
-Use Image Card when an image and its caption form one piece of content. It is a default export. The caption also supplies the image alternative text, so use a meaningful description rather than a filename.
+Use Image Card when an image and its caption form one piece of content. It is a default export. Provide independent alternative text and a visible caption so their purposes are not conflated.
 
 <ComponentPreview component="image-card">
 <include cwd lang="tsx">
@@ -33,6 +33,7 @@ export default function WorkspaceImage() {
   return (
     <ImageCard
       imageUrl="/images/workspace.jpg"
+      alt="Desks and monitors arranged around the shared studio"
       caption="The shared studio workspace"
       className="w-full max-w-sm"
     />
@@ -47,9 +48,10 @@ Add your own `/images/workspace.jpg` asset. The component neither uploads nor op
 | Prop | Purpose | Default |
 | --- | --- | --- |
 | `imageUrl` | Image URL or application asset | Required |
-| `caption` | Visible caption and image alternative text | Required |
-| `className` | Figure width and layout | Width 250px |
+| `alt` | Alternative text for the image, or an empty string for decorative content | Required |
+| `caption` | Visible caption | Required |
+| `className` | Figure width and layout | Width 250px, constrained to the available width |
 
 ## Accessibility
 
-Choose a caption explaining the image. This component does not expose independent alt text or a decorative-image mode; adapt the copied source when those semantics are needed. The image fills a 4:3 area using object-cover, so verify that cropping preserves the important subject. Keep the original source asset accessible and provide a useful fallback in applications that load remote images.
+Use alt text to communicate the image's relevant information. Provide an empty alt when the image is decorative or its information is fully conveyed by nearby text. The visible caption can supply context without repeating the alternative text. The image fills a 4:3 area using object-cover, so verify that cropping preserves the important subject. Keep the original source asset accessible and provide a useful fallback in applications that load remote images.

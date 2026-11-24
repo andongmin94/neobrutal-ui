@@ -45,11 +45,15 @@ export default function UploadProgress() {
 | Prop | Purpose | Default |
 | --- | --- | --- |
 | `value` | Completed amount; null means indeterminate | `null` |
+| `min` | Minimum amount | `0` |
 | `max` | Maximum amount | `100` |
 | `aria-label` / `aria-labelledby` | Accessible operation name | Unset |
 | `getAriaValueText` | Meaningful value announcement | Base UI behavior |
 | `className` | Width and root layout | Full available width |
+| `ProgressLabel` / `ProgressValue` | Optional children for a visible label and formatted value | — |
 
 ## Accessibility
+
+Use `ProgressLabel` and `ProgressValue` as optional children of `Progress`, or supply an external label. The wrapper already renders `ProgressTrack` and `ProgressIndicator`; do not add a second track as a child. The fill boundary follows the reading direction.
 
 Name the operation, not just the control. Do not invent percentages for unknown work. Keep values in range and announce completion or failure separately; reaching 100 does not prove that an application operation succeeded.

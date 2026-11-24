@@ -177,7 +177,8 @@ test("blog article lists show their bullet markers", async ({ page }) => {
 test("image-card preview preserves its screenshot proportions", async ({ page }) => {
   await openReady(page, "/docs/image-card");
   const preview = page.locator(".component-preview").first();
-  const image = preview.getByRole("img", { name: "neobrutal-ui documentation preview" });
+  const image = preview.getByRole("img", { name: "Screenshot of the component documentation" });
+  await expect(preview.locator("figcaption")).toHaveText("neobrutal-ui documentation preview");
   await expect(image).toBeVisible();
   await image.evaluate((node) => (node as HTMLImageElement).decode());
   for (const width of [320, 390, 1440]) {

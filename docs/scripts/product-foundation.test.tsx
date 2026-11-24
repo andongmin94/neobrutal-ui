@@ -25,6 +25,7 @@ import {
   FormLabel,
   FormMessage,
 } from "../src/components/ui/form";
+import ImageCard from "../src/components/ui/image-card";
 import { InputGroupButton } from "../src/components/ui/input-group";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../src/components/ui/input-otp";
 import {
@@ -58,6 +59,17 @@ function classesForSlot(html: string, slot: string) {
     return classes.split(/\s+/);
   });
 }
+
+test("ImageCard preserves independent alt and caption text, including decorative images", () => {
+  for (const alt of ["Desk with two monitors", ""]) {
+    const html = renderToStaticMarkup(
+      <ImageCard imageUrl="/workspace.jpg" alt={alt} caption="Workspace overview" />,
+    );
+    assert.ok(html.includes(`alt="${alt}"`));
+    assert.match(html, /<figcaption[^>]*>Workspace overview<\/figcaption>/);
+    assert.match(html, /<figure[^>]*class="[^"]*\bmax-w-full\b/);
+  }
+});
 
 test("Calendar week numbers preserve native row headers without leaking their data object", () => {
   const html = renderToStaticMarkup(<Calendar month={new Date(2024, 0, 1)} showWeekNumber />);

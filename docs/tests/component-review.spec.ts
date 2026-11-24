@@ -294,6 +294,10 @@ test("progress keeps indeterminate work visible with reduced motion", async ({ p
     .locator('[data-slot="progress-indicator"]')
     .evaluate((node) => node.getBoundingClientRect().width / node.parentElement!.clientWidth);
   expect(measuredFill).toBeCloseTo(0.66, 1);
+  const fill = determinate.locator('[data-slot="progress-indicator"]');
+  await determinate.evaluate((node) => node.setAttribute("dir", "rtl"));
+  await expect(fill).toHaveCSS("border-left-width", "2px");
+  await expect(fill).toHaveCSS("border-right-width", "0px");
 });
 
 test("sidebar collapsed, mobile, disclosure and menu states work", async ({ page }, info) => {
