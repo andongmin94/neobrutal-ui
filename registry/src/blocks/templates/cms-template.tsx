@@ -337,6 +337,7 @@ export default function CmsTemplate() {
 
   const nextPostNumber = React.useRef(106);
   const titleInputRef = React.useRef<HTMLInputElement>(null);
+  const searchInputRef = React.useRef<HTMLInputElement>(null);
 
   const filteredPosts = getFilteredPosts(posts, query, statusFilter);
   const selectedPost = posts.find((post) => post.id === selectedId);
@@ -383,10 +384,20 @@ export default function CmsTemplate() {
 
   const discardSelectedPost = () => {
     const saved = savedPosts.find((post) => post.id === selectedId);
-    if (!saved) return;
-    setPosts((current) => current.map((post) => (post.id === selectedId ? saved : post)));
-    setFeedback("Restored the last locally saved version.");
-    titleInputRef.current?.focus();
+    if (saved) {
+      setPosts((current) => current.map((post) => (post.id === selectedId ? saved : post)));
+      setFeedback("Restored the last locally saved version.");
+      titleInputRef.current?.focus();
+      return;
+    }
+
+    const remaining = posts.filter((post) => post.id !== selectedId);
+    const nextId = resolveSelectedPostId(getFilteredPosts(remaining, query, statusFilter), "");
+    setPosts(remaining);
+    setSelectedId(nextId);
+    setFeedback("Discarded the unsaved post.");
+    if (nextId) titleInputRef.current?.focus();
+    else searchInputRef.current?.focus();
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -407,7 +418,6 @@ export default function CmsTemplate() {
 
     nextPostNumber.current += 1;
     setPosts((current) => [post, ...current]);
-    setSavedPosts((current) => [{ ...post, dirty: false }, ...current]);
     setFeedback("");
     setSelectedId(post.id);
     setQuery("");
@@ -472,6 +482,7 @@ export default function CmsTemplate() {
                   className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-foreground/50"
                 />
                 <Input
+                  ref={searchInputRef}
                   id="post-search"
                   type="search"
                   className="h-10 pl-9"

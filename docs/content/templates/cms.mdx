@@ -5,3 +5,13 @@ layout: page
 ---
 
 <SpecialPage kind="template-detail" slug="cms" />
+
+## Connect your application
+
+The installed CMS page is a local editing example. Its initial posts and saved versions are kept in memory in
+`components/templates/cms-template.tsx`; reload resets them. Replace the sample data and save operation
+with your application's authenticated data source before connecting a real publishing workflow.
+
+- Save updates the local saved version of the selected post. Discard restores that version.
+- A new post stays unsaved until its first save. Discard removes it if it has never been saved.
+- Searching or changing status filters does not delete unsaved changes. The publication switch edits the post's status; it does not publish to a server.

@@ -364,6 +364,36 @@ test("CMS empty filters recover to a post or a focused new draft", async ({ page
   await expectHealthyTemplate(page);
 });
 
+test("CMS discard removes an unsaved draft and restores a saved draft", async ({ page }) => {
+  await openTemplate(page, "cms");
+  const posts = page.getByRole("region", { name: "Posts", exact: true });
+  const rows = posts.getByRole("button");
+  const title = page.getByRole("textbox", { name: "Title", exact: true });
+  const save = page.getByRole("button", { name: "Save", exact: true });
+  const discard = page.getByRole("button", { name: "Discard", exact: true });
+  const create = page.getByRole("button", { name: "New post", exact: true });
+
+  await expect(rows).toHaveCount(5);
+  await create.click();
+  await title.fill("Temporary draft");
+  await title.fill("Untitled post");
+  await expect(save).toBeEnabled();
+  await discard.click();
+  await expect(rows).toHaveCount(5);
+  await expect(page.getByText("Discarded the unsaved post.", { exact: true })).toBeVisible();
+  await expect(title).toHaveValue("July product update");
+  await expect(title).toBeFocused();
+
+  await create.click();
+  await title.fill("Saved draft");
+  await save.click();
+  await expect(save).toBeDisabled();
+  await title.fill("Temporary edit");
+  await discard.click();
+  await expect(title).toHaveValue("Saved draft");
+  await expect(rows).toHaveCount(6);
+});
+
 test("blog empty results keep a usable search and keyboard recovery", async ({ page }) => {
   await openTemplate(page, "blog");
   const search = page.getByRole("searchbox", { name: "Search posts" });
