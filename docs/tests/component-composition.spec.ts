@@ -183,7 +183,10 @@ for (const direction of ["ltr", "rtl"] as const) {
     for (const variant of ["default", "line"]) {
       const list = page.getByRole("tablist", { name: `${variant} views` });
       const first = list.getByRole("tab", { name: "Overview", exact: true });
-      const last = list.getByRole("tab", { name: "Release notes and deployment history", exact: true });
+      const last = list.getByRole("tab", {
+        name: "Release notes and deployment history",
+        exact: true,
+      });
       await expect(list).toHaveCSS("overflow-x", "auto");
       expect(await list.evaluate((node) => node.scrollWidth - node.clientWidth)).toBeGreaterThan(0);
       await first.focus();
