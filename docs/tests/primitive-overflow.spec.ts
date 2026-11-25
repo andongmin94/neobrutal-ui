@@ -254,7 +254,7 @@ for (const direction of ["ltr", "rtl"] as const) {
         await page.goto(`${origin}?surface=portal-direction&direction=${direction}&kind=${kind}`);
         await expect(page.locator("html")).toHaveCSS("direction", "ltr");
         const trigger = page.locator(`[data-slot="${kind}-trigger"]`);
-        if (kind === "popover") await trigger.click();
+        if (kind === "popover") await trigger.press("Enter");
         else await trigger.focus();
         const popup = page.locator(`[data-slot="${kind}-content"]`);
         await expect(popup).toBeVisible();
@@ -384,11 +384,13 @@ test("InputOTP readOnly blocks transformed paste and preserves caller capture", 
     await input.focus();
     await input.evaluate((node: HTMLInputElement) => {
       node.setSelectionRange(0, node.value.length);
-      const clipboardData = new DataTransfer();
-      clipboardData.setData("text/plain", "98-76");
-      node.dispatchEvent(
-        new ClipboardEvent("paste", { bubbles: true, cancelable: true, clipboardData }),
-      );
+      const paste = new ClipboardEvent("paste", {
+        bubbles: true,
+        cancelable: true,
+        clipboardData: new DataTransfer(),
+      });
+      paste.clipboardData!.setData("text/plain", "98-76");
+      node.dispatchEvent(paste);
     });
     await expect(input).toHaveValue(readOnly ? "1234" : "9876");
     await expect(field.getByTestId("paste-changes")).toHaveText(readOnly ? "0" : "1");

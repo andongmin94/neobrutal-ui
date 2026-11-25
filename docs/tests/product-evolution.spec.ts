@@ -106,7 +106,7 @@ test("link categories filter real destinations and clipboard failure remains act
   await expect(page.locator('[data-template-preview="links"] ul a')).toHaveCount(2);
   await page
     .getByRole("group", { name: "Filter links" })
-    .getByRole("button", { name: "All", exact: true })
+    .getByRole("button", { name: "All links", exact: true })
     .click();
   await expect(page.locator('[data-template-preview="links"] ul a')).toHaveCount(6);
   await page.getByRole("button", { name: "Copy email", exact: true }).click();

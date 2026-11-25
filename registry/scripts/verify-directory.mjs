@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
@@ -10,10 +11,11 @@ import { run } from "./consumer-command.mjs";
 const root = fileURLToPath(new URL("..", import.meta.url));
 const entry = JSON.parse(fs.readFileSync(path.join(root, "directory-entry.json"), "utf8"));
 const ownPackage = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
-const head = JSON.parse(
-  await download("https://api.github.com/repos/shadcn-ui/ui/git/ref/heads/main"),
-);
-const revision = head.object.sha;
+const [revision] = execFileSync(
+  "git",
+  ["ls-remote", "--exit-code", "https://github.com/shadcn-ui/ui.git", "refs/heads/main"],
+  { encoding: "utf8", timeout: 30_000 },
+).split(/\s+/);
 assert.match(revision, /^[a-f0-9]{40}$/);
 const temporary = fs.mkdtempSync(path.join(os.tmpdir(), "neobrutal-directory-"));
 

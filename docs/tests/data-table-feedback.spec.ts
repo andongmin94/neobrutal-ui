@@ -56,7 +56,7 @@ test("table sorting and empty states follow visible columns", async ({ page }) =
   await page.getByRole("menuitemcheckbox", { name: "amount", exact: true }).click();
   await page.keyboard.press("Escape");
   await preview.getByLabel("Filter email records").fill("nobody@example.invalid");
-  const empty = preview.getByRole("cell", { name: "No results.", exact: true });
+  const empty = preview.getByRole("cell").filter({ has: page.getByRole("status") });
   await expect(empty).toHaveAttribute("colspan", "4");
   await expect(empty.getByRole("status")).toHaveText("No results.");
 });

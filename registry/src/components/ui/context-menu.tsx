@@ -36,11 +36,41 @@ function ContextMenuPortal(props: ContextMenuPrimitive.Portal.Props) {
   return <ContextMenuPrimitive.Portal data-slot="context-menu-portal" {...props} />;
 }
 
-function ContextMenuTrigger({ className, ...props }: ContextMenuPrimitive.Trigger.Props) {
+function ContextMenuTrigger({
+  className,
+  onKeyDown,
+  ...props
+}: ContextMenuPrimitive.Trigger.Props) {
   return (
     <ContextMenuPrimitive.Trigger
       data-slot="context-menu-trigger"
       {...props}
+      onKeyDown={(event) => {
+        onKeyDown?.(event);
+        if (
+          event.key !== "F10" ||
+          !event.shiftKey ||
+          event.altKey ||
+          event.ctrlKey ||
+          event.metaKey ||
+          event.defaultPrevented ||
+          event.baseUIHandlerPrevented ||
+          event.target !== event.currentTarget
+        )
+          return;
+
+        // WebKit does not emit contextmenu for Shift+F10. Let the primitive handle opening.
+        const target = event.currentTarget;
+        const { left, top, width, height } = target.getBoundingClientRect();
+        const menuEvent = new MouseEvent("contextmenu", {
+          bubbles: true,
+          cancelable: true,
+          button: 2,
+          clientX: left + width / 2,
+          clientY: top + height / 2,
+        });
+        if (!target.dispatchEvent(menuEvent)) event.preventDefault();
+      }}
       className={(state) =>
         cn("select-none", typeof className === "function" ? className(state) : className)
       }

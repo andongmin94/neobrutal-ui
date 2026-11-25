@@ -68,6 +68,7 @@ export async function verifyServerCalendar({ page, origin, expect }) {
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Server-rendered calendar");
   const calendar = page.locator('[data-slot="calendar"]');
   await expect(calendar).toContainText("September 2026");
+  await expect(page.locator("html")).toHaveAttribute("data-consumer-hydrated", "true");
   await calendar.getByRole("button", { name: /next month/i }).click();
   await expect(calendar).toContainText("October 2026");
   await calendar.getByRole("button", { name: /previous month/i }).press("Enter");
