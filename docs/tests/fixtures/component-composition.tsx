@@ -218,7 +218,7 @@ function TabsDirectionFixture() {
 
 function NarrowTabsFixture() {
   const direction = new URLSearchParams(location.search).get("direction") === "rtl" ? "rtl" : "ltr";
-  const views = ["Overview", "Activity", "Permissions", "Audit history", "Release notes"];
+  const views = ["Overview", "Activity", "Permissions", "Audit history", "Release notes and deployment history"];
 
   return (
     <section className="grid w-[200px] gap-4">
