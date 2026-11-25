@@ -4,7 +4,7 @@ description: Website navigation with links and optional expandable content.
 shadcnDocsLink: https://base-ui.com/react/components/navigation-menu
 ---
 
-Use Navigation Menu for navigation between pages. Put direct destinations in NavigationMenuLink and grouped destinations inside a trigger/content pair. Use [Menubar](/docs/menubar) for application commands.
+Use Navigation Menu for navigation between pages. Put direct destinations in NavigationMenuLink and grouped destinations inside a trigger/content pair. NavigationMenu renders its own viewport for the expanded content; do not add another NavigationMenuViewport to its children. Use [Menubar](/docs/menubar) for application commands.
 
 <ComponentPreview component="navigation-menu">
 <include cwd lang="tsx">
@@ -67,6 +67,7 @@ export default function SiteNavigation() {
 | `NavigationMenuItem.value` | Stable grouped-item identifier when controlling state | Optional |
 | `NavigationMenuLink.href` / `render` | Native destination or router-link composition | Anchor |
 | `NavigationMenuLink.active` | Underlines the current destination and sets `aria-current="page"` | `false` |
+| `NavigationMenuLink.closeOnClick` | Close the expanded menu after activating a link | `false` |
 
 ## Accessibility
 

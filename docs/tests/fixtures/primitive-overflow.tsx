@@ -476,13 +476,21 @@ function NamedMenus() {
         </ContextMenu>
       ) : kind === "menubar" ? (
         <DirectionProvider direction={direction}>
-          <Menubar>
+          <Menubar orientation={query.get("orientation") === "vertical" ? "vertical" : "horizontal"}>
             <MenubarMenu>
               <MenubarTrigger>Menu commands</MenubarTrigger>
               <MenubarContent className="w-72" alignOffset={0}>
                 <MenuGroups kind="menubar" />
               </MenubarContent>
             </MenubarMenu>
+            {query.has("orientation") && (
+              <MenubarMenu>
+                <MenubarTrigger>View commands</MenubarTrigger>
+                <MenubarContent>
+                  <MenubarItem>Refresh view</MenubarItem>
+                </MenubarContent>
+              </MenubarMenu>
+            )}
           </Menubar>
         </DirectionProvider>
       ) : (

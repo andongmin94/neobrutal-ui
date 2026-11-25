@@ -29,7 +29,7 @@ function Menubar({ className, ...props }: MenubarPrimitive.Props) {
       {...props}
       className={(state) =>
         cn(
-          "flex h-11 items-center gap-1 rounded-base border-2 border-border bg-main p-1 font-base",
+          "flex h-11 items-center gap-1 rounded-base border-2 border-border bg-main p-1 font-base data-[orientation=vertical]:h-auto data-[orientation=vertical]:w-fit data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch",
           typeof className === "function" ? className(state) : className,
         )
       }

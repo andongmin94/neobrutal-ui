@@ -62,7 +62,7 @@ jobs:
           npm run test:browser -- component-review.spec.ts galleries.spec.ts product-foundation.spec.ts --grep 'scroll area has a name|marquee pause|progress keeps indeterminate work visible|avatar status badges|clipboard|checkbox: changed selection|radio group exposes|skeleton exposes|form errors preserve associations'
           npm run test:browser -- drawer-modal.spec.ts release-controls.spec.ts component-composition.spec.ts --grep 'dialog|select:|[Cc]arousel|Sidebar .*buttons submit forms|Sonner|InputGroup|Tabs vertical line|Tabs narrow'
           npm run test:browser -- template-states.spec.ts --grep 'template consumer data|document landmark|landing billing|CMS '
-          npm run test:browser -- primitive-overflow.spec.ts --grep 'NavigationMenu|Anchored popups preserve|Modal popups preserve|Calendar preserves focus|Calendar inline layout|InputOTP readOnly|Menu labels|Menu submenu'
+          npm run test:browser -- primitive-overflow.spec.ts --grep 'NavigationMenu|Anchored popups preserve|Modal popups preserve|Calendar preserves focus|Calendar inline layout|InputOTP readOnly|Menu labels|Menu submenu|Menubar orientation'
       - name: Verify representative fresh consumers
         working-directory: registry
         run: |

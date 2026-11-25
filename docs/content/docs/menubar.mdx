@@ -1,6 +1,6 @@
 ---
 title: Menubar
-description: A horizontal set of application menus with keyboard navigation.
+description: A set of application menus with horizontal or vertical keyboard navigation.
 shadcnDocsLink: https://base-ui.com/react/components/menubar
 ---
 
@@ -66,14 +66,14 @@ export default function FileMenu() {
 | `Menubar.loopFocus` | Wrap trigger keyboard navigation | `true` |
 | `Menubar.modal` | Limit interaction to an open menu | `true` |
 | `Menubar.disabled` | Disable all menus in the bar | `false` |
-| `Menubar.orientation` | Trigger navigation axis | `horizontal` |
+| `Menubar.orientation` | Trigger layout and keyboard navigation axis (`horizontal` or `vertical`) | `horizontal` |
 | `MenubarContent.align` / `sideOffset` | Popup placement | `start` / `8` |
 | `MenubarCheckboxItem.checked` / `onCheckedChange` | Checked command state | Uncontrolled |
 | `MenubarContent.alignOffset` | Popup alignment adjustment, in pixels | `-4` |
 
 ## Accessibility
 
-Keep labels short and commands meaningful. Arrow keys navigate triggers and menu items; Escape dismisses. MenubarShortcut only displays text: implement and test the corresponding keyboard handler separately. Make disabled commands visually identifiable, and do not use application-menu semantics for an ordinary list of website links.
+Keep labels short and commands meaningful. Horizontal menubars use Left/Right to move between triggers; vertical menubars stack the triggers and use Up/Down. Arrow keys navigate menu items; Escape dismisses. MenubarShortcut only displays text: implement and test the corresponding keyboard handler separately. Make disabled commands visually identifiable, and do not use application-menu semantics for an ordinary list of website links.
 
 Place `MenubarLabel` inside the `MenubarGroup` or `MenubarRadioGroup` it names. Base UI associates that visible label with its group automatically. The label supports native `id`, `ref`, `render`, and state-based `className` props.
 

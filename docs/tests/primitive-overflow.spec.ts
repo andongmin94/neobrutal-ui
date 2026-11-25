@@ -47,6 +47,27 @@ test.afterAll(async () => {
   }
 });
 
+test("Menubar orientation matches its visual layout and keyboard navigation", async ({ page }) => {
+  for (const orientation of ["horizontal", "vertical"] as const) {
+    await page.goto(`${origin}?surface=named-menus&kind=menubar&orientation=${orientation}`);
+    const menu = page.getByRole("menubar");
+    const first = menu.getByRole("menuitem", { name: "Menu commands" });
+    const second = menu.getByRole("menuitem", { name: "View commands" });
+    await expect(menu).toHaveAttribute("aria-orientation", orientation);
+    await expect(menu).toHaveCSS("flex-direction", orientation === "vertical" ? "column" : "row");
+    const firstBox = (await first.boundingBox())!;
+    const secondBox = (await second.boundingBox())!;
+    if (orientation === "vertical") {
+      expect(secondBox.y).toBeGreaterThanOrEqual(firstBox.y + firstBox.height);
+    } else {
+      expect(secondBox.x).toBeGreaterThanOrEqual(firstBox.x + firstBox.width);
+    }
+    await first.focus();
+    await first.press(orientation === "vertical" ? "ArrowDown" : "ArrowRight");
+    await expect(second).toBeFocused();
+  }
+});
+
 for (const kind of ["dropdown", "context", "menubar"] as const) {
   test(`Menu labels associate ${kind} item and radio groups`, async ({ page }) => {
     await page.goto(`${origin}?surface=named-menus&kind=${kind}`);
