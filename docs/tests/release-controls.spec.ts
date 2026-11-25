@@ -211,9 +211,11 @@ test("native slider stepping, boundaries, and pointer input agree with its value
   const thumb = preview.getByRole("slider").first();
   await expect(thumb).toBeVisible();
   const before = Number(await thumb.inputValue());
+  await expect(thumb).toHaveAttribute("aria-valuetext", `${before} percent`);
   await thumb.focus();
   await page.keyboard.press("ArrowRight");
   await expect.poll(async () => Number(await thumb.inputValue())).toBeGreaterThan(before);
+  await expect(thumb).toHaveAttribute("aria-valuetext", `${before + 1} percent`);
   await page.keyboard.press("Home");
   await expect
     .poll(async () => Number(await thumb.inputValue()))

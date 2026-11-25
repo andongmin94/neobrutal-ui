@@ -44,6 +44,7 @@ export default function VolumeSetting() {
         max={100}
         step={5}
         getAriaLabel={() => "Volume"}
+        getAriaValueText={(_, value) => `${value} percent`}
       />
     </div>
   );
@@ -61,6 +62,7 @@ For local reading direction, pass `dir="ltr"` or `dir="rtl"` to Slider. The wrap
 | `min` / `max` / `step` | Range and step | 0 / 100 / 1 |
 | `orientation` | Horizontal or vertical layout | `horizontal` |
 | `getAriaLabel` | Name for each thumb index | Unset |
+| `getAriaValueText` | Format the actual thumb input's value using `(formattedValue, value, index) => string` | Base UI formatting |
 | `disabled` | Prevent adjustment | `false` |
 | `minStepsBetweenValues` | Minimum thumb separation in steps | `0` |
 | `thumbCollisionBehavior` | `swap`, `push`, or `none` | `swap` |
@@ -71,7 +73,7 @@ Base UI owns pointer capture, keyboard stepping, value normalization, collision 
 
 ## Accessibility
 
-Name each thumb, especially for minimum/maximum ranges. Connect a visible group title with `aria-labelledby` and name each thumb with `getAriaLabel`. Show values and units in text. Test arrows, Home, and End, and keep pointer targets usable. Run expensive work at the end of interaction rather than on every drag update.
+Name each thumb, especially for minimum/maximum ranges. Connect a visible group title with `aria-labelledby` and name each thumb with `getAriaLabel`. Show values and units in text, and use `getAriaValueText` to provide matching units or converted values to assistive technology. Setting `aria-valuetext` on the root does not name each thumb's value. Test arrows, Home, and End, and keep pointer targets usable. Run expensive work at the end of interaction rather than on every drag update.
 
 ## Examples
 

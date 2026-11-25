@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 type SliderProps = SliderPrimitive.Root.Props<number[]> & {
   dir?: "ltr" | "rtl";
   getAriaLabel?: (index: number) => string;
+  getAriaValueText?: SliderPrimitive.Thumb.Props["getAriaValueText"];
 };
 
 function Slider({
@@ -15,6 +16,7 @@ function Slider({
   defaultValue,
   dir,
   getAriaLabel,
+  getAriaValueText,
   min = 0,
   orientation = "horizontal",
   thumbCollisionBehavior = "swap",
@@ -55,6 +57,7 @@ function Slider({
             data-slot="slider-thumb"
             index={index}
             aria-label={getAriaLabel?.(index)}
+            getAriaValueText={getAriaValueText}
             className="relative block size-5 shrink-0 rounded-full border-2 border-border bg-white transition-colors select-none after:absolute after:-inset-2 has-focus-visible:outline-none has-focus-visible:ring-1 has-focus-visible:ring-ring data-disabled:pointer-events-none data-disabled:opacity-50"
           />
         ))}
