@@ -458,6 +458,7 @@ function MenuGroups({ kind }: { kind: keyof typeof menuParts }) {
 function NamedMenus() {
   const kind = query.get("kind");
   const direction = query.get("direction") === "rtl" ? "rtl" : "ltr";
+  const orientation = query.get("orientation") === "vertical" ? "vertical" : "horizontal";
   const contextTarget = React.useRef<HTMLDivElement>(null);
   return (
     <section
@@ -476,7 +477,7 @@ function NamedMenus() {
         </ContextMenu>
       ) : kind === "menubar" ? (
         <DirectionProvider direction={direction}>
-          <Menubar orientation={query.get("orientation") === "vertical" ? "vertical" : "horizontal"}>
+          <Menubar orientation={orientation}>
             <MenubarMenu>
               <MenubarTrigger>Menu commands</MenubarTrigger>
               <MenubarContent className="w-72" alignOffset={0}>
